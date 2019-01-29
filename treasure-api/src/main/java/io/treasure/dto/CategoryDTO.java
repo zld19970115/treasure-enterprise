@@ -2,6 +2,7 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.common.validator.group.AddGroup;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

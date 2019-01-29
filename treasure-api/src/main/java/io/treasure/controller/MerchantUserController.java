@@ -26,10 +26,12 @@ import io.treasure.utils.SendSMSUtil;
 import oracle.jdbc.proxy.annotation.Post;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -137,7 +139,16 @@ public class MerchantUserController {
      */
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
-    public Result updatePassword(@RequestBody String oldPassword,String newPassword,Long id){
+    public Result updatePassword(HttpServletRequest request,@RequestBody String oldPassword,String newPassword,Long id,String code){
+        //获取短信验证码
+        String codeOld= (String) request.getSession().getAttribute("code");
+        if(StringUtils.isNotEmpty(codeOld)){
+            if(!codeOld.equals(code)){
+                return new Result().error("验证码输入错误！");
+            }
+        }else{
+            return new Result().error("请先获取验证码！");
+        }
        String oPassword= DigestUtils.sha256Hex(oldPassword);
        String nPassword= DigestUtils.sha256Hex(newPassword);
         if(!oPassword.equals(nPassword)){
@@ -150,11 +161,20 @@ public class MerchantUserController {
     /**
      * 找回密码
      * @param mobile
+     * @param  code
      * @return
      */
     @PutMapping("retrievePassword")
     @ApiOperation("找回密码")
-    public Result<Map<String, Object>>  retrievePassword(@RequestBody String mobile){
+    public Result<Map<String, Object>>  retrievePassword(HttpServletRequest request,@RequestBody String mobile,String code){
+        String codeOld= (String) request.getSession().getAttribute("code");
+        if(StringUtils.isNotEmpty(codeOld)){
+            if(!codeOld.equals(code)){
+                return new Result().error("验证码输入错误！");
+            }
+        }else{
+            return new Result().error("请先获取验证码！");
+        }
         if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
             return new Result().error("请输入手机号码！");
         }
@@ -173,8 +193,16 @@ public class MerchantUserController {
      */
     @PostMapping("register")
     @ApiOperation("注册")
-    public Result register(@RequestBody MerchantUserRegisterDTO dto){
+    public Result register( HttpServletRequest request, @RequestBody MerchantUserRegisterDTO dto){
         ValidatorUtils.validateEntity(dto);
+        String code= (String) request.getSession().getAttribute("code");
+        if(StringUtils.isNotEmpty(code)){
+            if(!code.equals(dto.getCode())){
+                return new Result().error("验证码输入错误！");
+            }
+        }else{
+            return new Result().error("请先获取验证码！");
+        }
         String oPassword= DigestUtils.sha256Hex(dto.getOldPassword());
         String nPassword= DigestUtils.sha256Hex(dto.getNewPassword());
         if(!oPassword.equals(nPassword)){
@@ -206,7 +234,15 @@ public class MerchantUserController {
      */
     @PutMapping("updateMobile")
     @ApiOperation("修改手机号")
-    public Result<Map<String, Object>>  updateMobile(@RequestBody String mobile,long id){
+    public Result<Map<String, Object>>  updateMobile(HttpServletRequest request, @RequestBody String mobile, long id, String code){
+        String codeOld= (String) request.getSession().getAttribute("code");
+        if(StringUtils.isNotEmpty(codeOld)){
+            if(!codeOld.equals(code)){
+                return new Result().error("验证码输入错误！");
+            }
+        }else{
+            return new Result().error("请先获取验证码！");
+        }
         if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
             return new Result().error("请输入手机号码！");
         }
@@ -242,7 +278,7 @@ public class MerchantUserController {
      * @param
      * @return
      */
-    @GetMapping("code")
+    @PutMapping("code")
     @ApiOperation("验证码")
     public Result registerCode(HttpServletRequest request){
         boolean bool= SendSMSUtil.sendCodeForRegister("13644698136",request,smsConfig);

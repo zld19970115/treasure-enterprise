@@ -132,26 +132,4 @@ public class MerchantController {
         return new Result();
     }
 
-    /**
-     * 附件上传
-     * @param file
-     * @return
-     */
-    @GetMapping("uploadFile")
-    @ApiOperation("文件上传")
-    public Result uploadFile(@RequestBody String file){
-        String url="";
-        try {
-            //上传文件
-            // 上传文件流。
-            File f=new File(file);
-            String suffix = FilenameUtils.getExtension(file).toLowerCase();
-            InputStream inputStream = new FileInputStream(f);
-            url = OSSFactory.build().uploadSuffix(inputStream, suffix);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return new Result().error("上传图片失败！");
-        }
-        return new Result().ok(url);
-    }
 }

@@ -94,6 +94,14 @@ public class MerchantEntity implements Serializable {
      * 身份证号
      */
 	private String cards;
+	/**
+	 * 身份证正面图片
+	 */
+	private String idcard_front_img;
+	/**
+	 * 身份证反面图片
+	 */
+	private String idcard_back_img;
     /**
      * 1-未审核，2-审核通过，3-审核未通过;审核状态
      */
