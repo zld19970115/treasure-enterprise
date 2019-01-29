@@ -9,6 +9,7 @@ import io.treasure.service.CategoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
      * @return
      */
     @Override
-    public CategoryEntity getByNameAndMerchantId(String name, long merchantId) {
+    public List getByNameAndMerchantId(String name, long merchantId) {
         return baseDao.getByNameAndMerchantId(name,merchantId);
     }
 

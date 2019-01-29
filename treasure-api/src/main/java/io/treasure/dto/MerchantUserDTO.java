@@ -58,7 +58,7 @@ public class MerchantUserDTO {
 	private Long updater;
 
 	@ApiModelProperty(value = "商户编号")
-	private Long merchantid;
+	private String merchantid;
 
 
 }

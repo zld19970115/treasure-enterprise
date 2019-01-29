@@ -84,8 +84,8 @@ public class CategoryController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
-        CategoryEntity cate=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
-        if(null!=cate){
+        List cate=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+        if(null!=cate && cate.size()>0){
             return new Result().error("分类名称已经存在！");
         }
         CategoryEntity category=new CategoryEntity();
@@ -104,17 +104,21 @@ public class CategoryController {
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody CategoryDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
         CategoryDTO cate=categoryService.get(dto.getId());
+        System.out.println(!cate.getName().equals(dto.getName()));
+        System.out.println(cate.getMerchantId()==dto.getMerchantId());
+        System.out.println(cate.getMerchantId()+"==="+dto.getMerchantId());
         if(!cate.getName().equals(dto.getName()) && cate.getMerchantId()==dto.getMerchantId()){
             //同一个商户，分类不能同名
-            CategoryEntity flag=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
-            if(null!=flag){
+             List flag=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+            if(null!=flag && flag.size()>0){
                 return new Result().error("分类名称已经存在！");
             }
         }
-        //效验数据
-        ValidatorUtils.validateEntity(dto);
+
         CategoryEntity category=new CategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());

@@ -26,7 +26,8 @@
     <update id="off" parameterType="io.treasure.entity.CategoryEntity">
         update ct_category set status=#{status} where id=#{id}
     </update>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.CategoryEntity">
+    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity"
+            resultType="java.util.List">
         select * from ct_category  where name = #{name} and merchant_id=#{merchant_id}  and status!=9 order by id desc
     </select>
 </mapper>

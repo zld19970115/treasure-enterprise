@@ -4,6 +4,8 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.CategoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 店铺类型分类表
  *
@@ -17,5 +19,5 @@ public interface CategoryDao extends BaseDao<CategoryEntity> {
     //隐藏
     void off(Long id,int status);
     //根据分类名称和商户Id
-    CategoryEntity getByNameAndMerchantId(String name,long merchant_id);
+    List getByNameAndMerchantId(String name, long merchant_id);
 }

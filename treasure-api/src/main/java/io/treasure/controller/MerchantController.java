@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 
 import cn.hutool.db.Page;
+import io.swagger.annotations.*;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
@@ -21,10 +22,6 @@ import io.treasure.oss.cloud.CloudStorageConfig;
 import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.oss.cloud.QiniuCloudStorageService;
 import io.treasure.service.MerchantService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import io.treasure.service.MerchantUserService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -97,7 +94,13 @@ public class MerchantController {
         user.setId(dto.getCreator());
         //根据商户名称、身份证号查询商户信息
         MerchantEntity  entity= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
-        user.setMerchantid(entity.getId());
+        String merchantId=user.getMerchantid();
+        if(StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)){
+            user.setMerchantid(merchantId+","+entity.getId());
+        }else{
+            user.setMerchantid(String.valueOf(entity.getId()));
+        }
+
         merchantUserService.update(user,null);
         return new Result();
     }
@@ -131,5 +134,4 @@ public class MerchantController {
        }
         return new Result();
     }
-
 }

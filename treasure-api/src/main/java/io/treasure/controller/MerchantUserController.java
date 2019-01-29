@@ -1,4 +1,5 @@
 package io.treasure.controller;
+import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
@@ -16,10 +17,6 @@ import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
@@ -280,8 +277,20 @@ public class MerchantUserController {
      */
     @PutMapping("code")
     @ApiOperation("验证码")
-    public Result registerCode(HttpServletRequest request){
-        boolean bool= SendSMSUtil.sendCodeForRegister("13644698136",request,smsConfig);
+    public Result registerCode(HttpServletRequest request,@RequestBody String mobile){
+        boolean bool= SendSMSUtil.sendCodeForRegister(mobile,request,smsConfig);
         return new Result().ok(bool);
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("getMerchantByUserId")
+    @ApiModelProperty("会员id显示商户信息")
+    public Result getMerchantByUserId(@RequestBody Long id){
+        List list=merchantUserService.getMerchantByUserId(id);
+        return new Result().ok(list);
     }
 }
