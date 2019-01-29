@@ -37,6 +37,17 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
         baseDao.off(id,status);
     }
 
+    /**
+     * 根据分类名称和商户Id
+     * @param name
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public CategoryEntity getByNameAndMerchantId(String name, long merchantId) {
+        return baseDao.getByNameAndMerchantId(name,merchantId);
+    }
+
     @Override
     public QueryWrapper<CategoryEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");

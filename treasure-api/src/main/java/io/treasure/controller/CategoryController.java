@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.hamcrest.core.IsNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -83,7 +84,10 @@ public class CategoryController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
-
+        CategoryEntity cate=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+        if(null!=cate){
+            return new Result().error("分类名称已经存在！");
+        }
         CategoryEntity category=new CategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
@@ -92,7 +96,7 @@ public class CategoryController {
         category.setCreateDate(new Date());
         category.setCreator(dto.getCreator());
         category.setSort(dto.getSort());
-        category.setMerchant_id(dto.getMerchant_id());
+        category.setMerchantId(dto.getMerchantId());
         categoryService.insert(category);
         return new Result();
     }
@@ -100,6 +104,15 @@ public class CategoryController {
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody CategoryDTO dto){
+        //同一个商户，分类不能同名
+        CategoryDTO cate=categoryService.get(dto.getId());
+        if(!cate.getName().equals(dto.getName()) && cate.getMerchantId()==dto.getMerchantId()){
+            //同一个商户，分类不能同名
+            CategoryEntity flag=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+            if(null!=flag){
+                return new Result().error("分类名称已经存在！");
+            }
+        }
         //效验数据
         ValidatorUtils.validateEntity(dto);
         CategoryEntity category=new CategoryEntity();
@@ -111,7 +124,7 @@ public class CategoryController {
         category.setUpdater(dto.getCreator());
         category.setSort(dto.getSort());
         category.setId(dto.getId());
-        categoryService.update(category,null);
+        categoryService.updateById(category);
         return new Result();
     }
 

@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="treasure:war exploded">
+    <output-path>$PROJECT_DIR$/../../../idea/artifacts/treasure_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$USER_HOME$/Desktop/treasure-dynamic-datasource.jar" />
+          <element id="file-copy" path="$USER_HOME$/Desktop/treasure.jar" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="treasure/web/Web" />
+    </root>
+  </artifact>
+</component>

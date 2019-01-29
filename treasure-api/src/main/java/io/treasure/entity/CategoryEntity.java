@@ -56,5 +56,5 @@ public class CategoryEntity extends BaseEntity {
 	/**
 	 * 商户
 	 */
-	private Long merchant_id;
+	private Long merchantId;
 }

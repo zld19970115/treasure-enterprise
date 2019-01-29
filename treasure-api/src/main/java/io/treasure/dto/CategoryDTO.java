@@ -44,6 +44,5 @@ public class CategoryDTO implements Serializable {
 	@ApiModelProperty(value = "创建者")
 	private Long creator;
 	@ApiModelProperty(value="商户")
-	@NotBlank(message = "商户不能为空")
-	private Long merchant_id;
+	private Long merchantId;
 }
