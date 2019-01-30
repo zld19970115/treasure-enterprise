@@ -17,7 +17,7 @@
         <result property="updater" column="updater"/>
         <result property="updateDate" column="update_date"/>
         <result property="brief" column="brief"/>
-        <result property="merchant_id" column="merchant_id"></result>
+        <result property="merchantId" column="merchant_id"/>
     </resultMap>
 
     <update id="on" parameterType="io.treasure.entity.CategoryEntity">
@@ -26,8 +26,11 @@
     <update id="off" parameterType="io.treasure.entity.CategoryEntity">
         update ct_category set status=#{status} where id=#{id}
     </update>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity"
-            resultType="java.util.List">
-        select * from ct_category  where name = #{name} and merchant_id=#{merchant_id}  and status!=9 order by id desc
+    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
+        select * from ct_category  where name = #{name} and merchant_id=#{merchantId}  and status!=9 order by id desc
+    </select>
+
+    <select id="getAllByMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
+        select * from ct_category  where merchant_id=#{merchantId}  and status=1 order by id desc
     </select>
 </mapper>

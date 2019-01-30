@@ -19,4 +19,6 @@ public interface CategoryService extends CrudService<CategoryEntity, CategoryDTO
     void off(Long id,int status);
     //根据分类名称和商户Id查询数据
     List getByNameAndMerchantId(String name,long merchantId);
+    //根据商户显示分类
+    List getAllByMerchantId (long merchantId);
 }

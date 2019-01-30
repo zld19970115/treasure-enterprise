@@ -19,5 +19,7 @@ public interface CategoryDao extends BaseDao<CategoryEntity> {
     //隐藏
     void off(Long id,int status);
     //根据分类名称和商户Id
-    List getByNameAndMerchantId(String name, long merchant_id);
+    List getByNameAndMerchantId(String name, long merchantId);
+    //根据商户显示分类信息
+    List getAllByMerchantId(long merchantId);
 }

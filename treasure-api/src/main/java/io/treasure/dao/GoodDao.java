@@ -4,6 +4,8 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.GoodEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 商品表
  *
@@ -12,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface GoodDao extends BaseDao<GoodEntity> {
-	
+    //根据菜品名称和商户id
+    List getByNameAndMerchantId(String name ,long martId);
 }

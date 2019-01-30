@@ -47,7 +47,7 @@ public class GoodEntity extends BaseEntity {
     /**
      * 菜品关键词
      */
-	private String key;
+	private String keys;
     /**
      * 单位
      */
@@ -75,7 +75,7 @@ public class GoodEntity extends BaseEntity {
     /**
      * 下架原因
      */
-	private String offShelveCause;
+	private String offShelveReason;
     /**
      * 商户id
      */

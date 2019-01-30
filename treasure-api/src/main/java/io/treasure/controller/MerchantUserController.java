@@ -15,6 +15,7 @@ import io.treasure.dto.MerchantUserDTO;
 
 import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
 
@@ -231,7 +232,7 @@ public class MerchantUserController {
      */
     @PutMapping("updateMobile")
     @ApiOperation("修改手机号")
-    public Result<Map<String, Object>>  updateMobile(HttpServletRequest request, @RequestBody String mobile, long id, String code){
+    public Result  updateMobile(HttpServletRequest request, @RequestBody String mobile, long id, String code){
         String codeOld= (String) request.getSession().getAttribute("code");
         if(StringUtils.isNotEmpty(codeOld)){
             if(!codeOld.equals(code)){
@@ -261,7 +262,7 @@ public class MerchantUserController {
      */
     @PutMapping("updateWeixin")
     @ApiOperation("帮定微信")
-    public Result<Map<String, Object>>  updateMobile(@RequestBody String openid,String weixinName,String weixinUrl,long id){
+    public Result  updateMobile(@RequestBody String openid,String weixinName,String weixinUrl,long id){
         if(!StringUtils.isNotBlank(openid) || !StringUtils.isNotEmpty(openid)){
             return new Result().error("请输入openid！");
         }
@@ -287,10 +288,13 @@ public class MerchantUserController {
      * @param id
      * @return
      */
-    @GetMapping("getMerchantByUserId")
-    @ApiModelProperty("会员id显示商户信息")
-    public Result getMerchantByUserId(@RequestBody Long id){
-        List list=merchantUserService.getMerchantByUserId(id);
-        return new Result().ok(list);
+    @GetMapping("getMerchantAllByUserId")
+    @ApiOperation("根据会员Id显示商户信息")
+    public Result<List> getMerchantAllByUserId(@RequestBody Long id){
+        if(id>0){
+            List list=merchantUserService.getMerchantByUserId(id);
+            return new Result().ok(list);
+        }
+       return new Result().error("获取商户出错了！");
     }
 }

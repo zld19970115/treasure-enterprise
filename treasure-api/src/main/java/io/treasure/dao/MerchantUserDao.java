@@ -25,5 +25,5 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     //删除
     void remove(long id);
     //根据会员id查询商户信息
-    List getMerchantByUserId(long id);
+    List getMerchantByUserId(Long id);
 }

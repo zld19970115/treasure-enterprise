@@ -9,6 +9,7 @@ import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.GoodDTO;
+import io.treasure.enm.Common;
 import io.treasure.service.GoodService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -61,10 +63,21 @@ public class GoodController {
     @ApiOperation("保存")
     public Result save(@RequestBody GoodDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
-
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
+        //根据菜品名称、商户查询该菜品名称是否存在
+        List list=goodService.getByNameAndMerchantId(dto.getName(),dto.getMartId());
+        if(null!=list && list.size()>0){
+            return new Result().error("菜品名称已经存在！");
+        }
+        if(dto.getStatus()==Common.STATUS_ON.getStatus()){//启用
+            dto.setShelveTime(new Date());
+            dto.setShelveBy(dto.getCreator());
+        }else if(dto.getStatus()==Common.STATUS_OFF.getStatus()){//禁用
+            dto.setOffShelveBy(dto.getCreator());
+            dto.setOffShelveTime(new Date());
+        }
+        dto.setCreateDate(new Date());
         goodService.save(dto);
-
         return new Result();
     }
 
@@ -72,10 +85,26 @@ public class GoodController {
     @ApiOperation("修改")
     public Result update(@RequestBody GoodDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
-
+        ValidatorUtils.validateEntity(dto, UpdateGroup.class);
+        GoodDTO data =goodService.get(dto.getId());
+        if(!data.getName().equals(dto.getName())){
+            //根据菜品名称、商户查询该菜品名称是否存在
+            List list=goodService.getByNameAndMerchantId(dto.getName(),dto.getMartId());
+            if(null!=list && list.size()>0){
+                return new Result().error("菜品名称已经存在！");
+            }
+        }
+        if(data.getStatus()!=dto.getStatus()){
+            if(dto.getStatus()==Common.STATUS_ON.getStatus()){//启用
+                dto.setShelveTime(new Date());
+                dto.setShelveBy(dto.getCreator());
+            }else if(dto.getStatus()==Common.STATUS_OFF.getStatus()){//禁用
+                dto.setOffShelveBy(dto.getCreator());
+                dto.setOffShelveTime(new Date());
+            }
+        }
+        dto.setUpdateDate(new Date());
         goodService.update(dto);
-
         return new Result();
     }
 
@@ -84,9 +113,7 @@ public class GoodController {
     public Result delete(@RequestBody Long[] ids){
         //效验数据
         AssertUtils.isArrayEmpty(ids, "id");
-
         goodService.delete(ids);
-
         return new Result();
     }
 }

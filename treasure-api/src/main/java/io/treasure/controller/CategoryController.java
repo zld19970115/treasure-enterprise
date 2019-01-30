@@ -170,4 +170,18 @@ public class CategoryController {
         }
         return new Result().error("隐藏数据失败！");
     }
+    /**
+     * 根据商户Id显示商户分类
+     * @param merchantId
+     * @return
+     */
+    @GetMapping("getAllByMerchantId")
+    @ApiOperation("显示商户对应的分类")
+    public Result<List> getAllByMerchantId(@RequestBody Long merchantId){
+        if(merchantId>0){
+            List list=categoryService.getAllByMerchantId(merchantId);
+            return new Result().ok(list);
+        }
+        return new Result().error("请选择商户！");
+    }
 }
