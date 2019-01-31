@@ -1,4 +1,5 @@
 package io.treasure.controller;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -33,13 +34,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/merchantroom")
-@Api(tags="包房或者桌表")
+@Api(tags="包房或者桌管理")
 public class MerchantRoomController {
     @Autowired
     private MerchantRoomService merchantRoomService;
 
     @GetMapping("roomPage")
-    @ApiOperation("包房分页")
+    @ApiOperation("包房列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -54,7 +55,7 @@ public class MerchantRoomController {
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
     @GetMapping("deskPage")
-    @ApiOperation("桌分页")
+    @ApiOperation("桌列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -69,12 +70,12 @@ public class MerchantRoomController {
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
     @GetMapping("{id}")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     public Result<MerchantRoomDTO> get(@PathVariable("id") Long id){
         MerchantRoomDTO data = merchantRoomService.get(id);
         return new Result<MerchantRoomDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantRoomDTO dto){
@@ -89,7 +90,7 @@ public class MerchantRoomController {
         merchantRoomService.save(dto);
         return new Result();
     }
-
+    @Login
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantRoomDTO dto){
@@ -115,7 +116,7 @@ public class MerchantRoomController {
         merchantRoomService.update(dto);
         return new Result();
     }
-
+    @Login
     @DeleteMapping("{id}")
     @ApiOperation("删除")
     public Result delete(@PathVariable long id){

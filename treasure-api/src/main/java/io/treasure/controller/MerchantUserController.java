@@ -55,7 +55,7 @@ public class MerchantUserController {
     @Autowired
     private SMSConfig smsConfig;
     @GetMapping("page")
-    @ApiOperation("分页")
+    @ApiOperation("列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value ="1", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
@@ -69,7 +69,7 @@ public class MerchantUserController {
     }
     @Login
     @GetMapping("{id}")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     public Result<MerchantUserDTO> get(@PathVariable("id") Long id){
         MerchantUserDTO data = merchantUserService.get(id);
 

@@ -3,6 +3,7 @@ package io.treasure.controller;
 
 import cn.hutool.db.Page;
 import io.swagger.annotations.*;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
@@ -55,7 +56,7 @@ public class MerchantController {
     @Autowired
     private MerchantUserService merchantUserService;
     @GetMapping("page")
-    @ApiOperation("分页")
+    @ApiOperation("列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -68,14 +69,13 @@ public class MerchantController {
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
-
     @GetMapping("{id}")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     public Result<MerchantDTO> get(@PathVariable("id") Long id){
         MerchantDTO data = merchantService.get(id);
         return new Result<MerchantDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantDTO dto){
@@ -104,7 +104,7 @@ public class MerchantController {
         merchantUserService.update(user,null);
         return new Result();
     }
-
+    @Login
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantDTO dto){
@@ -123,7 +123,7 @@ public class MerchantController {
         merchantService.update(dto);
         return new Result();
     }
-
+    @Login
     @DeleteMapping
     @ApiOperation("删除")
     public Result delete(@RequestBody Long id){

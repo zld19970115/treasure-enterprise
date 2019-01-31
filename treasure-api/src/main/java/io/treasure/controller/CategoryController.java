@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -42,7 +43,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("pageOn")
-    @ApiOperation("显示中数据")
+    @ApiOperation("显示中列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value = "1", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
@@ -57,7 +58,7 @@ public class CategoryController {
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
     @GetMapping("pageOff")
-    @ApiOperation("隐藏中数据")
+    @ApiOperation("隐藏中列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "1", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "2", paramType = "query",required = true, dataType="int") ,
@@ -72,12 +73,12 @@ public class CategoryController {
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
     @GetMapping("{id}")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     public Result<CategoryDTO> get(@PathVariable("id") Long id){
         CategoryDTO data = categoryService.get(id);
         return new Result<CategoryDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("保存")
     public Result save(@RequestBody CategoryDTO dto){
@@ -100,7 +101,7 @@ public class CategoryController {
         categoryService.insert(category);
         return new Result();
     }
-
+    @Login
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody CategoryDTO dto){
@@ -131,7 +132,7 @@ public class CategoryController {
         categoryService.updateById(category);
         return new Result();
     }
-
+    @Login
     @DeleteMapping
     @ApiOperation("删除")
     public Result delete(@RequestBody Long[] ids){
@@ -146,6 +147,7 @@ public class CategoryController {
      * @param id
      * @return
      */
+    @Login
     @PutMapping("on")
     @ApiOperation("显示数据")
     public Result on(@RequestBody Long id){
@@ -161,6 +163,7 @@ public class CategoryController {
      * @param id
      * @return
      */
+    @Login
     @PutMapping("off")
     @ApiOperation("隐藏数据")
     public Result off(@RequestBody Long id){

@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -67,12 +68,12 @@ public class GoodController {
         return new Result<PageData<GoodDTO>>().ok(page);
     }
     @GetMapping("{id}")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     public Result<GoodDTO> get(@PathVariable("id") Long id){
         GoodDTO data = goodService.get(id);
         return new Result<GoodDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("保存")
     public Result save(@RequestBody GoodDTO dto){
@@ -94,7 +95,7 @@ public class GoodController {
         goodService.save(dto);
         return new Result();
     }
-
+    @Login
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody GoodDTO dto){
@@ -121,20 +122,21 @@ public class GoodController {
         goodService.update(dto);
         return new Result();
     }
-
+    @Login
     @DeleteMapping("{id}")
     @ApiOperation("删除")
     public Result delete(@PathVariable("id") Long id){
        goodService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
+    @Login
     /**
      * 上架商品
      * @param id
      * @return
      */
     @PutMapping("on")
-    @ApiOperation("显示数据")
+    @ApiOperation("上架商品")
     public Result on(@RequestBody Long id){
         if(id>0){
             goodService.on(id,Common.STATUS_ON.getStatus());
@@ -148,6 +150,7 @@ public class GoodController {
      * @param id
      * @return
      */
+    @Login
     @PutMapping("off")
     @ApiOperation("下架商品")
     public Result off(@RequestBody Long id){
