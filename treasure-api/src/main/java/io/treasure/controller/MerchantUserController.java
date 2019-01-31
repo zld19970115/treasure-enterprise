@@ -67,7 +67,7 @@ public class MerchantUserController {
         PageData<MerchantUserDTO> page = merchantUserService.page(params);
         return new Result<PageData<MerchantUserDTO>>().ok(page);
     }
-
+    @Login
     @GetMapping("{id}")
     @ApiOperation("信息")
     public Result<MerchantUserDTO> get(@PathVariable("id") Long id){
@@ -96,15 +96,11 @@ public class MerchantUserController {
 //        merchantUserService.update(dto);
 //        return new Result();
 //    }
+    @Login
     @DeleteMapping
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long id){
-        if(id>0){
-            merchantUserService.remove(id);
-        }else{
-            return new Result().error("删除失败！");
-        }
-
+    public Result delete(@PathVariable("id") Long id){
+        merchantUserService.remove(id);
         return new Result();
     }
 
@@ -135,6 +131,7 @@ public class MerchantUserController {
      * @param
      * @return
      */
+    @Login
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
     @ApiImplicitParams({
@@ -157,10 +154,11 @@ public class MerchantUserController {
      * @param mobile
      * @return
      */
+    @Login
     @PutMapping("retrievePassword")
     @ApiOperation("找回密码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="mobile",value="",required=true,paramType="query"),
+            @ApiImplicitParam(name="mobile",value="手机号码",required=true,paramType="query"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
     })
     public Result<Map<String, Object>>  retrievePassword(String mobile,long id){
@@ -215,6 +213,7 @@ public class MerchantUserController {
      * @param  id
      * @return
      */
+    @Login
     @PutMapping("updateMobile")
     @ApiOperation("修改手机号")
     @ApiImplicitParams({
@@ -238,6 +237,7 @@ public class MerchantUserController {
      * @param  id
      * @return
      */
+    @Login
     @PutMapping("updateWeixin")
     @ApiOperation("帮定微信")
     @ApiImplicitParams({
