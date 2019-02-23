@@ -25,4 +25,10 @@
     <update id="updatePassword"   parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set password=#{password} where id=#{id}
     </update>
+    <update id="updateMobile"   parameterType="io.treasure.entity.MerchantUserEntity">
+        update ct_merchant_user set mobile=#{password} where id=#{id}
+    </update>
+    <update id="updateWeixin"   parameterType="io.treasure.entity.MerchantUserEntity">
+        update ct_merchant_user set openid=#{openid},weixinName=#{weixinName},weixinUrl=#{weixinUrl} where id=#{id}
+    </update>
 </mapper>

@@ -66,6 +66,28 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.updatePassword(password,id);
     }
 
+    /**
+     * 修改手机号
+     * @param mobile
+     * @param id
+     */
+    @Override
+    public void updateMobile(String mobile, long id) {
+        baseDao.updateMobile(mobile,id);
+    }
+
+    /**
+     * 帮定微信
+     * @param openid
+     * @param weixinname
+     * @param weixinurl
+     * @param id
+     */
+    @Override
+    public void updateWeixin(String openid, String weixinname, String weixinurl, long id) {
+        baseDao.updateWeixin(openid,weixinname,weixinurl,id);
+    }
+
     @Autowired
     private MerchantUserService userService;
     @Override

@@ -191,5 +191,41 @@ public class MerchantUserController {
         merchantUserService.save(dto);
         return new Result();
     }
-
+    /**
+     * 修改手机号码
+     * @param mobile
+     * @param  id
+     * @return
+     */
+    @PutMapping("updateMobile")
+    @ApiOperation("修改手机号")
+    public Result<Map<String, Object>>  updateMobile(@RequestBody String mobile,long id){
+        if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
+            return new Result().error("请输入手机号码！");
+        }
+        //根据用户名判断是否已经注册过了
+        MerchantUserEntity user = merchantUserService.getByMobile(mobile);
+        if(null!=user){
+            return new Result().error("该手机号码已存在，请换个手机号试试！");
+        }
+        merchantUserService.updateMobile(mobile,id);
+        return new Result();
+    }
+    /**
+     * 帮定微信
+     * @param openid
+     * @param weixinName
+     * @param weixinUrl
+     * @param  id
+     * @return
+     */
+    @PutMapping("updateWeixin")
+    @ApiOperation("帮定微信")
+    public Result<Map<String, Object>>  updateMobile(@RequestBody String openid,String weixinName,String weixinUrl,long id){
+        if(!StringUtils.isNotBlank(openid) || !StringUtils.isNotEmpty(openid)){
+            return new Result().error("请输入openid！");
+        }
+        merchantUserService.updateWeixin(openid,weixinName,weixinUrl,id);
+        return new Result();
+    }
 }

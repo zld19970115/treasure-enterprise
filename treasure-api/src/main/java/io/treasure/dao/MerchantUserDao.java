@@ -18,4 +18,8 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     MerchantUserEntity getByMobile(String mobile);
     //修改密码
     void updatePassword(String password,long id);
+    //修改手机号码
+    void updateMobile(String password,long id);
+    //帮定微信
+    void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
 }

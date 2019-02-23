@@ -19,4 +19,8 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     Map<String,Object> login(LoginDTO loginDTO);
     //修改密码
     void updatePassword(String password,long id);
+    //修改手机号
+    void updateMobile(String mobile,long id);
+    //帮定微信
+    void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
 }
