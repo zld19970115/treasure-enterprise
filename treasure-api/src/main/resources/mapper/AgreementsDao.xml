@@ -16,5 +16,7 @@
         <result property="updater" column="updater"/>
     </resultMap>
 
-
+    <select id="getAgreementsByStatusOn" resultType="io.treasure.entity.AgreementsEntity">
+        select * from ct_agreements where status=1
+    </select>
 </mapper>

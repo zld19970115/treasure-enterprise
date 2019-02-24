@@ -4,6 +4,8 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.AgreementsEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 协议管理
  *
@@ -12,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AgreementsDao extends BaseDao<AgreementsEntity> {
-	
+    //查询正常协议
+    List<AgreementsEntity> getAgreementsByStatusOn();
 }

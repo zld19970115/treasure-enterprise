@@ -1,10 +1,11 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.util.Date;
 
 /**
@@ -14,11 +15,11 @@ import java.util.Date;
  * @since 1.0.0 2019-07-24
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
 @TableName("ct_agreements")
 public class AgreementsEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
-
+	@TableId
+	private Long id;
     /**
      * 协议内容
      */
@@ -38,9 +39,11 @@ public class AgreementsEntity extends BaseEntity {
     /**
      * 修改时间
      */
+	@TableField(fill=FieldFill.INSERT_UPDATE)
 	private Date updateDate;
     /**
      * 更新者
      */
+	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Long updater;
 }

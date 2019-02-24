@@ -9,6 +9,7 @@ import io.treasure.service.AgreementsService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,12 +24,20 @@ public class AgreementsServiceImpl extends CrudServiceImpl<AgreementsDao, Agreem
     @Override
     public QueryWrapper<AgreementsEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        //状态
+        String status=(String)params.get("status");
         QueryWrapper<AgreementsEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         return wrapper;
     }
 
-
+    /**
+     * 查询协议信息
+     * @return
+     */
+    @Override
+    public List<AgreementsEntity> getAgreementsByStatusOn() {
+        return baseDao.getAgreementsByStatusOn();
+    }
 }
