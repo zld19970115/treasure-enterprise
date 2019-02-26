@@ -16,7 +16,13 @@ import java.util.Map;
  * 短信工具类
  */
 public class SendSMSUtil {
-
+    /**
+     * 获取验证码
+     * @param phoneNumber
+     * @param request
+     * @param smsConfig
+     * @return
+     */
     public static boolean sendCodeForRegister(String phoneNumber, HttpServletRequest request, SMSConfig smsConfig) {
         boolean ret=false;
         SMSSend send=new SMSSend(smsConfig);
@@ -34,6 +40,14 @@ public class SendSMSUtil {
         }
         return ret;
     }
+
+    /**
+     *
+     * @param phoneNumber
+     * @param request
+     * @param code
+     * @return
+     */
     public static Result verifyCode(String phoneNumber, HttpServletRequest request, String  code){
         Result result=new Result();
         String codeing= (String) request.getSession().getAttribute("code"+phoneNumber);

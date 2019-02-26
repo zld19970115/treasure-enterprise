@@ -4,6 +4,7 @@ package io.treasure.controller;
 import cn.hutool.db.Page;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
@@ -12,17 +13,31 @@ import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
+import io.treasure.enm.UploadFile;
+import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantUserEntity;
+import io.treasure.oss.cloud.AbstractCloudStorageService;
+import io.treasure.oss.cloud.CloudStorageConfig;
+import io.treasure.oss.cloud.OSSFactory;
+import io.treasure.oss.cloud.QiniuCloudStorageService;
 import io.treasure.service.MerchantService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.MerchantUserService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.AbstractCollection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +55,8 @@ import java.util.Map;
 public class MerchantController {
     @Autowired
     private MerchantService merchantService;
-
+    @Autowired
+    private MerchantUserService merchantUserService;
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -68,10 +84,21 @@ public class MerchantController {
     public Result save(@RequestBody MerchantDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
+        //根据商户名称、身份证号查询商户信息
+        MerchantEntity flag = merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+        if(null!=flag){
+            return new Result().error("该商户您已经注册过了！");
+        }
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setCreateDate(new Date());
         merchantService.save(dto);
-
+        //修改创建者的商户信息
+        MerchantUserEntity user=new MerchantUserEntity();
+        user.setId(dto.getCreator());
+        //根据商户名称、身份证号查询商户信息
+        MerchantEntity  entity= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+        user.setMerchantid(entity.getId());
+        merchantUserService.update(user,null);
         return new Result();
     }
 
@@ -80,10 +107,17 @@ public class MerchantController {
     public Result update(@RequestBody MerchantDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
+        MerchantDTO entity=merchantService.get(dto.getId());
+        if(!entity.equals(dto.getName()) || !entity.getCards().equals(dto.getCards())){
+            //根据修改的名称和身份账号查询
+            MerchantEntity  merchant= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+            if(null!=merchant){
+                return new Result().error("该商户您已经注册过了！");
+            }
+        }
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setUpdateDate(new Date());
         merchantService.update(dto);
-
         return new Result();
     }
 
@@ -96,5 +130,28 @@ public class MerchantController {
            return new Result().error("删除失败！");
        }
         return new Result();
+    }
+
+    /**
+     * 附件上传
+     * @param file
+     * @return
+     */
+    @GetMapping("uploadFile")
+    @ApiOperation("文件上传")
+    public Result uploadFile(@RequestBody String file){
+        String url="";
+        try {
+            //上传文件
+            // 上传文件流。
+            File f=new File(file);
+            String suffix = FilenameUtils.getExtension(file).toLowerCase();
+            InputStream inputStream = new FileInputStream(f);
+            url = OSSFactory.build().uploadSuffix(inputStream, suffix);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new Result().error("上传图片失败！");
+        }
+        return new Result().ok(url);
     }
 }

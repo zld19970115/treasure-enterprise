@@ -48,9 +48,10 @@ public class CategoryController {
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String")
     })
-    public Result<PageData<CategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params,String name){
+    public Result<PageData<CategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));
         params.put("name",name);
+        params.put("merchantId",merchantId);
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
@@ -62,9 +63,10 @@ public class CategoryController {
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String")
     })
-    public Result<PageData<CategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params,String name){
+    public Result<PageData<CategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
         params.put("status", String.valueOf(Common.STATUS_OFF.getStatus()));
         params.put("name",name);
+        params.put("merchantId",merchantId);
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
@@ -88,6 +90,7 @@ public class CategoryController {
         category.setCreateDate(new Date());
         category.setCreator(dto.getCreator());
         category.setSort(dto.getSort());
+        category.setMerchant_id(dto.getMerchant_id());
         categoryService.insert(category);
         return new Result();
     }

@@ -44,10 +44,13 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
         String status=(String)params.get("status");
         //菜品名称
         String name=(String)params.get("name");
+        //商户Id
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         wrapper.like(StringUtils.isNotBlank(name),"name",name);
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 

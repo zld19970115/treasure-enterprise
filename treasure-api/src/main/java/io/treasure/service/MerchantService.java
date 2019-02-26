@@ -13,4 +13,5 @@ import io.treasure.entity.MerchantEntity;
 public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO> {
     //删除
     void remove(long id);
+    MerchantEntity getByNameAndCards(String name, String cards);
 }

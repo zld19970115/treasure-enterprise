@@ -2,6 +2,7 @@ package io.treasure.controller;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
@@ -20,12 +21,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.TokenService;
+import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +50,8 @@ public class MerchantUserController {
     private MerchantUserService merchantUserService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private SMSConfig smsConfig;
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -231,5 +236,18 @@ public class MerchantUserController {
         }
         merchantUserService.updateWeixin(openid,weixinName,weixinUrl,id);
         return new Result();
+    }
+
+    /**
+     * 获取验证码
+     * @param request
+     * @param
+     * @return
+     */
+    @GetMapping("code")
+    @ApiOperation("验证码")
+    public Result registerCode(HttpServletRequest request){
+        boolean bool= SendSMSUtil.sendCodeForRegister("13644698136",request,smsConfig);
+        return new Result().ok(bool);
     }
 }

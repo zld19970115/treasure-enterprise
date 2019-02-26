@@ -29,6 +29,17 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     /**
+     * 根据名称和身份证号查询
+     * @param name
+     * @param cards
+     * @return
+     */
+    @Override
+    public MerchantEntity getByNameAndCards(String name, String cards) {
+        return baseDao.getByNameAndCards(name,cards);
+    }
+
+    /**
      * 查询条件
      * @param params
      * @return

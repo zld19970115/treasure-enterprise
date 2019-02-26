@@ -53,4 +53,8 @@ public class CategoryEntity extends BaseEntity {
      * 分类简介
      */
 	private String brief;
+	/**
+	 * 商户
+	 */
+	private Long merchant_id;
 }
