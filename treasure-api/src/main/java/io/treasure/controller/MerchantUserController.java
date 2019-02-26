@@ -12,6 +12,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantUserDTO;
 
+import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
+import oracle.jdbc.proxy.annotation.Post;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,38 +168,34 @@ public class MerchantUserController {
     }
     /**
      * 注册
-      * @param mobile
-     * @param oldPassword
-     * @param newPassword
-     * @param weixinName
-     * @param weixinUrl
-     * @param openid
+     *
      * @return
      */
-    @PutMapping("register")
+    @PostMapping("register")
     @ApiOperation("注册")
-    public Result register(@RequestBody String mobile,String oldPassword,String newPassword,String weixinName,String weixinUrl,String openid){
-        String oPassword= DigestUtils.sha256Hex(oldPassword);
-        String nPassword= DigestUtils.sha256Hex(newPassword);
+    public Result register(@RequestBody MerchantUserRegisterDTO dto){
+        ValidatorUtils.validateEntity(dto);
+        String oPassword= DigestUtils.sha256Hex(dto.getOldPassword());
+        String nPassword= DigestUtils.sha256Hex(dto.getNewPassword());
         if(!oPassword.equals(nPassword)){
             return new Result().error("两次输入密码不一致，请重新输入！");
         }
-        MerchantUserDTO dto=new MerchantUserDTO();
-        dto.setPassword(nPassword);
-        dto.setMobile(mobile);
-        dto.setWeixinname(weixinName);
-        dto.setWeixinurl(weixinUrl);
-        dto.setOpenid(openid);
-        dto.setCreateDate(new Date());
-        dto.setStatus(Common.STATUS_ON.getStatus());
+        MerchantUserEntity entity=new MerchantUserEntity();
+        entity.setPassword(nPassword);
+        entity.setMobile(dto.getMobile());
+        entity.setWeixinname(dto.getWeixinname());
+        entity.setWeixinurl(dto.getWeixinurl());
+        entity.setOpenid(dto.getOpenid());
+        entity.setCreateDate(new Date());
+        entity.setStatus(Common.STATUS_ON.getStatus());
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //根据用户名判断是否已经注册过了
-        MerchantUserEntity user = merchantUserService.getByMobile(mobile);
+        MerchantUserEntity user = merchantUserService.getByMobile(dto.getMobile());
         if(null!=user){
             return new Result().error("改注册账号已存在，请换个账号重新注册!");
         }
-        merchantUserService.save(dto);
+        merchantUserService.insert(entity);
         return new Result();
     }
     /**
