@@ -174,7 +174,7 @@ public class MerchantUserController {
      * @param openid
      * @return
      */
-    @GetMapping("register")
+    @PutMapping("register")
     @ApiOperation("注册")
     public Result register(@RequestBody String mobile,String oldPassword,String newPassword,String weixinName,String weixinUrl,String openid){
         String oPassword= DigestUtils.sha256Hex(oldPassword);
