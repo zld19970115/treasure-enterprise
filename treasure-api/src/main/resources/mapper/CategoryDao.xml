@@ -17,6 +17,7 @@
         <result property="updater" column="updater"/>
         <result property="updateDate" column="update_date"/>
         <result property="brief" column="brief"/>
+        <result property="merchant_id" column="merchant_id"></result>
     </resultMap>
 
     <update id="on" parameterType="io.treasure.entity.CategoryEntity">

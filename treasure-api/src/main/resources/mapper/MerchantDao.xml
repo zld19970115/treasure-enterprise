@@ -27,8 +27,10 @@
         <result property="cards" column="cards"/>
         <result property="auditstatus" column="auditStatus"/>
     </resultMap>
-    <update id="remove" parameterType="io.treasure.entity.MerchantUserEntity">
+    <update id="remove" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=9 where id=#{id}
     </update>
-
+    <select id="getByNameAndCards" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.MerchantEntity">
+        select * from ct_merchant where name = #{name} and cards=#{cards}  and status!=9 order by id desc
+    </select>
 </mapper>

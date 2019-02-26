@@ -82,6 +82,8 @@ public class CategoryController {
     public Result save(@RequestBody CategoryDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
+        //同一个商户，分类不能同名
+
         CategoryEntity category=new CategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
