@@ -148,9 +148,11 @@ public class MerchantUserController {
             return new Result().error("请输入手机号码！");
         }
         MerchantUserEntity user=merchantUserService.getByMobile(mobile);
+        String password=DigestUtils.sha256Hex("123456");
+        user.setPassword(password);
+        merchantUserService.updatePassword(password,user.getId());
         Map<String,Object> map=new HashMap<String,Object>();
-
-        map.put("password", user.getPassword());
+        map.put("password",123456);
         return new Result().ok(map);
     }
     /**
