@@ -56,6 +56,16 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return map;
     }
 
+    /**
+     * 修改密码
+     * @param password
+     * @param id
+     */
+    @Override
+    public void updatePassword(String password, long id) {
+        baseDao.updatePassword(password,id);
+    }
+
     @Autowired
     private MerchantUserService userService;
     @Override

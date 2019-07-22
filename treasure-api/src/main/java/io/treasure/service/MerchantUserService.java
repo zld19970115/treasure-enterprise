@@ -17,4 +17,6 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     MerchantUserEntity getByMobile(String mobile);
     //用户登陆
     Map<String,Object> login(LoginDTO loginDTO);
+    //修改密码
+    void updatePassword(String password,long id);
 }
