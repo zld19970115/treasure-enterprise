@@ -1,4 +1,5 @@
 package io.treasure.controller;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -17,13 +18,16 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import io.treasure.service.TokenService;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +44,8 @@ import java.util.Map;
 public class MerchantUserController {
     @Autowired
     private MerchantUserService merchantUserService;
-
+    @Autowired
+    private TokenService tokenService;
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -63,37 +68,26 @@ public class MerchantUserController {
         return new Result<MerchantUserDTO>().ok(data);
     }
 
-    /**
-     * 会员注册
-     * @param dto
-     * @return
-     */
-    @PostMapping
-    @ApiOperation("保存")
-    public Result save(@RequestBody MerchantUserDTO dto){
-            //效验数据
-            ValidatorUtils.validateEntity(dto);
-            String mobile=dto.getMobile();//注册账号、手机号码
-            //根据用户名判断是否已经注册过了
-            MerchantUserEntity user = merchantUserService.getByMobile(mobile);
-            if(null!=user){
-                return new Result().error("改注册账号已存在，请换个账号重新注册!");
-             }
-            dto.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
-            dto.setCreateDate(new Date());
-            merchantUserService.save(dto);
-            return new Result();
-    }
 
-    @PutMapping
-    @ApiOperation("修改")
-    public Result update(@RequestBody MerchantUserDTO dto){
-        //效验数据
-        ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
-        dto.setUpdateDate(new Date());
-        merchantUserService.update(dto);
-        return new Result();
-    }
+//    @PostMapping
+//    @ApiOperation("保存")
+//    public Result save(@RequestBody MerchantUserDTO dto){
+//            //效验数据
+//            ValidatorUtils.validateEntity(dto);
+//            dto.setCreateDate(new Date());
+//            merchantUserService.save(dto);
+//            return new Result();
+//    }
+//
+//    @PutMapping
+//    @ApiOperation("修改")
+//    public Result update(@RequestBody MerchantUserDTO dto){
+//        //效验数据
+//        ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
+//        dto.setUpdateDate(new Date());
+//        merchantUserService.update(dto);
+//        return new Result();
+//    }
     @DeleteMapping
     @ApiOperation("删除")
     public Result delete(@RequestBody Long[] ids){
@@ -102,6 +96,12 @@ public class MerchantUserController {
         merchantUserService.delete(ids);
         return new Result();
     }
+
+    /**
+     * 登陆
+     * @param dto
+     * @return
+     */
     @PostMapping("login")
     @ApiOperation("登录")
     public Result<Map<String, Object>> login(@RequestBody LoginDTO dto){
@@ -111,12 +111,83 @@ public class MerchantUserController {
         Map<String, Object> map = merchantUserService.login(dto);
         return new Result().ok(map);
     }
+    @Login
+    @PostMapping("logout")
+    @ApiOperation("退出")
+    public Result logout(@ApiIgnore @RequestAttribute("userId") Long userId){
+        tokenService.expireToken(userId);
+        return new Result();
+    }
 
-//    @Login
-//    @PostMapping("logout")
-//    @ApiOperation("退出")
-//    public Result logout(@ApiIgnore @RequestAttribute("userId") Long userId){
-//        //tokenService.expireToken(userId);
-//        return new Result();
-//    }
+    /**
+     * 修改密码
+     * @param
+     * @return
+     */
+    @PutMapping("updatePassword")
+    @ApiOperation("修改密码")
+    public Result updatePassword(@RequestBody String oldPassword,String newPassword,Long id){
+       String oPassword= DigestUtils.sha256Hex(oldPassword);
+       String nPassword= DigestUtils.sha256Hex(newPassword);
+        if(!oPassword.equals(nPassword)){
+            return new Result().error("两次输入密码不一致，请重新输入！");
+        }
+        merchantUserService.updatePassword(nPassword,id);
+        return new Result();
+    }
+
+    /**
+     * 找回密码
+     * @param mobile
+     * @return
+     */
+    @PutMapping("retrievePassword")
+    @ApiOperation("找回密码")
+    public Result<Map<String, Object>>  retrievePassword(@RequestBody String mobile){
+        if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
+            return new Result().error("请输入手机号码！");
+        }
+        MerchantUserEntity user=merchantUserService.getByMobile(mobile);
+        Map<String,Object> map=new HashMap<String,Object>();
+
+        map.put("password", user.getPassword());
+        return new Result().ok(map);
+    }
+    /**
+     * 注册
+      * @param mobile
+     * @param oldPassword
+     * @param newPassword
+     * @param weixinName
+     * @param weixinUrl
+     * @param openid
+     * @return
+     */
+    @PutMapping("register")
+    @ApiOperation("注册")
+    public Result register(@RequestBody String mobile,String oldPassword,String newPassword,String weixinName,String weixinUrl,String openid){
+        String oPassword= DigestUtils.sha256Hex(oldPassword);
+        String nPassword= DigestUtils.sha256Hex(newPassword);
+        if(!oPassword.equals(nPassword)){
+            return new Result().error("两次输入密码不一致，请重新输入！");
+        }
+        MerchantUserDTO dto=new MerchantUserDTO();
+        dto.setPassword(nPassword);
+        dto.setMobile(mobile);
+        dto.setWeixinname(weixinName);
+        dto.setWeixinurl(weixinUrl);
+        dto.setOpenid(openid);
+        dto.setCreateDate(new Date());
+        dto.setStatus(1);
+        //效验数据
+        ValidatorUtils.validateEntity(dto);
+        //根据用户名判断是否已经注册过了
+        MerchantUserEntity user = merchantUserService.getByMobile(mobile);
+        if(null!=user){
+            return new Result().error("改注册账号已存在，请换个账号重新注册!");
+        }
+        merchantUserService.save(dto);
+        return new Result();
+    }
+
 }
