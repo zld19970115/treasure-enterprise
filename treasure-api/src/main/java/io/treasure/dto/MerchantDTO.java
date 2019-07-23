@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -45,7 +46,7 @@ public class MerchantDTO implements Serializable {
 	private String businesshours;
 
 	@ApiModelProperty(value = "经营类别")
-	@NotBlank(message = "经营类型不能为空")
+	@NotNull(message = "经营类别不能为空")
 	private Long categoryid;
 
 	@ApiModelProperty(value = "头像")

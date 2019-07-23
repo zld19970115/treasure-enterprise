@@ -67,7 +67,7 @@ public class MerchantController {
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        ValidatorUtils.validateEntity(dto);
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setCreateDate(new Date());
         merchantService.save(dto);
@@ -79,7 +79,7 @@ public class MerchantController {
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
+        ValidatorUtils.validateEntity(dto);
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setUpdateDate(new Date());
         merchantService.update(dto);
