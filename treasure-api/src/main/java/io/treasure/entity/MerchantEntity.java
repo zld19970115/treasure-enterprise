@@ -2,11 +2,13 @@ package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,11 +18,11 @@ import java.util.Date;
  * @since 1.0.0 2019-07-23
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
 @TableName("ct_merchant")
-public class MerchantEntity extends BaseEntity {
+public class MerchantEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	@TableId
+	private Long id;
     /**
      * 手机号码
      */

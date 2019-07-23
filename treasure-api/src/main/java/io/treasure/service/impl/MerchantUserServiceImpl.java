@@ -99,13 +99,19 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
 
     @Autowired
     private MerchantUserService userService;
+
+    /**
+     * 查询条件
+     * @param params
+     * @return
+     */
     @Override
     public QueryWrapper<MerchantUserEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        String status=(String)params.get("status");
         QueryWrapper<MerchantUserEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         return wrapper;
     }
 

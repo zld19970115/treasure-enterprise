@@ -28,15 +28,19 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         baseDao.remove(id);
     }
 
+    /**
+     * 查询条件
+     * @param params
+     * @return
+     */
     @Override
     public QueryWrapper<MerchantEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        //状态
+        String status= (String) params.get("status");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         return wrapper;
     }
-
-
 }

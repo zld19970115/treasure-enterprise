@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -49,7 +50,8 @@ public class MerchantController {
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-
+        int status=Common.STATUS_ON.getStatus();
+        params.put("status",status+"");
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
@@ -58,7 +60,6 @@ public class MerchantController {
     @ApiOperation("信息")
     public Result<MerchantDTO> get(@PathVariable("id") Long id){
         MerchantDTO data = merchantService.get(id);
-
         return new Result<MerchantDTO>().ok(data);
     }
 
