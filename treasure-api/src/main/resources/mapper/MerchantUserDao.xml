@@ -29,6 +29,9 @@
         update ct_merchant_user set mobile=#{password} where id=#{id}
     </update>
     <update id="updateWeixin"   parameterType="io.treasure.entity.MerchantUserEntity">
-        update ct_merchant_user set openid=#{openid},weixinName=#{weixinName},weixinUrl=#{weixinUrl} where id=#{id}
+        update ct_merchant_user set openid=#{openid},weixinName=#{weixinNio.treasure.entity.MerchantUserEntity"ame},weixinUrl=#{weixinUrl} where id=#{id}
+    </update>
+    <update id="remove" parameterType="io.treasure.entity.MerchantUserEntity">
+        update ct_merchant_user set status=9 where id=#{id}
     </update>
 </mapper>

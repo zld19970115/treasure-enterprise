@@ -88,6 +88,15 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.updateWeixin(openid,weixinname,weixinurl,id);
     }
 
+    /**
+     * 删除
+     * @param id
+     */
+    @Override
+    public void remove(Long id) {
+        baseDao.remove(id);
+    }
+
     @Autowired
     private MerchantUserService userService;
     @Override

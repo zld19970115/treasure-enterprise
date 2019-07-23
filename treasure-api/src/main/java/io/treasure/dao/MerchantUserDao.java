@@ -22,4 +22,6 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     void updateMobile(String password,long id);
     //帮定微信
     void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
+    //删除
+    void remove(long id);
 }

@@ -11,6 +11,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantUserDTO;
 
+import io.treasure.enm.Common;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
 import io.swagger.annotations.Api;
@@ -55,8 +56,8 @@ public class MerchantUserController {
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantUserDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_ON.getStatus());
         PageData<MerchantUserDTO> page = merchantUserService.page(params);
-
         return new Result<PageData<MerchantUserDTO>>().ok(page);
     }
 
@@ -90,10 +91,13 @@ public class MerchantUserController {
 //    }
     @DeleteMapping
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long[] ids){
-        //效验数据
-        AssertUtils.isArrayEmpty(ids, "id");
-        merchantUserService.delete(ids);
+    public Result delete(@RequestBody Long id){
+        if(id>0){
+            merchantUserService.remove(id);
+        }else{
+            return new Result().error("删除失败！");
+        }
+
         return new Result();
     }
 
@@ -180,7 +184,7 @@ public class MerchantUserController {
         dto.setWeixinurl(weixinUrl);
         dto.setOpenid(openid);
         dto.setCreateDate(new Date());
-        dto.setStatus(1);
+        dto.setStatus(Common.STATUS_ON.getStatus());
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //根据用户名判断是否已经注册过了

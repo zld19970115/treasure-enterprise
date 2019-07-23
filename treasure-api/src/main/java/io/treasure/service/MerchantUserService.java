@@ -23,4 +23,6 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     void updateMobile(String mobile,long id);
     //帮定微信
     void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
+    //删除
+    void remove(Long id);
 }
