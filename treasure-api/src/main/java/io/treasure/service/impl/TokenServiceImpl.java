@@ -23,7 +23,7 @@ public class TokenServiceImpl extends BaseServiceImpl<TokenDao, TokenEntity> imp
 	/**
 	 * 12小时后过期
 	 */
-	private final static int EXPIRE = 3600 * 12;
+	private final static int EXPIRE = 3600 * 24 * 7;
 
 	@Override
 	public TokenEntity getByToken(String token) {

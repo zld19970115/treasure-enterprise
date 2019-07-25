@@ -38,7 +38,9 @@ spring:
         max-wait: -1ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-idle: 10      # 连接池中的最大空闲连接
         min-idle: 5       # 连接池中的最小空闲连接
-
+  http:
+    multipart:
+      location: /data/upload_tmp
 treasure:
   redis:
     open: false  # 是否开启redis缓存  true开启   false关闭
@@ -65,3 +67,9 @@ mybatis-plus:
     cache-enabled: false
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
+
+#短信配置
+sms:
+  config:
+    accessKeyId: LTAIcmvqUXgQC8Mw
+    accessSecret: FAv9m2cDTTbIoN4NaHN476V5v4KC4g

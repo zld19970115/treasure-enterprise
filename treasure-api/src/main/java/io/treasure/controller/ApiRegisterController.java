@@ -8,20 +8,21 @@
 
 package io.treasure.controller;
 
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.config.ISMSConfig;
 import io.treasure.entity.UserEntity;
 import io.treasure.dto.RegisterDTO;
 import io.treasure.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -35,6 +36,8 @@ import java.util.Date;
 public class ApiRegisterController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private SMSConfig smsConfig;
 
     @PostMapping("register")
     @ApiOperation("注册")
@@ -50,5 +53,18 @@ public class ApiRegisterController {
         userService.insert(user);
 
         return new Result();
+    }
+    @GetMapping("code")
+    @ApiOperation("验证码")
+    public Result register(HttpServletRequest request){
+        boolean bool=SendSMSUtil.sendCodeForRegister("13694600620",request,smsConfig);
+        return new Result().ok(bool);
+    }
+
+    @GetMapping("verifyCode")
+    @ApiOperation("验证")
+    public Result verifyCode(HttpServletRequest request,String code){
+        Result bool=SendSMSUtil.verifyCode("13694600620",request,code);
+        return bool;
     }
 }
