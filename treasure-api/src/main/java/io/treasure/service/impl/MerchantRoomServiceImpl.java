@@ -9,6 +9,7 @@ import io.treasure.service.MerchantRoomService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,5 +46,16 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     @Override
     public void remove(long id, int status) {
         baseDao.updateStatusById(id,status);
+    }
+
+    /**
+     * 根据名称和商户id查询
+     * @param name
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public List getByNameAndMerchantId(String name, long merchantId,int type) {
+        return baseDao.getByNameAndMerchantId(name,merchantId,type);
     }
 }

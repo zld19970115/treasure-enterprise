@@ -24,6 +24,7 @@ public class MerchantRoomDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	@ApiModelProperty(value = "")
+	@NotNull(message = "id不能为空",groups =UpdateGroup.class)
 	private Long id;
 
 	@ApiModelProperty(value = "包房或者桌名称")

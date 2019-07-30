@@ -64,7 +64,7 @@ public class MerchantRoomController {
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantRoomDTO>> deskPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", MerchantRoomEnm.TYPE_ROOM.getType()+"");
+        params.put("status", MerchantRoomEnm.TYPE_DESK.getType()+"");
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
@@ -79,6 +79,10 @@ public class MerchantRoomController {
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantRoomDTO dto){
         //根据商户和名称判断是否存在
+        List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+        if(null!=roomList && roomList.size()>0){
+            return new Result().error("名称已经存在！");
+        }
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
         dto.setCreateDate(new Date());
@@ -91,6 +95,22 @@ public class MerchantRoomController {
     public Result update(@RequestBody MerchantRoomDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto, UpdateGroup.class);
+        MerchantRoomDTO data=merchantRoomService.get(dto.getId());
+        long merchantIdOld=data.getMerchantId();
+        long merchantId=dto.getMerchantId();
+        if(!data.getName().equals(dto.getName())){
+            //根据商户和名称判断是否存在
+            List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+            if(null!=roomList && roomList.size()>0){
+                return new Result().error("名称已经存在！");
+            }
+        }else if(merchantIdOld!=merchantId){
+            //根据商户和名称判断是否存在
+            List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+            if(null!=roomList && roomList.size()>0){
+                return new Result().error("名称已经存在！");
+            }
+        }
         dto.setUpdateDate(new Date());
         merchantRoomService.update(dto);
         return new Result();
