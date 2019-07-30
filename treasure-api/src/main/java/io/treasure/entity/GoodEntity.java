@@ -45,10 +45,6 @@ public class GoodEntity extends BaseEntity {
      */
 	private Integer showInHot;
     /**
-     * 菜品关键词
-     */
-	private String keys;
-    /**
      * 单位
      */
 	private String units;

@@ -38,20 +38,34 @@ public class GoodController {
     @Autowired
     private GoodService goodService;
 
-    @GetMapping("page")
-    @ApiOperation("分页")
+    @GetMapping("onPage")
+    @ApiOperation("销售中商品列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
     })
-    public Result<PageData<GoodDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<GoodDTO>> onPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<GoodDTO> page = goodService.page(params);
-
         return new Result<PageData<GoodDTO>>().ok(page);
     }
-
+    @GetMapping("offPage")
+    @ApiOperation("已下架品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+    })
+    public Result<PageData<GoodDTO>> offPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_OFF.getStatus()+"");
+        PageData<GoodDTO> page = goodService.page(params);
+        return new Result<PageData<GoodDTO>>().ok(page);
+    }
     @GetMapping("{id}")
     @ApiOperation("信息")
     public Result<GoodDTO> get(@PathVariable("id") Long id){
@@ -108,12 +122,39 @@ public class GoodController {
         return new Result();
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long[] ids){
-        //效验数据
-        AssertUtils.isArrayEmpty(ids, "id");
-        goodService.delete(ids);
+    public Result delete(@PathVariable("id") Long id){
+       goodService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
+    }
+    /**
+     * 上架商品
+     * @param id
+     * @return
+     */
+    @PutMapping("on")
+    @ApiOperation("显示数据")
+    public Result on(@RequestBody Long id){
+        if(id>0){
+            goodService.on(id,Common.STATUS_ON.getStatus());
+            return new Result();
+        }
+        return new Result().error("显示数据失败！");
+    }
+
+    /**
+     * 下架商品
+     * @param id
+     * @return
+     */
+    @PutMapping("off")
+    @ApiOperation("下架商品")
+    public Result off(@RequestBody Long id){
+        if(id>0){
+            goodService.off(id,Common.STATUS_OFF.getStatus());
+            return new Result();
+        }
+        return new Result().error("隐藏数据失败！");
     }
 }

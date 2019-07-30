@@ -47,8 +47,6 @@ public class GoodDTO implements Serializable {
 	private String introduce;
 	@ApiModelProperty(value = "是否热门 1=热门/0=默认")
 	private Integer showInHot;
-	@ApiModelProperty(value = "菜品关键词")
-	private String keys;
 	@ApiModelProperty(value = "单位")
 	private String units;
 	@ApiModelProperty(value = "备注信息")

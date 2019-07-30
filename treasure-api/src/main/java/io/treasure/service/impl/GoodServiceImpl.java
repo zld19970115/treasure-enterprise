@@ -24,10 +24,15 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     @Override
     public QueryWrapper<GoodEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
+        //状态
+        String status=(String)params.get("status");
+        //商户Id
+        String merchantId=(String)params.get("merchantId");
 
         QueryWrapper<GoodEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"mart_id",merchantId);
         return wrapper;
     }
 
@@ -40,5 +45,35 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     @Override
     public List getByNameAndMerchantId(String name, long martId) {
         return baseDao.getByNameAndMerchantId(name,martId);
+    }
+
+    /**
+     * 上架商品
+     * @param id
+     * @param status
+     */
+    @Override
+    public void on(long id, int status) {
+        baseDao.updateStatusById(id,status);
+    }
+
+    /**
+     * 下架商品
+     * @param id
+     * @param status
+     */
+    @Override
+    public void off(long id, int status) {
+        baseDao.updateStatusById(id,status);
+    }
+
+    /**
+     * 删除
+     * @param id
+     * @param status
+     */
+    @Override
+    public void remove(long id, int status) {
+        baseDao.updateStatusById(id,status);
     }
 }

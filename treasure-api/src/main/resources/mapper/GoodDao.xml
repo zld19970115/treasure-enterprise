@@ -12,7 +12,6 @@
         <result property="price" column="price"/>
         <result property="introduce" column="introduce"/>
         <result property="showInHot" column="show_in_hot"/>
-        <result property="keys" column="keys"/>
         <result property="units" column="units"/>
         <result property="remarks" column="remarks"/>
         <result property="shelveTime" column="shelve_time"/>
@@ -36,4 +35,7 @@
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
     </select>
+    <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
+        update ct_good set status=#{status} where id=#{id}
+    </update>
 </mapper>
