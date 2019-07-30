@@ -46,7 +46,8 @@
 			<artifactId>commons-configuration</artifactId>
 			<version>1.10</version>
 		</dependency>
-    </dependencies>
+	</dependencies>
+
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
