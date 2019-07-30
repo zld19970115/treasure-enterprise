@@ -11,7 +11,6 @@ package io.treasure.controller;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.config.ISMSConfig;
 import io.treasure.entity.UserEntity;
 import io.treasure.dto.RegisterDTO;
 import io.treasure.service.UserService;

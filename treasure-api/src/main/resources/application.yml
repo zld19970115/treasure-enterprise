@@ -73,3 +73,23 @@ sms:
   config:
     accessKeyId: LTAIcmvqUXgQC8Mw
     accessSecret: FAv9m2cDTTbIoN4NaHN476V5v4KC4g
+
+#微信配置
+wx:
+  config:
+    app_id: wx48836d8507c216f6
+    appsecret: f4ae44e03535db89a99f01488a6728ac
+  pay:
+    key: basDYrmyy04566421816DDweixin1473
+    mch_id: 1527742301
+    notifyUrl: https://api.xinronghetech.com:8443/renren-api/api/wxprecreate/notify
+
+#支付宝配置
+pay:
+  alipay:
+    gatewayUrl: https://openapi.alipay.com/gateway.do #https://openapi.alipaydev.com/gateway.do
+    appid: 2019032163585943
+    appPrivateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGGIJYJrQh3G+4/z6eURp4slw/Da1L+LxYdSSh+Lt5qChrHIeUP5C7FbVZ0iEWCWVfa3MZQC3lSiIVgA0R9hCk2AH6IIkcMj+4mmHMf14pVsm+vAhCesyTa+KslPPbqeJ87542YJCJXMkBFThxAFJB10pqb2MoV4ugb0oXH1pnCt7K1ZmCu/cuaGlWWGTn4wJO0gTcO/pswchaqDl5YhNznziVCRbeuQrWRJ1AWWDBPPAH0HD/yuB4zpEF9kA4hc0QhCM90swYAxhVQr6BNm8B6sCS1LHTav7Vvz6V59ThUvD/U1S+eMXXdob1eleu0J+oeoC2PwAYORgAdUDpsssHAgMBAAECggEABitTO92QtJFB5XgFgjayZVngp5IMeJY5f2O+jVDKveIvyA4uZr6ICluFt1Nk9mO6hXs6LWojQ8XIQ/Ul8w4/vHKBtUF4I6mo9F3Sd+TrkMwEIm2GsFNUta6hc5B7+7ZRuGRaAAWH2s9J7z+y70n8RdKnnaL0apg3X/q3SvsN/LF67fhSGGQv4pzZ27zOT/o22FJlO5uV8MviDfhpop5Cxm542ombHFPNkTv6xarMG8+vWXd67rDRj32VMvvrIiiC71O5RWNkC9mp15J6QQGmx3GR1UaEqu+n5pOsnW4dFEpoTliGHfWYo1EcH9H5vsxFAmgwPmXOHp/mq7CHeyTb8QKBgQDsFG9QbrvEGtHjEHxgwKwq8UokY6aqLOw6qyC+zI7rc9S/RK19s1lpr3DH0BO9mWqN7Ncme+dl4LWNk+7x/LWYPQZFra/KvxArcwR4vauUn0NzelvPZ25DzObR+RnGdqxz1jZNqiaR/U/9pi91LOGlKo69X0IgY6UwcC2GBztfDwKBgQDWz5RPQp/2BJHTFj0XfxLdkc3sApPdbySXnOg79PWZjP4dX5o7O1BXJOCgbTC4BpvtT+0TDeQzL7kZcySECG6cc1SmXEBtL5gHMbmXO1azna/LrC7jfmJ5R90qn7lL8461QhhUKEzcEB3TkoKBE+5ABRu4erqVJZYgDtAMtIRUiQKBgHvUnC7MZqEOkFlSJGt7pNNBjWpY+ur4dVCwwpRSKAVI1KcfFwGAOb490CJ++lvRRRr8yD3fcBj4LUL9/a/gpkAcglW6LSNj5M9lnUrX8lAa2f6Qh+fakPPvXoN07hgz13FLQ2Cph2G8RWD+8pW73QANuqGKfd0PZ25o6PgMgw/xAoGAEhpOQlu4BVCfRW3DWj6QRXHrK6+P7IJYUBqeC6d6JyWVqL4Mzl8SRzXJZFuvVmLgMyCgNxHdoF6uN7HXavUW9UJW6OovV8RCCKEtJcyPYvWwAfcRwIQ/Ij9nKRdq0zbEWQwn5re6unT1PoZDT0NxuZ10l5hoLveK7kqxR9DSshkCgYEAhw/cnsdj0BHC6zK2U+I39CUeL3GXxCEa+vAqxA66rhdJluKSZM9jF5qXWx8mUEbjLtbI9GckXl2BCpwEi8PPR3AhYjCPUWJkKggyqyzhjqfpbu/lhg9ljkWHdMtSUdP+GkGVWlAm3Nl2S09fBrDoWK2UMhbLcAk8Vqf73wvZCBc=
+    alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAove2F+UnM68u+W5/tLU5Z1YXPGLYr9w5JykDa+HQV5dfuVrFjsZOnnh3PVwXEzJFIFNkD4E6FTDkNi/KKUDO5ot/Bbvjtwkw9e9rZU14x+JaC5SuQHe6+VQF4PcEs1Ra+ihJPwMxbu4C0ag4Kg+wwyQoUXh5/Pat5yKlyIHpJGZWLKnVF/A1//50SBFhTvhqbZw2zpej9X4gC6LRLlhJN1ch7gJtYR4OsYNDDZ99ZYV6+BetVRrdeBJh6gXkMUeYIsaTpzIFCA01SKte1h8ogUj1vD273A8dPV/69QzzwHuN10KB9uD5Nvhpx6ZuPol/fPWytsn8QRefGReHL8tt/wIDAQAB
+    returnUrl: https://api.xinronghetech.com:8443/renren-api/api/ali/return
+    notifyUrl: https://api.xinronghetech.com:8443/renren-api/api/ali/notify
