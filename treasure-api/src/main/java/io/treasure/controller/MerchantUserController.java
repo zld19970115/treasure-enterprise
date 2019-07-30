@@ -137,16 +137,12 @@ public class MerchantUserController {
      */
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
-    public Result updatePassword(HttpServletRequest request,@RequestBody String oldPassword,String newPassword,Long id,String code){
-        //获取短信验证码
-        String codeOld= (String) request.getSession().getAttribute("code");
-        if(StringUtils.isNotEmpty(codeOld)){
-            if(!codeOld.equals(code)){
-                return new Result().error("验证码输入错误！");
-            }
-        }else{
-            return new Result().error("请先获取验证码！");
-        }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="oldPassword",value="第一次输入的密码",required=true,paramType="query"),
+            @ApiImplicitParam(name="newPassword",value="第二次输入的密码",required=true,paramType="query"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
+    })
+    public Result updatePassword(HttpServletRequest request,String oldPassword,String newPassword,Long id){
        String oPassword= DigestUtils.sha256Hex(oldPassword);
        String nPassword= DigestUtils.sha256Hex(newPassword);
         if(!oPassword.equals(nPassword)){
@@ -159,30 +155,27 @@ public class MerchantUserController {
     /**
      * 找回密码
      * @param mobile
-     * @param  code
      * @return
      */
     @PutMapping("retrievePassword")
     @ApiOperation("找回密码")
-    public Result<Map<String, Object>>  retrievePassword(HttpServletRequest request,@RequestBody String mobile,String code){
-        String codeOld= (String) request.getSession().getAttribute("code");
-        if(StringUtils.isNotEmpty(codeOld)){
-            if(!codeOld.equals(code)){
-                return new Result().error("验证码输入错误！");
-            }
-        }else{
-            return new Result().error("请先获取验证码！");
-        }
-        if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
-            return new Result().error("请输入手机号码！");
-        }
-        MerchantUserEntity user=merchantUserService.getByMobile(mobile);
-        String password=DigestUtils.sha256Hex("123456");
-        user.setPassword(password);
-        merchantUserService.updatePassword(password,user.getId());
-        Map<String,Object> map=new HashMap<String,Object>();
-        map.put("password",123456);
-        return new Result().ok(map);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="",required=true,paramType="query"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
+    })
+    public Result<Map<String, Object>>  retrievePassword(String mobile,long id){
+       MerchantUserDTO user= merchantUserService.get(id);
+       if(null!=user){
+           if(!user.getMobile().equals(mobile)){
+               return new Result().error("手机号输入错误！");
+           }
+           String password=DigestUtils.sha256Hex("123456");
+           merchantUserService.updatePassword(password,id);
+           Map<String,Object> map=new HashMap<String,Object>();
+           map.put("password",123456);
+           return new Result().ok(map);
+       }
+        return new Result().error("出错了！");
     }
     /**
      * 注册
@@ -193,14 +186,6 @@ public class MerchantUserController {
     @ApiOperation("注册")
     public Result register( HttpServletRequest request, @RequestBody MerchantUserRegisterDTO dto){
         ValidatorUtils.validateEntity(dto);
-        String code= (String) request.getSession().getAttribute("code");
-        if(StringUtils.isNotEmpty(code)){
-            if(!code.equals(dto.getCode())){
-                return new Result().error("验证码输入错误！");
-            }
-        }else{
-            return new Result().error("请先获取验证码！");
-        }
         String oPassword= DigestUtils.sha256Hex(dto.getOldPassword());
         String nPassword= DigestUtils.sha256Hex(dto.getNewPassword());
         if(!oPassword.equals(nPassword)){
@@ -232,18 +217,11 @@ public class MerchantUserController {
      */
     @PutMapping("updateMobile")
     @ApiOperation("修改手机号")
-    public Result  updateMobile(HttpServletRequest request, @RequestBody String mobile, long id, String code){
-        String codeOld= (String) request.getSession().getAttribute("code");
-        if(StringUtils.isNotEmpty(codeOld)){
-            if(!codeOld.equals(code)){
-                return new Result().error("验证码输入错误！");
-            }
-        }else{
-            return new Result().error("请先获取验证码！");
-        }
-        if(!StringUtils.isNotBlank(mobile) || !StringUtils.isNotEmpty(mobile)){
-            return new Result().error("请输入手机号码！");
-        }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号码",required=true,paramType="query"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
+    })
+    public Result  updateMobile(HttpServletRequest request,String mobile, long id){
         //根据用户名判断是否已经注册过了
         MerchantUserEntity user = merchantUserService.getByMobile(mobile);
         if(null!=user){
@@ -262,10 +240,13 @@ public class MerchantUserController {
      */
     @PutMapping("updateWeixin")
     @ApiOperation("帮定微信")
-    public Result  updateMobile(@RequestBody String openid,String weixinName,String weixinUrl,long id){
-        if(!StringUtils.isNotBlank(openid) || !StringUtils.isNotEmpty(openid)){
-            return new Result().error("请输入openid！");
-        }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openid",value="openid",required=true,paramType="query"),
+            @ApiImplicitParam(name="weixinName",value="微信名称",required=true,paramType="query"),
+            @ApiImplicitParam(name="weixinUrl",value="微信头像",required = true,paramType = "query"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
+    })
+    public Result  updateMobile(String openid,String weixinName,String weixinUrl,long id){
         merchantUserService.updateWeixin(openid,weixinName,weixinUrl,id);
         return new Result();
     }
@@ -277,12 +258,21 @@ public class MerchantUserController {
      * @return
      */
     @PutMapping("code")
-    @ApiOperation("验证码")
+    @ApiOperation("获取验证码")
     public Result registerCode(HttpServletRequest request,@RequestBody String mobile){
         boolean bool= SendSMSUtil.sendCodeForRegister(mobile,request,smsConfig);
         return new Result().ok(bool);
     }
-
+    @GetMapping("verifyCode")
+    @ApiOperation("校验验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query"),
+            @ApiImplicitParam(name="code",value="验证码",required=true,paramType="query")
+    })
+    public Result verifyCode(HttpServletRequest request,String mobile,String code){
+        Result bool=SendSMSUtil.verifyCode(mobile,request,code);
+        return bool;
+    }
     /**
      *
      * @param id
@@ -290,11 +280,11 @@ public class MerchantUserController {
      */
     @GetMapping("getMerchantAllByUserId")
     @ApiOperation("根据会员Id显示商户信息")
-    public Result<List> getMerchantAllByUserId(@RequestBody Long id){
-        if(id>0){
-            List list=merchantUserService.getMerchantByUserId(id);
-            return new Result().ok(list);
-        }
-       return new Result().error("获取商户出错了！");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="会员编号",required=true,paramType="query")
+    })
+    public Result<List> getMerchantAllByUserId(Long id){
+        List list=merchantUserService.getMerchantByUserId(id);
+        return new Result().ok(list);
     }
 }

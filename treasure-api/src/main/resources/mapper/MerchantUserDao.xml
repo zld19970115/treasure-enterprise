@@ -24,7 +24,7 @@
     </select>
     <select id="getMerchantByUserId" resultType="java.util.Map">
         select m.* from ct_merchant_user user
-        left join ct_merchant m on ( m.id=user.merchantId and m.status=1)
+        left join ct_merchant m on ( find_in_set(m.id,user.merchantId) and m.status=1)
         where user.id=#{id}
     </select>
     <update id="updatePassword"   parameterType="io.treasure.entity.MerchantUserEntity">
