@@ -65,7 +65,7 @@ public class MerchantUserEntity implements Serializable {
     /**
      * 商户编号
      */
-	private Long merchantid;
+	private String merchantid;
 	private Date createDate;
 	private Long creator;
 }

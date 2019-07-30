@@ -17,11 +17,9 @@
 	</parent>
 
     <modules>
-        <module>treasure-common</module>
-		<module>treasure-dynamic-datasource</module>
-        <module>treasure-admin</module>
+
         <module>treasure-api</module>
-        <module>treasure-generator</module>
+
     </modules>
 
     <properties>

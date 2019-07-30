@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.hamcrest.core.IsNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -83,7 +84,10 @@ public class CategoryController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
-
+        List cate=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+        if(null!=cate && cate.size()>0){
+            return new Result().error("分类名称已经存在！");
+        }
         CategoryEntity category=new CategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
@@ -92,7 +96,7 @@ public class CategoryController {
         category.setCreateDate(new Date());
         category.setCreator(dto.getCreator());
         category.setSort(dto.getSort());
-        category.setMerchant_id(dto.getMerchant_id());
+        category.setMerchantId(dto.getMerchantId());
         categoryService.insert(category);
         return new Result();
     }
@@ -102,6 +106,19 @@ public class CategoryController {
     public Result update(@RequestBody CategoryDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
+        //同一个商户，分类不能同名
+        CategoryDTO cate=categoryService.get(dto.getId());
+        System.out.println(!cate.getName().equals(dto.getName()));
+        System.out.println(cate.getMerchantId()==dto.getMerchantId());
+        System.out.println(cate.getMerchantId()+"==="+dto.getMerchantId());
+        if(!cate.getName().equals(dto.getName()) && cate.getMerchantId()==dto.getMerchantId()){
+            //同一个商户，分类不能同名
+             List flag=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+            if(null!=flag && flag.size()>0){
+                return new Result().error("分类名称已经存在！");
+            }
+        }
+
         CategoryEntity category=new CategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
@@ -111,7 +128,7 @@ public class CategoryController {
         category.setUpdater(dto.getCreator());
         category.setSort(dto.getSort());
         category.setId(dto.getId());
-        categoryService.update(category,null);
+        categoryService.updateById(category);
         return new Result();
     }
 
@@ -152,5 +169,19 @@ public class CategoryController {
             return new Result();
         }
         return new Result().error("隐藏数据失败！");
+    }
+    /**
+     * 根据商户Id显示商户分类
+     * @param merchantId
+     * @return
+     */
+    @GetMapping("getAllByMerchantId")
+    @ApiOperation("显示商户对应的分类")
+    public Result<List> getAllByMerchantId(@RequestBody Long merchantId){
+        if(merchantId>0){
+            List list=categoryService.getAllByMerchantId(merchantId);
+            return new Result().ok(list);
+        }
+        return new Result().error("请选择商户！");
     }
 }

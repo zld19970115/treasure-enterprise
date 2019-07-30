@@ -97,6 +97,16 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.remove(id);
     }
 
+    /**
+     * 根据会员Id查询店铺信息
+     * @param id
+     * @return
+     */
+    @Override
+    public List getMerchantByUserId(Long id) {
+        return baseDao.getMerchantByUserId(id);
+    }
+
     @Autowired
     private MerchantUserService userService;
 

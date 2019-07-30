@@ -4,6 +4,8 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 
+import java.util.List;
+
 /**
  * 商户表
  *

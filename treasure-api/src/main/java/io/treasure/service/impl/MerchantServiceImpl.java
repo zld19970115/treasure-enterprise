@@ -9,6 +9,7 @@ import io.treasure.service.MerchantService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,8 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     public MerchantEntity getByNameAndCards(String name, String cards) {
         return baseDao.getByNameAndCards(name,cards);
     }
+
+
 
     /**
      * 查询条件

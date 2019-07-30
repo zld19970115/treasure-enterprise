@@ -39,6 +39,8 @@ public class MerchantUserRegisterDTO {
 
 	@ApiModelProperty(value = "")
 	private String openid;
-
+	@ApiModelProperty(value="验证码")
+	@NotBlank(message = "验证码不能为空")
+	private String code;
 
 }
