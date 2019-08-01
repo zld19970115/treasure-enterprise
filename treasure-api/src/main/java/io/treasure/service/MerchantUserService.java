@@ -27,4 +27,6 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     void remove(Long id);
     //会员id查询该会员对应的商户信息
     List getMerchantByUserId(Long id);
+    //根据会员手机号码查询对应的商户信息
+    List getMerchantByMobile(String mobile);
 }

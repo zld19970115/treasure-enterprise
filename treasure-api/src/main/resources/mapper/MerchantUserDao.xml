@@ -27,6 +27,13 @@
         left join ct_merchant m on ( find_in_set(m.id,user.merchantId) and m.status=1)
         where user.id=#{id}
     </select>
+
+    <select id="getMerchantByMobile" resultType="java.util.Map">
+        select m.* from ct_merchant_user user
+        left join ct_merchant m on ( find_in_set(m.id,user.merchantId) and m.status=1)
+        where user.mobile=#{mobile} and user.status=1
+    </select>
+
     <update id="updatePassword"   parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set password=#{password} where id=#{id}
     </update>

@@ -287,4 +287,18 @@ public class MerchantUserController {
         List list=merchantUserService.getMerchantByUserId(id);
         return new Result().ok(list);
     }
+    /**
+     *
+     * @param mobile
+     * @return
+     */
+    @GetMapping("getMerchantAllByMobile")
+    @ApiOperation("根据会员手机号码示商户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="会员手机号码",required=true,paramType="query")
+    })
+    public Result<List> getMerchantAllByMobile(String mobile){
+        List list=merchantUserService.getMerchantByMobile(mobile);
+        return new Result().ok(list);
+    }
 }

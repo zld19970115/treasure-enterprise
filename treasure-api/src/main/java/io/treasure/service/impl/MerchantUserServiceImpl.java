@@ -107,6 +107,16 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getMerchantByUserId(id);
     }
 
+    /**
+     * 商户会员手机号码查询会员商户信息
+     * @param mobile
+     * @return
+     */
+    @Override
+    public List getMerchantByMobile(String mobile) {
+        return baseDao.getMerchantByMobile(mobile);
+    }
+
     @Autowired
     private MerchantUserService userService;
 
