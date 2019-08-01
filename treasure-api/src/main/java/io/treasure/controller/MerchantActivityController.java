@@ -56,7 +56,6 @@ public class MerchantActivityController {
         params.put("status", Common.STATUS_ON.getStatus()+"");
         return new Result<PageData<MerchantActivityDTO>>().ok(page);
     }
-    @Login
     @GetMapping("getById")
     @ApiOperation("信息")
     @ApiImplicitParams({
