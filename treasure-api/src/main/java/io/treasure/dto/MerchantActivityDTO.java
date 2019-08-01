@@ -24,6 +24,7 @@ public class MerchantActivityDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	@ApiModelProperty(value = "id")
+	@NotNull(message ="编号不能为空",groups = UpdateGroup.class)
 	private Long id;
 
 	@ApiModelProperty(value = "标题")
@@ -46,28 +47,16 @@ public class MerchantActivityDTO implements Serializable {
 	private Integer type;
 
 	@ApiModelProperty(value = "商户")
-	@NotNull(message = "标题不能为空",groups = AddGroup.class)
-	@NotNull(message = "标题不能为空",groups = UpdateGroup.class)
+	@NotNull(message = "商户不能为空",groups = AddGroup.class)
+	@NotNull(message = "商户不能为空",groups = UpdateGroup.class)
 	private Long merchantId;
-
-	@ApiModelProperty(value = "状态")
-	private Integer status;
-
-	@ApiModelProperty(value = "备注")
-	private String remark;
-
-	@ApiModelProperty(value = "修改时间")
-	private Date updateDate;
-
-	@ApiModelProperty(value = "创建时间")
-	private Date createDate;
 
 	@ApiModelProperty(value = "")
 	@NotNull(message = "创建者不能为空",groups = AddGroup.class)
 	private Long creator;
 
 	@ApiModelProperty(value = "")
-	@NotBlank(message = "修改者不能为空",groups = UpdateGroup.class)
+	@NotNull(message = "修改者不能为空",groups = UpdateGroup.class)
 	private Long updater;
 
 

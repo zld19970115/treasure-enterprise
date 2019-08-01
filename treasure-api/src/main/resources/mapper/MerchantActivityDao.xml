@@ -20,7 +20,7 @@
         <result property="updater" column="updater"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
-        update ct_good set status=#{status} where id=#{id}
+        update ct_merchant_activity set status=#{status} where id=#{id}
     </update>
 
 </mapper>

@@ -48,7 +48,8 @@ public class CategoryController {
         @ApiImplicitParam(name = Constant.PAGE, value = "1", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String")
+        @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
     })
     public Result<PageData<CategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));
@@ -63,7 +64,8 @@ public class CategoryController {
             @ApiImplicitParam(name = Constant.PAGE, value = "1", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "2", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
-            @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String")
+            @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
     })
     public Result<PageData<CategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
         params.put("status", String.valueOf(Common.STATUS_OFF.getStatus()));
@@ -72,9 +74,12 @@ public class CategoryController {
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
-    @GetMapping("{id}")
+    @GetMapping("getById")
     @ApiOperation("详细信息")
-    public Result<CategoryDTO> get(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<CategoryDTO> get(Long id){
         CategoryDTO data = categoryService.get(id);
         return new Result<CategoryDTO>().ok(data);
     }
@@ -135,10 +140,11 @@ public class CategoryController {
     @Login
     @DeleteMapping("delete")
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long[] ids){
-        //效验数据
-        AssertUtils.isArrayEmpty(ids, "id");
-        categoryService.delete(ids);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delete(Long id){
+        categoryService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
 
@@ -150,12 +156,12 @@ public class CategoryController {
     @Login
     @PutMapping("on")
     @ApiOperation("显示数据")
-    public Result on(@RequestBody Long id){
-        if(id>0){
-            categoryService.on(id,Common.STATUS_ON.getStatus());
-            return new Result();
-        }
-        return new Result().error("显示数据失败！");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result on(Long id){
+        categoryService.on(id,Common.STATUS_ON.getStatus());
+        return new Result();
     }
 
     /**
@@ -166,12 +172,12 @@ public class CategoryController {
     @Login
     @PutMapping("off")
     @ApiOperation("隐藏数据")
-    public Result off(@RequestBody Long id){
-        if(id>0){
-            categoryService.off(id,Common.STATUS_OFF.getStatus());
-            return new Result();
-        }
-        return new Result().error("隐藏数据失败！");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result off(Long id){
+        categoryService.off(id,Common.STATUS_OFF.getStatus());
+        return new Result();
     }
     /**
      * 根据商户Id显示商户分类
@@ -180,11 +186,11 @@ public class CategoryController {
      */
     @GetMapping("getAllByMerchantId")
     @ApiOperation("显示商户对应的分类")
-    public Result<List> getAllByMerchantId(@RequestBody Long merchantId){
-        if(merchantId>0){
-            List list=categoryService.getAllByMerchantId(merchantId);
-            return new Result().ok(list);
-        }
-        return new Result().error("请选择商户！");
-    }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<List> getAllByMerchantId(Long merchantId){
+       List list=categoryService.getAllByMerchantId(merchantId);
+       return new Result().ok(list);
+      }
 }

@@ -24,6 +24,7 @@ import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.oss.cloud.QiniuCloudStorageService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
+import lombok.extern.java.Log;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,13 @@ public class MerchantController {
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
-    @GetMapping("{id}")
+    @Login
+    @GetMapping("getById")
     @ApiOperation("详细信息")
-    public Result<MerchantDTO> get(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<MerchantDTO> get(Long id){
         MerchantDTO data = merchantService.get(id);
         return new Result<MerchantDTO>().ok(data);
     }
@@ -126,12 +131,11 @@ public class MerchantController {
     @Login
     @DeleteMapping
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long id){
-       if(id>0){
-           merchantService.remove(id);
-       }else{
-           return new Result().error("删除失败！");
-       }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delete(Long id){
+        merchantService.remove(id);
         return new Result();
     }
 }
