@@ -67,9 +67,12 @@ public class GoodController {
         PageData<GoodDTO> page = goodService.page(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
-    @GetMapping("{id}")
+    @GetMapping("getById")
     @ApiOperation("详细信息")
-    public Result<GoodDTO> get(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<GoodDTO> get(Long id){
         GoodDTO data = goodService.get(id);
         return new Result<GoodDTO>().ok(data);
     }
@@ -123,9 +126,12 @@ public class GoodController {
         return new Result();
     }
     @Login
-    @DeleteMapping("{id}")
+    @DeleteMapping("delete")
     @ApiOperation("删除")
-    public Result delete(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delete(Long id){
        goodService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
@@ -137,12 +143,12 @@ public class GoodController {
      */
     @PutMapping("on")
     @ApiOperation("上架商品")
-    public Result on(@RequestBody Long id){
-        if(id>0){
-            goodService.on(id,Common.STATUS_ON.getStatus());
-            return new Result();
-        }
-        return new Result().error("显示数据失败！");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result on(Long id){
+        goodService.on(id,Common.STATUS_ON.getStatus());
+        return new Result();
     }
 
     /**
@@ -153,11 +159,11 @@ public class GoodController {
     @Login
     @PutMapping("off")
     @ApiOperation("下架商品")
-    public Result off(@RequestBody Long id){
-        if(id>0){
-            goodService.off(id,Common.STATUS_OFF.getStatus());
-            return new Result();
-        }
-        return new Result().error("隐藏数据失败！");
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result off(Long id){
+        goodService.off(id,Common.STATUS_OFF.getStatus());
+        return new Result();
     }
 }
