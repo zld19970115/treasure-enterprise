@@ -28,6 +28,7 @@ import java.util.Map;
  *
  * @author Super 63600679@qq.com
  */
+@ApiIgnore
 @RestController
 @RequestMapping("/api")
 @Api(tags="登录接口")

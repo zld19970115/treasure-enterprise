@@ -3,6 +3,8 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
+import io.treasure.common.exception.ErrorCode;
+import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 
 import io.treasure.common.sms.SMSConfig;
@@ -181,5 +183,51 @@ public class ApiClientUserController {
         tokenService.expireToken(userId);
         return new Result();
     }
+
+    @Login
+    @PutMapping("editPassword")
+    @ApiOperation("修改密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="用户ID",required=true,paramType="query"),
+            @ApiImplicitParam(name="oldPassword",value="原密码",required=true,paramType="query"),
+            @ApiImplicitParam(name="newPassword",value="新密码",required=true,paramType="query")
+    })
+    public Result editPassword(Long id,String oldPassword,String newPassword){
+        ClientUserDTO data = clientUserService.get(id);
+        data.getPassword();
+        //密码错误
+        if(!data.getPassword().equals(DigestUtils.sha256Hex(oldPassword))){
+            throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
+        }else{
+            data.setPassword(DigestUtils.sha256Hex(newPassword));
+        }
+        clientUserService.update(data);
+        return new Result();
+    }
+
+    @PutMapping("forgetPassword")
+    @ApiOperation("忘记密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="tel",value="注册手机号",required=true,paramType="query"),
+            @ApiImplicitParam(name="code",value="验证码",required=true,paramType="query"),
+            @ApiImplicitParam(name="password",value="重置密码",required=true,paramType="query")
+    })
+    public Result forgetPassword(HttpServletRequest request,String tel,String code,String password){
+        Result bool=SendSMSUtil.verifyCode(tel,request,code);
+        if(bool.getCode()==0){
+            ClientUserEntity clientUserEntity=clientUserService.getByMobile(tel) ;
+            if(clientUserEntity==null){
+                throw new RenException(ErrorCode.ACCOUNT_NOT_EXIST);
+            }else {
+                clientUserEntity.setPassword(DigestUtils.sha256Hex(password));
+
+                clientUserService.updateById(clientUserEntity);
+            }
+        }
+
+        return new Result();
+    }
+
+
 
 }

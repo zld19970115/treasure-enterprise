@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Super 63600679@qq.com
  */
+@ApiIgnore
 @RestController
 @RequestMapping("/api")
 @Api(tags="测试接口")

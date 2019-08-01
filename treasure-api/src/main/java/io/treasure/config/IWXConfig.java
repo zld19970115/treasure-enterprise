@@ -5,6 +5,7 @@ package io.treasure.config;
 import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.wx.IWXPayDomain;
 import io.treasure.common.wx.WXConfig;
+import io.treasure.utils.PathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class IWXConfig extends WXConfig {
 
     public IWXConfig() throws Exception {
         String os = System.getProperty("os.name");
-        String certPath =File.separator+"www";
+        String certPath = "/www/apiclient_cert.p12";
         if(os.toLowerCase().startsWith("win")){
             certPath = "C:\\apiclient_cert.p12";
         }

@@ -1,5 +1,8 @@
 package io.treasure.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
@@ -55,6 +58,7 @@ public class ClientUserEntity extends BaseEntity {
     /**
      * 密码
      */
+	@JSONField(serialize=false)
 	private String password;
     /**
      * 手机号
@@ -107,9 +111,11 @@ public class ClientUserEntity extends BaseEntity {
     /**
      * 更新时间
      */
+	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Date updateDate;
     /**
      * 更新者
      */
+	@TableField(fill=FieldFill.INSERT_UPDATE)
 	private Long updater;
 }

@@ -20,6 +20,7 @@ import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.Date;
  *
  * @author Super 63600679@qq.com
  */
+@ApiIgnore
 @RestController
 @RequestMapping("/api")
 @Api(tags="注册接口")
