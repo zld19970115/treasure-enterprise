@@ -79,7 +79,7 @@ public class CategoryController {
         return new Result<CategoryDTO>().ok(data);
     }
     @Login
-    @PostMapping
+    @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody CategoryDTO dto){
         //效验数据
@@ -102,7 +102,7 @@ public class CategoryController {
         return new Result();
     }
     @Login
-    @PutMapping
+    @PutMapping("update")
     @ApiOperation("修改")
     public Result update(@RequestBody CategoryDTO dto){
         //效验数据
@@ -133,7 +133,7 @@ public class CategoryController {
         return new Result();
     }
     @Login
-    @DeleteMapping
+    @DeleteMapping("delete")
     @ApiOperation("删除")
     public Result delete(@RequestBody Long[] ids){
         //效验数据
