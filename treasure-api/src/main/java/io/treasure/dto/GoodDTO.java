@@ -42,8 +42,6 @@ public class GoodDTO implements Serializable {
 	@NotNull(message = "菜品原价不能为空",groups=UpdateGroup.class)
 	private BigDecimal price;
 	@ApiModelProperty(value = "菜品介绍")
-	@NotBlank(message="菜品介绍不能为空",groups=AddGroup.class)
-	@NotBlank(message="菜品介绍不能为空",groups=UpdateGroup.class)
 	private String introduce;
 	@ApiModelProperty(value = "是否热门 1=热门/0=默认")
 	private Integer showInHot;
