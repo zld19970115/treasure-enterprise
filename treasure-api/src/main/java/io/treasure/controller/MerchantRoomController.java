@@ -50,7 +50,7 @@ public class MerchantRoomController {
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantRoomDTO>> roomPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status",Common.STATUS_ON.getStatus()+"");
+        params.put("status", Common.STATUS_ON.getStatus()+"");
         params.put("type",MerchantRoomEnm.TYPE_ROOM.getType()+"");
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
@@ -71,9 +71,12 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
-    @GetMapping("{id}")
+    @GetMapping("getById")
     @ApiOperation("详细信息")
-    public Result<MerchantRoomDTO> get(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<MerchantRoomDTO> get(long id){
         MerchantRoomDTO data = merchantRoomService.get(id);
         return new Result<MerchantRoomDTO>().ok(data);
     }
@@ -119,9 +122,12 @@ public class MerchantRoomController {
         return new Result();
     }
     @Login
-    @DeleteMapping("{id}")
+    @DeleteMapping("remove")
     @ApiOperation("删除")
-    public Result delete(@PathVariable long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delete(long id){
         merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
         return new Result();
     }
