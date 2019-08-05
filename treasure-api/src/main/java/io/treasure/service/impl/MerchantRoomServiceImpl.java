@@ -24,17 +24,20 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     @Override
     public QueryWrapper<MerchantRoomEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-        //状体
+        //状态
         String status=(String)params.get("status");
         //名称
         String name=(String)params.get("name");
         //商户
         String merchantId=(String)params.get("merchantId");
+        //类型
+        String type=(String)params.get("type");
         QueryWrapper<MerchantRoomEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         wrapper.like(StringUtils.isNotBlank(name),"name",name);
         wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
+        wrapper.eq(StringUtils.isNotBlank(type),"type",type);
         return wrapper;
     }
 

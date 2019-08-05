@@ -50,7 +50,8 @@ public class MerchantRoomController {
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantRoomDTO>> roomPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", MerchantRoomEnm.TYPE_ROOM.getType()+"");
+        params.put("status",Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_ROOM.getType()+"");
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
@@ -65,7 +66,8 @@ public class MerchantRoomController {
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantRoomDTO>> deskPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", MerchantRoomEnm.TYPE_DESK.getType()+"");
+        params.put("status",Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_DESK.getType()+"");
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
