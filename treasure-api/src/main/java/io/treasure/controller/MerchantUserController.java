@@ -77,11 +77,16 @@ public class MerchantUserController {
     }
 
 
-//    @PostMapping
-//    @ApiOperation("保存")
+//    @PostMapping("save")
+//    @ApiOperation("创建下级会员")
 //    public Result save(@RequestBody MerchantUserDTO dto){
 //            //效验数据
-//            ValidatorUtils.validateEntity(dto);
+//            ValidatorUtils.validateEntity(dto,AddGroup.class);
+//            //根据用户名判断是否已经注册过了
+//            MerchantUserEntity user = merchantUserService.getByMobile(dto.getMobile());
+//            if(null!=user){
+//                return new Result().error("改注册账号已存在，请换个账号重新注册!");
+//            }
 //            dto.setCreateDate(new Date());
 //            merchantUserService.save(dto);
 //            return new Result();
@@ -301,4 +306,5 @@ public class MerchantUserController {
         List list=merchantUserService.getMerchantByMobile(mobile);
         return new Result().ok(list);
     }
+
 }

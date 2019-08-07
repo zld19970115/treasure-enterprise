@@ -68,4 +68,8 @@ public class MerchantUserEntity implements Serializable {
 	private String merchantid;
 	private Date createDate;
 	private Long creator;
+	/**
+	 * 父节点
+	 */
+	private Long pid;
 }

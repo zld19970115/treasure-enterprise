@@ -18,13 +18,9 @@ import java.util.Date;
 @Data
 @ApiModel(value = "商户管理员注册")
 public class MerchantUserRegisterDTO {
-
-
-
 	@ApiModelProperty(value = "手机号码")
 	@NotBlank(message="手机号码不能为空")
 	private String mobile;
-
 	@ApiModelProperty(value = "密码")
 	@NotBlank(message ="密码不能为空")
 	private String oldPassword;
@@ -33,14 +29,8 @@ public class MerchantUserRegisterDTO {
 	private String newPassword;
 	@ApiModelProperty(value = "微信名称")
 	private String weixinname;
-
 	@ApiModelProperty(value = "微信头像")
 	private String weixinurl;
-
 	@ApiModelProperty(value = "")
 	private String openid;
-	@ApiModelProperty(value="验证码")
-	@NotBlank(message = "验证码不能为空")
-	private String code;
-
 }

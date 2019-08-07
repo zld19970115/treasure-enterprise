@@ -3,9 +3,13 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.common.validator.group.AddGroup;
+import io.treasure.common.validator.group.UpdateGroup;
 import lombok.Data;
+import org.apache.ibatis.annotations.Update;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -23,11 +27,12 @@ public class MerchantUserDTO {
 	private Long id;
 
 	@ApiModelProperty(value = "手机号码")
-	@NotBlank(message="手机号码不能为空")
+	@NotBlank(message="手机号码不能为空",groups = AddGroup.class)
+	@NotBlank(message="手机号码不能为空",groups = UpdateGroup.class)
 	private String mobile;
 
 	@ApiModelProperty(value = "密码")
-	@NotBlank(message ="密码不能为空")
+	@NotBlank(message ="密码不能为空",groups = AddGroup.class)
 	private String password;
 
 	@ApiModelProperty(value = "微信名称")
@@ -50,15 +55,23 @@ public class MerchantUserDTO {
 
 	@ApiModelProperty(value = "创建时间")
 	private Date createDate;
-
 	@ApiModelProperty(value = "创建者")
+	@NotNull(message = "创建者不能为空",groups = AddGroup.class)
 	private Long creator;
 
 	@ApiModelProperty(value = "修改者")
+	@NotNull(message = "修改者不能为空",groups = UpdateGroup.class)
 	private Long updater;
-
 	@ApiModelProperty(value = "商户编号")
+	@NotBlank(message = "商户不能为空",groups=AddGroup.class)
+	@NotBlank(message = "商户不能为空",groups = UpdateGroup.class)
 	private String merchantid;
-
+	@ApiModelProperty(value = "父节点")
+	@NotNull(message = "父节点不能为空",groups = AddGroup.class)
+	@NotNull(message = "父级点不能为空",groups = UpdateGroup.class)
+	private Long pid;
+	@NotNull(message = "角色不能为空",groups=AddGroup.class)
+	@NotNull(message = "角色不能为空",groups = UpdateGroup.class)
+	private Long roleId;
 
 }
