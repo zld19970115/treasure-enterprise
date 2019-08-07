@@ -76,7 +76,7 @@ public class MerchantRoomController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<MerchantRoomDTO> get(long id){
+    public Result<MerchantRoomDTO> get(@PathVariable("id") Long id){
         MerchantRoomDTO data = merchantRoomService.get(id);
         return new Result<MerchantRoomDTO>().ok(data);
     }
