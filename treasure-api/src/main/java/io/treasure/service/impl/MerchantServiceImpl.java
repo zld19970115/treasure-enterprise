@@ -25,8 +25,8 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
      * @param id
      */
     @Override
-    public void remove(long id) {
-        baseDao.remove(id);
+    public void remove(long id,int status) {
+        baseDao.updateStatusById(id,status);
     }
 
     /**
@@ -40,6 +40,15 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         return baseDao.getByNameAndCards(name,cards);
     }
 
+    /**
+     * 闭店
+     * @param id
+     * @param status
+     */
+    @Override
+    public void closeShop(long id, int status) {
+        baseDao.updateStatusById(id,status);
+    }
 
 
     /**
@@ -54,7 +63,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         String status= (String) params.get("status");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
+        wrapper.in(StringUtils.isNotBlank(status),"status",status);
         return wrapper;
     }
 }

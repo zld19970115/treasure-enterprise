@@ -106,4 +106,8 @@ public class MerchantEntity implements Serializable {
      * 1-未审核，2-审核通过，3-审核未通过;审核状态
      */
 	private Integer auditstatus;
+	/**
+	 * 闭店时间
+	 */
+	private String closeshophours;
 }

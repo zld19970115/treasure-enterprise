@@ -66,7 +66,7 @@ public class MerchantController {
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         int status=Common.STATUS_ON.getStatus();
-        params.put("status",status+"");
+        params.put("status",Common.STATUS_ON.getStatus()+","+Common.STATUS_CLOSE.getStatus());
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
@@ -135,7 +135,27 @@ public class MerchantController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result delete(Long id){
-        merchantService.remove(id);
+        merchantService.remove(id,Common.STATUS_DELETE.getStatus());
+        return new Result();
+    }
+    @Login
+    @PutMapping("closeShop")
+    @ApiOperation("闭店")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result closeShop(Long id){
+        merchantService.closeShop(id,Common.STATUS_CLOSE.getStatus());
+        return new Result();
+    }
+    @Login
+    @PutMapping("setUpShop")
+    @ApiOperation("营业中")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result setUpShop(Long id){
+        merchantService.closeShop(id,Common.STATUS_ON.getStatus());
         return new Result();
     }
 }

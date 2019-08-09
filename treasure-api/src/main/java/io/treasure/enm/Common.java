@@ -9,7 +9,9 @@ public enum Common {
 	/**禁用**/
 	STATUS_OFF(0),
 	/**删除**/
-	STATUS_DELETE(9);
+	STATUS_DELETE(9),
+	/**闭店**/
+	STATUS_CLOSE(2);
 
 	private int status;
 	private Common(int status) {

@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO> {
     //删除
-    void remove(long id);
+    void remove(long id,int status);
     MerchantEntity getByNameAndCards(String name, String cards);
+    //闭店
+    void closeShop(long id ,int status);
 }

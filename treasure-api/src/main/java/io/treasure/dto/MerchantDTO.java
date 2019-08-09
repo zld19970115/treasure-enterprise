@@ -92,6 +92,8 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "1-未审核，2-审核通过，3-审核未通过;审核状态")
 	private Integer auditstatus;
-
+	@ApiModelProperty(value = "闭店时间")
+	@NotBlank(message = "闭店时间不能为空")
+	private String closeshophours;
 
 }

@@ -1,5 +1,6 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
@@ -14,11 +15,11 @@ import java.util.Date;
  * @since 1.0.0 2019-08-09
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
 @TableName("ct_merchant_order_detail")
 public class MerchantOrderDetailEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
-
+	@TableId
+	private Long id;
     /**
      * 订单号
      */

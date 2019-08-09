@@ -127,7 +127,7 @@ public class MerchantOrderController {
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
     @GetMapping("getById")
-    @ApiOperation("信息")
+    @ApiOperation("详细信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
     })
