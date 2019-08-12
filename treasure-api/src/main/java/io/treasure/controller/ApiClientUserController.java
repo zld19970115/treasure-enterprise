@@ -138,6 +138,16 @@ public class ApiClientUserController {
         return new Result().ok(bool);
     }
 
+    @GetMapping("userRegisterByCode")
+    @ApiOperation("用户注册验证码(返回验证码)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="tel",value="手机号",required=true,paramType="query")
+    })
+    public Result register(String tel){
+        Result result= SendSMSUtil.sendCodeForRegister(tel,smsConfig);
+        return result;
+    }
+
     @GetMapping("userRegisterVerifyCode")
     @ApiOperation("用户注册验证码校验")
     @ApiImplicitParams({
