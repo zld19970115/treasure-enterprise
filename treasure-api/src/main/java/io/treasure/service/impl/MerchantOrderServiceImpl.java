@@ -24,6 +24,8 @@ public class MerchantOrderServiceImpl extends CrudServiceImpl<MerchantOrderDao, 
     @Override
     public QueryWrapper<MerchantOrderEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
+        //状态
+        String status=(String)params.get("status");
         //订单支付状态
         String payStatus=(String)params.get("payStatus");
         //商户
@@ -34,12 +36,11 @@ public class MerchantOrderServiceImpl extends CrudServiceImpl<MerchantOrderDao, 
         }else{
             wrapper.eq(StringUtils.isNotBlank(payStatus), "pay_status",payStatus);
         }
-        wrapper.eq("status", Common.STATUS_ON.getStatus());
+        wrapper.eq(StringUtils.isNotBlank(status),"status", status);
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
-
     /**
      * 删除订单
      * @param id

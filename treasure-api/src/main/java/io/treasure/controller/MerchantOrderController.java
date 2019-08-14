@@ -12,6 +12,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.Order;
+import io.treasure.entity.MerchantOrderDetailEntity;
 import io.treasure.service.MerchantOrderDetailService;
 import io.treasure.service.MerchantOrderService;
 import io.swagger.annotations.Api;
@@ -53,6 +54,7 @@ public class MerchantOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("payStatus", Order.PAY_STATUS_8+"");
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -67,6 +69,7 @@ public class MerchantOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> chargePage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("payStatus", Order.PAY_STTAUS_7);
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -80,7 +83,8 @@ public class MerchantOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("payStatus", Order.PAY_STTAUS_2.getStatus()+","+Order.PAY_STTAUS_6);
+        params.put("payStatus", Order.PAY_STTAUS_2.getStatus()+","+Order.PAY_STTAUS_3+","+Order.PAY_STTAUS_6);
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -95,6 +99,7 @@ public class MerchantOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> finishPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("payStatus", Order.PAY_STTAUS_4.getStatus()+"");
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -109,11 +114,12 @@ public class MerchantOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> calcelPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("payStatus", Order.PAY_STTAUS_5.getStatus()+"");
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
-    @GetMapping("acceptPage")
-    @ApiOperation("已接受列表")
+    @GetMapping("allPage")
+    @ApiOperation("全部列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -121,8 +127,8 @@ public class MerchantOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MerchantOrderDTO>> acceptPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("payStatus", Order.PAY_STTAUS_3.getStatus()+"");
+    public Result<PageData<MerchantOrderDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -133,6 +139,8 @@ public class MerchantOrderController {
     })
     public Result<MerchantOrderDTO> get(long id){
         MerchantOrderDTO data = merchantOrderService.get(id);
+        List<MerchantOrderDetailEntity> detailList= merchantOrderDetailService.getByOrderId(id,Common.STATUS_ON.getStatus());
+        data.setDetailList(detailList);
         return new Result<MerchantOrderDTO>().ok(data);
     }
 

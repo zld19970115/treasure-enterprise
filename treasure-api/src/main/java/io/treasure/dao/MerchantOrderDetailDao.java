@@ -4,6 +4,9 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.MerchantOrderDetailEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 商户订单明细管理
  *
@@ -16,4 +19,8 @@ public interface MerchantOrderDetailDao extends BaseDao<MerchantOrderDetailEntit
      * 删除
      */
     void updateStatus(long order_id,int status);
+    /**
+     * 根据订单号，查询订单明细
+     */
+    List<MerchantOrderDetailEntity> getByOrderId(long orderId,int status);
 }

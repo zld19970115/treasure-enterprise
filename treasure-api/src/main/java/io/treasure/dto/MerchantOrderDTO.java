@@ -2,10 +2,12 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.entity.MerchantOrderDetailEntity;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -87,6 +89,7 @@ public class MerchantOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "预支付订单号")
 	private String perpayId;
-
+	@ApiModelProperty(value = "订单明细")
+	private List<MerchantOrderDetailEntity> detailList;
 
 }

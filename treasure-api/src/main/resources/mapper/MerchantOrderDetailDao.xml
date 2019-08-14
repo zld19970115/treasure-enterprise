@@ -26,5 +26,7 @@
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderDetailEntity">
         update ct_merchant_order_detail set status=#{status} where order_id=#{order_id}
     </update>
-
+    <select id="getByOrderId" parameterType="io.treasure.entity.MerchantOrderDetailEntity" resultType="io.treasure.entity.MerchantOrderDetailEntity">
+        select * from ct_merchant_order_detail where order_id =#{order_id}  and status=#{status} order by id desc
+    </select>
 </mapper>
