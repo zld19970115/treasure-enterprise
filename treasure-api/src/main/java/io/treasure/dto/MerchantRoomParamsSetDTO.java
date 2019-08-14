@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import lombok.Data;
-import org.apache.ibatis.annotations.Update;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +12,6 @@ import java.util.Date;
 
 /**
  * 商户端包房设置管理
- *
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-08-14
  */
