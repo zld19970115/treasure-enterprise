@@ -116,13 +116,20 @@ public class MerchantController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         MerchantDTO entity=merchantService.get(dto.getId());
-        if(!entity.equals(dto.getName()) || !entity.getCards().equals(dto.getCards())){
+        if(!entity.equals(dto.getName())){
             //根据修改的名称和身份账号查询
-            MerchantEntity  merchant= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+            MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
             if(null!=merchant){
                 return new Result().error("该商户您已经注册过了！");
             }
         }
+//        if(!entity.getCards().equals(dto.getCards())){
+//            //根据修改的名称和身份账号查询
+//            MerchantEntity  merchant= merchantService.getByCards(dto.getCards(),Common.STATUS_DELETE.getStatus());
+//            if(null!=merchant){
+//                return new Result().error("该商户您已经注册过了！");
+//            }
+//        }
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setUpdateDate(new Date());
         merchantService.update(dto);

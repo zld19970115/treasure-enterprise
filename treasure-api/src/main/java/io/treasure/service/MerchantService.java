@@ -16,6 +16,8 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     //删除
     void remove(long id,int status);
     MerchantEntity getByNameAndCards(String name, String cards);
+    //根据商户名称查询
+    MerchantEntity  getByName(String name,int status);
     //闭店
     void closeShop(long id ,int status);
 }

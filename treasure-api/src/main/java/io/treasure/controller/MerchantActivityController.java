@@ -52,8 +52,8 @@ public class MerchantActivityController {
         @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true, dataType="String")
     })
     public Result<PageData<MerchantActivityDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MerchantActivityDTO> page = merchantActivityService.page(params);
         params.put("status", Common.STATUS_ON.getStatus()+"");
+        PageData<MerchantActivityDTO> page = merchantActivityService.page(params);
         return new Result<PageData<MerchantActivityDTO>>().ok(page);
     }
     @GetMapping("getById")

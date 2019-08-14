@@ -41,6 +41,17 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     /**
+     * 商户名称查询
+     * @param name
+     * @param status
+     * @return
+     */
+    @Override
+    public MerchantEntity getByName(String name, int status) {
+        return baseDao.getByName(name,status);
+    }
+
+    /**
      * 闭店
      * @param id
      * @param status

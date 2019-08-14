@@ -28,8 +28,6 @@ public class MerchantActivityDTO implements Serializable {
 	private Long id;
 
 	@ApiModelProperty(value = "标题")
-	@NotBlank(message = "标题不能为空",groups = AddGroup.class)
-	@NotBlank(message = "标题不能为空",groups = UpdateGroup.class)
 	private String title;
 
 	@ApiModelProperty(value = "活动内容")
@@ -41,6 +39,8 @@ public class MerchantActivityDTO implements Serializable {
 	private String brief;
 
 	@ApiModelProperty(value = "图片")
+	@NotBlank(message = "图片不能为空",groups = AddGroup.class)
+	@NotBlank(message = "图片不能为空",groups = UpdateGroup.class)
 	private String icon;
 
 	@ApiModelProperty(value = "类型")
@@ -58,6 +58,6 @@ public class MerchantActivityDTO implements Serializable {
 	@ApiModelProperty(value = "")
 	@NotNull(message = "修改者不能为空",groups = UpdateGroup.class)
 	private Long updater;
-
+	private Integer status;
 
 }

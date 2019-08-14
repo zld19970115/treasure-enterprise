@@ -17,6 +17,8 @@ import java.util.Map;
 public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据名称和身份账号查询
     MerchantEntity getByNameAndCards(String name, String cards);
+    //根据商户名查询
+    MerchantEntity getByName(String name,int status);
     //根据id修改状态
     void updateStatusById(long id,int status);
 }
