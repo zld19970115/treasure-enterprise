@@ -109,32 +109,32 @@ public class MerchantController {
         merchantUserService.update(user,null);
         return new Result();
     }
-    @Login
-    @PutMapping
-    @ApiOperation("修改")
-    public Result update(@RequestBody MerchantDTO dto){
-        //效验数据
-        ValidatorUtils.validateEntity(dto);
-        MerchantDTO entity=merchantService.get(dto.getId());
-        if(!entity.getName().equals(dto.getName())){
-            //根据修改的名称和身份账号查询
-            MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
-            if(null!=merchant){
-                return new Result().error("该商户您已经注册过了！");
-            }
-        }
-//        if(!entity.getCards().equals(dto.getCards())){
+//    @Login
+//    @PutMapping
+//    @ApiOperation("修改")
+//    public Result update(@RequestBody MerchantDTO dto){
+//        //效验数据
+//        ValidatorUtils.validateEntity(dto);
+//        MerchantDTO entity=merchantService.get(dto.getId());
+//        if(!entity.getName().equals(dto.getName())){
 //            //根据修改的名称和身份账号查询
-//            MerchantEntity  merchant= merchantService.getByCards(dto.getCards(),Common.STATUS_DELETE.getStatus());
+//            MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
 //            if(null!=merchant){
 //                return new Result().error("该商户您已经注册过了！");
 //            }
 //        }
-        dto.setStatus(Common.STATUS_ON.getStatus());
-        dto.setUpdateDate(new Date());
-        merchantService.update(dto);
-        return new Result();
-    }
+////        if(!entity.getCards().equals(dto.getCards())){
+////            //根据修改的名称和身份账号查询
+////            MerchantEntity  merchant= merchantService.getByCards(dto.getCards(),Common.STATUS_DELETE.getStatus());
+////            if(null!=merchant){
+////                return new Result().error("该商户您已经注册过了！");
+////            }
+////        }
+//        dto.setStatus(Common.STATUS_ON.getStatus());
+//        dto.setUpdateDate(new Date());
+//        merchantService.update(dto);
+//        return new Result();
+//    }
     @Login
     @PutMapping("updateBasic")
     @ApiOperation("修改店铺名称")
@@ -148,7 +148,7 @@ public class MerchantController {
             @ApiImplicitParam(name = "address", value = "店铺地址", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "cards", value = "身份证号码", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "businesslicense", value = "营业执照", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
     public Result updateBasic(long id,String headurl,String name,String brief,String log,String lat,String address,String cards,String businesslicense,long updater){
         MerchantDTO entity=merchantService.get(id);
@@ -180,11 +180,11 @@ public class MerchantController {
             @ApiImplicitParam(name = "businesshours", value = "营业时间", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "closeshophours", value = "关店时间", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "tel", value = "联系电话", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
-    public Result updateHourse(long id,String businessshours,String closeshophours,String tel,long updater){
+    public Result updateHourse(long id,String businesshours,String closeshophours,String tel,long updater){
         MerchantDTO entity=merchantService.get(id);
-        entity.setBusinesshours(businessshours);
+        entity.setBusinesshours(businesshours);
         entity.setCloseshophours(closeshophours);
         entity.setTel(tel);
         entity.setUpdateDate(new Date());
@@ -197,8 +197,8 @@ public class MerchantController {
     @ApiOperation("修改店铺类型")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
-            @ApiImplicitParam(name = "categoryid", value = "营业时间", paramType = "query", required = true, dataType = "long"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "categoryid", value = "店铺分类", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
     public Result updateCategory(long id,long categoryid,long updater){
         MerchantDTO entity=merchantService.get(id);
