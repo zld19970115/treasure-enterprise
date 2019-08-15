@@ -95,5 +95,8 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "闭店时间")
 	@NotBlank(message = "闭店时间不能为空")
 	private String closeshophours;
-
+	@ApiModelProperty(value ="联系电话")
+	private String tel;
+	@ApiModelProperty(value ="预约天数")
+	private Integer days;
 }

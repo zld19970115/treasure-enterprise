@@ -116,7 +116,7 @@ public class MerchantController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         MerchantDTO entity=merchantService.get(dto.getId());
-        if(!entity.equals(dto.getName())){
+        if(!entity.getName().equals(dto.getName())){
             //根据修改的名称和身份账号查询
             MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
             if(null!=merchant){
@@ -133,6 +133,79 @@ public class MerchantController {
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setUpdateDate(new Date());
         merchantService.update(dto);
+        return new Result();
+    }
+    @Login
+    @PutMapping("updateBasic")
+    @ApiOperation("修改店铺名称")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "headurl", value ="店铺头像", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "name", value = "店铺名称", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "brief", value = "店铺简介", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "log", value = "店铺经度", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "lat", value = "店铺纬度", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "address", value = "店铺地址", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "cards", value = "身份证号码", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "businesslicense", value = "营业执照", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+    })
+    public Result updateBasic(long id,String headurl,String name,String brief,String log,String lat,String address,String cards,String businesslicense,long updater){
+        MerchantDTO entity=merchantService.get(id);
+        if(!entity.getName().equals(name)){
+            //根据修改的名称和身份账号查询
+            MerchantEntity  merchant= merchantService.getByName(name,Common.STATUS_DELETE.getStatus());
+            if(null!=merchant){
+                return new Result().error("该商户您已经注册过了！");
+            }
+        }
+        entity.setHeadurl(headurl);
+        entity.setName(name);
+        entity.setBrief(brief);
+        entity.setLog(log);
+        entity.setLat(lat);
+        entity.setAddress(address);
+        entity.setCards(cards);
+        entity.setBusinesslicense(businesslicense);
+        entity.setUpdateDate(new Date());
+        entity.setUpdater(updater);
+        merchantService.update(entity);
+        return new Result();
+    }
+    @Login
+    @PutMapping("updateHourse")
+    @ApiOperation("修改店铺开店、闭店时间和联系电话")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "businesshours", value = "营业时间", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "closeshophours", value = "关店时间", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "tel", value = "联系电话", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+    })
+    public Result updateHourse(long id,String businessshours,String closeshophours,String tel,long updater){
+        MerchantDTO entity=merchantService.get(id);
+        entity.setBusinesshours(businessshours);
+        entity.setCloseshophours(closeshophours);
+        entity.setTel(tel);
+        entity.setUpdateDate(new Date());
+        entity.setUpdater(updater);
+        merchantService.update(entity);
+        return new Result();
+    }
+    @Login
+    @PutMapping("updateCategory")
+    @ApiOperation("修改店铺类型")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "categoryid", value = "营业时间", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+    })
+    public Result updateCategory(long id,long categoryid,long updater){
+        MerchantDTO entity=merchantService.get(id);
+        entity.setCategoryid(categoryid);
+        entity.setUpdateDate(new Date());
+        entity.setUpdater(updater);
+        merchantService.update(entity);
         return new Result();
     }
     @Login

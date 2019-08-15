@@ -110,4 +110,12 @@ public class MerchantEntity implements Serializable {
 	 * 闭店时间
 	 */
 	private String closeshophours;
+	/**
+	 * 联系电话
+	 */
+	private String tel;
+	/**
+	 * 预约天数
+	 */
+	private Integer days;
 }
