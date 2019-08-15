@@ -17,4 +17,6 @@ public interface MerchantRoomService extends CrudService<MerchantRoomEntity, Mer
     void remove(long id,int status);
     //根据名称和商户id查询
     List getByNameAndMerchantId(String name, long merchantId,int type);
+    //根据商户编号查询包房信息
+    List getByMerchantId(long merchantId,int status);
 }

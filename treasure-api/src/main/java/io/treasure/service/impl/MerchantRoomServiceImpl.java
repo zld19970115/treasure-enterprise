@@ -61,4 +61,14 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     public List getByNameAndMerchantId(String name, long merchantId,int type) {
         return baseDao.getByNameAndMerchantId(name,merchantId,type);
     }
+
+    /**
+     * 根据商户查询包房信息
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public List getByMerchantId(long merchantId,int status) {
+        return baseDao.getByMerchantId(merchantId,status);
+    }
 }

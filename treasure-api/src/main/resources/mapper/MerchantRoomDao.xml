@@ -26,4 +26,7 @@
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
         select * from ct_merchant_room  where merchant_id=#{merchantId} and name=#{name} and type=#{type} and status!=9 order by id desc
     </select>
+    <select id="getByMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
+        select * from ct_merchant_room  where merchant_id=#{merchantId} and status=#{status} order by id desc
+    </select>
 </mapper>
