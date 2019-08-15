@@ -76,7 +76,7 @@ public class MerchantRoomController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<MerchantRoomDTO> get(@PathVariable("id") Long id){
+    public Result<MerchantRoomDTO> get(Long id){
         MerchantRoomDTO data = merchantRoomService.get(id);
         return new Result<MerchantRoomDTO>().ok(data);
     }
@@ -91,6 +91,7 @@ public class MerchantRoomController {
         }
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
+        dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setCreateDate(new Date());
         merchantRoomService.save(dto);
         return new Result();

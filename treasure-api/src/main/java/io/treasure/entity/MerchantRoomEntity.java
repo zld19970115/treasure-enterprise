@@ -53,7 +53,7 @@ public class MerchantRoomEntity extends BaseEntity {
     /**
      * 状态
      */
-	private String status;
+	private int status;
     /**
      * 修改时间
      */
