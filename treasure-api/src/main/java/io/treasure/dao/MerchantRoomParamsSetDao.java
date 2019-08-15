@@ -12,5 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetEntity> {
-	
+    //修改状态
+    void updateStatus(long id,int status);
 }

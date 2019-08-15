@@ -51,11 +51,12 @@ public class MerchantRoomParamsSetController {
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType="long")
     })
     public Result<PageData<MerchantRoomParamsSetDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantRoomParamsSetDTO> page = merchantRoomParamsSetService.page(params);
-
         return new Result<PageData<MerchantRoomParamsSetDTO>>().ok(page);
     }
 
@@ -67,7 +68,7 @@ public class MerchantRoomParamsSetController {
 //        return new Result<MerchantRoomParamsSetDTO>().ok(data);
 //    }
 
-    @PostMapping
+    @PostMapping("save")
     @ApiOperation("预约包房设置")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType="long") ,
@@ -136,14 +137,13 @@ public class MerchantRoomParamsSetController {
 //        return new Result();
 //    }
 
-    @DeleteMapping
+    @DeleteMapping("remove")
     @ApiOperation("删除")
-    public Result delete(@RequestBody Long[] ids){
-        //效验数据
-        AssertUtils.isArrayEmpty(ids, "id");
-
-        merchantRoomParamsSetService.delete(ids);
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result delete(long id){
+        merchantRoomParamsSetService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
 }

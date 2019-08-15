@@ -23,12 +23,23 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
     @Override
     public QueryWrapper<MerchantRoomParamsSetEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        //状态
+        String status=(String)params.get("status");
+        //商户
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MerchantRoomParamsSetEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         return wrapper;
     }
 
-
+    /**
+     * 删除
+     * @param id
+     */
+    @Override
+    public void remove(long id,int status) {
+        baseDao.updateStatus(id,status);
+    }
 }
