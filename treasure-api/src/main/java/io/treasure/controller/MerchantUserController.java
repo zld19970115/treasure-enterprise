@@ -54,6 +54,8 @@ public class MerchantUserController {
     private TokenService tokenService;
     @Autowired
     private SMSConfig smsConfig;
+
+    @Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
@@ -283,6 +285,7 @@ public class MerchantUserController {
      * @param id
      * @return
      */
+    @Login
     @GetMapping("getMerchantAllByUserId")
     @ApiOperation("根据会员Id显示商户信息")
     @ApiImplicitParams({
@@ -297,6 +300,7 @@ public class MerchantUserController {
      * @param mobile
      * @return
      */
+    @Login
     @GetMapping("getMerchantAllByMobile")
     @ApiOperation("根据会员手机号码示商户信息")
     @ApiImplicitParams({

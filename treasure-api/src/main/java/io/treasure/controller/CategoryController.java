@@ -41,7 +41,7 @@ import java.util.Map;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
-
+    @Login
     @GetMapping("pageOn")
     @ApiOperation("显示中列表")
     @ApiImplicitParams({
@@ -58,6 +58,7 @@ public class CategoryController {
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
+    @Login
     @GetMapping("pageOff")
     @ApiOperation("隐藏中列表")
     @ApiImplicitParams({
@@ -74,6 +75,7 @@ public class CategoryController {
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -184,6 +186,7 @@ public class CategoryController {
      * @param merchantId
      * @return
      */
+    @Login
     @GetMapping("getAllByMerchantId")
     @ApiOperation("显示商户对应的分类")
     @ApiImplicitParams({

@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class MerchantOrderDetailController {
     @Autowired
     private MerchantOrderDetailService merchantOrderDetailService;
-
+    @Login
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -50,7 +51,7 @@ public class MerchantOrderDetailController {
 
         return new Result<PageData<MerchantOrderDetailDTO>>().ok(page);
     }
-
+    @Login
     @GetMapping("{id}")
     @ApiOperation("信息")
     public Result<MerchantOrderDetailDTO> get(@PathVariable("id") Long id){
@@ -58,7 +59,7 @@ public class MerchantOrderDetailController {
 
         return new Result<MerchantOrderDetailDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantOrderDetailDTO dto){
@@ -69,7 +70,7 @@ public class MerchantOrderDetailController {
 
         return new Result();
     }
-
+    @Login
     @PutMapping
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantOrderDetailDTO dto){
@@ -80,7 +81,7 @@ public class MerchantOrderDetailController {
 
         return new Result();
     }
-
+    @Login
     @DeleteMapping
     @ApiOperation("删除")
     public Result delete(@RequestBody Long[] ids){

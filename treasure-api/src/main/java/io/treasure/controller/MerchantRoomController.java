@@ -38,7 +38,7 @@ import java.util.Map;
 public class MerchantRoomController {
     @Autowired
     private MerchantRoomService merchantRoomService;
-
+    @Login
     @GetMapping("roomPage")
     @ApiOperation("包房列表")
     @ApiImplicitParams({
@@ -55,6 +55,7 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
+    @Login
     @GetMapping("deskPage")
     @ApiOperation("桌列表")
     @ApiImplicitParams({
@@ -71,6 +72,7 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({

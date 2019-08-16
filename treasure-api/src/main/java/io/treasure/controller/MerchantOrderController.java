@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -43,6 +44,8 @@ public class MerchantOrderController {
     private MerchantOrderService merchantOrderService;
     @Autowired
     private MerchantOrderDetailService merchantOrderDetailService;
+
+    @Login
     @GetMapping("appointmentPage")
     @ApiOperation("预约列表")
     @ApiImplicitParams({
@@ -58,6 +61,8 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @Login
     @GetMapping("chargePage")
     @ApiOperation("已退单列表")
     @ApiImplicitParams({
@@ -73,6 +78,7 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @Login
     @GetMapping("ongPage")
     @ApiOperation("进行中列表")
     @ApiImplicitParams({
@@ -88,6 +94,7 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @Login
     @GetMapping("finishPage")
     @ApiOperation("已完成列表")
     @ApiImplicitParams({
@@ -103,6 +110,7 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @Login
     @GetMapping("calcelPage")
     @ApiOperation("已取消列表")
     @ApiImplicitParams({
@@ -118,6 +126,7 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @Login
     @GetMapping("allPage")
     @ApiOperation("全部列表")
     @ApiImplicitParams({
@@ -132,6 +141,7 @@ public class MerchantOrderController {
         PageData<MerchantOrderDTO> page = merchantOrderService.page(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -165,6 +175,7 @@ public class MerchantOrderController {
 //
 //        return new Result();
 //    }
+    @Login
     @Transient
     @DeleteMapping("delete")
     @ApiOperation("删除")

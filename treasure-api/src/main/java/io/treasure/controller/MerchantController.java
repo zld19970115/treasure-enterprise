@@ -56,6 +56,8 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantUserService merchantUserService;
+
+    @Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({

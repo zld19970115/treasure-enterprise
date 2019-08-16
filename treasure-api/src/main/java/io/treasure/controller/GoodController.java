@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -38,7 +39,7 @@ import java.util.Map;
 public class GoodController {
     @Autowired
     private GoodService goodService;
-
+    @Login
     @GetMapping("onPage")
     @ApiOperation("销售中商品列表")
     @ApiImplicitParams({
@@ -53,6 +54,7 @@ public class GoodController {
         PageData<GoodDTO> page = goodService.page(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
+    @Login
     @GetMapping("offPage")
     @ApiOperation("已下架品列表")
     @ApiImplicitParams({
@@ -67,6 +69,7 @@ public class GoodController {
         PageData<GoodDTO> page = goodService.page(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({

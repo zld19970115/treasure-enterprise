@@ -18,6 +18,7 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="roomName" column="room_name"></result>
     </resultMap>
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantRoomParamsSetEntity">
         update ct_merchant_room_params_set set status=#{status} where id=#{id}

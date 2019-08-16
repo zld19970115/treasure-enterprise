@@ -30,7 +30,8 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	@NotNull(message = "包房编号不能为空",groups = AddGroup.class)
 	@NotNull(message = "包房编号不能为空",groups = UpdateGroup.class)
 	private Long roomId;
-
+	@ApiModelProperty(value = "包房名称")
+	private String roomName;
 	@ApiModelProperty(value = "1-包房，2-桌")
 	private Integer type;
 

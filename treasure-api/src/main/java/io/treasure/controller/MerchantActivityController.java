@@ -41,7 +41,7 @@ import java.util.Map;
 public class MerchantActivityController {
     @Autowired
     private MerchantActivityService merchantActivityService;
-
+    @Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
@@ -56,6 +56,7 @@ public class MerchantActivityController {
         PageData<MerchantActivityDTO> page = merchantActivityService.page(params);
         return new Result<PageData<MerchantActivityDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getById")
     @ApiOperation("信息")
     @ApiImplicitParams({

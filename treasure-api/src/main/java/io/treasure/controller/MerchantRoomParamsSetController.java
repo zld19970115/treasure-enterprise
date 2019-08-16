@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.DateUtils;
@@ -45,6 +46,7 @@ public class MerchantRoomParamsSetController {
     //商户
     @Autowired
     private MerchantService merchantService;
+    @Login
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -67,7 +69,7 @@ public class MerchantRoomParamsSetController {
 //
 //        return new Result<MerchantRoomParamsSetDTO>().ok(data);
 //    }
-
+    @Login
     @PostMapping("save")
     @ApiOperation("预约包房设置")
     @ApiImplicitParams({
@@ -105,12 +107,14 @@ public class MerchantRoomParamsSetController {
                         String sysTime=setdate+" "+DateUtils.format(setHourse,"HH:mm");
                         for(int room=0;room<list.size();room++){
                             Map map= (Map) list.get(room);
-                            String id=String.valueOf(map.get("id"));
+                            String roomId=String.valueOf(map.get("id"));
+                            String roomName=String.valueOf(map.get("name"));
                             MerchantRoomParamsSetDTO dto=new MerchantRoomParamsSetDTO();
                             dto.setCreateDate(new Date());
                             dto.setCreator(creator);
                             dto.setMerchantId(merchantId);
-                            dto.setRoomId(Long.parseLong(id));
+                            dto.setRoomId(Long.parseLong(roomId));
+                            dto.setRoomName(roomName);
                             dto.setState(MerchantRoomEnm.STATE_USE_NO.getType());
                             dto.setUseDate(DateUtils.stringToDate(sysTime,"yyyy-MM-dd HH:mm"));
                             dto.setStatus(Common.STATUS_ON.getStatus());
@@ -136,7 +140,7 @@ public class MerchantRoomParamsSetController {
 //
 //        return new Result();
 //    }
-
+    @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")
     @ApiImplicitParams({

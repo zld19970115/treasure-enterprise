@@ -58,4 +58,8 @@ public class MerchantRoomParamsSetEntity extends BaseEntity {
      * 修改者
      */
 	private Long updater;
+	/**
+	 * 包房名称
+	 */
+	private String roomName;
 }
