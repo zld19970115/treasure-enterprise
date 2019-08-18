@@ -21,4 +21,6 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     MerchantEntity getByName(String name,int status);
     //根据id修改状态
     void updateStatusById(long id,int status);
+
+    List<MerchantEntity> getMerchantList(Map<String, Object> params);
 }

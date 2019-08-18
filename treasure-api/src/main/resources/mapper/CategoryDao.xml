@@ -6,31 +6,19 @@
     <resultMap type="io.treasure.entity.CategoryEntity" id="categoryMap">
 
         <result property="id" column="id"/>
+        <result property="pid" column="pid"/>
         <result property="name" column="name"/>
         <result property="sort" column="sort"/>
         <result property="status" column="status"/>
         <result property="showInCommend" column="show_in_commend"/>
+        <result property="showInNav" column="show_in_nav"/>
         <result property="icon" column="icon"/>
         <result property="remarks" column="remarks"/>
         <result property="creator" column="creator"/>
         <result property="createDate" column="create_date"/>
         <result property="updater" column="updater"/>
         <result property="updateDate" column="update_date"/>
-        <result property="brief" column="brief"/>
-        <result property="merchantId" column="merchant_id"/>
     </resultMap>
 
-    <update id="on" parameterType="io.treasure.entity.CategoryEntity">
-        update ct_category set status=#{status} where id=#{id}
-    </update>
-    <update id="off" parameterType="io.treasure.entity.CategoryEntity">
-        update ct_category set status=#{status} where id=#{id}
-    </update>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_category  where name = #{name} and merchant_id=#{merchantId}  and status!=9 order by id desc
-    </select>
 
-    <select id="getAllByMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_category  where merchant_id=#{merchantId}  and status=1 order by id desc
-    </select>
 </mapper>

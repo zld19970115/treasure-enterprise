@@ -44,4 +44,15 @@
     <select id="getByCards" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.MerchantEntity">
         select * from ct_merchant where cards=#{cards}  and status!=#{status} order by id desc
     </select>
+
+    <select id="getMerchantList" resultType="io.treasure.entity.MerchantEntity">
+        select *,ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000) AS distance FROM ct_merchant having distance &lt;= 5000 and status=1
+        <if test="recommend != null and recommend.trim() != ''">
+            and recommend = #{recommend}
+        </if>
+        <if test="recommend != null and recommend.trim() != ''">
+            and recommend = #{recommend}
+        </if>
+    </select>
 </mapper>

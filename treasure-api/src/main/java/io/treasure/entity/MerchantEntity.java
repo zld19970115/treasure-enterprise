@@ -118,4 +118,20 @@ public class MerchantEntity implements Serializable {
 	 * 预约天数
 	 */
 	private Integer days;
+	/**
+	 * 是否推荐：0否，1是；
+	 */
+	private String recommend;
+	/**
+	 * 特色菜；多个菜名用英文逗号分隔
+	 */
+	private String characteristic;
+
+	/**
+	 * 距离
+	 */
+	@TableField(exist=false)
+	private String distance;
+
+
 }

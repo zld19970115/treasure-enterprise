@@ -1,83 +1,43 @@
+
 package io.treasure.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.constant.Constant;
 import io.treasure.dao.CategoryDao;
 import io.treasure.dto.CategoryDTO;
 import io.treasure.entity.CategoryEntity;
 import io.treasure.service.CategoryService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.treasure.common.service.impl.CrudServiceImpl;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
  * 店铺类型分类表
  *
  * @author Super 63600679@qq.com
- * @since 1.0.0 2019-07-24
+ * @since 1.0.0 2019-08-18
  */
 @Service
 public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEntity, CategoryDTO> implements CategoryService {
-    /**
-     * 显示数据
-     * @param id
-     */
-    @Override
-    public void on(Long id,int status) {
-        baseDao.on(id,status);
-    }
-
-    /**
-     * 隐藏数据
-     * @param id
-     */
-    @Override
-    public void off(Long id,int status) {
-        baseDao.off(id,status);
-    }
-
-    /**
-     * 根据分类名称和商户Id
-     * @param name
-     * @param merchantId
-     * @return
-     */
-    @Override
-    public List getByNameAndMerchantId(String name, long merchantId) {
-        return baseDao.getByNameAndMerchantId(name,merchantId);
-    }
-
-    @Override
-    public List getAllByMerchantId(long merchantId) {
-        return baseDao.getAllByMerchantId(merchantId);
-    }
-
-    /**
-     * 删除
-     * @param id
-     * @param status
-     */
-    @Override
-    public void remove(Long id, int status) {
-        baseDao.on(id,status);
-    }
 
     @Override
     public QueryWrapper<CategoryEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
+
         //状态
-        String status=(String)params.get("status");
-        //菜品名称
-        String name=(String)params.get("name");
-        //商户Id
-        String merchantId=(String)params.get("merchantId");
+        String status = (String)params.get("status");
+        //是否推荐
+        String showInCommend = (String)params.get("showInCommend");
+        //是否导航栏
+        String showInNav = (String)params.get("showInCommend");
         QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-        wrapper.eq(StringUtils.isNotBlank(status), "status", status);
-        wrapper.like(StringUtils.isNotBlank(name),"name",name);
-        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
+        wrapper.eq(StringUtils.isNotBlank(showInCommend), "show_in_commend", showInCommend);
+        wrapper.eq(StringUtils.isNotBlank(showInNav), "show_in_nav", showInNav);
+        wrapper.eq("pid", 0L);
         return wrapper;
     }
 

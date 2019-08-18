@@ -5,25 +5,19 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.CategoryDTO;
+import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.enm.Common;
-import io.treasure.entity.CategoryEntity;
-import io.treasure.service.CategoryService;
+import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.service.GoodCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.hamcrest.core.IsNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +32,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/category")
 @Api(tags="店铺类型分类表")
-public class CategoryController {
+public class GoodCategoryController {
     @Autowired
-    private CategoryService categoryService;
+    private GoodCategoryService goodCategoryService;
     @Login
     @GetMapping("pageOn")
     @ApiOperation("显示中列表")
@@ -51,12 +45,12 @@ public class CategoryController {
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
     })
-    public Result<PageData<CategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
+    public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params, String name, String merchantId){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));
         params.put("name",name);
         params.put("merchantId",merchantId);
-        PageData<CategoryDTO> page = categoryService.page(params);
-        return new Result<PageData<CategoryDTO>>().ok(page);
+        PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
+        return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
     @Login
     @GetMapping("pageOff")
@@ -68,12 +62,12 @@ public class CategoryController {
             @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
     })
-    public Result<PageData<CategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params,String name,String merchantId){
+    public Result<PageData<GoodCategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params, String name, String merchantId){
         params.put("status", String.valueOf(Common.STATUS_OFF.getStatus()));
         params.put("name",name);
         params.put("merchantId",merchantId);
-        PageData<CategoryDTO> page = categoryService.page(params);
-        return new Result<PageData<CategoryDTO>>().ok(page);
+        PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
+        return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
     @Login
     @GetMapping("getById")
@@ -81,22 +75,22 @@ public class CategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<CategoryDTO> get(Long id){
-        CategoryDTO data = categoryService.get(id);
-        return new Result<CategoryDTO>().ok(data);
+    public Result<GoodCategoryDTO> get(Long id){
+        GoodCategoryDTO data = goodCategoryService.get(id);
+        return new Result<GoodCategoryDTO>().ok(data);
     }
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
-    public Result save(@RequestBody CategoryDTO dto){
+    public Result save(@RequestBody GoodCategoryDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
-        List cate=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+        List cate= goodCategoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
         if(null!=cate && cate.size()>0){
             return new Result().error("分类名称已经存在！");
         }
-        CategoryEntity category=new CategoryEntity();
+        GoodCategoryEntity category=new GoodCategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
         category.setName(dto.getName());
@@ -105,29 +99,29 @@ public class CategoryController {
         category.setCreator(dto.getCreator());
         category.setSort(dto.getSort());
         category.setMerchantId(dto.getMerchantId());
-        categoryService.insert(category);
+        goodCategoryService.insert(category);
         return new Result();
     }
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
-    public Result update(@RequestBody CategoryDTO dto){
+    public Result update(@RequestBody GoodCategoryDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
-        CategoryDTO cate=categoryService.get(dto.getId());
+        GoodCategoryDTO cate= goodCategoryService.get(dto.getId());
         System.out.println(!cate.getName().equals(dto.getName()));
         System.out.println(cate.getMerchantId()==dto.getMerchantId());
         System.out.println(cate.getMerchantId()+"==="+dto.getMerchantId());
         if(!cate.getName().equals(dto.getName()) && cate.getMerchantId()==dto.getMerchantId()){
             //同一个商户，分类不能同名
-             List flag=categoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
+             List flag= goodCategoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
             if(null!=flag && flag.size()>0){
                 return new Result().error("分类名称已经存在！");
             }
         }
 
-        CategoryEntity category=new CategoryEntity();
+        GoodCategoryEntity category=new GoodCategoryEntity();
         category.setBrief(dto.getBrief());
         category.setIcon(dto.getIcon());
         category.setName(dto.getName());
@@ -136,7 +130,7 @@ public class CategoryController {
         category.setUpdater(dto.getCreator());
         category.setSort(dto.getSort());
         category.setId(dto.getId());
-        categoryService.updateById(category);
+        goodCategoryService.updateById(category);
         return new Result();
     }
     @Login
@@ -146,7 +140,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result delete(Long id){
-        categoryService.remove(id,Common.STATUS_DELETE.getStatus());
+        goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
 
@@ -162,7 +156,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result on(Long id){
-        categoryService.on(id,Common.STATUS_ON.getStatus());
+        goodCategoryService.on(id,Common.STATUS_ON.getStatus());
         return new Result();
     }
 
@@ -178,7 +172,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result off(Long id){
-        categoryService.off(id,Common.STATUS_OFF.getStatus());
+        goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
         return new Result();
     }
     /**
@@ -193,7 +187,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType = "long")
     })
     public Result<List> getAllByMerchantId(Long merchantId){
-       List list=categoryService.getAllByMerchantId(merchantId);
+       List list= goodCategoryService.getAllByMerchantId(merchantId);
        return new Result().ok(list);
       }
 }

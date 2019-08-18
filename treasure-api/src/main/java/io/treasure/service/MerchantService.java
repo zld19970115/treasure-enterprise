@@ -1,10 +1,12 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商户表
@@ -20,4 +22,10 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     MerchantEntity  getByName(String name,int status);
     //闭店
     void closeShop(long id ,int status);
+
+    PageData<MerchantDTO> queryPage(Map<String, Object> params);
+
+    PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
+
+    PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);
 }
