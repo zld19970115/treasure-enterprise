@@ -15,5 +15,5 @@ import java.util.Date;
 @Mapper
 public interface MerchantOrderDao extends BaseDao<MerchantOrderEntity> {
     void updateStatus(long id,int status);
-    void updateStatusAndReason(long id, int status, String verify, Date verifyDate);
+    void updateStatusAndReason(long id, int status, long verify, Date verifyDate,String verify_reason);
 }

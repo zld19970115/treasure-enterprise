@@ -16,5 +16,5 @@ public interface MerchantOrderService extends CrudService<MerchantOrderEntity, M
     //删除订单
     void remove(long id,int status);
     //同意退款
-    void updateStatusAndReason(long id, int status, String verify, Date verifyDate);
+    void updateStatusAndReason(long id, int status, long verify, Date verifyDate,String verify_reason);
 }

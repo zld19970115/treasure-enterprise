@@ -58,7 +58,7 @@ public class MerchantOrderServiceImpl extends CrudServiceImpl<MerchantOrderDao, 
      * @param status
      */
     @Override
-    public void updateStatusAndReason(long id, int status, String verify, Date verifyDate) {
-        baseDao.updateStatusAndReason(id,status,verify,verifyDate);
+    public void updateStatusAndReason(long id, int status, long verify, Date verifyDate,String verify_reason) {
+        baseDao.updateStatusAndReason(id,status,verify,verifyDate,verify_reason);
     }
 }

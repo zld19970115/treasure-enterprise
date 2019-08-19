@@ -176,10 +176,11 @@ public class MerchantOrderController {
     @ApiOperation("取消订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
-            @ApiImplicitParam(name = "verify", value = "取消原因", paramType = "query", required = true, dataType="String")
+            @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result calcelUpdate(long id,String verify){
-        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_5.getStatus(),verify,new Date());
+    public Result calcelUpdate(long id,long verify,String verify_reason){
+        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_5.getStatus(),verify,new Date(),verify_reason);
         MerchantOrderDTO dto = merchantOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getMerchantRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
@@ -189,10 +190,11 @@ public class MerchantOrderController {
     @PutMapping("acceptUpdate")
     @ApiOperation("接受订单")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
-    public Result acceptUpdate(long id){
-        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_3.getStatus(),"接受订单",new Date());
+    public Result acceptUpdate(long id,long verify){
+        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_3.getStatus(),verify,new Date(),"接受订单");
         return new Result();
     }
     @Login
@@ -200,10 +202,11 @@ public class MerchantOrderController {
     @PutMapping("finishUpdate")
     @ApiOperation("完成订单")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
-    public Result finishUpdate(long id){
-        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_4.getStatus(),"订单完成",new Date());
+    public Result finishUpdate(long id,long verify){
+        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_4.getStatus(),verify,new Date(),"完成订单");
         MerchantOrderDTO dto = merchantOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getMerchantRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
@@ -214,11 +217,12 @@ public class MerchantOrderController {
     @PutMapping("refundYesUpdate")
     @ApiOperation("同意退款")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result refundYesUpdate(long id){
+    public Result refundYesUpdate(long id,long verify){
         MerchantOrderDTO dto = merchantOrderService.get(id);
-        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_7.getStatus(),"同意退款",new Date());
+        merchantOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_7.getStatus(),verify,new Date(),"同意退款");
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getMerchantRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
@@ -228,10 +232,11 @@ public class MerchantOrderController {
     @ApiOperation("拒绝退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
-            @ApiImplicitParam(name = "verify", value = "拒绝退款原因", paramType = "query", required = true, dataType="String")
+            @ApiImplicitParam(name = "verify", value = "拒绝人", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result refundNoUpdate(long id,String verify){
-        merchantOrderService.updateStatusAndReason(id,Order.PAY_STATUS_9.getStatus(),verify,new Date());
+    public Result refundNoUpdate(long id,long verify,String verify_reason){
+        merchantOrderService.updateStatusAndReason(id,Order.PAY_STATUS_9.getStatus(),verify,new Date(),verify_reason);
         return new Result();
     }
     @Login
