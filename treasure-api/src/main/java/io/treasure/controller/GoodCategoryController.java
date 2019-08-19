@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/goodcategory")
-@Api(tags="店铺类型分类表")
+@Api(tags="菜品分类管理")
 public class GoodCategoryController {
     @Autowired
     private GoodCategoryService goodCategoryService;
