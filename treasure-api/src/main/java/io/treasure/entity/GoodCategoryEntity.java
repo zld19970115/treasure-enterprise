@@ -13,7 +13,7 @@ import java.util.Date;
  * @since 1.0.0 2019-07-24
  */
 @Data
-@TableName("ct_category")
+@TableName("ct_good_category")
 public class GoodCategoryEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 

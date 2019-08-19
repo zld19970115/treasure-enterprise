@@ -30,7 +30,7 @@ import java.util.Map;
  * @since 1.0.0 2019-07-24
  */
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/goodcategory")
 @Api(tags="店铺类型分类表")
 public class GoodCategoryController {
     @Autowired
