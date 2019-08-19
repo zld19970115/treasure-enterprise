@@ -132,6 +132,9 @@ public class MerchantEntity implements Serializable {
 	 */
 	@TableField(exist=false)
 	private String distance;
-
+	/**
+	 * 平均消费金额
+	 */
+	private Double monetary;
 
 }

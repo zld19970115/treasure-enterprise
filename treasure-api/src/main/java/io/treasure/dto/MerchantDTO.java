@@ -105,7 +105,7 @@ public class MerchantDTO implements Serializable {
 	private String characteristic;
 	@ApiModelProperty(value ="距离（米）")
 	private String distance;
-
-
+	@ApiModelProperty(value = "平均消费金额")
+	private Double monetary;
 
 }
