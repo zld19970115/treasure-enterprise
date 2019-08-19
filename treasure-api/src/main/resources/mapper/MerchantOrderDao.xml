@@ -16,6 +16,7 @@
         <result property="payStatus" column="pay_status"/>
         <result property="refundReason" column="refund_reason"/>
         <result property="refundDate" column="refund_date"/>
+        <result property="verifyReason" column="verify_reason"/>
         <result property="verify" column="verify"/>
         <result property="verifyDate" column="verify_date"/>
         <result property="status" column="status"/>
@@ -28,11 +29,12 @@
         <result property="noncestr" column="noncestr"/>
         <result property="outtradeno" column="outtradeno"/>
         <result property="perpayId" column="perpay_id"/>
+
     </resultMap>
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderEntity">
         update ct_merchant_order set status=#{status} where id=#{id}
     </update>
-    <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderEntity">
-        update ct_merchant_order set status=#{status},verify=#{verify},verify_date=#{verifyDate} where id=#{id}
+    <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantOrderEntity">
+        update ct_merchant_order set status=#{status},verify=#{verify},verify_date=#{verifyDate},verify_reason=#{verifyReason} where id=#{id}
     </update>
 </mapper>

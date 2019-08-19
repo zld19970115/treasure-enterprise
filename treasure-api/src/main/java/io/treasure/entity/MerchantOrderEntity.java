@@ -68,6 +68,10 @@ public class MerchantOrderEntity extends BaseEntity {
      * 退款/不接受/取消审核时间
      */
 	private Date verifyDate;
+	/**
+	 * 审核意见
+	 */
+	private String verifyReason;
     /**
      * 状态
      */
