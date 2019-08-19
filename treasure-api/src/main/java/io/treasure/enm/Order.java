@@ -19,7 +19,16 @@ public enum Order {
 	/**7-退款成功**/
 	PAY_STTAUS_7(7),
 	/**预约订单**/
-	PAY_STATUS_8(8);
+	PAY_STATUS_8(8),
+	/**拒绝退款**/
+	PAY_STATUS_9(9),
+	/**申请取消订单**/
+	PAY_STATUS_10(10),
+	/**微信支付**/
+	PAY_TYPE_WEIXIN(1),
+	/**支付宝支付**/
+	PAY_TYPE_ALI(2);
+
 	private int status;
 	private Order(int status) {
 		this.status = status;

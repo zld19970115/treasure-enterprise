@@ -32,5 +32,7 @@
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderEntity">
         update ct_merchant_order set status=#{status} where id=#{id}
     </update>
-
+    <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderEntity">
+        update ct_merchant_order set status=#{status},verify=#{verify},verify_date=#{verifyDate} where id=#{id}
+    </update>
 </mapper>

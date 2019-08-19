@@ -10,6 +10,7 @@ import io.treasure.service.MerchantOrderService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -48,5 +49,16 @@ public class MerchantOrderServiceImpl extends CrudServiceImpl<MerchantOrderDao, 
     @Override
     public void remove(long id,int status) {
         baseDao.updateStatus(id,status);
+    }
+
+
+    /**
+     * 同意退款
+     * @param id
+     * @param status
+     */
+    @Override
+    public void updateStatusAndReason(long id, int status, String verify, Date verifyDate) {
+        baseDao.updateStatusAndReason(id,status,verify,verifyDate);
     }
 }
