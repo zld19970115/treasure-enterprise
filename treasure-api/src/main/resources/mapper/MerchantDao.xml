@@ -51,8 +51,8 @@
         <if test="recommend != null and recommend.trim() != ''">
             and recommend = #{recommend}
         </if>
-        <if test="recommend != null and recommend.trim() != ''">
-            and recommend = #{recommend}
+        <if test="categoryId != null and categoryId.trim() != ''">
+            and categoryId = #{categoryId}
         </if>
     </select>
 </mapper>
