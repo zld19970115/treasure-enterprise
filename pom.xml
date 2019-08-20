@@ -17,11 +17,8 @@
 	</parent>
 
     <modules>
-        <module>treasure-common</module>
-        <module>treasure-dynamic-datasource</module>
-        <module>treasure-admin</module>
+
         <module>treasure-api</module>
-        <module>treasure-generator</module>
     </modules>
 
     <properties>
@@ -95,6 +92,17 @@
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.treasure.common</groupId>
+            <artifactId>treasure-common</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay</groupId>
+            <artifactId>alipay-trade-sdk</artifactId>
+            <version>20161215</version>
+        </dependency>
+
         <!-- mysql驱动 -->
         <dependency>
             <groupId>mysql</groupId>
