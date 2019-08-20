@@ -42,4 +42,9 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
     public void remove(long id,int status) {
         baseDao.updateStatus(id,status);
     }
+
+    @Override
+    public void updateStatus(long id, int status) {
+        baseDao.updateStatus(id,status);
+    }
 }

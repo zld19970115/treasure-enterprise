@@ -150,9 +150,10 @@ public class MerchantController {
             @ApiImplicitParam(name = "address", value = "店铺地址", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "cards", value = "身份证号码", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "businesslicense", value = "营业执照", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "monetary", value = "平均消费", paramType = "query", required = true, dataType = "double"),
             @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
-    public Result updateBasic(long id,String headurl,String name,String brief,String log,String lat,String address,String cards,String businesslicense,long updater){
+    public Result updateBasic(long id,String headurl,String name,String brief,String log,String lat,String address,String cards,String businesslicense,double monetary,long updater){
         MerchantDTO entity=merchantService.get(id);
         if(!entity.getName().equals(name)){
             //根据修改的名称和身份账号查询
@@ -169,6 +170,7 @@ public class MerchantController {
         entity.setAddress(address);
         entity.setCards(cards);
         entity.setBusinesslicense(businesslicense);
+        entity.setMonetary(monetary);
         entity.setUpdateDate(new Date());
         entity.setUpdater(updater);
         merchantService.update(entity);

@@ -13,4 +13,6 @@ import io.treasure.entity.MerchantRoomParamsSetEntity;
 public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomParamsSetEntity, MerchantRoomParamsSetDTO> {
     //删除
     void remove(long id,int status);
+    //修改状态
+    void updateStatus(long id,int status);
 }

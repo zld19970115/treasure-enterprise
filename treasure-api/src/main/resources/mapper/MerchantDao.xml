@@ -31,8 +31,12 @@
         <result property="closeshophours" column="closeShopHours"/>
         <result property="tel"  column="tel"></result>
         <result property="days" column="days"></result>
+<<<<<<< HEAD
         <result property="recommend" column="recommend"></result>
         <result property="characteristic" column="characteristic"></result>
+=======
+        <result property="monetary" column="monetary"/>
+>>>>>>> 0a05025e9d66396a575bc7a67abdda3458d58024
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
