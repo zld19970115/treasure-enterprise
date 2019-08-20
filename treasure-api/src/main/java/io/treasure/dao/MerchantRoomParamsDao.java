@@ -16,4 +16,5 @@ import java.util.List;
 public interface MerchantRoomParamsDao extends BaseDao<MerchantRoomParamsEntity> {
     void updateStatusById(Long id,int status);
     List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId,String content,int status);
+    List<MerchantRoomParamsEntity> getAllByStatus(int status);
 }

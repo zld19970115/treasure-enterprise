@@ -37,7 +37,7 @@ public class MerchantRoomParamsController {
     private MerchantRoomParamsService merchantRoomParamsService;
     @Login
     @GetMapping("page")
-    @ApiOperation("分页")
+    @ApiOperation("列表")
     @ApiImplicitParams({
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -46,6 +46,20 @@ public class MerchantRoomParamsController {
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "queury",required = true,dataType = "long")
     })
     public Result<PageData<MerchantRoomParamsDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantRoomParamsDTO> page = merchantRoomParamsService.page(params);
+
+        return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);
+    }
+    @Login
+    @GetMapping("allPage")
+    @ApiOperation("不根据商户查询列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantRoomParamsDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantRoomParamsDTO> page = merchantRoomParamsService.page(params);
 
         return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);

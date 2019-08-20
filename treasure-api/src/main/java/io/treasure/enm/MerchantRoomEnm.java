@@ -11,7 +11,9 @@ public enum MerchantRoomEnm {
 	/**未使用**/
 	STATE_USE_NO(0),
 	/**使用**/
-	STATE_USE_YEA(1);
+	STATE_USE_YEA(1),
+	/**预约天数**/
+	DAYS(7);
 	private int type;
 	private MerchantRoomEnm(int type) {
 		this.type = type;

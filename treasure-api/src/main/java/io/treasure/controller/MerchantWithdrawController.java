@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -38,7 +39,7 @@ import java.util.Map;
 public class MerchantWithdrawController {
     @Autowired
     private MerchantWithdrawService merchantWithdrawService;
-
+    @Login
     @GetMapping("allPage")
     @ApiOperation("全部列表")
     @ApiImplicitParams({
@@ -54,6 +55,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @Login
     @GetMapping("agreePage")
     @ApiOperation("同意提现列表")
     @ApiImplicitParams({
@@ -69,6 +71,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @Login
     @GetMapping("agreeNoPage")
     @ApiOperation("拒绝提现列表")
     @ApiImplicitParams({
@@ -84,6 +87,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @Login
     @GetMapping("getInfo")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -93,7 +97,7 @@ public class MerchantWithdrawController {
         MerchantWithdrawDTO data = merchantWithdrawService.get(id);
         return new Result<MerchantWithdrawDTO>().ok(data);
     }
-
+    @Login
     @PostMapping("save")
     @ApiOperation("申请提现")
     public Result save(@RequestBody MerchantWithdrawDTO dto){
@@ -108,7 +112,7 @@ public class MerchantWithdrawController {
         return new Result();
     }
 
-
+    @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")
     @ApiImplicitParams({
