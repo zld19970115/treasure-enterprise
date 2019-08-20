@@ -31,6 +31,8 @@
         <result property="closeshophours" column="closeShopHours"/>
         <result property="tel"  column="tel"></result>
         <result property="days" column="days"></result>
+        <result property="recommend" column="recommend"></result>
+        <result property="characteristic" column="characteristic"></result>
         <result property="monetary" column="monetary"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
@@ -52,8 +54,8 @@
         <if test="recommend != null and recommend.trim() != ''">
             and recommend = #{recommend}
         </if>
-        <if test="recommend != null and recommend.trim() != ''">
-            and recommend = #{recommend}
+        <if test="categoryId != null and categoryId.trim() != ''">
+            and categoryId = #{categoryId}
         </if>
     </select>
 </mapper>
