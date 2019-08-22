@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.dto.CategoryDTO;
+import io.treasure.enm.Common;
 import io.treasure.service.CategoryService;
 
 
@@ -66,6 +67,7 @@ public class ApiCategoryController {
     })
     public Result<PageData<CategoryDTO>> commendPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("showInCommend",1);
+        params.put("pid","0");
         PageData<CategoryDTO> page = categoryService.page(params);
 
         return new Result<PageData<CategoryDTO>>().ok(page);
@@ -81,6 +83,7 @@ public class ApiCategoryController {
     })
     public Result<PageData<CategoryDTO>> navPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("showInNav",1);
+        params.put("pid","0");
         PageData<CategoryDTO> page = categoryService.page(params);
 
         return new Result<PageData<CategoryDTO>>().ok(page);
@@ -130,6 +133,32 @@ public class ApiCategoryController {
 
         return new Result();
     }
-    
-    
+    @GetMapping("categoryOnePage")
+    @ApiOperation("一级分类列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+    })
+    public Result<PageData<CategoryDTO>> categoryOnePage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("pid","0");
+        params.put("status", Common.values()+"");
+        PageData<CategoryDTO> page = categoryService.page(params);
+        return new Result<PageData<CategoryDTO>>().ok(page);
+    }
+    @GetMapping("categoryTwoPage")
+    @ApiOperation("二级分类列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="pid",value="分类编号",paramType = "query",dataType = "long",required = true)
+    })
+    public Result<PageData<CategoryDTO>> categoryTwoPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.values()+"");
+        PageData<CategoryDTO> page = categoryService.page(params);
+        return new Result<PageData<CategoryDTO>>().ok(page);
+    }
 }

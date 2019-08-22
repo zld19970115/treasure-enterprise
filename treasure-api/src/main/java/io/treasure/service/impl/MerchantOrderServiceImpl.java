@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,5 +61,15 @@ public class MerchantOrderServiceImpl extends CrudServiceImpl<MerchantOrderDao, 
     @Override
     public void updateStatusAndReason(long id, int status, long verify, Date verifyDate,String verify_reason) {
         baseDao.updateStatusAndReason(id,status,verify,verifyDate,verify_reason);
+    }
+
+    /**
+     * 今日统计订单数量
+     * @param merchantId
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> countTodayPaystatus(long merchantId,int status) {
+        return baseDao.countTodayPaystaus(merchantId,status);
     }
 }

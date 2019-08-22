@@ -48,7 +48,9 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "经营类别")
 	@NotNull(message = "经营类别不能为空")
 	private Long categoryid;
-
+	@ApiModelProperty(value = "经营类别二级")
+	@NotNull(message = "经营类别不能为空")
+	private Long categoryidtwo;
 	@ApiModelProperty(value = "头像")
 	@NotBlank(message = "头像不能为空")
 	private String headurl;
