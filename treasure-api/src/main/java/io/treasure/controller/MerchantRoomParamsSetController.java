@@ -12,6 +12,8 @@ import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.MerchantRoomEntity;
+import io.treasure.entity.MerchantRoomParamsEntity;
+import io.treasure.service.MerchantRoomParamsService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -40,6 +42,9 @@ import java.util.Map;
 public class MerchantRoomParamsSetController {
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
+    //预约参数
+    @Autowired
+    private MerchantRoomParamsService merchantRoomParamsService;
     //包房
     @Autowired
     private MerchantRoomService merchantRoomService;
@@ -74,14 +79,10 @@ public class MerchantRoomParamsSetController {
     @ApiOperation("预约包房设置")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType="long") ,
-            @ApiImplicitParam(name = "days", value = "预约天数", paramType = "query",required = true, dataType="int"),
             @ApiImplicitParam(name="creator",value="创建者",paramType = "query",required = true,dataType = "long")
     })
-    public Result save(long merchantId,int days,long creator){
-
-        if(days<=0){
-            return new Result().error("预约天数必须大于0!");
-        }
+    public Result save(long merchantId,long creator){
+        int days=MerchantRoomEnm.DAYS.getType();
         if(merchantId<=0){
             return new Result().error("商户编号必须大于0！");
         }
@@ -100,26 +101,25 @@ public class MerchantRoomParamsSetController {
                 //设置时间
                Date date= DateUtils.addDateDays(new Date(),i);
                String setdate=DateUtils.format(date,"yyyy-MM-dd");
-                for(int h=1;h<24;h++){
-                    //预约时间段
-                    Date setHourse= DateUtils.addDateHours(openHourse,h);
-                    if(setHourse.after(openHourse) && setHourse.before(closeHorse)){
-                        String sysTime=setdate+" "+DateUtils.format(setHourse,"HH:mm");
-                        for(int room=0;room<list.size();room++){
-                            Map map= (Map) list.get(room);
-                            String roomId=String.valueOf(map.get("id"));
-                            String roomName=String.valueOf(map.get("name"));
-                            MerchantRoomParamsSetDTO dto=new MerchantRoomParamsSetDTO();
-                            dto.setCreateDate(new Date());
-                            dto.setCreator(creator);
-                            dto.setMerchantId(merchantId);
-                            dto.setRoomId(Long.parseLong(roomId));
-                            dto.setRoomName(roomName);
-                            dto.setState(MerchantRoomEnm.STATE_USE_NO.getType());
-                            dto.setUseDate(DateUtils.stringToDate(sysTime,"yyyy-MM-dd HH:mm"));
-                            dto.setStatus(Common.STATUS_ON.getStatus());
-                            merchantRoomParamsSetService.save(dto);
-                        }
+               //预约参数
+                List<MerchantRoomParamsEntity> paramsList=merchantRoomParamsService.getAllByStatus(Common.STATUS_ON.getStatus());
+                for(int h=0;h<paramsList.size();h++){
+                    MerchantRoomParamsEntity params=paramsList.get(h);
+                    for(int room=0;room<list.size();room++){
+                        Map map= (Map) list.get(room);
+                        String roomId=String.valueOf(map.get("id"));
+                        String roomName=String.valueOf(map.get("name"));
+                        MerchantRoomParamsSetDTO dto=new MerchantRoomParamsSetDTO();
+                        dto.setCreateDate(new Date());
+                        dto.setCreator(creator);
+                        dto.setMerchantId(merchantId);
+                        dto.setRoomId(Long.parseLong(roomId));
+                        dto.setRoomName(roomName);
+                        dto.setState(MerchantRoomEnm.STATE_USE_NO.getType());
+                        dto.setUseDate(DateUtils.stringToDate(setdate,"yyyy-MM-dd"));
+                        dto.setStatus(Common.STATUS_ON.getStatus());
+                        dto.setRoomParamsId(params.getId());
+                        merchantRoomParamsSetService.save(dto);
                     }
                 }
             }

@@ -22,4 +22,7 @@
         select * from  ct_merchant_room_params
         where  merchant_id=#{merchantId} and content=#{content} and status=#{status}
     </select>
+    <select id="getAllByStatus" parameterType="io.treasure.entity.MerchantRoomParamsEntity" resultType="io.treasure.entity.MerchantRoomParamsEntity">
+        select * from  ct_merchant_room_params where  status=#{status}
+    </select>
 </mapper>

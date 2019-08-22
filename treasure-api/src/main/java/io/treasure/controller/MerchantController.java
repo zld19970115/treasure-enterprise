@@ -201,12 +201,14 @@ public class MerchantController {
     @ApiOperation("修改店铺类型")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
-            @ApiImplicitParam(name = "categoryid", value = "店铺分类", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "categoryid", value = "店铺一级分类", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "categoryidtwo", value = "店铺二级分类", paramType = "query", required = true, dataType = "long"),
             @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
-    public Result updateCategory(long id,long categoryid,long updater){
+    public Result updateCategory(long id,long categoryid,long categoryidtwo,long updater){
         MerchantDTO entity=merchantService.get(id);
         entity.setCategoryid(categoryid);
+        entity.setCategoryidtwo(categoryidtwo);
         entity.setUpdateDate(new Date());
         entity.setUpdater(updater);
         merchantService.update(entity);

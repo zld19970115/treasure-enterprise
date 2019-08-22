@@ -51,4 +51,9 @@ public class MerchantRoomParamsServiceImpl extends CrudServiceImpl<MerchantRoomP
     public List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId, String content,int status) {
         return baseDao.getByMerchantIdAndContent(merchantId,content,status);
     }
+
+    @Override
+    public List<MerchantRoomParamsEntity> getAllByStatus(int status) {
+        return baseDao.getAllByStatus(status);
+    }
 }

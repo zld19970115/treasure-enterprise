@@ -4,6 +4,7 @@ package io.treasure.controller;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.utils.DateUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
@@ -252,5 +253,25 @@ public class MerchantOrderController {
         merchantOrderDetailService.remove(id,Common.STATUS_OFF.getStatus());
         return new Result();
     }
+    @Login
+    @GetMapping("todayPage")
+    @ApiOperation("今日统计数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="long")
+    })
+    public Result todayPage(long merchantId){
+        //PAY_STTAUS_2 已支付  PAY_STTAUS_3已接受 PAY_STTAUS_4已完成
+        List list=merchantOrderService.countTodayPaystatus(merchantId,Common.STATUS_ON.getStatus());
+        return new Result<>().ok(list);
+    }
+    @Login
+    @GetMapping("countPage")
+    @ApiOperation("总统计数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="long")
+    })
+    public Result<PageData<MerchantOrderDTO>> countPage(long merchantId){
 
+        return new Result<>();
+    }
 }

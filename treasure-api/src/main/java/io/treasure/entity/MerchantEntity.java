@@ -52,6 +52,10 @@ public class MerchantEntity implements Serializable {
      * 经营类别
      */
 	private Long categoryid;
+	/**
+	 * 二级经营类别
+	 */
+	private Long categoryidtwo;
     /**
      * 头像
      */

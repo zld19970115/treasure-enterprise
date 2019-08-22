@@ -33,11 +33,13 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
         String showInCommend = (String)params.get("showInCommend");
         //是否导航栏
         String showInNav = (String)params.get("showInCommend");
+        //父级节点
+        String pid=(String)params.get("pid");
         QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(showInCommend), "show_in_commend", showInCommend);
         wrapper.eq(StringUtils.isNotBlank(showInNav), "show_in_nav", showInNav);
-        wrapper.eq("pid", 0L);
+        wrapper.eq(StringUtils.isNotBlank(pid),"pid", pid);
         return wrapper;
     }
 

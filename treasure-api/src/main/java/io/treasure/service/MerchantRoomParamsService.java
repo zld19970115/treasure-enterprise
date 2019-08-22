@@ -16,4 +16,6 @@ public interface MerchantRoomParamsService extends CrudService<MerchantRoomParam
     void remove(Long id,int status);
     //根据商户编号和参数内容查询
     List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId, String content,int status);
+    //根据状态获取预约参数
+    List<MerchantRoomParamsEntity> getAllByStatus(int status);
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantOrderDetailDao">
+
+    <resultMap type="io.treasure.entity.MerchantOrderDetailEntity" id="merchantOrderDetailMap">
+
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodId" column="good_id"/>
+        <result property="num" column="num"/>
+        <result property="price" column="price"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="refundReason" column="refund_reason"/>
+        <result property="refundDate" column="refund_date"/>
+        <result property="verify" column="verify"/>
+        <result property="verifyDate" column="verify_date"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+    <update id="updateStatus" parameterType="io.treasure.entity.MerchantOrderDetailEntity">
+        update ct_merchant_order_detail set status=#{status} where order_id=#{order_id}
+    </update>
+    <select id="getByOrderId" parameterType="io.treasure.entity.MerchantOrderDetailEntity" resultType="io.treasure.entity.MerchantOrderDetailEntity">
+        select * from ct_merchant_order_detail where order_id =#{order_id}  and status=#{status} order by id desc
+    </select>
+</mapper>

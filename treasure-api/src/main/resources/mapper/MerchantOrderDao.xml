@@ -37,4 +37,18 @@
     <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantOrderEntity">
         update ct_merchant_order set status=#{status},verify=#{verify},verify_date=#{verifyDate},verify_reason=#{verifyReason} where id=#{id}
     </update>
+
+    <select id="countTodayPaystaus" parameterType="io.treasure.entity.MerchantOrderEntity" resultType="Map">
+
+        select (select count(*) from ct_merchant_order o where (pay_status=6 or pay_status=7)  AND
+            create_date BETWEEN CONCAT(CURDATE()," 00:00:00") and CONCAT(CURDATE()," 23:59:59") and merchant_id =#{merchantId}  and status=#{status}   )  refundNum ,
+            (select count(*) from ct_merchant_order o where pay_status=8
+            and create_date BETWEEN CONCAT(CURDATE()," 00:00:00") and CONCAT(CURDATE()," 23:59:59") and  merchant_id =#{merchantId}  and status=#{status} )  appNum ,
+            (select count(*) from ct_merchant_order o where  create_date BETWEEN CONCAT(CURDATE()," 00:00:00")
+            and CONCAT(CURDATE()," 23:59:59") and  merchant_id =#{merchantId}  and status=#{status} )  nums,
+            (select sum(money) from ct_merchant_order o where  create_date BETWEEN CONCAT(CURDATE()," 00:00:00")
+            and CONCAT(CURDATE()," 23:59:59") and  merchant_id =#{merchantId}  and status=#{status} )  moneys
+
+
+    </select>
 </mapper>

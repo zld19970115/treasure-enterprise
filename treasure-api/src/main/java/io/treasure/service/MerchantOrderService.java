@@ -5,6 +5,8 @@ import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.entity.MerchantOrderEntity;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 商户订单管理
@@ -17,4 +19,6 @@ public interface MerchantOrderService extends CrudService<MerchantOrderEntity, M
     void remove(long id,int status);
     //同意退款
     void updateStatusAndReason(long id, int status, long verify, Date verifyDate,String verify_reason);
+    //今日订单统计数据
+    List<Map<String,Object>> countTodayPaystatus(long merchantId,int status);
 }
