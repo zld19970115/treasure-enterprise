@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 1.0.0 2019-08-23
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/masterOrder")
 @Api(tags="订单表")
 public class ApiMasterOrderController {
     @Autowired
