@@ -1,5 +1,5 @@
 
-package io.treasureservice.impl;
+package io.treasure.service.impl;
 
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.MasterOrderDTO;
