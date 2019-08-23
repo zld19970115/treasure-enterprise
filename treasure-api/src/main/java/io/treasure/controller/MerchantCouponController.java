@@ -90,7 +90,7 @@ public class MerchantCouponController {
         return new Result();
     }
     @Login
-    @DeleteMapping
+    @DeleteMapping("remove")
     @ApiOperation("删除")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value ="编号", paramType = "query", required = true, dataType="long")
