@@ -51,11 +51,11 @@ public class MerchantEntity implements Serializable {
     /**
      * 经营类别
      */
-	private Long categoryid;
+	private String categoryid;
 	/**
 	 * 二级经营类别
 	 */
-	private Long categoryidtwo;
+	private String categoryidtwo;
     /**
      * 头像
      */
@@ -98,14 +98,7 @@ public class MerchantEntity implements Serializable {
      * 身份证号
      */
 	private String cards;
-	/**
-	 * 身份证正面图片
-	 */
-	private String idcard_front_img;
-	/**
-	 * 身份证反面图片
-	 */
-	private String idcard_back_img;
+
     /**
      * 1-未审核，2-审核通过，3-审核未通过;审核状态
      */
@@ -140,5 +133,12 @@ public class MerchantEntity implements Serializable {
 	 * 平均消费金额
 	 */
 	private Double monetary;
-
+	/**
+	 * 身份证正面照
+	 */
+	private String idcardFrontImg;
+	/**
+	 * 身份证反面照
+	 */
+	private String idcardBackImg;
 }

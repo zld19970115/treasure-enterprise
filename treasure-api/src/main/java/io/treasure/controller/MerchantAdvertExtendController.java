@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ import java.util.Map;
 public class MerchantAdvertExtendController {
     @Autowired
     private MerchantAdvertExtendService merchantAdvertExtendService;
-
+    @Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
@@ -50,7 +52,7 @@ public class MerchantAdvertExtendController {
         PageData<MerchantAdvertExtendDTO> page = merchantAdvertExtendService.page(params);
         return new Result<PageData<MerchantAdvertExtendDTO>>().ok(page);
     }
-
+    @Login
     @GetMapping("getByInfo")
     @ApiOperation("信息")
     @ApiImplicitParams({
@@ -60,16 +62,17 @@ public class MerchantAdvertExtendController {
         MerchantAdvertExtendDTO data = merchantAdvertExtendService.get(id);
         return new Result<MerchantAdvertExtendDTO>().ok(data);
     }
-
+    @Login
     @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantAdvertExtendDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
+        dto.setCreateDate(new Date());
         merchantAdvertExtendService.save(dto);
         return new Result();
     }
-
+    @Login
     @PutMapping("update")
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantAdvertExtendDTO dto){

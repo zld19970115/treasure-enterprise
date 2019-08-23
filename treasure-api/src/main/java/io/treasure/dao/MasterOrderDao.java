@@ -5,6 +5,8 @@ import io.treasure.common.dao.BaseDao;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
+
 /**
  * 订单表
  *
@@ -13,5 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
-	
+    void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason);
 }
