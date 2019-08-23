@@ -46,11 +46,11 @@ public class MerchantDTO implements Serializable {
 	private String businesshours;
 
 	@ApiModelProperty(value = "经营类别")
-	@NotNull(message = "经营类别不能为空")
-	private Long categoryid;
+	@NotBlank(message = "经营类别不能为空")
+	private String categoryid;
 	@ApiModelProperty(value = "经营类别二级")
-	@NotNull(message = "经营类别不能为空")
-	private Long categoryidtwo;
+	@NotBlank(message = "经营类别不能为空")
+	private String categoryidtwo;
 	@ApiModelProperty(value = "头像")
 	@NotBlank(message = "头像不能为空")
 	private String headurl;
@@ -109,5 +109,9 @@ public class MerchantDTO implements Serializable {
 	private String distance;
 	@ApiModelProperty(value = "平均消费金额")
 	private Double monetary;
+	@ApiModelProperty(value = "身份证正面照")
+	private String  idcardFrontImg;;
+	@ApiModelProperty(value = "身份证反面照")
+	private String idcardBackImg; ;
 
 }

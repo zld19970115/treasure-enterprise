@@ -151,9 +151,13 @@ public class MerchantController {
             @ApiImplicitParam(name = "cards", value = "身份证号码", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "businesslicense", value = "营业执照", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "monetary", value = "平均消费", paramType = "query", required = true, dataType = "double"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "idcardFrontImg", value = "身份证正面照", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "idcardBackImg", value = "身份证反面照", paramType = "query", required = true, dataType = "String")
     })
-    public Result updateBasic(long id,String headurl,String name,String brief,String log,String lat,String address,String cards,String businesslicense,double monetary,long updater){
+    public Result updateBasic(long id,String headurl,String name,String brief,String log,
+                              String lat,String address,String cards,String businesslicense,
+                              double monetary,long updater,String idcardFrontImg,String idcardBackImg){
         MerchantDTO entity=merchantService.get(id);
         if(!entity.getName().equals(name)){
             //根据修改的名称和身份账号查询
@@ -173,6 +177,8 @@ public class MerchantController {
         entity.setMonetary(monetary);
         entity.setUpdateDate(new Date());
         entity.setUpdater(updater);
+        entity.setIdcardBackImg(idcardBackImg);
+        entity.setIdcardFrontImg(idcardFrontImg);
         merchantService.update(entity);
         return new Result();
     }
@@ -201,11 +207,11 @@ public class MerchantController {
     @ApiOperation("修改店铺类型")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long"),
-            @ApiImplicitParam(name = "categoryid", value = "店铺一级分类", paramType = "query", required = true, dataType = "long"),
-            @ApiImplicitParam(name = "categoryidtwo", value = "店铺二级分类", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "categoryid", value = "店铺一级分类", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "categoryidtwo", value = "店铺二级分类", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
-    public Result updateCategory(long id,long categoryid,long categoryidtwo,long updater){
+    public Result updateCategory(long id,String categoryid,String categoryidtwo,long updater){
         MerchantDTO entity=merchantService.get(id);
         entity.setCategoryid(categoryid);
         entity.setCategoryidtwo(categoryidtwo);

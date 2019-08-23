@@ -128,7 +128,10 @@ public class MerchantUserController {
     @Login
     @PostMapping("logout")
     @ApiOperation("退出")
-    public Result logout(@ApiIgnore @RequestAttribute("userId") Long userId){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value="编号",required=true,paramType="query", dataType="long")
+    })
+    public Result logout(Long userId){
         tokenService.expireToken(userId);
         return new Result();
     }
@@ -142,9 +145,9 @@ public class MerchantUserController {
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="oldPassword",value="第一次输入的密码",required=true,paramType="query"),
-            @ApiImplicitParam(name="newPassword",value="第二次输入的密码",required=true,paramType="query"),
-            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query")
+            @ApiImplicitParam(name="oldPassword",value="第一次输入的密码",required=true,paramType="query", dataType="String"),
+            @ApiImplicitParam(name="newPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
     })
     public Result updatePassword(HttpServletRequest request,String oldPassword,String newPassword,Long id){
        String oPassword= DigestUtils.sha256Hex(oldPassword);
