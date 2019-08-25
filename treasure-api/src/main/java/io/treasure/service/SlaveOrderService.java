@@ -5,6 +5,8 @@ import io.treasure.entity.SlaveOrderEntity;
 
 import io.treasure.common.service.CrudService;
 
+import java.util.List;
+
 
 /**
  * 订单菜品表
@@ -14,4 +16,5 @@ import io.treasure.common.service.CrudService;
  */
 public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOrderDTO> {
 
+    List<SlaveOrderEntity> selectByOrderId(String orderId);
 }

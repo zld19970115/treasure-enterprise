@@ -1,12 +1,16 @@
 package io.treasure.service;
 
+import io.treasure.common.utils.Result;
 import io.treasure.dto.MasterOrderDTO;
-import io.treasure.enm.Order;
+import io.treasure.dto.OrderDTO;
+import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 
 import io.treasure.common.service.CrudService;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -17,4 +21,8 @@ import java.util.Date;
  */
 public interface MasterOrderService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
     void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason);
+
+    OrderDTO getOrder(String orderId);
+
+    Result orderSave(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList, ClientUserEntity user);
 }

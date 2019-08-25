@@ -1,9 +1,14 @@
 package io.treasure.controller;
 
 import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.dto.MasterOrderDTO;
+import io.treasure.dto.OrderDTO;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.enm.Order;
+import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.UserEntity;
 import io.treasure.service.MasterOrderService;
 
 
@@ -23,12 +28,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.service.SlaveOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -149,6 +156,29 @@ public class ApiMasterOrderController {
         PageData<MasterOrderDTO> page = masterOrderService.page(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
+
+    @Login
+    @GetMapping("{orderId}")
+    @ApiOperation("订单详情")
+    public Result<OrderDTO> getOrderInfo(@PathVariable("order_id") String orderId){
+        OrderDTO data = masterOrderService.getOrder(orderId);
+
+        return new Result<OrderDTO>().ok(data);
+    }
+
+    @Login
+    @PostMapping("generateOrder")
+    @ApiOperation("生成订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dto", value = "订单", paramType = "body", required = true, dataType="MasterOrderDTO"),
+            @ApiImplicitParam(name = "dtoList", value = "订单菜品列表", paramType = "body", required = true, dataType="List<<SlaveOrderDTO>>"),
+    })
+    public Result generateOrder(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList,@LoginUser ClientUserEntity user){
+        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        ValidatorUtils.validateEntity(dtoList, AddGroup.class, DefaultGroup.class);
+        return  masterOrderService.orderSave(dto,dtoList,user);
+    }
+
     @Login
     @GetMapping("{id}")
     @ApiOperation("信息")

@@ -4,6 +4,7 @@ import io.treasure.entity.MasterOrderEntity;
 import io.treasure.common.dao.BaseDao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.Date;
 
@@ -16,4 +17,6 @@ import java.util.Date;
 @Mapper
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason);
+
+    MasterOrderEntity selectByOrderId(String orderId);
 }
