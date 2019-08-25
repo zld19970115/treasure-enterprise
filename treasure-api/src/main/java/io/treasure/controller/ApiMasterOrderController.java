@@ -5,6 +5,7 @@ import io.treasure.annotation.LoginUser;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.enm.Order;
 import io.treasure.entity.ClientUserEntity;
@@ -177,6 +178,194 @@ public class ApiMasterOrderController {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         ValidatorUtils.validateEntity(dtoList, AddGroup.class, DefaultGroup.class);
         return  masterOrderService.orderSave(dto,dtoList,user);
+    }
+
+    @Login
+    @GetMapping("allOrderPage")
+    @ApiOperation("全部订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> allOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("noPayOrderPage")
+    @ApiOperation("未支付订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> noPayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.NOPAYORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("receiptOrderPage")
+    @ApiOperation("商家已接单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> receiptOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("refusalOrderPage")
+    @ApiOperation("商户拒接单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> refusalOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("payFinishOrderPage")
+    @ApiOperation("支付完成订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> payFinishOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.PAYORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("cancelNopayOrderPage")
+    @ApiOperation("取消未支付订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> cancelNopayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.CANCELNOPAYORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("userApplyRefundOrderPage")
+    @ApiOperation("消费者申请退款订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> userApplyRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("refusesRefundOrderPage")
+    @ApiOperation("商户拒绝退款订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> refusesRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("agreeRefundOrderPage")
+    @ApiOperation("商家同意退款订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> agreeRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @GetMapping("deleteOrderPage")
+    @ApiOperation("删除订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> deleteOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.DELETEORDER.getValue());
+        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
+
+    @Login
+    @PutMapping("orderCancel")
+    @ApiOperation("未支付订单取消")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "refundReason", value = "取消订单原因", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "id", value = "主订单ID", paramType = "query",required=true, dataType="Long")
+    })
+    public Result orderCancel(@ApiIgnore @RequestParam Map<String, Object> params){
+        return  masterOrderService.updateByCancel(params);
+    }
+
+    @Login
+    @PutMapping("userCheck")
+    @ApiOperation("用户结账")
+    public Result userCheck(Long id){
+        return  masterOrderService.updateByCheck(id);
+    }
+
+    @Login
+    @PutMapping("userApplyRefund")
+    @ApiOperation("消费者申请退款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "refundReason", value = "取消订单原因", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "id", value = "主订单ID", paramType = "query",required=true, dataType="Long")
+    })
+    public Result userApplyRefund(@ApiIgnore @RequestParam Map<String, Object> params){
+        return  masterOrderService.updateByApplyRefund(params);
     }
 
     @Login

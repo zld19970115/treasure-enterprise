@@ -1,5 +1,6 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
@@ -11,6 +12,7 @@ import io.treasure.common.service.CrudService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -25,4 +27,12 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     OrderDTO getOrder(String orderId);
 
     Result orderSave(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList, ClientUserEntity user);
+
+    PageData<MasterOrderDTO> listPage(Map<String, Object> params);
+
+    Result updateByCheck(Long id);
+
+    Result updateByCancel(Map<String, Object> params);
+
+    Result updateByApplyRefund(Map<String, Object> params);
 }
