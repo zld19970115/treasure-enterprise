@@ -41,11 +41,11 @@ public class MerchantCouponEntity extends BaseEntity {
     /**
      * 开始时间
      */
-	private Date startDate;
+	private String startDate;
     /**
      * 结束时间
      */
-	private Date endDate;
+	private String endDate;
     /**
      * 商户
      */
