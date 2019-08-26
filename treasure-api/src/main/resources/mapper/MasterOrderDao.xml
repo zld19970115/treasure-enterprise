@@ -32,6 +32,8 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
-
+    <select id="selectByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order  where merchant_id=#{orderId}
+    </select>
 
 </mapper>

@@ -1,6 +1,7 @@
 
 package io.treasure.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.SlaveOrderEntity;
@@ -11,6 +12,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +23,7 @@ import java.util.Map;
  */
 @Service
 public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveOrderEntity, SlaveOrderDTO> implements SlaveOrderService {
+
 
     @Override
     public QueryWrapper<SlaveOrderEntity> getWrapper(Map<String, Object> params){
@@ -33,4 +36,16 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     }
 
 
+    @Override
+    public List<SlaveOrderEntity> selectByOrderId(String orderId) {
+        List<SlaveOrderEntity> slaveOrderEntityList=baseDao.selectList(queryWrapper(orderId));
+        return slaveOrderEntityList;
+    }
+
+    private QueryWrapper<SlaveOrderEntity> queryWrapper(String orderId){
+        QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
+
+        return wrapper;
+    }
 }
