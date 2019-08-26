@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -48,17 +49,17 @@ public class MerchantCouponDTO implements Serializable {
 	@ApiModelProperty(value = "开始时间")
 	@NotNull(message ="开始时间不能为空",groups= AddGroup.class)
 	@NotNull(message = "开始时间不能为空",groups= UpdateGroup.class)
-	private Date startDate;
+	private String startDate;
 
 	@ApiModelProperty(value = "结束时间")
 	@NotNull(message ="结束时间不能为空",groups= AddGroup.class)
 	@NotNull(message = "结束不能为空",groups= UpdateGroup.class)
-	private Date endDate;
+	private String endDate;
 
 	@ApiModelProperty(value = "商户")
 	@NotNull(message ="商户不能为空",groups= AddGroup.class)
 	@NotNull(message = "商户不能为空",groups= UpdateGroup.class)
-	private Long merchantId;
+	private String merchantId;
 
 	@ApiModelProperty(value = "备注")
 	private String remark;
