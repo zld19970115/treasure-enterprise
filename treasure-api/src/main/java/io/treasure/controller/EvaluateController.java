@@ -1,26 +1,25 @@
 package io.treasure.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.treasure.annotation.Login;
+
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.EvaluateDTO;
-import io.treasure.dto.GoodDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.EvaluateEntity;
+import io.treasure.service.impl.ClientUserServiceImpl;
 import io.treasure.service.impl.EvaluateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 /**
  * 用户评价表
@@ -32,9 +31,11 @@ import java.util.Map;
 public class EvaluateController {
     @Autowired
     private EvaluateServiceImpl evaluateService;
+    @Autowired
+    private ClientUserServiceImpl clientUserService;
     @RequestMapping("/add")
     @ApiOperation("添加评价表")
-    public Result  addEvaluate(@RequestBody EvaluateDTO dto){
+    public Result addEvaluate(@RequestBody EvaluateDTO dto){
         EvaluateEntity evaluateEntity = new EvaluateEntity();
         evaluateEntity.setHygiene(dto.getHygiene());
         evaluateEntity.setAttitude(dto.getAttitude());
@@ -51,6 +52,10 @@ public class EvaluateController {
         evaluateEntity.setUpdateDate(dto.getUpdateDate());
         evaluateEntity.setCreateDate(new Date());
         evaluateEntity.setStatus(Common.STATUS_ON.getStatus());
+        ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getUid());
+        evaluateEntity.setUsername(clientUserEntity.getUsername());
+        evaluateEntity.setHeadImg(clientUserEntity.getHeadImg());
+        evaluateEntity.setAvgUser((dto.getHygiene()+dto.getFlavor()+dto.getPrice()+dto.getSpeed()+dto.getAttitude())/5);
         evaluateService.insert(evaluateEntity);
         return new Result();
     }
@@ -61,7 +66,7 @@ public class EvaluateController {
         evaluateService.delEvaluate(id);
         return new Result();
     }
-    @RequestMapping("/see")
+    @GetMapping("/see")
     @ApiOperation("查看评价表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -70,9 +75,23 @@ public class EvaluateController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true, dataType="long")
     })
-    public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
+
         params.put("status", Common.STATUS_OFF.getStatus()+"");
-       PageData<EvaluateDTO> page = evaluateService.page(params);
+        PageData<EvaluateDTO> page = evaluateService.page(params);
+        List list = page.getList();
+        Map map= new HashMap();
+        Double avgSpeed = evaluateService.selectAvgSpeed(merchantId);
+        Double avgHygiene = evaluateService.selectAvgHygiene(merchantId);
+        Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
+        Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
+        Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
+        map.put("avgHygiene",avgHygiene);//平均环境卫生
+        map.put("avgAttitude",avgAttitude);//平均服务态度
+        map.put("avgFlavor",avgFlavor);//平均菜品口味
+        map.put("avgSpeed",avgSpeed);//平均上菜速度
+        map.put("avgAllScore",avgAllScore);//平均上菜速度
+        list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }
 }

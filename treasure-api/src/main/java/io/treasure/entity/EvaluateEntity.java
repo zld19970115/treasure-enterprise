@@ -81,4 +81,17 @@ public class EvaluateEntity {
      * 修改者
      */
     private long updater;
+    /**
+     * 昵称
+     */
+    private String username;
+
+    /**
+     * 头像图片地址
+     */
+    private String headImg;
+    /**
+     * 个人栏平均分
+     */
+    private double avgUser;
 }

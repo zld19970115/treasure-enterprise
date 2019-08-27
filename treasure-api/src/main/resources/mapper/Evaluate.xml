@@ -19,9 +19,27 @@
         <result property="updater" column="updater"/>
         <result property="creator" column="creator"/>
         <result property="updateDate" column="update_date"/>
+        <result property="username" column="username"/>
+        <result property="headImg" column="head_img;"/>
+        <result property="avgUser" column="avg_user"/>
     </resultMap>
 
     <delete id="delEvaluate" parameterType="io.treasure.entity.EvaluateEntity">
         delete from ct_evaluate WHERE evaluate_id = #{evaluateId}
     </delete>
+ <select id="selectAvgSpeed" parameterType="long" resultType="Double">
+    SELECT avg(speed) FROM ct_evaluate WHERE mart_id = #{martId};
+ </select>
+    <select id="selectAvgHygiene" parameterType="long" resultType="Double">
+    SELECT avg(hygiene) FROM ct_evaluate WHERE mart_id = #{martId};
+ </select>
+    <select id="selectAvgAttitude" parameterType="long" resultType="Double">
+    SELECT avg(attitude) FROM ct_evaluate WHERE mart_id = #{martId};
+ </select>
+    <select id="selectAvgFlavor" parameterType="long" resultType="Double">
+    SELECT avg(flavor) FROM ct_evaluate WHERE mart_id = #{martId};
+ </select>
+<select id="selectAvgAllScore" parameterType="long" resultType="Double">
+    SELECT avg(avg_user) FROM ct_evaluate WHERE mart_id = #{martId};
+ </select>
 </mapper>

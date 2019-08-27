@@ -48,7 +48,30 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
         baseDao.delEvaluate(id);
     }
 
+    @Override
+    public Double selectAvgSpeed(long merchantId) {
+        return baseDao.selectAvgSpeed(merchantId);
+    }
 
+    @Override
+    public Double selectAvgHygiene(long merchantId) {
+        return baseDao.selectAvgHygiene(merchantId);
+    }
+
+    @Override
+    public Double selectAvgAttitude(long merchantId) {
+        return baseDao.selectAvgAttitude(merchantId);
+    }
+
+    @Override
+    public Double selectAvgFlavor(long merchantId) {
+        return baseDao.selectAvgFlavor(merchantId);
+    }
+
+    @Override
+    public Double selectAvgAllScore(long merchantId) {
+        return baseDao.selectAvgAllScore(merchantId);
+    }
 
 
 }

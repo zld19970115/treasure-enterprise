@@ -8,15 +8,16 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.EvaluateDTO;
-import io.treasure.dto.GoodDTO;
 import io.treasure.enm.Common;
 import io.treasure.service.impl.EvaluateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class MerchanEvaluateController {
 
 
 
-    @RequestMapping("/MerchanSee")
+    @GetMapping("/MerchanSee")
     @ApiOperation("查看评价表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -43,9 +44,23 @@ public class MerchanEvaluateController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true, dataType="long")
     })
-    public Result<PageData<EvaluateDTO>> seeMarchanEvaluate(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<EvaluateDTO>> seeMarchanEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
 
+        params.put("status", Common.STATUS_OFF.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.page(params);
+        List list = page.getList();
+        Map map= new HashMap();
+        Double avgSpeed = evaluateService.selectAvgSpeed(merchantId);
+        Double avgHygiene = evaluateService.selectAvgHygiene(merchantId);
+        Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
+        Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
+        Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
+        map.put("avgHygiene",avgHygiene);//平均环境卫生
+        map.put("avgAttitude",avgAttitude);//平均服务态度
+        map.put("avgFlavor",avgFlavor);//平均菜品口味
+        map.put("avgSpeed",avgSpeed);//平均上菜速度
+        map.put("avgAllScore",avgAllScore);//平均上菜速度
+        list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }
 }

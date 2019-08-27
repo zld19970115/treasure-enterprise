@@ -21,6 +21,9 @@ public interface EvaluateService  extends CrudService<EvaluateEntity, EvaluateDT
      */
     void addEvaluate(EvaluateEntity evaluateEntity);
     void  delEvaluate(int id);
-
-
+    Double  selectAvgSpeed(long merchantId);
+    Double selectAvgHygiene(long merchantId);
+    Double selectAvgAttitude(long merchantId);
+    Double selectAvgFlavor(long merchantId);
+    Double selectAvgAllScore(long merchantId);
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.entity.ClientUserEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -110,4 +111,10 @@ public class EvaluateDTO implements Serializable {
     @ApiModelProperty(value = "更新者")
     @NotNull(message = "更新者不能为空",groups = UpdateGroup.class)
     private long updater;
+    @ApiModelProperty(value = "昵称")
+    private String username;
+    @ApiModelProperty(value = "头像图片地址")
+    private String headImg;
+    @ApiModelProperty(value = "个人栏平均分")
+    private double avgUser;
 }
