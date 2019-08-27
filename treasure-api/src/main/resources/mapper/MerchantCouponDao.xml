@@ -9,7 +9,7 @@
         <result property="name" column="name"/>
         <result property="type" column="type"/>
         <result property="money" column="money"/>
-        <result property="amount" column="amount"/>
+        <result property="disType" column="dis_type"/>
         <result property="discount" column="discount"/>
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>

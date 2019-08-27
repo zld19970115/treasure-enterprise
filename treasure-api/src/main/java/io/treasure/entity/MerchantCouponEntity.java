@@ -31,9 +31,9 @@ public class MerchantCouponEntity extends BaseEntity {
      */
 	private Double money;
     /**
-     * 优惠金额
+     * 优惠类型 1-金额,2-折扣
      */
-	private Double amount;
+	private Integer disType;
     /**
      * 优惠折扣u
      */

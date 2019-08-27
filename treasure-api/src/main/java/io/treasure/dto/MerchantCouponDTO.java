@@ -40,8 +40,8 @@ public class MerchantCouponDTO implements Serializable {
 	@ApiModelProperty(value = "满多少金额可以使用优惠卷")
 	private Double money;
 
-	@ApiModelProperty(value = "优惠金额")
-	private Double amount;
+	@ApiModelProperty(value = "优惠类型：1-金额；2-折扣")
+	private Integer disType;
 
 	@ApiModelProperty(value = "优惠折扣")
 	private Double discount;
