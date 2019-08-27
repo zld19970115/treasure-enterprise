@@ -3,6 +3,7 @@ package io.treasure.controller;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.utils.DateUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
@@ -48,7 +49,7 @@ public class MerchantCouponController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户", paramType = "query", dataType="long")
+            @ApiImplicitParam(name = "merchantId", value = "商户", paramType = "query",required = true,  dataType="long")
     })
     public Result<PageData<MerchantCouponDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantCouponDTO> page = merchantCouponService.page(params);
