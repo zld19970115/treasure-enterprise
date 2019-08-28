@@ -23,10 +23,13 @@ public class MerchantCouponServiceImpl extends CrudServiceImpl<MerchantCouponDao
     @Override
     public QueryWrapper<MerchantCouponEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        String status=(String)params.get("status");
+        //商户编号
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MerchantCouponEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 

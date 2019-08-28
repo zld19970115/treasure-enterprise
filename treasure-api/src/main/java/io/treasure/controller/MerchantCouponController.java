@@ -43,17 +43,17 @@ public class MerchantCouponController {
     private MerchantCouponService merchantCouponService;
     @Login
     @GetMapping("page")
-    @ApiOperation("列表")
+    @ApiOperation("全部列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
-        @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
-        @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "merchantId", value = "商户", paramType = "query",required = true,  dataType="long")
     })
     public Result<PageData<MerchantCouponDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantCouponDTO> page = merchantCouponService.page(params);
-
         return new Result<PageData<MerchantCouponDTO>>().ok(page);
     }
     @Login

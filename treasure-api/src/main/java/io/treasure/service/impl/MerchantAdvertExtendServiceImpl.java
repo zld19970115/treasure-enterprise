@@ -23,10 +23,14 @@ public class MerchantAdvertExtendServiceImpl extends CrudServiceImpl<MerchantAdv
     @Override
     public QueryWrapper<MerchantAdvertExtendEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
-
+        //商户
+        String merchantId=(String)params.get("merchantId");
+        //状态
+        String status=(String)params.get("status");
         QueryWrapper<MerchantAdvertExtendEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-
+        wrapper.eq(StringUtils.isNotBlank(status),"status",status);
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 
