@@ -190,15 +190,17 @@ public class MerchantController {
             @ApiImplicitParam(name = "businesshours", value = "营业时间", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "closeshophours", value = "关店时间", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "tel", value = "联系电话", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
+            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "depost", value = "押金", paramType = "query", required = true, dataType = "double")
     })
-    public Result updateHourse(long id,String businesshours,String closeshophours,String tel,long updater){
+    public Result updateHourse(long id,String businesshours,String closeshophours,String tel,long updater,double depost){
         MerchantDTO entity=merchantService.get(id);
         entity.setBusinesshours(businesshours);
         entity.setCloseshophours(closeshophours);
         entity.setTel(tel);
         entity.setUpdateDate(new Date());
         entity.setUpdater(updater);
+        entity.setDepost(depost);
         merchantService.update(entity);
         return new Result();
     }
