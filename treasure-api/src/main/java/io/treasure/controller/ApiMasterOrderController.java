@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.dto.AllOrderDTO;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
@@ -9,6 +10,7 @@ import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.enm.Order;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.entity.UserEntity;
 import io.treasure.service.MasterOrderService;
 
@@ -170,13 +172,9 @@ public class ApiMasterOrderController {
     @Login
     @PostMapping("generateOrder")
     @ApiOperation("生成订单")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "dto", value = "订单", paramType = "body", required = true, dataType="MasterOrderDTO"),
-            @ApiImplicitParam(name = "dtoList", value = "订单菜品列表", paramType = "body", required = true, dataType="List<<SlaveOrderDTO>>"),
-    })
-    public Result generateOrder(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList,@LoginUser ClientUserEntity user){
+    public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user){
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
-        ValidatorUtils.validateEntity(dtoList, AddGroup.class, DefaultGroup.class);
+        List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderSave(dto,dtoList,user);
     }
 

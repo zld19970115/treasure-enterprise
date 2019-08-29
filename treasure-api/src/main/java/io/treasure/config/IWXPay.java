@@ -5,14 +5,21 @@ import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.common.wx.WXConfig;
 import io.treasure.common.wx.WXPay;
+import io.treasure.utils.AdressIPUtil;
+import io.treasure.utils.PayCommonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.jdom.JDOMException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * IWXPay
@@ -112,6 +119,8 @@ public class IWXPay extends WXPay {
         return responseMapForPay;
     }
 
+
+
     /**
      * 从request的inputStream中获取参数
      * @param request
@@ -154,6 +163,51 @@ public class IWXPay extends WXPay {
         Map<String, String> responseMap = WXPayUtil.xmlToMap(responseXml);
 
         return responseMap;
+    }
+
+    /**
+     * 统一下单
+     * 应用场景：商户系统先调用该接口在微信支付服务后台生成预支付交易单，返回正确的预支付交易回话标识后再在APP里面调起支付。
+     * @param trade_no  订单号
+     * @param totalAmount   支付金额
+     * @param description   描述
+     * @param request
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, String> weixinPrePay(String trade_no, BigDecimal totalAmount,
+                                            String description, HttpServletRequest request) throws Exception {
+        SortedMap<String, String> parameterMap = new TreeMap<String, String>();
+        parameterMap.put("appid", config.getAppID());  //应用appid
+        parameterMap.put("mch_id", config.getMchID());  //商户号
+        //parameterMap.put("device_info", "WEB");
+        parameterMap.put("nonce_str", WXPayUtil.generateNonceStr());
+        parameterMap.put("body", description);
+        parameterMap.put("out_trade_no", trade_no);
+        parameterMap.put("fee_type", "CNY");
+        BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+        java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+        parameterMap.put("total_fee", df.format(total));
+        parameterMap.put("spbill_create_ip", AdressIPUtil.getClientIpAddress(request));
+        parameterMap.put("notify_url", config.getNotifyUrl());
+        parameterMap.put("trade_type", "APP");//"JSAPI"
+        String sign =WXPayUtil.generateSignature(parameterMap,config.getKey());
+        parameterMap.put("sign", sign);
+        String requestXML = WXPayUtil.mapToXml(parameterMap);
+        String result = PayCommonUtil.httpsRequest(
+                "https://api.mch.weixin.qq.com/pay/unifiedorder", "POST",
+                requestXML);
+        Map<String, String> map = null;
+        try {
+            map = WXPayUtil.xmlToMap(result);
+        } catch (JDOMException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return map;
     }
 
 

@@ -5,11 +5,14 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 
 import io.treasure.common.service.CrudService;
+import io.treasure.entity.SlaveOrderEntity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +29,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     OrderDTO getOrder(String orderId);
 
-    Result orderSave(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList, ClientUserEntity user);
+    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
 
     PageData<MasterOrderDTO> listPage(Map<String, Object> params);
 
@@ -35,4 +38,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result updateByCancel(Map<String, Object> params);
 
     Result updateByApplyRefund(Map<String, Object> params);
+
+    Map<String, String> getNotify(Constants.PayMode alipay, BigDecimal bigDecimal, String out_trade_no);
 }

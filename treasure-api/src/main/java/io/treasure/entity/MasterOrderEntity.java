@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.util.Date;
 
 /**
@@ -54,6 +55,10 @@ public class MasterOrderEntity extends BaseEntity {
      * 订单金额
      */
 	private BigDecimal totalMoney;
+	/**
+	 * 赠送金额
+	 */
+	private BigDecimal giftMoney;
     /**
      * 实际支付金额
      */

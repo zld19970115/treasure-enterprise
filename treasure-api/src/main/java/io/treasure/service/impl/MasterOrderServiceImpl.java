@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +84,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result orderSave(MasterOrderDTO dto, List<SlaveOrderDTO> dtoList, ClientUserEntity user) {
+    public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result=new Result();
         //生成订单号
         String orderId= OrderUtil.getOrderIdByTime(user.getId());
         //锁定包房/散台
          MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(dto.getReservationId());
+        if(merchantRoomParamsSetEntity==null){
+            return result.error(-5,"没有此包房/散台");
+        }
          int isUse=merchantRoomParamsSetEntity.getState();
          if(isUse==0){
              merchantRoomParamsSetEntity.setState(1);
@@ -99,6 +103,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
          }else if(isUse==1){
              return result.error(-1,"包房/散台已经预定,请重新选择！");
          }
+         //是否使用赠送金
+        if(dto.getGiftMoney().doubleValue()>0)
+        {
+            
+        }else {
+
+        }
         //保存主订单
         MasterOrderEntity masterOrderEntity=ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(orderId);
@@ -109,12 +120,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-2,"没有订单数据！");
         }
         //保存订单菜品
-        dtoList.forEach(slaveOrderDTO -> {
-            slaveOrderDTO.setOrderId(orderId);
-            slaveOrderDTO.setStatus(1);
+        dtoList.forEach(slaveOrderEntity -> {
+            slaveOrderEntity.setOrderId(orderId);
+            slaveOrderEntity.setStatus(1);
         });
-        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
-        boolean b=slaveOrderService.insertBatch(slaveOrderEntityList);
+//        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
+        boolean b=slaveOrderService.insertBatch(dtoList);
         if(!b){
             return result.error(-3,"没有订单菜品数据！");
         }
@@ -192,6 +203,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-1,"申请退款失败！");
         }
         return result;
+    }
+
+    @Override
+    public Map<String, String> getNotify(Constants.PayMode alipay, BigDecimal bigDecimal, String out_trade_no) {
+
+        return null;
     }
 
     private Wrapper<MasterOrderEntity> getQueryWrapper(Map<String, Object> params) {

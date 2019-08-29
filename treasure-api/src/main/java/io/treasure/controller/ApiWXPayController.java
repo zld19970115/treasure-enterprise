@@ -2,12 +2,15 @@ package io.treasure.controller;
 
 
 import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.entity.ClientUserEntity;
+import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,18 +76,23 @@ public class ApiWXPayController {
             @ApiImplicitParam(name="total_fee",value="订单总金额单位分",required=true,paramType="query"),
             @ApiImplicitParam(name="refund_fee",value="退款金额单位分",required=true,paramType="query")
     })
-    public Object refund(String orderNo,String total_fee,String refund_fee) throws Exception {
+    public Object refund(String orderNo,String total_fee,String refund_fee,@LoginUser ClientUserEntity user) throws Exception {
         Map<String, String> reqData = new HashMap<>();
         // 商户订单号
         reqData.put("out_trade_no", orderNo);
         // 授权码
-        reqData.put("out_refund_no", String.valueOf(System.nanoTime()));
+        reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(user.getId()));
         // 订单总金额，单位为分，只能为整数
-        reqData.put("total_fee", total_fee);
+        BigDecimal totalAmount = new BigDecimal(total_fee);
+        BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+        java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+        reqData.put("total_fee", df.format(total));
         //退款金额
-        reqData.put("refund_fee", refund_fee);
+        BigDecimal refundAmount = new BigDecimal(refund_fee);
+        BigDecimal refund = refundAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+        reqData.put("refund_fee", df.format(refund));
         // 退款异步通知地址
-//        reqData.put("notify_url", wxPayConfig.getNotifyUrl());
+        reqData.put("notify_url", wxPayConfig.getNotifyUrl());
         reqData.put("refund_fee_type", "CNY");
         reqData.put("op_user_id", wxPayConfig.getMchID());
 

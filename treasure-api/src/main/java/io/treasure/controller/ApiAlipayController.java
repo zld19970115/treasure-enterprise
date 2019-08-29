@@ -19,6 +19,9 @@ import io.treasure.annotation.Login;
 import io.treasure.config.AlipayProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.dto.MasterOrderDTO;
+import io.treasure.enm.Constants;
+import io.treasure.service.MasterOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -65,6 +68,9 @@ public class ApiAlipayController {
 
     @Autowired
     private AlipayTradeService alipayTradeService;
+
+    @Autowired
+    private MasterOrderService masterOrderService;
 
 
     /**
@@ -132,6 +138,7 @@ public class ApiAlipayController {
             if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
                 try {
                     Map<String, String> responseMap = null;
+                    responseMap=masterOrderService.getNotify(Constants.PayMode.ALIPAY, new BigDecimal(total_amount), out_trade_no);
                     return responseMap.get("return_code");
                 } catch (Exception ex) {
                     return "FAIL";

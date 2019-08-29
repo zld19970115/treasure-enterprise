@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.Date;
 
 import java.math.BigDecimal;
@@ -46,6 +47,9 @@ public class MasterOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "订单金额")
 	private BigDecimal totalMoney;
+
+	@ApiModelProperty(value = "赠送金额")
+	private BigDecimal giftMoney;
 
 	@ApiModelProperty(value = "实际支付金额")
 	private BigDecimal payMoney;

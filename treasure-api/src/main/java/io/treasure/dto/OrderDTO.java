@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "订单金额")
 	private BigDecimal totalMoney;
+
+	@ApiModelProperty(value = "赠送金额")
+	private BigDecimal giftMoney;
 
 	@ApiModelProperty(value = "实际支付金额")
 	private BigDecimal payMoney;
