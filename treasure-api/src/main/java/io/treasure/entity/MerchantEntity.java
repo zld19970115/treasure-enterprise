@@ -141,4 +141,8 @@ public class MerchantEntity implements Serializable {
 	 * 身份证反面照
 	 */
 	private String idcardBackImg;
+	/**
+	 * 押金金额
+	 */
+	private Double depost;
 }

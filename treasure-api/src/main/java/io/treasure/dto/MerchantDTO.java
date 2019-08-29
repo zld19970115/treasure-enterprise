@@ -110,8 +110,10 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "平均消费金额")
 	private Double monetary;
 	@ApiModelProperty(value = "身份证正面照")
-	private String  idcardFrontImg;;
+	private String  idcardFrontImg;
 	@ApiModelProperty(value = "身份证反面照")
-	private String idcardBackImg; ;
+	private String idcardBackImg;
+	@ApiModelProperty(value = "押金金额")
+	private Double depost;
 
 }

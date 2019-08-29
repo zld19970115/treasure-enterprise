@@ -34,6 +34,7 @@
         <result property="recommend" column="recommend"></result>
         <result property="characteristic" column="characteristic"></result>
         <result property="monetary" column="monetary"/>
+        <result property="depost" column="depost"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
