@@ -6,8 +6,6 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantDao;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.service.MerchantService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

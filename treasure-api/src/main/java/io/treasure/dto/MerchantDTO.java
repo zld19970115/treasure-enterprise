@@ -115,5 +115,11 @@ public class MerchantDTO implements Serializable {
 	private String idcardBackImg;
 	@ApiModelProperty(value = "押金金额")
 	private Double depost;
+	@ApiModelProperty(value = "商家可提现总额")
+	private Double totalCash;
 
+	@ApiModelProperty(value = "商家已提现金额")
+	private Double alreadyCash;
+	@ApiModelProperty(value = "商家未提现金额")
+	private Double notCash;
 }

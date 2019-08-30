@@ -111,4 +111,8 @@ public class GoodEntity extends BaseEntity {
      * 库存量
      */
 	private Integer stock;
+	/**
+	 * 数量
+	 */
+	private Integer number;
 }

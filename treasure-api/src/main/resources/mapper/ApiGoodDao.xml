@@ -38,13 +38,11 @@
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}
     </update>
-    <select id="getGoodCategoryByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-      select DISTINCT cg.good_category_id,cgc.name from ct_good as cg
-      LEFT JOIN ct_good_category as cgc on cgc.id=cg.good_category_id
-        where cg.mart_id=#{martId} and cg.status=1
+    <select id="getGoodCategoryByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodCategoryEntity">
+      select  *  from  ct_good_category   where merchant_id=#{martId} and status= 1
     </select>
     <select id="getGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * FROM ct_good mart_id=#{martId} and `status`=1
+        select * FROM ct_good where mart_id=#{martId} and `status`=1
     </select>
     <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
        select * FROM ct_good where mart_id=#{arg0}  and good_category_id=#{arg1} and `status`=1

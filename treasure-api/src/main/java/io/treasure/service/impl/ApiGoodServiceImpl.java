@@ -5,6 +5,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.ApiGoodDao;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.GoodDTO;
+import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.service.ApiGoodService;
 import io.treasure.service.GoodService;
@@ -87,7 +88,7 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
      * @return
      */
     @Override
-    public List getGoodCategoryByMartId(long martId){
+    public  List<GoodCategoryEntity> getGoodCategoryByMartId(long martId){
         return baseDao.getGoodCategoryByMartId(martId);
     }
 

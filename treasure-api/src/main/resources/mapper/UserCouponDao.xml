@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.UserCouponDao">
+    <resultMap type="io.treasure.entity.UserCouponEntity" id="userCouponMap">
+
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="couponType" column="coupon_type"/>
+        <result property="martId" column="mart_id"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+    <resultMap type="io.treasure.entity.ClientUserEntity" id="clientUserMap">
+
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="username" column="username"/>
+        <result property="idCard" column="id_card"/>
+        <result property="idcardFrontImg" column="idcard_front_img"/>
+        <result property="idcardBackImg" column="idcard_back_img"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="birth" column="birth"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="headImg" column="head_img"/>
+        <result property="integral" column="integral"/>
+        <result property="balance" column="balance"/>
+        <result property="coin" column="coin"/>
+        <result property="gift" column="gift"/>
+        <result property="level" column="level"/>
+        <result property="openid" column="openid"/>
+        <result property="unionid" column="unionid"/>
+        <result property="status" column="status"/>
+        <result property="origin" column="origin"/>
+        <result property="way" column="way"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+
+
+    <select id="selectGift" parameterType="io.treasure.entity.UserCouponEntity" resultType="Double">
+    select gift from ct_client_user where id = #{userId}
+
+</select>
+
+    <select id="selectByCouponId" parameterType="io.treasure.entity.UserCouponEntity" resultType="io.treasure.entity.UserCouponEntity">
+    select * from ct_user_coupon where coupon_id = #{couponId}
+
+</select>
+    <select id="selectByUserId" resultType="java.util.Map">
+        select m.*,user.coupon_id from  ct_user_coupon user
+        left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
+        where user.user_id = #{userId}  and user.mart_id = #{martId} and user.status = 1 and m.money   &lt;= #{money}
+    </select>
+    <select id="selectMyCouponByUserId" parameterType="io.treasure.entity.UserCouponEntity" resultType="java.util.Map">
+        select m.*,user.coupon_id from  ct_user_coupon user
+        left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
+        where user.user_id = #{userId} and user .status = 1
+
+</select>
+    <select id="selectMartCoupon" parameterType="io.treasure.entity.UserCouponEntity"  resultType="io.treasure.entity.UserCouponEntity">
+        select * from ct_user_coupon where user_id = #{userId} and mart_id = #{martId}
+
+</select>
+    <select id="selectBymartId" parameterType="io.treasure.entity.MerchantCouponEntity" resultType="io.treasure.entity.MerchantCouponEntity">
+       select * from ct_merchant_coupon where merchant_id = #{martId}
+    </select>
+
+</mapper>

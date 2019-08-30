@@ -9,23 +9,17 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.GoodDTO;
 import io.treasure.enm.Common;
-import io.treasure.service.ApiGoodService;
-import io.treasure.service.GoodService;
+import io.treasure.entity.GoodCategoryEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -190,8 +184,12 @@ public class ApiGoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "martId", value = "商户ID", paramType = "query", required = true, dataType = "long")
     })
-    public Result<List> getGoodCategoryByMartId(Long martId) {
-        return new Result<List>().ok(apigoodService.getGoodCategoryByMartId(martId));
+    public Result getGoodCategoryByMartId(Long martId) {
+
+        List<GoodCategoryEntity> goodCategoryByMartId = apigoodService.getGoodCategoryByMartId(martId);
+
+
+        return new Result().ok(goodCategoryByMartId);
     }
 
     /**
@@ -211,13 +209,13 @@ public class ApiGoodController {
 
     /**
      * 显示指定商户菜品分类中的菜品
-     * @param dto
+     * @param martId,goodCategoryId
      * @return
      */
     @Login
     @GetMapping("getGoodsByGoodCategoryId")
     @ApiOperation("根据商户ID显示此商户菜品")
-    public Result<List> getGoodsByGoodCategoryId(GoodDTO dto) {
-        return new Result<List>().ok(apigoodService.getGoodsByGoodCategoryId(dto.getMartId(),dto.getGoodCategoryId()));
+    public Result<List> getGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
+        return new Result<List>().ok(apigoodService.getGoodsByGoodCategoryId(martId,goodCategoryId));
     }
 }

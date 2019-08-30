@@ -1,7 +1,6 @@
 package io.treasure.controller;
 
 
-import cn.hutool.db.Page;
 import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
@@ -13,32 +12,16 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
-import io.treasure.enm.UploadFile;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
-import io.treasure.oss.cloud.AbstractCloudStorageService;
-import io.treasure.oss.cloud.CloudStorageConfig;
-import io.treasure.oss.cloud.OSSFactory;
-import io.treasure.oss.cloud.QiniuCloudStorageService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
-import lombok.extern.java.Log;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.AbstractCollection;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 

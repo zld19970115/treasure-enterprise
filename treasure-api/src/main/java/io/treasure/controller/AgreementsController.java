@@ -4,8 +4,6 @@ package io.treasure.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.AgreementsDTO;
-import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.AgreementsEntity;
 import io.treasure.service.AgreementsService;
 import org.springframework.beans.factory.annotation.Autowired;

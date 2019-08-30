@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.EvaluateDTO;
 import io.treasure.enm.Common;
 import io.treasure.service.impl.EvaluateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +46,6 @@ public class MerchanEvaluateController {
 
         params.put("status", Common.STATUS_OFF.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.page(params);
-        List list = page.getList();
         Map map= new HashMap();
         Double avgSpeed = evaluateService.selectAvgSpeed(merchantId);
         Double avgHygiene = evaluateService.selectAvgHygiene(merchantId);
@@ -60,8 +57,8 @@ public class MerchanEvaluateController {
         map.put("avgFlavor",avgFlavor);//平均菜品口味
         map.put("avgSpeed",avgSpeed);//平均上菜速度
         map.put("avgAllScore",avgAllScore);//平均上菜速度
-        list.add(map);
-        return new Result<PageData<EvaluateDTO>>().ok(page);
+        map.put("page",page);
+        return new Result().ok(map);
     }
 }
 

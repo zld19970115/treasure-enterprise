@@ -8,7 +8,6 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodCategoryDTO;
-import io.treasure.dto.MerchantDTO;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;

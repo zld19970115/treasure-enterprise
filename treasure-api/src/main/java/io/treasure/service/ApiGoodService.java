@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.GoodDTO;
+import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface ApiGoodService extends CrudService<GoodEntity, GoodDTO> {
     //删除
     void remove(long id, int status);
     //查询所有菜品分类id并去重
-    List getGoodCategoryByMartId(long martId);
+    List<GoodCategoryEntity> getGoodCategoryByMartId(long martId);
 
     //通过商户ID查询此商户所有菜品
     List getGoodsByMartId(long martId);

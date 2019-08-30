@@ -4,16 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.EvaluateDao;
-import io.treasure.dto.EvaluateDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.EvaluateEntity;
-import io.treasure.entity.GoodEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 
 /**

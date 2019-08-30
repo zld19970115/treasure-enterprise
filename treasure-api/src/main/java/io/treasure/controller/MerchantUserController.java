@@ -15,23 +15,17 @@ import io.treasure.dto.MerchantUserDTO;
 
 import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
 
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
-import oracle.jdbc.proxy.annotation.Post;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

@@ -145,4 +145,19 @@ public class MerchantEntity implements Serializable {
 	 * 押金金额
 	 */
 	private Double depost;
+	/**
+	 *
+	 *商家可提现总额
+	 */
+	private Double totalCash;
+	/**
+	 *
+	 *商家已提现金额
+	 */
+	private Double alreadyCash;
+	/**
+	 *
+	 *商家未提现金额
+	 */
+	private Double notCash;
 }

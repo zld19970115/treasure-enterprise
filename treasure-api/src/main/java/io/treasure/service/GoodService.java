@@ -1,8 +1,6 @@
 package io.treasure.service;
 
 import io.treasure.common.service.CrudService;
-import io.treasure.dto.GoodDTO;
-import io.treasure.entity.GoodEntity;
 
 import java.util.List;
 
