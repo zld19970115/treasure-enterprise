@@ -9,6 +9,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dto.GoodDTO;
 import io.treasure.enm.Common;
 import io.treasure.service.GoodService;
 import io.swagger.annotations.Api;

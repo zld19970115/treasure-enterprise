@@ -6,6 +6,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.DateUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;

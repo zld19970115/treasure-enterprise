@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.GoodEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

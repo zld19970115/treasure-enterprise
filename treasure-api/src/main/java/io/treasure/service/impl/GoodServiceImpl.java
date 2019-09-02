@@ -3,6 +3,8 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodDao;
+import io.treasure.dto.GoodDTO;
+import io.treasure.entity.GoodEntity;
 import io.treasure.service.GoodService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

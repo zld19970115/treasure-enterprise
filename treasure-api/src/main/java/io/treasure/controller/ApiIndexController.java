@@ -8,6 +8,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/index")
 @Api(tags="首页模块")
-public class ApiIndexController {
+public class
+ApiIndexController {
 
     @Autowired
     private MerchantService merchantService;

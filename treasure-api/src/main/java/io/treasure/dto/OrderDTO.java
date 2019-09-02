@@ -2,6 +2,7 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantRoomParamsSetEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import lombok.Data;
