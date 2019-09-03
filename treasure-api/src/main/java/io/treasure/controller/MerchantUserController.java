@@ -5,11 +5,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantUserDTO;
 
@@ -38,6 +34,7 @@ import java.util.Map;
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-07-22
  */
+
 @RestController
 @RequestMapping("/merchantuser")
 @Api(tags="商户管理员")
@@ -110,6 +107,7 @@ public class MerchantUserController {
      * @param dto
      * @return
      */
+    @CrossOrigin
     @PostMapping("login")
     @ApiOperation("登录")
     public Result<Map<String, Object>> login(@RequestBody LoginDTO dto){
@@ -117,7 +115,7 @@ public class MerchantUserController {
         ValidatorUtils.validateEntity(dto);
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
-        return new Result().ok(map);
+       return new Result().ok(map);
     }
     @Login
     @PostMapping("logout")
@@ -184,9 +182,10 @@ public class MerchantUserController {
      *
      * @return
      */
+    @CrossOrigin
     @PostMapping("register")
     @ApiOperation("注册")
-    public Result register( HttpServletRequest request, @RequestBody MerchantUserRegisterDTO dto){
+    public Result register(@RequestBody MerchantUserRegisterDTO dto){
         ValidatorUtils.validateEntity(dto);
         String oPassword= DigestUtils.sha256Hex(dto.getOldPassword());
         String nPassword= DigestUtils.sha256Hex(dto.getNewPassword());
@@ -201,6 +200,7 @@ public class MerchantUserController {
         entity.setOpenid(dto.getOpenid());
         entity.setCreateDate(new Date());
         entity.setStatus(Common.STATUS_ON.getStatus());
+        entity.setMerchantid("0");
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //根据用户名判断是否已经注册过了
