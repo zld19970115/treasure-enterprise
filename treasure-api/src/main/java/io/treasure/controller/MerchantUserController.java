@@ -46,6 +46,7 @@ public class MerchantUserController {
     @Autowired
     private SMSConfig smsConfig;
 
+    @CrossOrigin
     @Login
     @GetMapping("page")
     @ApiOperation("列表")
@@ -133,6 +134,7 @@ public class MerchantUserController {
      * @param
      * @return
      */
+    @CrossOrigin
     @Login
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
@@ -156,6 +158,7 @@ public class MerchantUserController {
      * @param mobile
      * @return
      */
+    @CrossOrigin
     @Login
     @PutMapping("retrievePassword")
     @ApiOperation("找回密码")
@@ -217,6 +220,7 @@ public class MerchantUserController {
      * @param  id
      * @return
      */
+    @CrossOrigin
     @Login
     @PutMapping("updateMobile")
     @ApiOperation("修改手机号")
@@ -261,12 +265,14 @@ public class MerchantUserController {
      * @param
      * @return
      */
+    @CrossOrigin
     @PutMapping("code")
     @ApiOperation("获取验证码")
     public Result registerCode(HttpServletRequest request,@RequestBody String mobile){
         boolean bool= SendSMSUtil.sendCodeForRegister(mobile,request,smsConfig);
         return new Result().ok(bool);
     }
+    @CrossOrigin
     @GetMapping("verifyCode")
     @ApiOperation("校验验证码")
     @ApiImplicitParams({
@@ -282,6 +288,7 @@ public class MerchantUserController {
      * @param id
      * @return
      */
+    @CrossOrigin
     @Login
     @GetMapping("getMerchantAllByUserId")
     @ApiOperation("根据会员Id显示商户信息")
@@ -297,6 +304,7 @@ public class MerchantUserController {
      * @param mobile
      * @return
      */
+    @CrossOrigin
     @Login
     @GetMapping("getMerchantAllByMobile")
     @ApiOperation("根据会员手机号码示商户信息")

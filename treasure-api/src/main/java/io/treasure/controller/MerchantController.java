@@ -8,6 +8,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
@@ -67,8 +68,6 @@ public class MerchantController {
     @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantDTO dto){
-
-
         //效验数据
        // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
@@ -82,8 +81,7 @@ public class MerchantController {
         dto.setAuditstatus(Audit.STATUS_NO.getStatus());
         merchantService.save(dto);
         //修改创建者的商户信息
-        MerchantUserEntity user=new MerchantUserEntity();
-        user.setId(dto.getCreator());
+        MerchantUserDTO user=merchantUserService.get(dto.getCreator());
         //根据商户名称、身份证号查询商户信息
         MerchantEntity  entity= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
         String merchantId=user.getMerchantid();
@@ -92,7 +90,7 @@ public class MerchantController {
         }else{
             user.setMerchantid(String.valueOf(entity.getId()));
         }
-        merchantUserService.update(user,null);
+        merchantUserService.update(user);
         return new Result().ok(entity);
     }
     @Login

@@ -69,6 +69,7 @@ public class MerchantUserDTO {
 	@ApiModelProperty(value = "父节点")
 	@NotNull(message = "父节点不能为空",groups = AddGroup.class)
 	@NotNull(message = "父级点不能为空",groups = UpdateGroup.class)
+
 	private Long pid;
 	@NotNull(message = "角色不能为空",groups=AddGroup.class)
 	@NotNull(message = "角色不能为空",groups = UpdateGroup.class)
