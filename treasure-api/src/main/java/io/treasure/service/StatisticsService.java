@@ -14,4 +14,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
      int monthReserve(String month, Long merchantId);
     int monthQuit(String month, Long merchantId);
     double monthMoney(String month, Long merchantId);
+    double allMoney(Long merchantId);
 }

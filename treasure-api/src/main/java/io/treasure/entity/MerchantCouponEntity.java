@@ -74,4 +74,5 @@ public class MerchantCouponEntity extends BaseEntity {
      * 发放条件:1-自己领取,2-满额自动领取，3-自动发放
      */
 	private Integer grants;
+
 }

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.treasure.dao.UserGiftDao">
 
-<mapper namespace="io.treasure.dao.UserCouponDao">
-    <resultMap type="io.treasure.entity.UserCouponEntity" id="userCouponMap">
+    <resultMap type="io.treasure.entity.UserGiftEntity" id="UserGiftMap">
 
         <result property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="couponId" column="coupon_id"/>
-        <result property="martId" column="mart_id"/>
+        <result property="number" column="number"/>
+        <result property="userNumber" column="user_number"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
         <result property="updateDate" column="update_date"/>
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="money" column="money"/>
     </resultMap>
+
     <resultMap type="io.treasure.entity.ClientUserEntity" id="clientUserMap">
 
         <result property="id" column="id"/>
@@ -42,36 +45,21 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
+    <update id="updateUnumberAndStatus"  parameterType="io.treasure.entity.UserGiftEntity">
+        update ct_user_gift set user_number= #{userNumber} , status = 1 where id= #{id}
 
 
-    <select id="selectGift" parameterType="io.treasure.entity.UserCouponEntity" resultType="Double">
-    select gift from ct_client_user where id = #{userId}
+    </update>
+    <update id="updateGift" parameterType="io.treasure.entity.UserGiftEntity">
 
-</select>
-
-    <select id="selectByCouponId" parameterType="io.treasure.entity.UserCouponEntity" resultType="io.treasure.entity.UserCouponEntity">
-    select * from ct_user_coupon where coupon_id = #{couponId}
-
-</select>
-    <select id="selectByUserId" resultType="java.util.List">
-        select m.*,user.coupon_id from  ct_user_coupon user
-        left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
-        where user.user_id = #{userId}  and user.mart_id = #{martId} and user.status = 1 and m.money   &lt;= #{money}
+         update ct_client_user set gift= #{money} where id= #{id}
+    </update>
+    <select id="selectBynumber"  parameterType="io.treasure.entity.UserGiftEntity" resultType="io.treasure.entity.ClientUserEntity">
+    select * from ct_client_user where mobile = #{userNumber}
     </select>
-    <select id="selectMyCouponByUserId" parameterType="io.treasure.entity.UserCouponEntity" resultType="java.util.List">
-        select m.*,user.coupon_id from  ct_user_coupon user
-        left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
-        where user.user_id = #{userId} and user .status = 1
-
-</select>
-    <select id="selectMartCoupon" parameterType="io.treasure.entity.UserCouponEntity"  resultType="io.treasure.entity.MerchantCouponEntity">
-      select m.* from  ct_user_coupon user
-        left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
-        where user.user_id = #{userId}  and mart_id = #{martId}
-
-</select>
-    <select id="selectBymartId" parameterType="io.treasure.entity.MerchantCouponEntity" resultType="io.treasure.entity.MerchantCouponEntity">
-       select * from ct_merchant_coupon where merchant_id = #{martId}
+    <select id="selectStatus"  parameterType="io.treasure.entity.UserGiftEntity" resultType="io.treasure.entity.UserGiftEntity">
+         select * from ct_user_gift where number = #{number} and password = #{password}
     </select>
+
 
 </mapper>

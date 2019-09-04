@@ -5,13 +5,8 @@ import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
-import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
@@ -72,13 +67,16 @@ public class MerchantController {
     @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantDTO dto){
+
+
         //效验数据
-        ValidatorUtils.validateEntity(dto);
+       // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
         MerchantEntity flag = merchantService.getByNameAndCards(dto.getName(),dto.getCards());
         if(null!=flag){
             return new Result().error("该商户您已经注册过了！");
         }
+
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setCreateDate(new Date());
         dto.setAuditstatus(Audit.STATUS_NO.getStatus());
