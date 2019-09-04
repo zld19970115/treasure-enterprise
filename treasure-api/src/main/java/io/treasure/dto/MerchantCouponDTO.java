@@ -24,8 +24,8 @@ import java.util.Date;
 public class MerchantCouponDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(value = "")
-	private Long id;
+	@ApiModelProperty(value = "ID")
+	private long id;
 
 	@ApiModelProperty(value = "名称")
 	@NotBlank(message ="名称不能为空",groups= AddGroup.class)

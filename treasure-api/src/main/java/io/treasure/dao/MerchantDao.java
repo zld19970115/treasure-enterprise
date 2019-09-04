@@ -3,6 +3,7 @@ package io.treasure.dao;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Mapper
 public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据名称和身份账号查询
-    MerchantEntity getByNameAndCards(String name, String cards);
+    MerchantEntity getByNameAndCards(@Param("name") String name,@Param("cards") String cards);
     //根据商户名查询
     MerchantEntity getByName(String name,int status);
     //根据id修改状态

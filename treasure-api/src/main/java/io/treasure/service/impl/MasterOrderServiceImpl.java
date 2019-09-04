@@ -87,7 +87,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result=new Result();
         //生成订单号
-        String orderId= OrderUtil.getOrderIdByTime(user.getId());
+        String orderId= OrderUtil.getOrderIdByTime(dto.getId());
         //锁定包房/散台
          MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(dto.getReservationId());
         if(merchantRoomParamsSetEntity==null){

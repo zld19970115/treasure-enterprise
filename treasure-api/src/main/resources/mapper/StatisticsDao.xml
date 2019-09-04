@@ -67,4 +67,8 @@
 
        select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m') = #{month} and status = "4"
     </select>
+    <select id="allMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
+
+       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}   and status = "4"
+    </select>
 </mapper>

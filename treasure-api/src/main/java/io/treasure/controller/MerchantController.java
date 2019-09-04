@@ -5,14 +5,10 @@ import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
-import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
@@ -68,18 +64,22 @@ public class MerchantController {
         return new Result<MerchantDTO>().ok(data);
     }
     @Login
-    @PostMapping
+    @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody MerchantDTO dto){
+
+
         //效验数据
-        ValidatorUtils.validateEntity(dto);
+       // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
         MerchantEntity flag = merchantService.getByNameAndCards(dto.getName(),dto.getCards());
         if(null!=flag){
             return new Result().error("该商户您已经注册过了！");
         }
+
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setCreateDate(new Date());
+        dto.setAuditstatus(Audit.STATUS_NO.getStatus());
         merchantService.save(dto);
         //修改创建者的商户信息
         MerchantUserEntity user=new MerchantUserEntity();
@@ -92,36 +92,36 @@ public class MerchantController {
         }else{
             user.setMerchantid(String.valueOf(entity.getId()));
         }
-
         merchantUserService.update(user,null);
-        return new Result();
+        return new Result().ok(entity);
     }
-//    @Login
-//    @PutMapping
-//    @ApiOperation("修改")
-//    public Result update(@RequestBody MerchantDTO dto){
-//        //效验数据
-//        ValidatorUtils.validateEntity(dto);
-//        MerchantDTO entity=merchantService.get(dto.getId());
-//        if(!entity.getName().equals(dto.getName())){
+    @Login
+    @PutMapping("edit")
+    @ApiOperation("修改")
+    public Result update(@RequestBody MerchantDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto);
+        MerchantDTO entity=merchantService.get(dto.getId());
+        if(!entity.getName().equals(dto.getName())){
+            //根据修改的名称和身份账号查询
+            MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
+            if(null!=merchant){
+                return new Result().error("该商户您已经注册过了！");
+            }
+        }
+//        if(!entity.getCards().equals(dto.getCards())){
 //            //根据修改的名称和身份账号查询
-//            MerchantEntity  merchant= merchantService.getByName(dto.getName(),Common.STATUS_DELETE.getStatus());
+//            MerchantEntity  merchant= merchantService.getByCards(dto.getCards(),Common.STATUS_DELETE.getStatus());
 //            if(null!=merchant){
 //                return new Result().error("该商户您已经注册过了！");
 //            }
 //        }
-////        if(!entity.getCards().equals(dto.getCards())){
-////            //根据修改的名称和身份账号查询
-////            MerchantEntity  merchant= merchantService.getByCards(dto.getCards(),Common.STATUS_DELETE.getStatus());
-////            if(null!=merchant){
-////                return new Result().error("该商户您已经注册过了！");
-////            }
-////        }
-//        dto.setStatus(Common.STATUS_ON.getStatus());
-//        dto.setUpdateDate(new Date());
-//        merchantService.update(dto);
-//        return new Result();
-//    }
+        dto.setStatus(Common.STATUS_ON.getStatus());
+        dto.setUpdateDate(new Date());
+        dto.setAuditstatus(Audit.STATUS_NO.getStatus());
+        merchantService.update(dto);
+        return new Result();
+    }
     @Login
     @PutMapping("updateBasic")
     @ApiOperation("修改店铺名称")

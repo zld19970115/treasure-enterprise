@@ -10,9 +10,7 @@ import io.treasure.service.impl.UserCouponServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 用户优惠卷表
@@ -28,20 +26,11 @@ public class UserCouponController {
     @ApiOperation("查询商家可领取优惠卷")
     public  Result selectMartCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId){
 
-        List list = new ArrayList();
-        List<UserCouponEntity> userCouponEntities = userCouponService.selectMartCoupon(userId, martId);
-        List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectBymartId(martId);
-        for (UserCouponEntity userCouponEntity : userCouponEntities) {
-            for (MerchantCouponEntity merchantCouponEntity : merchantCouponEntities) {
-                if (userCouponEntity.getCouponId()!=merchantCouponEntity.getId()){
-                    //没领取过
-                    list.add(merchantCouponEntity);
+        List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
+        List<MerchantCouponEntity> AllMerchantCouponEntities = userCouponService.selectBymartId(martId);
+        AllMerchantCouponEntities.removeAll(merchantCouponEntities);
 
-                }
-            }
-        }
-
-        return  new Result().ok(list);
+          return new Result().ok(AllMerchantCouponEntities);
     }
     @PostMapping("/addCoupon")
     @ApiOperation("用户领取商家优惠卷")
@@ -86,6 +75,7 @@ public class UserCouponController {
     }
     @GetMapping("/myCoupon")
     @ApiOperation("查询我的优惠卷")
+
     public Result myCoupon(@RequestParam(value = "userId") Long userId){
         List list = userCouponService.selectMyCouponByUserId(userId);
 

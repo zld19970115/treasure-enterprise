@@ -160,4 +160,9 @@ public class MerchantEntity implements Serializable {
 	 *商家未提现金额
 	 */
 	private Double notCash;
+	/**
+	 *
+	 *审核失败原因
+	 */
+	private String reason;
 }

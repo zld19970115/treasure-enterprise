@@ -51,7 +51,7 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
     }
 
     @Override
-    public  List<UserCouponEntity>  selectMartCoupon(Long userId, long martId) {
+    public  List<MerchantCouponEntity>  selectMartCoupon(Long userId, long martId) {
         return baseDao.selectMartCoupon(userId,martId);
     }
 

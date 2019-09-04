@@ -71,4 +71,9 @@ public class StatisticsServiceImpl extends CrudServiceImpl<StatisticsDao, Master
     public double monthMoney(String month, Long merchantId) {
         return baseDao.monthMoney(month,merchantId);
     }
+
+    @Override
+    public double allMoney(Long merchantId) {
+        return baseDao.allMoney(merchantId);
+    }
 }
