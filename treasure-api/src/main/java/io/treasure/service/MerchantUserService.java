@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.entity.MerchantUserEntity;
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     //删除
     void remove(Long id);
     //会员id查询该会员对应的商户信息
-    List getMerchantByUserId(Long id);
+    List<MerchantDTO> getMerchantByUserId(Long id);
     //根据会员手机号码查询对应的商户信息
     List getMerchantByMobile(String mobile);
 }

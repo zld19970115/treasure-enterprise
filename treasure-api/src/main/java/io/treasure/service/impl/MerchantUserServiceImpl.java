@@ -7,6 +7,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.MerchantUserDao;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
@@ -103,7 +104,7 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
      * @return
      */
     @Override
-    public List getMerchantByUserId(Long id) {
+    public List<MerchantDTO> getMerchantByUserId(Long id) {
         return baseDao.getMerchantByUserId(id);
     }
 

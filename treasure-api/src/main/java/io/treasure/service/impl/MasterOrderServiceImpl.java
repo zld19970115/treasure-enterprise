@@ -106,7 +106,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
          //是否使用赠送金
         if(dto.getGiftMoney().doubleValue()>0)
         {
-            ClientUserEntity clientUserEntity=clientUserService.selectById(user.getId());
+            ClientUserEntity clientUserEntity=clientUserService.selectById(dto.getId());
             BigDecimal gift=clientUserEntity.getGift();
             BigDecimal useGift=new BigDecimal(dto.getGiftMoney().doubleValue()).setScale(2);
             if(gift.compareTo(useGift)==-1){

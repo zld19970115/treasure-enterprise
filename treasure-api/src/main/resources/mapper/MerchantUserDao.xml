@@ -23,7 +23,7 @@
     <select id="getByMobile" resultType="io.treasure.entity.MerchantUserEntity">
         select * from ct_merchant_user where mobile = #{value} and status=1
     </select>
-    <select id="getMerchantByUserId" resultType="java.util.Map">
+    <select id="getMerchantByUserId" resultType="io.treasure.dto.MerchantDTO">
         select m.* from ct_merchant_user user
         left join ct_merchant m on ( find_in_set(m.id,user.merchantId))
         where user.id=#{id}
