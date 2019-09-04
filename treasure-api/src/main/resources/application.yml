@@ -78,10 +78,10 @@ sms:
 wx:
   config:
     app_id: wxf2486962789c4507
-    appsecret: e2994c485c3646e960aafc9ffa79c20c
+    appsecret: f740a7b079f256525c2a7c03ae809c1e
   pay:
-    key: basDYrmyy04566421816DDweixin1473
-    mch_id: 1498618862
+    key: b3131519b52e377344a6ddeb8106c024
+    mch_id: 1516500931
     notifyUrl: http://www.aukuu.com:8081/treasure-api/api/wxprecreate/notify
 
 #支付宝配置

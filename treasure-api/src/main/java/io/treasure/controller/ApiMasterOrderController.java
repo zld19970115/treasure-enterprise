@@ -2,7 +2,6 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
-import io.treasure.dto.AllOrderDTO;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;

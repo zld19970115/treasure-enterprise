@@ -8,18 +8,15 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MasterOrderDao;
+import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
-import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.*;
-import io.treasure.service.MasterOrderService;
+import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 
-import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.service.MerchantService;
-import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.OrderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private SlaveOrderService slaveOrderService;
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
+    @Autowired
+    private ClientUserService clientUserService;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params){
@@ -106,9 +106,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
          //是否使用赠送金
         if(dto.getGiftMoney().doubleValue()>0)
         {
-            
-        }else {
-
+            ClientUserEntity clientUserEntity=clientUserService.selectById(user.getId());
+            BigDecimal gift=clientUserEntity.getGift();
+            BigDecimal useGift=new BigDecimal(dto.getGiftMoney().doubleValue()).setScale(2);
+            if(gift.compareTo(useGift)==-1){
+                return result.error(-7,"您的赠送金不足！");
+            }else{
+                clientUserEntity.setGift(gift.subtract(useGift));
+            }
+            clientUserService.updateById(clientUserEntity);
         }
         //保存主订单
         MasterOrderEntity masterOrderEntity=ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
@@ -120,16 +126,22 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-2,"没有订单数据！");
         }
         //保存订单菜品
-        dtoList.forEach(slaveOrderEntity -> {
-            slaveOrderEntity.setOrderId(orderId);
-            slaveOrderEntity.setStatus(1);
-        });
+        if(masterOrderEntity.getReservationId()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            if(dtoList==null)
+            {
+                return result.error(-6,"没有菜品数据！");
+            }
+            dtoList.forEach(slaveOrderEntity -> {
+                slaveOrderEntity.setOrderId(orderId);
+                slaveOrderEntity.setStatus(1);
+            });
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
-        boolean b=slaveOrderService.insertBatch(dtoList);
-        if(!b){
-            return result.error(-3,"没有订单菜品数据！");
+            boolean b=slaveOrderService.insertBatch(dtoList);
+            if(!b){
+                return result.error(-3,"没有订单菜品数据！");
+            }
         }
-        return result;
+        return result.ok(orderId);
     }
 
     @Override
