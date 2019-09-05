@@ -220,4 +220,12 @@ public class ApiGoodController {
     public Result<List> getGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
         return new Result<List>().ok(apigoodService.getGoodsByGoodCategoryId(martId,goodCategoryId));
     }
+
+
+    @Login
+    @GetMapping("getShowInHotbyMartId")
+    @ApiOperation("根据商户ID查询此商户热销菜品")
+    public Result<List<GoodDTO>> getShowInHotbyMartId(long martId ) {
+        return new Result<List<GoodDTO>>().ok(apigoodService.getShowInHotbyMartId(martId));
+    }
 }

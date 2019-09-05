@@ -1,6 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -29,4 +30,6 @@ public interface ApiGoodDao extends BaseDao<GoodEntity> {
 
     //通过商户ID与菜品分类ID查询此分类的所有菜
     List getGoodsByGoodCategoryId(long martId, long goodCategoryId);
+
+    List<GoodDTO> getShowInHotbyMartId(long martId);
 }

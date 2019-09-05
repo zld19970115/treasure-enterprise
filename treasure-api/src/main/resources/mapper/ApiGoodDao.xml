@@ -47,5 +47,7 @@
     <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
        select * FROM ct_good where mart_id=#{arg0}  and good_category_id=#{arg1} and `status`=1
     </select>
-
+    <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
+        select * from ct_good where mart_id=#{martId} and show_in_hot=1
+    </select>
 </mapper>

@@ -114,4 +114,15 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
         List goodsByGoodCategoryId = baseDao.getGoodsByGoodCategoryId(martId, goodCategoryId);
         return goodsByGoodCategoryId;
     }
+
+    /**
+     * 通过商户ID查询此商户热销菜
+     * @param martId
+     * @return
+     */
+    @Override
+    public List<GoodDTO> getShowInHotbyMartId(long martId) {
+        return baseDao.getShowInHotbyMartId(martId);
+    }
+
 }
