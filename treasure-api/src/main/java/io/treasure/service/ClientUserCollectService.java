@@ -3,6 +3,7 @@ package io.treasure.service;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.ClientUserCollectDTO;
 import io.treasure.entity.ClientUserCollectEntity;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户收藏
@@ -11,5 +12,5 @@ import io.treasure.entity.ClientUserCollectEntity;
  * @since 1.0.0 2019-08-02
  */
 public interface ClientUserCollectService extends CrudService<ClientUserCollectEntity, ClientUserCollectDTO> {
-
+    Integer selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
 }

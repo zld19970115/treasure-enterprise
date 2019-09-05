@@ -82,7 +82,7 @@ public class GoodController {
     @ApiOperation("保存")
     public Result save(@RequestBody GoodDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, AddGroup.class);
+   //     ValidatorUtils.validateEntity(dto, AddGroup.class);
         //根据菜品名称、商户查询该菜品名称是否存在
         List list=goodService.getByNameAndMerchantId(dto.getName(),dto.getMartId());
         if(null!=list && list.size()>0){

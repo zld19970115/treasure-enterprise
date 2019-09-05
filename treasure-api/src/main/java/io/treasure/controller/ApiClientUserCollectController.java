@@ -82,5 +82,25 @@ public class ApiClientUserCollectController {
         clientUserCollectService.update(clientUserCollectDTO);
         return new Result();
     }
+    @GetMapping("/yesOrNo")
+    @ApiOperation("是否收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "martId", value = "商家id", paramType = "query", required = true, dataType = "long"),
+
+    })
+    public Result yesOrNo(long userId,long martId){
+        Integer status = clientUserCollectService.selectByUidAndMid(userId, martId);
+        Integer a = 1;
+        if (a.equals(status)){
+    return new Result().ok("ture");
+}
+        return new Result().ok("false");
+
+
+    }
+
+
+
 
 }

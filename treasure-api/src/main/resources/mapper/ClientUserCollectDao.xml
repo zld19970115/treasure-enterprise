@@ -15,6 +15,10 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
+    <select id="selectByUidAndMid" resultType="java.lang.Integer">
+        select status from ct_client_user_collect where type = 1 and collect_id = #{martId} and client_user_id = #{userId}
+
+    </select>
 
 
 </mapper>
