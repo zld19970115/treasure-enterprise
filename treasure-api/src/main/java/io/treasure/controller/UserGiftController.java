@@ -1,16 +1,25 @@
 package io.treasure.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.UserGiftDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.UserGiftEntity;
 import io.treasure.service.impl.UserGiftServiceImpl;
+import io.treasure.utils.DateUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * 用户赠送金表
@@ -22,9 +31,9 @@ import java.math.BigDecimal;
 public class UserGiftController {
     @Autowired
     UserGiftServiceImpl userGiftService;
-    @PostMapping("/insertGift")
+    @PostMapping("/goGift")
     @ApiOperation("用户充值赠送金")
-    public Result insertGift(@RequestBody UserGiftDTO dto){
+    public Result goGift(@RequestBody UserGiftDTO dto){
         ClientUserEntity clientUserEntity = userGiftService.selectBynumber(dto.getUserNumber());
        if (clientUserEntity==null){
            return new Result().error("不存在此用户");
@@ -33,9 +42,22 @@ public class UserGiftController {
        if (userGiftEntity==null){
            return new Result().error("账号密码错误");
        }
-       if (userGiftEntity.getStatus()==1){
+        Date endDate = dto.getEndDate();
+        long end = endDate.getTime();
+         Date date = new Date();
+        long now = date.getTime();
+        if (end>now){
+            return new Result().error("卡密已经过期");
+        }
+        if (userGiftEntity.getStatus()==1){
            return new Result().error("该卡密已使用");
        }
+        BigDecimal a = new BigDecimal("50");
+
+       if( clientUserEntity.getGift().compareTo(a)==1){
+           return new Result().error("该用户赠送金额不小于50");
+       }
+
         long id = userGiftEntity.getId();
         String userNumber = dto.getUserNumber();
         userGiftService.updateUnumberAndStatus(userNumber,id);
@@ -45,5 +67,29 @@ public class UserGiftController {
 
     }
 
+    @GetMapping("/insertGift")
+    @ApiOperation("创建赠送金卡劵")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "article", value = "卡眷数量", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "money", value = "钱数", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "end_date", value = "卡眷截止时间", paramType = "query", required = true, dataType = "")
+    })
+    public Result insertGift( Integer article, BigDecimal money,Date end_date) {
 
+        for (int i = 0; i < article; i++) {
+            //注意replaceAll前面的是正则表达式
+            UserGiftDTO uge = new UserGiftDTO();
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            Date date = new Date();
+            int password = (int) ((Math.random() * 9 + 1) * 100000);
+            uge.setNumber(uuid);
+            uge.setCreateDate(date);
+            uge.setEndDate(end_date);
+            uge.setMoney(money);
+            uge.setPassword(password);
+            userGiftService.insertGift(uge);
+        }
+
+            return new Result().ok("创建成功");
+    }
 }

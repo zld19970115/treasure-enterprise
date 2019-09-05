@@ -7,10 +7,12 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 
 import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantUserService;
 
@@ -298,8 +300,8 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="会员编号",required=true,paramType="query",dataType = "Long")
     })
-    public Result<List> getMerchantAllByUserId(Long id){
-        List list=merchantUserService.getMerchantByUserId(id);
+    public Result<List<MerchantDTO>> getMerchantAllByUserId(Long id){
+        List<MerchantDTO> list=merchantUserService.getMerchantByUserId(id);
         return new Result().ok(list);
     }
     /**

@@ -22,7 +22,7 @@ private long id;
 /**
  * 卡劵账号
  */
-private long number;
+private String number;
     /**
      * 密碼
      */
@@ -57,6 +57,9 @@ private long number;
      */
     private BigDecimal money;
 
-
+    /**
+     * 截止日期
+     */
+    private Date  endDate;
 
 }

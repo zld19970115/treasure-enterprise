@@ -1,6 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -25,7 +26,7 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     //删除
     void remove(long id);
     //根据会员id查询商户信息
-    List getMerchantByUserId(Long id);
+    List<MerchantDTO> getMerchantByUserId(Long id);
     //根据手机号码查询会员商户信息
     List getMerchantByMobile(String mobile);
 }

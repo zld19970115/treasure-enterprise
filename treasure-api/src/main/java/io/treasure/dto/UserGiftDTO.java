@@ -26,7 +26,7 @@ public class UserGiftDTO {
      * 卡劵账号
      */
     @ApiModelProperty(value = "卡劵账号")
-    private long number;
+    private String number;
     /**
      * 密碼
      */
@@ -70,5 +70,6 @@ public class UserGiftDTO {
      */
     @ApiModelProperty(value = "面额")
     private BigDecimal money;
-
+    @ApiModelProperty(value = "截止日期")
+    private Date  endDate;
 }

@@ -110,7 +110,7 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
      * @return
      */
     @Override
-    public List getMerchantByUserId(Long id) {
+    public List<MerchantDTO> getMerchantByUserId(Long id) {
         return baseDao.getMerchantByUserId(id);
     }
 

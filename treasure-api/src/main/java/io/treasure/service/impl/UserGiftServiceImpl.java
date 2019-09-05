@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -38,7 +39,7 @@ public class UserGiftServiceImpl  extends CrudServiceImpl<UserGiftDao, UserGiftE
     }
 
     @Override
-    public UserGiftEntity selectStatus(Long number,Integer password) {
+    public UserGiftEntity selectStatus(String number,Integer password) {
         return baseDao.selectStatus(number,password);
     }
 
@@ -50,5 +51,10 @@ public class UserGiftServiceImpl  extends CrudServiceImpl<UserGiftDao, UserGiftE
     @Override
     public void updateGift(BigDecimal money,long id) {
         baseDao.updateGift(money,id);
+    }
+
+    @Override
+    public void insertGift(UserGiftDTO dto) {
+        baseDao.insertGift(dto);
     }
 }

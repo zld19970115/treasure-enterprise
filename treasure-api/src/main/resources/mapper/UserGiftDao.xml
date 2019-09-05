@@ -14,6 +14,7 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
         <result property="money" column="money"/>
+        <result property="endDate" column="end_date"/>
     </resultMap>
 
     <resultMap type="io.treasure.entity.ClientUserEntity" id="clientUserMap">
@@ -60,6 +61,8 @@
     <select id="selectStatus"  parameterType="io.treasure.entity.UserGiftEntity" resultType="io.treasure.entity.UserGiftEntity">
          select * from ct_user_gift where number = #{number} and password = #{password}
     </select>
-
+   <insert id="insertGift" parameterType="io.treasure.entity.UserGiftEntity">
+       INSERT INTO `treasure`.`ct_user_gift` ( `number`, `password`,   `money`,  `create_date`,  `end_date`) VALUES ( #{number},#{password},#{money},#{createDate},#{endDate});
+   </insert>
 
 </mapper>
