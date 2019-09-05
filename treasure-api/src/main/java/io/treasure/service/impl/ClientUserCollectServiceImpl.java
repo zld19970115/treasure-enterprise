@@ -32,7 +32,14 @@ public class ClientUserCollectServiceImpl extends CrudServiceImpl<ClientUserColl
 
 
     @Override
-    public Integer selectByUidAndMid(Long userId, Long martId) {
+    public ClientUserCollectDTO selectByUidAndMid(Long userId, Long martId) {
         return baseDao.selectByUidAndMid(userId,martId);
     }
+
+    @Override
+    public void changeStatus(Long userId, Long martId) {
+        baseDao.changeStatus(userId,martId);
+    }
+
+
 }

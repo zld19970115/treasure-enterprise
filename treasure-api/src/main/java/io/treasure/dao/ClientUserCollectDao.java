@@ -1,6 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.ClientUserCollectDTO;
 import io.treasure.entity.ClientUserCollectEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface ClientUserCollectDao extends BaseDao<ClientUserCollectEntity> {
-     Integer selectByUidAndMid(@Param("userId")Long userId,@Param("martId")Long martId);
+    ClientUserCollectDTO selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
+    void changeStatus(@Param("userId")Long userId, @Param("martId")Long martId);
 }

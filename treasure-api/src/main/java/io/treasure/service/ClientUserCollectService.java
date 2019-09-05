@@ -12,5 +12,6 @@ import org.apache.ibatis.annotations.Param;
  * @since 1.0.0 2019-08-02
  */
 public interface ClientUserCollectService extends CrudService<ClientUserCollectEntity, ClientUserCollectDTO> {
-    Integer selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
+    ClientUserCollectDTO selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
+    void changeStatus(@Param("userId")Long userId, @Param("martId")Long martId);
 }
