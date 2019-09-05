@@ -74,5 +74,4 @@ public class MerchantUserDTO {
 	@NotNull(message = "角色不能为空",groups=AddGroup.class)
 	@NotNull(message = "角色不能为空",groups = UpdateGroup.class)
 	private Long roleId;
-
 }

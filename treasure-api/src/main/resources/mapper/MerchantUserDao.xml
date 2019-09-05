@@ -18,6 +18,7 @@
         <result property="updater" column="updater"/>
         <result property="merchantid" column="merchantId"/>
         <result property="pid" column="pid"/>
+        <result property="pidName" column="pid_name"/>
     </resultMap>
 
     <select id="getByMobile" resultType="io.treasure.entity.MerchantUserEntity">

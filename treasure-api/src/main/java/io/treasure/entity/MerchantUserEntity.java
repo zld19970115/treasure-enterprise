@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 
@@ -72,4 +73,6 @@ public class MerchantUserEntity implements Serializable {
 	 * 父节点
 	 */
 	private Long pid;
+	private String pidName;//父节点名称
+
 }

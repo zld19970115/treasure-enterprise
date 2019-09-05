@@ -1,13 +1,17 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.MerchantUserDao;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.MerchantUserService;
@@ -29,8 +33,11 @@ import java.util.Map;
  */
 @Service
 public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, MerchantUserEntity, MerchantUserDTO> implements MerchantUserService {
+
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private MerchantUserService userService;
     /**
      * 登陆
      * @param loginDTO
@@ -117,8 +124,9 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getMerchantByMobile(mobile);
     }
 
-    @Autowired
-    private MerchantUserService userService;
+
+
+
 
     /**
      * 查询条件
@@ -129,9 +137,21 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
     public QueryWrapper<MerchantUserEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
         String status=(String)params.get("status");
+        //微信名称
+        String weixinname=(String)params.get("weixinname");
+        //手机号码
+        String mobile=(String)params.get("mobile");
+        //商户
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MerchantUserEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
+        wrapper.like(StringUtils.isNotBlank(weixinname),"weixinName",weixinname);
+        wrapper.eq(StringUtils.isNotBlank(mobile),"mobile",mobile);
+        if(StringUtils.isNotBlank(merchantId)){
+            merchantId=merchantId.substring(1,merchantId.length()-1);
+        }
+        wrapper.in(StringUtils.isNotBlank(merchantId),"merchantId",merchantId);
         return wrapper;
     }
 

@@ -78,10 +78,8 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) {
         //分页
         IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
-
         //查询
         List<MerchantEntity> list = baseDao.getMerchantList(params);
-
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
