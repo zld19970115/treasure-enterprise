@@ -9,6 +9,9 @@ import io.treasure.service.MerchantRoomParamsSetService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,5 +49,16 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
     @Override
     public void updateStatus(long id, int status) {
         baseDao.updateStatus(id,status);
+    }
+
+    /**
+     * 查询指定日期、时间段内可用包房
+     * @param useDate
+     * @param roomParamsId
+     * @return
+     */
+    @Override
+    public List getAvailableRoomsByData(Date useDate, long roomParamsId){
+        return baseDao.getAvailableRoomsByData(useDate,roomParamsId);
     }
 }
