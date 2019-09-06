@@ -71,7 +71,7 @@ public class ApiMasterOrderController {
     }
     @Login
     @GetMapping("appointmentPage")
-    @ApiOperation("预约列表")
+    @ApiOperation("商户端-预约列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -81,12 +81,12 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MasterOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Order.PAY_STATUS_8+"");
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("chargePage")
-    @ApiOperation("已退单列表")
+    @ApiOperation("商户端-已退单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -96,12 +96,12 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MasterOrderDTO>> chargePage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Order.PAY_STTAUS_7);
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("ongPage")
-    @ApiOperation("进行中列表")
+    @ApiOperation("商户端-进行中列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -111,12 +111,12 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MasterOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Order.PAY_STTAUS_2.getStatus()+","+Order.PAY_STTAUS_3+","+Order.PAY_STTAUS_6);
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("finishPage")
-    @ApiOperation("已完成列表")
+    @ApiOperation("商户端-已完成列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -126,12 +126,12 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MasterOrderDTO>> finishPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Order.PAY_STTAUS_4.getStatus()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("calcelPage")
-    @ApiOperation("已取消列表")
+    @ApiOperation("商户端-已取消列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -141,12 +141,12 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MasterOrderDTO>> calcelPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Order.PAY_STTAUS_5.getStatus()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("allPage")
-    @ApiOperation("全部列表")
+    @ApiOperation("商户端-全部列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -155,7 +155,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MasterOrderDTO> page = masterOrderService.page(params);
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
 
@@ -404,7 +404,7 @@ public class ApiMasterOrderController {
     @Login
     @Transient
     @PutMapping("cancelUpdate")
-    @ApiOperation("取消订单")
+    @ApiOperation("商户端-取消订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
@@ -419,7 +419,7 @@ public class ApiMasterOrderController {
     }
     @Login
     @PutMapping("acceptUpdate")
-    @ApiOperation("接受订单")
+    @ApiOperation("商户端-接受订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
@@ -431,7 +431,7 @@ public class ApiMasterOrderController {
     @Login
     @Transient
     @PutMapping("finishUpdate")
-    @ApiOperation("完成订单")
+    @ApiOperation("商户端-完成订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
@@ -446,7 +446,7 @@ public class ApiMasterOrderController {
     @Login
     @Transient
     @PutMapping("refundYesUpdate")
-    @ApiOperation("同意退款")
+    @ApiOperation("商户端-同意退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
@@ -460,7 +460,7 @@ public class ApiMasterOrderController {
     }
     @Login
     @PutMapping("refundNoUpdate")
-    @ApiOperation("拒绝退款")
+    @ApiOperation("商户端-拒绝退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "拒绝人", paramType = "query", required = true, dataType="long"),

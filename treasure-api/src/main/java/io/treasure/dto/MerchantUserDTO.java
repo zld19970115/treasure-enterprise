@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Update;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -74,4 +75,6 @@ public class MerchantUserDTO {
 	@NotNull(message = "角色不能为空",groups=AddGroup.class)
 	@NotNull(message = "角色不能为空",groups = UpdateGroup.class)
 	private Long roleId;
+	@ApiModelProperty(value = "商户列表")
+	private List<MerchantDTO> merchantList;
 }

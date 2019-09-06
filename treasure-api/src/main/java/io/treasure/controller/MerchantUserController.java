@@ -66,12 +66,18 @@ public class MerchantUserController {
         PageData<MerchantUserDTO> page = merchantUserService.page(params);
         return new Result<PageData<MerchantUserDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
-    @GetMapping("{id}")
+    @GetMapping("getById")
     @ApiOperation("详细信息")
-    public Result<MerchantUserDTO> get(@PathVariable("id") Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<MerchantUserDTO> get(Long id){
         MerchantUserDTO data = merchantUserService.get(id);
-
+        //查询商户信息
+        List<MerchantDTO> merchantList=merchantUserService.getMerchantByUserId(id);
+        data.setMerchantList(merchantList);
         return new Result<MerchantUserDTO>().ok(data);
     }
 

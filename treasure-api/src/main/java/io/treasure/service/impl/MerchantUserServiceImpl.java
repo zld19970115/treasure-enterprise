@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,10 +149,14 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         wrapper.like(StringUtils.isNotBlank(weixinname),"weixinName",weixinname);
         wrapper.eq(StringUtils.isNotBlank(mobile),"mobile",mobile);
+        List<Long> mId=new ArrayList<Long>();
         if(StringUtils.isNotBlank(merchantId)){
-            merchantId=merchantId.substring(1,merchantId.length()-1);
+            String[] mIds=merchantId.split(",");
+            for(int i=0;i<mIds.length;i++){
+                mId.add(Long.parseLong(mIds[i]));
+            }
         }
-        wrapper.in(StringUtils.isNotBlank(merchantId),"merchantId",merchantId);
+        wrapper.in(StringUtils.isNotBlank(merchantId),"merchantId",mId);
         return wrapper;
     }
 

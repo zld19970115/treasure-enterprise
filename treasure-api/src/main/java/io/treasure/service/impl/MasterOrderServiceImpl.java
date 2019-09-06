@@ -52,6 +52,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String id = (String)params.get("id");
         //状态
         String status=(String)params.get("status");
+        //商户
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         if(StringUtils.isNotBlank(status) && status.indexOf(",")>-1){
@@ -59,6 +61,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }else{
             wrapper.eq(StringUtils.isNotBlank(status), "pay_status",status);
         }
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 
@@ -153,6 +156,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return getPageData(page, MasterOrderDTO.class);
     }
 
+    /**
+     * 商户端订单列表查询
+     * @param params
+     * @return
+     */
+    @Override
+    public PageData<MasterOrderDTO> listMerchantPage(Map<String, Object> params) {
+        IPage<MasterOrderEntity> page = baseDao.selectPage(
+                getPage(params, null, false),
+                getQueryMerchantWrapper(params)
+        );
+        return getPageData(page, MasterOrderDTO.class);
+    }
+
     @Override
     public Result updateByCheck(Long id) {
         Result result=new Result();
@@ -237,4 +254,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return wrapper;
     }
 
+    private Wrapper<MasterOrderEntity> getQueryMerchantWrapper(Map<String, Object> params) {
+        String status=(String)params.get("status");
+        //商户id
+        String merchantId=(String)params.get("merchantId");
+        QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
+        if(StringUtils.isNotBlank(status) && status.indexOf(",")>-1){
+            wrapper.in(StringUtils.isNotBlank(status),"status",status);
+        }else{
+            wrapper.eq(StringUtils.isNotBlank(status), "status",status);
+        }
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
+        return wrapper;
+    }
 }

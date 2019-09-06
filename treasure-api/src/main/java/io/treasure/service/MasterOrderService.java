@@ -32,7 +32,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
 
     PageData<MasterOrderDTO> listPage(Map<String, Object> params);
-
+    //商户端订单列表
+    PageData<MasterOrderDTO> listMerchantPage(Map<String, Object> params);
     Result updateByCheck(Long id);
 
     Result updateByCancel(Map<String, Object> params);

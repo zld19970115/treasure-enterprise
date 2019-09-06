@@ -2,6 +2,7 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantRoomParamsSetEntity;
 import io.treasure.entity.SlaveOrderEntity;
@@ -112,4 +113,6 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "预订时间信息")
 	private MerchantRoomParamsSetEntity reservationInfo;
+	@ApiModelProperty(value = "创建者信息")
+	private ClientUserEntity clientUserInfo;
 }
