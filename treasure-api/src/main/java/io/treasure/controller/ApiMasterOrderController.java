@@ -92,7 +92,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> chargePage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -141,7 +141,7 @@ public class ApiMasterOrderController {
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
-    @Login
+    //@Login
     @GetMapping("allPage")
     @ApiOperation("商户端-全部列表")
     @ApiImplicitParams({
