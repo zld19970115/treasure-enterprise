@@ -165,7 +165,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<MasterOrderDTO> listMerchantPage(Map<String, Object> params) {
         IPage<MasterOrderEntity> page = baseDao.selectPage(
                 getPage(params, null, false),
-                getQueryMerchantWrapper(params)
+                getQueryWrapper(params)
         );
         return getPageData(page, MasterOrderDTO.class);
     }
@@ -244,21 +244,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String userId = (String)params.get("userId");
         //状态
         String status=(String)params.get("status");
-        QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq(StringUtils.isNotBlank(userId), "creator", userId);
-        if(StringUtils.isNotBlank(status) && status.indexOf(",")>-1){
-            wrapper.in(StringUtils.isNotBlank(status),"status",status);
-        }else{
-            wrapper.eq(StringUtils.isNotBlank(status), "status",status);
-        }
-        return wrapper;
-    }
-
-    private Wrapper<MasterOrderEntity> getQueryMerchantWrapper(Map<String, Object> params) {
-        String status=(String)params.get("status");
         //商户id
         String merchantId=(String)params.get("merchantId");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(userId), "creator", userId);
         if(StringUtils.isNotBlank(status) && status.indexOf(",")>-1){
             wrapper.in(StringUtils.isNotBlank(status),"status",status);
         }else{

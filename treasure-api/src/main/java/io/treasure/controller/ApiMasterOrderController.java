@@ -398,7 +398,7 @@ public class ApiMasterOrderController {
         masterOrderService.delete(ids);
         return new Result();
     }
-    @Login
+    //@Login
     @Transient
     @PutMapping("cancelUpdate")
     @ApiOperation("商户端-取消订单")
@@ -411,10 +411,10 @@ public class ApiMasterOrderController {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    @Login
+    //@Login
     @PutMapping("acceptUpdate")
     @ApiOperation("商户端-接受订单")
     @ApiImplicitParams({
@@ -425,7 +425,7 @@ public class ApiMasterOrderController {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         return new Result();
     }
-    @Login
+    //@Login
     @Transient
     @PutMapping("finishUpdate")
     @ApiOperation("商户端-完成订单(翻台)")
@@ -440,7 +440,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    @Login
+    //@Login
     @Transient
     @PutMapping("refundYesUpdate")
     @ApiOperation("商户端-同意退款")
@@ -452,10 +452,10 @@ public class ApiMasterOrderController {
         MasterOrderDTO dto = masterOrderService.get(id);
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),verify,new Date(),"同意退款");
         //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    @Login
+    //@Login
     @PutMapping("refundNoUpdate")
     @ApiOperation("商户端-拒绝退款")
     @ApiImplicitParams({
