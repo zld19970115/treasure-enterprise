@@ -44,5 +44,6 @@
 	      AND cs.room_params_id=#{roomParamsId}
 	      AND cs.state = 0
 	      AND cs.status =1
+	      and cr.merchant_id=#{merchantId}
     </select>
 </mapper>
