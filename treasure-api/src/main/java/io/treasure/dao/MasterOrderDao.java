@@ -16,7 +16,8 @@ import java.util.Date;
  */
 @Mapper
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
-    void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason);
+    //refundReason
+    void updateStatusAndReason(long id, int status, long updater, Date refundDate, String refundReason);
 
     MasterOrderEntity selectByOrderId(String orderId);
 }

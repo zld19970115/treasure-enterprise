@@ -35,5 +35,7 @@
     <select id="selectByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order  where merchant_id=#{orderId}
     </select>
-
+    <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantEntity">
+        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},refund_date=#{refundDate} where id=#{id}
+    </update>
 </mapper>

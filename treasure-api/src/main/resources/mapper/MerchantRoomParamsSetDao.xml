@@ -21,7 +21,7 @@
         <result property="roomName" column="room_name"></result>
     </resultMap>
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantRoomParamsSetEntity">
-        update ct_merchant_room_params_set set status=#{status} where id=#{id}
+        update ct_merchant_room_params_set set state=#{status} where id=#{id}
     </update>
     <select id="getAvailableRoomsByData" parameterType="io.treasure.dto.MerchantRoomParamsSetDTO" resultType="java.util.Map">
         SELECT

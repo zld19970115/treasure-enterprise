@@ -136,6 +136,10 @@ public interface Constants {
          */
         MERCHANTAGREEREFUNDORDER(8),
         /**
+         * 翻台
+         */
+        MERCHANTAGFINISHORDER(10),
+        /**
          * 删除订单
          */
         DELETEORDER(9);

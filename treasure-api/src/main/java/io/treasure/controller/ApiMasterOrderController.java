@@ -4,13 +4,10 @@ import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.OrderDTO;
-import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
-import io.treasure.enm.Order;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.SlaveOrderEntity;
-import io.treasure.entity.UserEntity;
 import io.treasure.service.MasterOrderService;
 
 
@@ -30,7 +27,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.service.SlaveOrderService;
+import oracle.jdbc.driver.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +77,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Order.PAY_STATUS_8+"");
+        //params.put("status", Order.PAY_STATUS_8+"");
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -95,13 +92,13 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> chargePage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Order.PAY_STTAUS_7);
+        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("ongPage")
-    @ApiOperation("商户端-进行中列表")
+    @ApiOperation("商户端-进行中列表(已支付和已接受订单)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -110,13 +107,13 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Order.PAY_STTAUS_2.getStatus()+","+Order.PAY_STTAUS_3+","+Order.PAY_STTAUS_6);
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.PAYORDER.getValue());
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("finishPage")
-    @ApiOperation("商户端-已完成列表")
+    @ApiOperation("商户端-已完成列表(翻台)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -125,13 +122,13 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> finishPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Order.PAY_STTAUS_4.getStatus()+"");
+        params.put("status", Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
     @Login
     @GetMapping("calcelPage")
-    @ApiOperation("商户端-已取消列表")
+    @ApiOperation("商户端-拒绝订单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -140,7 +137,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> calcelPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Order.PAY_STTAUS_5.getStatus()+"");
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -411,10 +408,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(long id,long verify,String verify_reason){
-        masterOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_5.getStatus(),verify,new Date(),verify_reason);
+        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
     @Login
@@ -425,22 +422,22 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
     public Result acceptUpdate(long id,long verify){
-        masterOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_3.getStatus(),verify,new Date(),"接受订单");
+        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         return new Result();
     }
     @Login
     @Transient
     @PutMapping("finishUpdate")
-    @ApiOperation("商户端-完成订单")
+    @ApiOperation("商户端-完成订单(翻台)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
     public Result finishUpdate(long id,long verify){
-        masterOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_4.getStatus(),verify,new Date(),"完成订单");
+        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
     @Login
@@ -453,7 +450,7 @@ public class ApiMasterOrderController {
     })
     public Result refundYesUpdate(long id,long verify){
         MasterOrderDTO dto = masterOrderService.get(id);
-        masterOrderService.updateStatusAndReason(id,Order.PAY_STTAUS_7.getStatus(),verify,new Date(),"同意退款");
+        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),verify,new Date(),"同意退款");
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
@@ -467,7 +464,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
     public Result refundNoUpdate(long id,long verify,String verify_reason){
-        masterOrderService.updateStatusAndReason(id,Order.PAY_STATUS_9.getStatus(),verify,new Date(),verify_reason);
+        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
         return new Result();
     }
     
