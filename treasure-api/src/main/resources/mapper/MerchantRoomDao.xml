@@ -24,7 +24,7 @@
         update ct_merchant_room set status=#{status} where id=#{id}
     </update>
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_merchant_room  where merchant_id=#{merchantId} and name=#{name} and type=#{type} and status!=9 order by id desc
+        select * from ct_merchant_room  where merchant_id=#{arg2} and name=#{arg1} and type=#{arg0} and status!=9 order by id desc
     </select>
     <select id="getByMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
         select * from ct_merchant_room  where merchant_id=#{merchantId} and status=#{status} order by id desc

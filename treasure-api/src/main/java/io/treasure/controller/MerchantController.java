@@ -97,8 +97,8 @@ public class MerchantController {
     @PutMapping("edit")
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantDTO dto){
-        //效验数据
-        ValidatorUtils.validateEntity(dto);
+        //效验数据s
+      //  ValidatorUtils.validateEntity(dto);
         MerchantDTO entity=merchantService.get(dto.getId());
         if(!entity.getName().equals(dto.getName())){
             //根据修改的名称和身份账号查询

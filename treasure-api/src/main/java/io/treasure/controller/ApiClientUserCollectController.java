@@ -68,19 +68,48 @@ public class ApiClientUserCollectController {
 
         clientUserCollectService.save(dto);
 
+
         return new Result();
     }
 
     @DeleteMapping
     @ApiOperation("取消收藏")
-    public Result delete(Long id){
+    public Result delete(long userId,long martId){
         //效验数据
-        AssertUtils.isNull(id,"id");
-
-        ClientUserCollectDTO clientUserCollectDTO=clientUserCollectService.get(id);
-        clientUserCollectDTO.setStatus(9);
-        clientUserCollectService.update(clientUserCollectDTO);
-        return new Result();
+       // AssertUtils.isNull(id,"id");
+        ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
+        if (clientUserCollectDTO!=null){
+        clientUserCollectService.changeStatus(userId, martId);
+        return new Result().ok("已取消");
     }
+        return new Result().ok("未收藏");
+
+    }
+    @GetMapping("/yesOrNo")
+    @ApiOperation("是否收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "martId", value = "商家id", paramType = "query", required = true, dataType = "long"),
+
+    })
+    public Result yesOrNo(long userId,long martId){
+        ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
+        if (clientUserCollectDTO!=null){
+        Integer status = clientUserCollectDTO.getStatus();
+        Integer a = 1;
+        if (a.equals(status)){
+    return new Result().ok("true");
+}else {
+            return new Result().ok("false");
+        }
+
+        }
+        return new Result().ok("false");
+
+
+    }
+
+
+
 
 }

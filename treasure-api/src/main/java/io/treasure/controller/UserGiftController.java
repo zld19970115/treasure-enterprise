@@ -42,11 +42,11 @@ public class UserGiftController {
        if (userGiftEntity==null){
            return new Result().error("账号密码错误");
        }
-        Date endDate = dto.getEndDate();
+        Date endDate = userGiftEntity.getEndDate();
         long end = endDate.getTime();
          Date date = new Date();
         long now = date.getTime();
-        if (end>now){
+        if (now>end){
             return new Result().error("卡密已经过期");
         }
         if (userGiftEntity.getStatus()==1){
@@ -55,7 +55,7 @@ public class UserGiftController {
         BigDecimal a = new BigDecimal("50");
 
        if( clientUserEntity.getGift().compareTo(a)==1){
-           return new Result().error("该用户赠送金额不小于50");
+           return new Result().error("赠送金余额大于50不可充值");
        }
 
         long id = userGiftEntity.getId();
@@ -63,7 +63,7 @@ public class UserGiftController {
         userGiftService.updateUnumberAndStatus(userNumber,id);
         BigDecimal money = userGiftEntity.getMoney().add(clientUserEntity.getGift());
         userGiftService.updateGift(money,clientUserEntity.getId());
-        return new Result();
+        return new Result().ok("充值成功");
 
     }
 
@@ -92,4 +92,12 @@ public class UserGiftController {
 
             return new Result().ok("创建成功");
     }
+    @GetMapping("/select")
+    @ApiOperation("查看赠送金表")
+    public Result insertGift( long id) {
+        UserGiftEntity userGiftEntity = userGiftService.selectById(id);
+        return new Result().ok(userGiftEntity);
+    }
+
+
 }

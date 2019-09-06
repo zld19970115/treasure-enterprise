@@ -3,6 +3,7 @@ package io.treasure.service;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.entity.MerchantRoomEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface MerchantRoomService extends CrudService<MerchantRoomEntity, Mer
     //删除
     void remove(long id,int status);
     //根据名称和商户id查询
-    List getByNameAndMerchantId(String name, long merchantId,int type);
+    List getByNameAndMerchantId(@Param("name") String name, @Param("merchantId")long merchantId, @Param("type")int type);
     //根据商户编号查询包房信息
     List getByMerchantId(long merchantId,int status);
 }
