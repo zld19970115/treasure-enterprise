@@ -23,5 +23,13 @@
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantRoomParamsSetEntity">
         update ct_merchant_room_params_set set status=#{status} where id=#{id}
     </update>
-
+    <select id="getAvailableRoomsByData" parameterType="io.treasure.dto.MerchantRoomParamsSetDTO" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+        SELECT * FROM
+	        ct_merchant_room_params_set
+        WHERE
+	        use_date=#{useDate}
+	      AND room_params_id=#{roomParamsId}
+	      AND state = 0
+	      AND `status` =1
+    </select>
 </mapper>

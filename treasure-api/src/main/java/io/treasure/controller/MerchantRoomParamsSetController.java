@@ -7,6 +7,7 @@ import io.treasure.common.utils.DateUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.dto.MerchantRoomParamsDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
@@ -23,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.xml.crypto.Data;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -147,5 +151,16 @@ public class MerchantRoomParamsSetController {
     public Result delete(long id){
         merchantRoomParamsSetService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
+    }
+
+    @Login
+    @GetMapping("getAvailableRoomsByData")
+    @ApiOperation("查询指定日期、时间段内可用包房")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "useDate", value = "年月日", paramType = "query", required = true, dataType="Date"),
+            @ApiImplicitParam(name = "roomParamsId", value = "时间段", paramType = "query", required = true, dataType="long")
+    })
+    public Result<List<MerchantRoomParamsSetDTO>> getAvailableRoomsByData(Date useDate, long roomParamsId){
+        return new Result<List<MerchantRoomParamsSetDTO>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId));
     }
 }
