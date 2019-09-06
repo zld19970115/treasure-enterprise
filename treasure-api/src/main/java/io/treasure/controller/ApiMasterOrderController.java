@@ -141,6 +141,21 @@ public class ApiMasterOrderController {
         PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
+    @Login
+    @GetMapping("applRefundPage")
+    @ApiOperation("商户端-申请退款列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<MasterOrderDTO>> applRefundPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+"");
+        PageData<MasterOrderDTO> page = masterOrderService.listMerchantPage(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
     //@Login
     @GetMapping("allPage")
     @ApiOperation("商户端-全部列表")
