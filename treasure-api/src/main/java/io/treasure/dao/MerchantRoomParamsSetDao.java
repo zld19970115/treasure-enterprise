@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商户端包房设置管理
@@ -22,5 +23,5 @@ public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetE
     void updateStatus(long id, int status);
 
     //查询指定日期、时间段内可用包房
-    List<MerchantRoomParamsSetDTO> getAvailableRoomsByData(@Param("useDate")Date useDate, @Param("roomParamsId")long roomParamsId);
+    List<Map> getAvailableRoomsByData(@Param("useDate")Date useDate, @Param("roomParamsId")long roomParamsId);
 }

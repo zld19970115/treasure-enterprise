@@ -21,5 +21,5 @@ public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomPa
     void updateStatus(long id,int status);
 
     //查询指定日期、时间段内可用包房
-    List<MerchantRoomParamsSetDTO> getAvailableRoomsByData(Date useDate, long roomParamsId);
+    List getAvailableRoomsByData(Date useDate, long roomParamsId);
 }
