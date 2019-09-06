@@ -244,8 +244,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String userId = (String)params.get("userId");
         //状态
         String status=(String)params.get("status");
-        //商户id
-        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(userId), "creator", userId);
         if(StringUtils.isNotBlank(status) && status.indexOf(",")>-1){
@@ -253,7 +251,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }else{
             wrapper.eq(StringUtils.isNotBlank(status), "status",status);
         }
-        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 }

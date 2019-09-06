@@ -200,7 +200,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> noPayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.NOPAYORDER.getValue());
+        params.put("status", Constants.OrderStatus.NOPAYORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -216,7 +216,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> receiptOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -232,7 +232,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> refusalOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -248,7 +248,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> payFinishOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.PAYORDER.getValue());
+        params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -264,7 +264,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> cancelNopayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.CANCELNOPAYORDER.getValue());
+        params.put("status", Constants.OrderStatus.CANCELNOPAYORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -280,7 +280,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> userApplyRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -296,7 +296,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> refusesRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -312,7 +312,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> agreeRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -328,7 +328,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MasterOrderDTO>> deleteOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.DELETEORDER.getValue());
+        params.put("status", Constants.OrderStatus.DELETEORDER.getValue()+"");
         PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
@@ -414,7 +414,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    //@Login
+    @Login
     @PutMapping("acceptUpdate")
     @ApiOperation("商户端-接受订单")
     @ApiImplicitParams({
@@ -425,7 +425,7 @@ public class ApiMasterOrderController {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         return new Result();
     }
-    //@Login
+    @Login
     @Transient
     @PutMapping("finishUpdate")
     @ApiOperation("商户端-完成订单(翻台)")
@@ -440,7 +440,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    //@Login
+    @Login
     @Transient
     @PutMapping("refundYesUpdate")
     @ApiOperation("商户端-同意退款")
@@ -455,7 +455,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
-    //@Login
+    @Login
     @PutMapping("refundNoUpdate")
     @ApiOperation("商户端-拒绝退款")
     @ApiImplicitParams({

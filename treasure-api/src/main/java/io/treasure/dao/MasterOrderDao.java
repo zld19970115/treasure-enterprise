@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 订单表
@@ -18,6 +20,7 @@ import java.util.Date;
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //refundReason
     void updateStatusAndReason(long id, int status, long updater, Date refundDate, String refundReason);
-
+    //商户端查询
+    List<Map<String,Object>> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);
 }
