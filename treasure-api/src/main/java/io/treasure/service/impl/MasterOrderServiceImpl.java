@@ -10,6 +10,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MasterOrderDTO;
+import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.*;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -162,12 +164,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @return
      */
     @Override
-    public PageData<MasterOrderDTO> listMerchantPage(Map<String, Object> params) {
-        IPage<MasterOrderEntity> page = baseDao.selectPage(
-                getPage(params, null, false),
-                getQueryWrapper(params)
-        );
-        return getPageData(page, MasterOrderDTO.class);
+    public PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params) {
+        int count= baseDao.selectCount(getQueryWrapper(params));
+        String status=(String)params.get("status");
+        if(StringUtils.isNotBlank(status)){
+            String[] str=status.split(",");
+            params.put("statusStr",str);
+        }
+        List<MerchantOrderDTO> list=baseDao.listMerchant(params);
+        return getPageData(list,count, MerchantOrderDTO.class);
     }
 
     @Override

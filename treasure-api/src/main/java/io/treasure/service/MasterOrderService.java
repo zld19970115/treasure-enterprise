@@ -3,6 +3,7 @@ package io.treasure.service;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.MasterOrderDTO;
+import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.enm.Constants;
@@ -33,7 +34,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     PageData<MasterOrderDTO> listPage(Map<String, Object> params);
     //商户端订单列表
-    PageData<MasterOrderDTO> listMerchantPage(Map<String, Object> params);
+    PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params);
     Result updateByCheck(Long id);
 
     Result updateByCancel(Map<String, Object> params);

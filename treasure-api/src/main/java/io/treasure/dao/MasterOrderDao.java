@@ -1,4 +1,5 @@
 package io.treasure.dao;
+import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 
 import io.treasure.common.dao.BaseDao;
@@ -21,6 +22,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //refundReason
     void updateStatusAndReason(long id, int status, long updater, Date refundDate, String refundReason);
     //商户端查询
-    List<Map<String,Object>> listMerchant(Map params);
+    List<MerchantOrderDTO> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);
 }

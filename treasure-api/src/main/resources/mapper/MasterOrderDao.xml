@@ -35,7 +35,20 @@
     <select id="selectByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order  where merchant_id=#{orderId}
     </select>
+    <select id="listMerchant" parameterType="Map" resultType="io.treasure.dto.MerchantOrderDTO">
+        select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
+        left join ct_merchant_room room on masterOrder.room_id=room.id
+        left join ct_client_user cuser on masterOrder.creator=cuser.id
+        where masterOrder.merchant_id=#{merchantId}
+        <if test="status != null">
+            and masterOrder.status in
+            <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
     <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantEntity">
-        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},refund_date=#{refundDate} where id=#{id}
+        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
+        refund_date=#{refundDate} where id=#{id}
     </update>
 </mapper>

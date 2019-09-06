@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-08-01
  */
+@Slf4j
 @RestController
 @RequestMapping("/merchantactivity")
 @Api(tags="商户活动管理")
