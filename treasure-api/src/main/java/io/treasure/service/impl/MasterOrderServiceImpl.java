@@ -4,6 +4,7 @@ package io.treasure.service.impl;
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
@@ -165,14 +166,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params) {
-        int count= baseDao.selectCount(getQueryWrapper(params));
+       // int count= baseDao.selectCount(getQueryWrapper(params));
+        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         String status=(String)params.get("status");
         if(StringUtils.isNotBlank(status)){
             String[] str=status.split(",");
             params.put("statusStr",str);
         }
         List<MerchantOrderDTO> list=baseDao.listMerchant(params);
-        return getPageData(list,count, MerchantOrderDTO.class);
+        return getPageData(list,pages.getTotal(), MerchantOrderDTO.class);
     }
 
     @Override
