@@ -12,7 +12,7 @@ public class OrderUtil {
      * @return
      */
     public static String getOrderIdByTime(Long id) {
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
         String newDate=sdf.format(new Date());
 
         String result="";
@@ -29,7 +29,7 @@ public class OrderUtil {
      * @return
      */
     public static String getRefundOrderIdByTime(Long id) {
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
         String newDate=sdf.format(new Date());
         String result="";
         Random random=new Random();
