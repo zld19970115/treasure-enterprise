@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface GoodService extends CrudService<GoodEntity, GoodDTO> {
     //根据商户id和菜品名称查询
-    List getByNameAndMerchantId(@Param("name") String name,@Param("martId") long martId);
+    List getByNameAndMerchantId(String name,long martId);
     //上架商品
     void on(long id,int status);
     //下架商品

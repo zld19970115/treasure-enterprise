@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface GoodDao extends BaseDao<GoodEntity> {
     //根据菜品名称和商户id
-    List getByNameAndMerchantId(@Param("name") String name, @Param("martId") long martId);
+    List getByNameAndMerchantId(String name,long martId);
     //上架、下架商品
     void updateStatusById(long id,int status);
 }
