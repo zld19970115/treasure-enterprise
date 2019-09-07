@@ -179,7 +179,7 @@ public class ApiMasterOrderController {
             OrderDTO data = masterOrderService.getOrder(orderId);
             return new Result<OrderDTO>().ok(data);
     }
-    
+
     @Login
     @PostMapping("generateOrder")
     @ApiOperation("生成订单")

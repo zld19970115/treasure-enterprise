@@ -91,8 +91,8 @@ public class ApiWXAppPayController {
             reslutMap.put("return_msg",orderInfo.get("return_msg"));
             reslutMap.put("return_code",orderInfo.get("return_code"));
             reslutMap.put("package","Sign=WXPay");
-            reslutMap.put("timestamp",time.toString());
-            reslutMap.put("sign", sign);//官方文档上是sign，当前示例代码是paySign 可能以前的
+            reslutMap.put("timeStamp",time.toString());
+            reslutMap.put("paySign", sign);//官方文档上是sign，当前示例代码是paySign 可能以前的
             reslutMap.put("err_code_des", orderInfo.get("err_code_des"));
             result.ok(reslutMap);
         }
