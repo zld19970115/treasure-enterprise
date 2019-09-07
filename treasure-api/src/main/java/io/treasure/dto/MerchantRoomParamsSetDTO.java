@@ -46,6 +46,7 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	@ApiModelProperty(value = "状态，9-删除，1-显示，0-隐藏")
 	private Integer status;
 
+
 	@ApiModelProperty(value = "备注")
 	private String remark;
 
@@ -66,5 +67,19 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	@NotNull(message = "修改者不能为空",groups = UpdateGroup.class)
 	private Long updater;
 
+	@ApiModelProperty(value = "包房或者桌名称")
+	private String name;
+
+	@ApiModelProperty(value = "图片")
+	private String icon;
+
+	@ApiModelProperty(value = "状态")
+	private Integer sr_status;
+
+	@ApiModelProperty(value = "可容纳最低人数")
+	private Integer num_low;
+
+	@ApiModelProperty(value = "可容纳最高人数")
+	private Integer num_high;
 
 }
