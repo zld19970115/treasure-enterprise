@@ -44,6 +44,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private SlaveOrderService slaveOrderService;
     @Autowired
+    private MerchantRoomService merchantRoomService;
+    @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
 
     @Autowired
@@ -78,10 +80,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO getOrder(String orderId) {
         MasterOrderEntity masterOrderEntity=baseDao.selectByOrderId(orderId);
         OrderDTO orderDTO=ConvertUtils.sourceToTarget(masterOrderEntity,OrderDTO.class);
+        //菜单信息
         MerchantEntity merchantEntity=merchantService.selectById(masterOrderEntity.getMerchantId());
         orderDTO.setMerchantInfo(merchantEntity);
+        //菜单信息
         List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(orderId);
         orderDTO.setSlaveOrder(slaveOrderEntitys);
+        MerchantRoomEntity merchantRoomEntity=merchantRoomService.selectById(masterOrderEntity.getRoomId());
+        orderDTO.setMerchantRoomEntity(merchantRoomEntity);
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
         orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
         return orderDTO;
