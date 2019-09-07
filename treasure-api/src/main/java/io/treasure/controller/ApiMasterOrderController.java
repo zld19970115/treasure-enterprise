@@ -78,7 +78,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MerchantOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        //params.put("status", Order.PAY_STATUS_8+"");
+        params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -99,7 +99,7 @@ public class ApiMasterOrderController {
     }
     @Login
     @GetMapping("ongPage")
-    @ApiOperation("商户端-进行中列表(已支付和已接受订单)")
+    @ApiOperation("商户端-进行中列表(已接受订单)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -108,7 +108,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.PAYORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue());
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -416,7 +416,7 @@ public class ApiMasterOrderController {
     @Login
     @Transient
     @PutMapping("cancelUpdate")
-    @ApiOperation("商户端-取消订单")
+    @ApiOperation("商户端-取消/拒绝订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
