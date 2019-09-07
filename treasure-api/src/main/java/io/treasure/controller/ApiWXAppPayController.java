@@ -82,16 +82,16 @@ public class ApiWXAppPayController {
             String sign = WXPayUtil.generateSignature(params, wxPayConfig.getKey());
 
             Map<String, String> reslutMap = new HashMap<>();
-            reslutMap.put("appId",orderInfo.get("appid"));
+            reslutMap.put("appid",orderInfo.get("appid"));
             reslutMap.put("code_url",orderInfo.get("code_url"));
-            reslutMap.put("mch_id",orderInfo.get("mch_id"));
-            reslutMap.put("nonce_str",orderInfo.get("nonce_str"));
-            reslutMap.put("prepay_id",orderInfo.get("prepay_id"));
+            reslutMap.put("partnerid",orderInfo.get("mch_id"));
+            reslutMap.put("noncestr",orderInfo.get("nonce_str"));
+            reslutMap.put("prepayid",orderInfo.get("prepay_id"));
             reslutMap.put("result_code",orderInfo.get("result_code"));
             reslutMap.put("return_msg",orderInfo.get("return_msg"));
             reslutMap.put("return_code",orderInfo.get("return_code"));
-            reslutMap.put("pack","Sign=WXPay");
-            reslutMap.put("time",time.toString());
+            reslutMap.put("package","Sign=WXPay");
+            reslutMap.put("timestamp",time.toString());
             reslutMap.put("sign", sign);//官方文档上是sign，当前示例代码是paySign 可能以前的
             reslutMap.put("err_code_des", orderInfo.get("err_code_des"));
             result.ok(reslutMap);
