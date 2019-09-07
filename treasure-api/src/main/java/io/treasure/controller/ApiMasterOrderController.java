@@ -173,7 +173,7 @@ public class ApiMasterOrderController {
     }
 
     @Login
-    @GetMapping("{orderId}")
+    @GetMapping("getByInfo")
     @ApiOperation("订单详情")
     public Result<OrderDTO> getOrderInfo(@PathVariable("order_id") String orderId){
         OrderDTO data = masterOrderService.getOrder(orderId);
@@ -413,7 +413,7 @@ public class ApiMasterOrderController {
         masterOrderService.delete(ids);
         return new Result();
     }
-    //@Login
+    @Login
     @Transient
     @PutMapping("cancelUpdate")
     @ApiOperation("商户端-取消订单")
@@ -422,7 +422,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result calcelUpdate(long id,long verify,String verify_reason){
+    public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason){
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
@@ -436,7 +436,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
-    public Result acceptUpdate(long id,long verify){
+    public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify){
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         return new Result();
     }
@@ -448,7 +448,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
-    public Result finishUpdate(long id,long verify){
+    public Result finishUpdate(@RequestParam  long id,@RequestParam  long verify){
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
@@ -463,7 +463,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result refundYesUpdate(long id,long verify){
+    public Result refundYesUpdate(@RequestParam  long id,@RequestParam  long verify){
         MasterOrderDTO dto = masterOrderService.get(id);
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),verify,new Date(),"同意退款");
         //同时将包房或者桌设置成未使用状态
@@ -478,7 +478,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "拒绝人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result refundNoUpdate(long id,long verify,String verify_reason){
+    public Result refundNoUpdate(@RequestParam long id,@RequestParam long verify,@RequestParam String verify_reason){
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
         return new Result();
     }
