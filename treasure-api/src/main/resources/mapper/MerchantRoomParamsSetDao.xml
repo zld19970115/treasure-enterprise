@@ -23,18 +23,18 @@
     <update id="updateStatus" parameterType="io.treasure.entity.MerchantRoomParamsSetEntity">
         update ct_merchant_room_params_set set state=#{status} where id=#{id}
     </update>
-    <select id="getAvailableRoomsByData" parameterType="io.treasure.dto.MerchantRoomParamsSetDTO" resultType="java.util.Map">
+    <select id="getAvailableRoomsByData" parameterType="io.treasure.dto.MerchantRoomParamsSetDTO" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
         SELECT
      	cr.`name`,
         cr.icon,
-        cr.type,
-        cr.`status`,
+        cs.type,
+        cr.`status`as cr_status,
         cr.num_low,
         cr.num_high,
-        cs.id as set_id,
+        cs.id,
         cs.room_id,
-        cs.state as set_state,
-        cs.`status` as set_status,
+        cs.state,
+        cs.`status`,
         cs.room_name
          FROM
 	        ct_merchant_room_params_set as cs
