@@ -83,7 +83,7 @@ public class MerchantRoomParamsSetController {
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType="long") ,
             @ApiImplicitParam(name="creator",value="创建者",paramType = "query",required = true,dataType = "long")
     })
-    public Result save(long merchantId,long creator){
+    public Result save(@RequestParam long merchantId,@RequestParam long creator){
         int days=MerchantRoomEnm.DAYS.getType();
         if(merchantId<=0){
             return new Result().error("商户编号必须大于0！");
@@ -148,7 +148,7 @@ public class MerchantRoomParamsSetController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
     })
-    public Result delete(long id){
+    public Result delete(@RequestParam long id){
         merchantRoomParamsSetService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
@@ -160,7 +160,7 @@ public class MerchantRoomParamsSetController {
             @ApiImplicitParam(name = "useDate", value = "年月日", paramType = "query", required = true, dataType="Date"),
             @ApiImplicitParam(name = "roomParamsId", value = "时间段", paramType = "query", required = true, dataType="long")
     })
-    public Result<List<Map>> getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId){
-        return new Result<List<Map>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId,merchantId));
+    public Result<List<MerchantRoomParamsSetDTO>> getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId){
+        return new Result<List<MerchantRoomParamsSetDTO>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId,merchantId));
     }
 }

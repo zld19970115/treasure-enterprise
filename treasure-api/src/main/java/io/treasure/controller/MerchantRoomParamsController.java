@@ -70,7 +70,7 @@ public class MerchantRoomParamsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="编号",paramType = "queury",required = true,dataType = "Long")
     })
-    public Result<MerchantRoomParamsDTO> get(Long id){
+    public Result<MerchantRoomParamsDTO> get(@RequestParam Long id){
         MerchantRoomParamsDTO data = merchantRoomParamsService.get(id);
 
         return new Result<MerchantRoomParamsDTO>().ok(data);
@@ -111,7 +111,7 @@ public class MerchantRoomParamsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="编号",paramType = "queury",required = true,dataType = "Long")
     })
-    public Result delete(Long id){
+    public Result delete(@RequestParam Long id){
         merchantRoomParamsService.remove(id, Common.STATUS_DELETE.getStatus());
         return new Result();
     }

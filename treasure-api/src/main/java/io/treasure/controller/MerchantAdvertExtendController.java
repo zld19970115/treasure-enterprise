@@ -75,7 +75,7 @@ public class MerchantAdvertExtendController {
     @ApiImplicitParams({
             @ApiImplicitParam(name ="id",value = "编号", paramType = "query", required = true, dataType="long")
     })
-    public Result<MerchantAdvertExtendDTO> get(Long id){
+    public Result<MerchantAdvertExtendDTO> get(@RequestParam  Long id){
         MerchantAdvertExtendDTO data = merchantAdvertExtendService.get(id);
         return new Result<MerchantAdvertExtendDTO>().ok(data);
     }

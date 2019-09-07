@@ -28,7 +28,7 @@ public class UserCouponController {
 
         List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
         List<MerchantCouponEntity> AllMerchantCouponEntities = userCouponService.selectBymartId(martId);
-        AllMerchantCouponEntities.removeAll(merchantCouponEntities);
+        AllMerchantCouponEntities.removeAll(Arrays.asList(merchantCouponEntities));
 
           return new Result().ok(AllMerchantCouponEntities);
     }

@@ -64,7 +64,7 @@ public class MerchantActivityController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<MerchantActivityDTO> get(Long id){
+    public Result<MerchantActivityDTO> get(@RequestParam  Long id){
         MerchantActivityDTO data = merchantActivityService.get(id);
         return new Result<MerchantActivityDTO>().ok(data);
     }
@@ -111,7 +111,7 @@ public class MerchantActivityController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(Long id){
+    public Result delete(@RequestParam  Long id){
         merchantActivityService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }

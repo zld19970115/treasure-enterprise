@@ -73,7 +73,7 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<MerchantUserDTO> get(Long id){
+    public Result<MerchantUserDTO> get(@RequestParam Long id){
         MerchantUserDTO data = merchantUserService.get(id);
         //查询商户信息
         List<MerchantDTO> merchantList=merchantUserService.getMerchantByUserId(id);
@@ -135,7 +135,7 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="userId",value="编号",required=true,paramType="query", dataType="long")
     })
-    public Result logout(Long userId){
+    public Result logout(@RequestParam Long userId){
         tokenService.expireToken(userId);
         return new Result();
     }
@@ -154,7 +154,8 @@ public class MerchantUserController {
             @ApiImplicitParam(name="newPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
     })
-    public Result updatePassword(HttpServletRequest request,String oldPassword,String newPassword,Long id){
+    public Result updatePassword(HttpServletRequest request,@RequestParam String oldPassword,
+                                 @RequestParam String newPassword,@RequestParam Long id){
        String oPassword= DigestUtils.sha256Hex(oldPassword);
        String nPassword= DigestUtils.sha256Hex(newPassword);
         if(!oPassword.equals(nPassword)){
@@ -177,7 +178,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name="mobile",value="手机号码",required=true,paramType="query", dataType="String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="Long")
     })
-    public Result<Map<String, Object>>  retrievePassword(String mobile,Long id){
+    public Result<Map<String, Object>>  retrievePassword(@RequestParam String mobile,@RequestParam Long id){
        MerchantUserDTO user= merchantUserService.get(id);
        if(null!=user){
            if(!user.getMobile().equals(mobile)){
@@ -239,7 +240,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name="mobile",value="手机号码",required=true,paramType="query",dataType = "String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query",dataType = "long")
     })
-    public Result  updateMobile(HttpServletRequest request,String mobile, long id){
+    public Result  updateMobile(HttpServletRequest request,@RequestParam String mobile,@RequestParam  long id){
         //根据用户名判断是否已经注册过了
         MerchantUserEntity user = merchantUserService.getByMobile(mobile);
         if(null!=user){
@@ -265,7 +266,8 @@ public class MerchantUserController {
             @ApiImplicitParam(name="weixinUrl",value="微信头像",required = true,paramType = "query",dataType = "String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query",dataType = "long")
     })
-    public Result  updateMobile(String openid,String weixinName,String weixinUrl,long id){
+    public Result  updateMobile(@RequestParam String openid,@RequestParam String weixinName,
+                                @RequestParam String weixinUrl,@RequestParam long id){
         merchantUserService.updateWeixin(openid,weixinName,weixinUrl,id);
         return new Result();
     }
@@ -290,7 +292,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query",dataType = "String"),
             @ApiImplicitParam(name="code",value="验证码",required=true,paramType="query",dataType = "String")
     })
-    public Result verifyCode(HttpServletRequest request,String mobile,String code){
+    public Result verifyCode(HttpServletRequest request,@RequestParam String mobile,@RequestParam String code){
         Result bool=SendSMSUtil.verifyCode(mobile,request,code);
         return bool;
     }
@@ -306,7 +308,7 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="会员编号",required=true,paramType="query",dataType = "Long")
     })
-    public Result<List<MerchantDTO>> getMerchantAllByUserId(Long id){
+    public Result<List<MerchantDTO>> getMerchantAllByUserId(@RequestParam Long id){
         List<MerchantDTO> list=merchantUserService.getMerchantByUserId(id);
         return new Result().ok(list);
     }
@@ -322,7 +324,7 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="mobile",value="会员手机号码",required=true,paramType="query",dataType = "String")
     })
-    public Result<List> getMerchantAllByMobile(String mobile){
+    public Result<List> getMerchantAllByMobile(@RequestParam String mobile){
         List list=merchantUserService.getMerchantByMobile(mobile);
         return new Result().ok(list);
     }

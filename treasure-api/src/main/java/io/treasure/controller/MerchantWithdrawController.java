@@ -93,7 +93,7 @@ public class MerchantWithdrawController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="Long")
     })
-    public Result<MerchantWithdrawDTO> get(Long id){
+    public Result<MerchantWithdrawDTO> get(@RequestParam Long id){
         MerchantWithdrawDTO data = merchantWithdrawService.get(id);
         return new Result<MerchantWithdrawDTO>().ok(data);
     }
@@ -118,7 +118,7 @@ public class MerchantWithdrawController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
     })
-    public Result delete(long id){
+    public Result delete(@RequestParam long id){
         merchantWithdrawService.updateStatusById(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }

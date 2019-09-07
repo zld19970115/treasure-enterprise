@@ -60,7 +60,7 @@ public class MerchantController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<MerchantDTO> get(Long id){
+    public Result<MerchantDTO> get(@RequestParam  Long id){
         MerchantDTO data = merchantService.get(id);
         return new Result<MerchantDTO>().ok(data);
     }
@@ -138,9 +138,10 @@ public class MerchantController {
             @ApiImplicitParam(name = "idcardFrontImg", value = "身份证正面照", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "idcardBackImg", value = "身份证反面照", paramType = "query", required = true, dataType = "String")
     })
-    public Result updateBasic(long id,String headurl,String name,String brief,String log,
-                              String lat,String address,String cards,String businesslicense,
-                              double monetary,long updater,String idcardFrontImg,String idcardBackImg){
+    public Result updateBasic(@ApiIgnore @RequestParam Map<String, Object> params){
+        long id=(Long)params.get("id");
+        String name=(String)params.get("name");
+
         MerchantDTO entity=merchantService.get(id);
         if(!entity.getName().equals(name)){
             //根据修改的名称和身份账号查询
@@ -149,6 +150,19 @@ public class MerchantController {
                 return new Result().error("该商户您已经注册过了！");
             }
         }
+        String headurl=(String)params.get("headurl");
+        String brief=(String)params.get("brief");
+        String log=(String)params.get("log");
+        String lat=(String)params.get("lat");
+        String address=(String)params.get("address");
+
+
+        String cards=(String)params.get("cards");
+        double monetary=(Double) params.get("monetary");
+        long updater=(Long)params.get("updater");
+        String idcardBackImg=(String)params.get("idcardBackImg");
+        String idcardFrontImg=(String)params.get("idcardFrontImg");
+
         entity.setHeadurl(headurl);
         entity.setName(name);
         entity.setBrief(brief);
@@ -156,7 +170,7 @@ public class MerchantController {
         entity.setLat(lat);
         entity.setAddress(address);
         entity.setCards(cards);
-        entity.setBusinesslicense(businesslicense);
+        entity.setBusinesslicense(cards);
         entity.setMonetary(monetary);
         entity.setUpdateDate(new Date());
         entity.setUpdater(updater);
@@ -176,7 +190,8 @@ public class MerchantController {
             @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long"),
             @ApiImplicitParam(name = "depost", value = "押金", paramType = "query", required = true, dataType = "double")
     })
-    public Result updateHourse(long id,String businesshours,String closeshophours,String tel,long updater,double depost){
+    public Result updateHourse(@RequestParam  long id,@RequestParam String businesshours,@RequestParam String closeshophours,
+                               @RequestParam String tel,@RequestParam long updater,@RequestParam double depost){
         MerchantDTO entity=merchantService.get(id);
         entity.setBusinesshours(businesshours);
         entity.setCloseshophours(closeshophours);
@@ -196,7 +211,7 @@ public class MerchantController {
             @ApiImplicitParam(name = "categoryidtwo", value = "店铺二级分类", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType = "long")
     })
-    public Result updateCategory(long id,String categoryid,String categoryidtwo,long updater){
+    public Result updateCategory(@RequestParam long id,@RequestParam String categoryid,@RequestParam String categoryidtwo,@RequestParam long updater){
         MerchantDTO entity=merchantService.get(id);
         entity.setCategoryid(categoryid);
         entity.setCategoryidtwo(categoryidtwo);
@@ -211,7 +226,7 @@ public class MerchantController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(Long id){
+    public Result delete(@RequestParam Long id){
         merchantService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
@@ -221,7 +236,7 @@ public class MerchantController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result closeShop(Long id){
+    public Result closeShop(@RequestParam Long id){
         merchantService.closeShop(id,Common.STATUS_CLOSE.getStatus());
         return new Result();
     }
@@ -231,7 +246,7 @@ public class MerchantController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result setUpShop(Long id){
+    public Result setUpShop(@RequestParam Long id){
         merchantService.closeShop(id,Common.STATUS_ON.getStatus());
         return new Result();
     }

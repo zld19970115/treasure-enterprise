@@ -130,7 +130,7 @@ public class MerchantRoomController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(long id){
+    public Result delete(@RequestParam long id){
         merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
         return new Result();
     }

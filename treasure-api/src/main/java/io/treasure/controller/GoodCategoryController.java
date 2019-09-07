@@ -75,7 +75,7 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<GoodCategoryDTO> get(Long id){
+    public Result<GoodCategoryDTO> get(@RequestParam  Long id){
         GoodCategoryDTO data = goodCategoryService.get(id);
         return new Result<GoodCategoryDTO>().ok(data);
     }
@@ -139,7 +139,7 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(Long id){
+    public Result delete(@RequestParam  Long id){
         goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
@@ -155,7 +155,7 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result on(Long id){
+    public Result on(@RequestParam  Long id){
         goodCategoryService.on(id,Common.STATUS_ON.getStatus());
         return new Result();
     }
@@ -171,7 +171,7 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result off(Long id){
+    public Result off(@RequestParam  Long id){
         goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
         return new Result();
     }
@@ -186,7 +186,7 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result<List> getAllByMerchantId(Long merchantId){
+    public Result<List> getAllByMerchantId(@RequestParam  Long merchantId){
        List list= goodCategoryService.getAllByMerchantId(merchantId);
        return new Result().ok(list);
       }

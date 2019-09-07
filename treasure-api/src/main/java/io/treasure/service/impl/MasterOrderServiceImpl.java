@@ -4,6 +4,7 @@ package io.treasure.service.impl;
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
@@ -98,7 +99,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result=new Result();
         //生成订单号
-        String orderId= OrderUtil.getOrderIdByTime(dto.getId());
+        String orderId= OrderUtil.getOrderIdByTime(user.getId());
         //锁定包房/散台
          MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(dto.getReservationId());
         if(merchantRoomParamsSetEntity==null){
@@ -117,9 +118,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
          //是否使用赠送金
         if(dto.getGiftMoney().doubleValue()>0)
         {
-            ClientUserEntity clientUserEntity=clientUserService.selectById(dto.getId());
+            ClientUserEntity clientUserEntity=clientUserService.selectById(user.getId());
             BigDecimal gift=clientUserEntity.getGift();
-            BigDecimal useGift=new BigDecimal(dto.getGiftMoney().doubleValue()).setScale(2);
+            BigDecimal useGift=new BigDecimal(dto.getGiftMoney().toString());
+            useGift=useGift.setScale(2);
             if(gift.compareTo(useGift)==-1){
                 return result.error(-7,"您的赠送金不足！");
             }else{
@@ -145,12 +147,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             dtoList.forEach(slaveOrderEntity -> {
                 slaveOrderEntity.setOrderId(orderId);
                 slaveOrderEntity.setStatus(1);
+
+               slaveOrderService.insert(slaveOrderEntity);
+
             });
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
-            boolean b=slaveOrderService.insertBatch(dtoList);
-            if(!b){
-                return result.error(-3,"没有订单菜品数据！");
-            }
+//            boolean b=slaveOrderService.insertBatch(dtoList);
+
         }
         return result.ok(orderId);
     }
@@ -171,14 +174,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params) {
-        int count= baseDao.selectCount(getQueryWrapper(params));
+       // int count= baseDao.selectCount(getQueryWrapper(params));
+        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         String status=(String)params.get("status");
         if(StringUtils.isNotBlank(status)){
             String[] str=status.split(",");
             params.put("statusStr",str);
         }
         List<MerchantOrderDTO> list=baseDao.listMerchant(params);
-        return getPageData(list,count, MerchantOrderDTO.class);
+        return getPageData(list,pages.getTotal(), MerchantOrderDTO.class);
     }
 
     @Override

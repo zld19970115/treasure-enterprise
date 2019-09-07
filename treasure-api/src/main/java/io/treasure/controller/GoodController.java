@@ -132,7 +132,7 @@ public class GoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(Long id){
+    public Result delete(@RequestParam  Long id){
        goodService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
@@ -147,7 +147,7 @@ public class GoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result on(Long id){
+    public Result on( @RequestParam Long id){
         goodService.on(id,Common.STATUS_ON.getStatus());
         return new Result();
     }
@@ -163,7 +163,7 @@ public class GoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result off(Long id){
+    public Result off(@RequestParam  Long id){
         goodService.off(id,Common.STATUS_OFF.getStatus());
         return new Result();
     }

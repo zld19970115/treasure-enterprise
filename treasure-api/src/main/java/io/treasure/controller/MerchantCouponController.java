@@ -62,7 +62,7 @@ public class MerchantCouponController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
     })
-    public Result<MerchantCouponDTO> get(long id){
+    public Result<MerchantCouponDTO> get(@RequestParam long id){
         MerchantCouponDTO data = merchantCouponService.get(id);
         return new Result<MerchantCouponDTO>().ok(data);
     }
@@ -96,7 +96,7 @@ public class MerchantCouponController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value ="编号", paramType = "query", required = true, dataType="long")
     })
-    public Result delete(long id){
+    public Result delete(@RequestParam long id){
         merchantCouponService.updateStatusById(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
