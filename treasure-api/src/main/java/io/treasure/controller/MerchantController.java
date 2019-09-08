@@ -139,10 +139,9 @@ public class MerchantController {
             @ApiImplicitParam(name = "idcardBackImg", value = "身份证反面照", paramType = "query", required = true, dataType = "String")
     })
     public Result updateBasic(@ApiIgnore @RequestParam Map<String, Object> params){
-        long id=(Long)params.get("id");
+        String id=(String)params.get("id");
         String name=(String)params.get("name");
-
-        MerchantDTO entity=merchantService.get(id);
+        MerchantDTO entity=merchantService.get(Long.parseLong(id));
         if(!entity.getName().equals(name)){
             //根据修改的名称和身份账号查询
             MerchantEntity  merchant= merchantService.getByName(name,Common.STATUS_DELETE.getStatus());
@@ -158,8 +157,8 @@ public class MerchantController {
 
 
         String cards=(String)params.get("cards");
-        double monetary=(Double) params.get("monetary");
-        long updater=(Long)params.get("updater");
+        String monetary=(String) params.get("monetary");
+        String updater=(String)params.get("updater");
         String idcardBackImg=(String)params.get("idcardBackImg");
         String idcardFrontImg=(String)params.get("idcardFrontImg");
 
@@ -171,9 +170,9 @@ public class MerchantController {
         entity.setAddress(address);
         entity.setCards(cards);
         entity.setBusinesslicense(cards);
-        entity.setMonetary(monetary);
+        entity.setMonetary(Double.parseDouble(monetary));
         entity.setUpdateDate(new Date());
-        entity.setUpdater(updater);
+        entity.setUpdater(Long.parseLong(updater));
         entity.setIdcardBackImg(idcardBackImg);
         entity.setIdcardFrontImg(idcardFrontImg);
         merchantService.update(entity);

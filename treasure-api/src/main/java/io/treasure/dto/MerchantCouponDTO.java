@@ -59,7 +59,7 @@ public class MerchantCouponDTO implements Serializable {
 	@ApiModelProperty(value = "商户")
 	@NotNull(message ="商户不能为空",groups= AddGroup.class)
 	@NotNull(message = "商户不能为空",groups= UpdateGroup.class)
-	private String merchantId;
+	private Long merchantId;
 
 	@ApiModelProperty(value = "备注")
 	private String remark;
