@@ -99,16 +99,6 @@ public class ApiSlaveOrderController {
 
         return new Result();
     }
-    @Login
-    @PutMapping("refundUpdate")
-    @ApiOperation("退菜")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="int"),
-            @ApiImplicitParam(name = "updater", value = "修改者", paramType = "query", required = true, dataType="int")
-    })
-    public Result refundUpdate( @ApiIgnore @RequestParam   Long id){
 
-        return new Result();
-    }
     
 }
