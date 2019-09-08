@@ -6,6 +6,9 @@ import io.treasure.entity.ClientUserCollectEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 用户收藏
  *
@@ -16,4 +19,5 @@ import org.apache.ibatis.annotations.Param;
 public interface ClientUserCollectDao extends BaseDao<ClientUserCollectEntity> {
     ClientUserCollectDTO selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
     void changeStatus(@Param("userId")Long userId, @Param("martId")Long martId);
+    List<ClientUserCollectDTO> getCollectMerchantByUserId(Map params);
 }

@@ -23,5 +23,35 @@
 
     </select>
 
+    <select id="getCollectMerchantByUserId" parameterType="map" resultType="io.treasure.dto.ClientUserCollectDTO">
+      SELECT
+        cc.`id` ,
+        cc.`type`,
+        cc.`collect_id` ,
+        cc.`client_user_id`,
+        cc.`status`,
+        cc.`update_date`,
+        cc.`create_date`,
+        cc.`creator` ,
+        cc.`updater`,
+      cm.name,
+      cm.address,
+      cm.brief,
+      cm.businessHours,
+      cm.headUrl,
+      cm.score,
+      cm.closeShopHours,
+      cm.monetary,
+      cm.tel,
+      cm.remark
+        FROM
+	      ct_client_user_collect AS cc
+	      LEFT JOIN ct_merchant AS cm ON cc.collect_id = cm.id
+	  where
+	    cc.client_user_id=#{clientUserId}
+	    and cc.status=1
+	    and cc.type=1
+    </select>
+
 
 </mapper>
