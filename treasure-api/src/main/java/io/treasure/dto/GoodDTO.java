@@ -96,8 +96,6 @@ public class GoodDTO implements Serializable {
 	@NotNull(message = "库存量不能为空",groups=UpdateGroup.class)
 	private Integer stock;
 	@ApiModelProperty(value = "状态 9-删除，1-启用，0-禁用")
-	@NotNull( message = "状态不能为空",groups=AddGroup.class)
-	@NotNull(message="状态不能为空",groups=UpdateGroup.class)
 	private Integer status;
 	@ApiModelProperty(value = "数量")
 	private Integer number;

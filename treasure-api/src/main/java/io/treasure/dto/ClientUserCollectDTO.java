@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -45,6 +46,48 @@ public class ClientUserCollectDTO implements Serializable {
 
 	@ApiModelProperty(value = "更新者")
 	private Long updater;
+
+//	-------------------------------------------------------------
+
+
+	@ApiModelProperty(value = "商户名称")
+	@NotBlank(message = "商户名称不能为空")
+	private String name;
+
+
+	@ApiModelProperty(value = "商户地址")
+	private String address;
+
+	@ApiModelProperty(value = "商户简介")
+	private String brief;
+
+	@ApiModelProperty(value = "营业时间")
+	private String businesshours;
+
+
+
+	@ApiModelProperty(value = "头像")
+	private String headurl;
+
+	@ApiModelProperty(value = "评分")
+	private Double score;
+
+
+	@ApiModelProperty(value = "备注")
+	private String remark;
+
+
+
+	@ApiModelProperty(value = "闭店时间")
+	private String closeshophours;
+
+	@ApiModelProperty(value ="联系电话")
+	private String tel;
+
+
+	@ApiModelProperty(value = "平均消费金额")
+	private Double monetary;
+
 
 
 }

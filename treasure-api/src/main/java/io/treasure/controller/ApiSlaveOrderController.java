@@ -88,10 +88,9 @@ public class ApiSlaveOrderController {
 
         return new Result();
     }
-        @Login
+    @Login
     @DeleteMapping
     @ApiOperation("删除")
-    
     public Result delete(@RequestBody Long[] ids){
         //效验数据
         AssertUtils.isArrayEmpty(ids, "id");
@@ -100,6 +99,6 @@ public class ApiSlaveOrderController {
 
         return new Result();
     }
-    
+
     
 }

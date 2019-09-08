@@ -13,6 +13,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantCouponDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.CouponEnm;
+import io.treasure.entity.MerchantCouponEntity;
 import io.treasure.service.MerchantCouponService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -73,7 +74,7 @@ public class MerchantCouponController {
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
         dto.setCreateDate(new Date());
-        dto.setGrants(CouponEnm.STATUS_GRANTS.getStatus());
+//        dto.setGrants(CouponEnm.STATUS_GRANTS.getStatus());
         dto.setStatus(Common.STATUS_ON.getStatus());
         merchantCouponService.save(dto);
         return new Result();
