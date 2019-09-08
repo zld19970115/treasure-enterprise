@@ -76,4 +76,7 @@ public class SlaveOrderEntity extends BaseEntity {
      */
 	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Long updater;
+
+	@TableField(exist=false)
+	private GoodEntity goodInfo;
 }

@@ -71,29 +71,23 @@ public class ApiWXAppPayController {
         Map<String, String> orderInfo= wxPay.unifiedOrder(data);
         if(orderInfo!=null) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("appId", wxPayConfig.getAppID());
-            params.put("mchId", wxPayConfig.getMchID());
+            params.put("appid", wxPayConfig.getAppID());
+            params.put("partnerid", wxPayConfig.getMchID());
             Long time = (System.currentTimeMillis() / 1000);
-            params.put("timeStamp", time.toString());
-            params.put("nonceStr", orderInfo.get("nonce_str"));
-            params.put("prepayId", orderInfo.get("prepay_id"));
+            params.put("timestamp", time.toString());
+            params.put("noncestr", orderInfo.get("nonce_str"));
+            params.put("prepayid", orderInfo.get("prepay_id"));
             params.put("package", "Sign=WXPay");
-            params.put("signType", "MD5");
             String sign = WXPayUtil.generateSignature(params, wxPayConfig.getKey());
 
             Map<String, String> reslutMap = new HashMap<>();
-            reslutMap.put("appid",orderInfo.get("appid"));
-            reslutMap.put("code_url",orderInfo.get("code_url"));
-            reslutMap.put("partnerid",orderInfo.get("mch_id"));
+            reslutMap.put("appid",wxPayConfig.getAppID());
+            reslutMap.put("partnerid",wxPayConfig.getMchID());
+            reslutMap.put("timestamp",time.toString());
             reslutMap.put("noncestr",orderInfo.get("nonce_str"));
             reslutMap.put("prepayid",orderInfo.get("prepay_id"));
-            reslutMap.put("result_code",orderInfo.get("result_code"));
-            reslutMap.put("return_msg",orderInfo.get("return_msg"));
-            reslutMap.put("return_code",orderInfo.get("return_code"));
             reslutMap.put("package","Sign=WXPay");
-            reslutMap.put("timeStamp",time.toString());
-            reslutMap.put("paySign", sign);//官方文档上是sign，当前示例代码是paySign 可能以前的
-            reslutMap.put("err_code_des", orderInfo.get("err_code_des"));
+            reslutMap.put("sign", sign);
             result.ok(reslutMap);
         }
         return result;

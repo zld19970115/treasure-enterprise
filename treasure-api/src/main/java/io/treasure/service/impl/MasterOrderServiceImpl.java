@@ -52,6 +52,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private ClientUserService clientUserService;
 
+    @Autowired
+    private GoodService goodService;
+
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
@@ -86,6 +89,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         orderDTO.setMerchantInfo(merchantEntity);
         //菜单信息
         List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(orderId);
+        slaveOrderEntitys.forEach(slaveOrderEntity -> {
+            GoodEntity goodEntity=goodService.selectById(slaveOrderEntity.getGoodId());
+            slaveOrderEntity.setGoodInfo(goodEntity);
+        });
         orderDTO.setSlaveOrder(slaveOrderEntitys);
         MerchantRoomEntity merchantRoomEntity=merchantRoomService.selectById(masterOrderEntity.getRoomId());
         orderDTO.setMerchantRoomEntity(merchantRoomEntity);
