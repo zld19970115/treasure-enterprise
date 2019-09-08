@@ -45,6 +45,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private SlaveOrderService slaveOrderService;
     @Autowired
+    private MerchantRoomService merchantRoomService;
+    @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
 
     @Autowired
@@ -79,10 +81,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO getOrder(String orderId) {
         MasterOrderEntity masterOrderEntity=baseDao.selectByOrderId(orderId);
         OrderDTO orderDTO=ConvertUtils.sourceToTarget(masterOrderEntity,OrderDTO.class);
+        //菜单信息
         MerchantEntity merchantEntity=merchantService.selectById(masterOrderEntity.getMerchantId());
         orderDTO.setMerchantInfo(merchantEntity);
+        //菜单信息
         List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(orderId);
         orderDTO.setSlaveOrder(slaveOrderEntitys);
+        MerchantRoomEntity merchantRoomEntity=merchantRoomService.selectById(masterOrderEntity.getRoomId());
+        orderDTO.setMerchantRoomEntity(merchantRoomEntity);
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
         orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
         return orderDTO;
@@ -93,7 +99,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result=new Result();
         //生成订单号
-        String orderId= OrderUtil.getOrderIdByTime(dto.getId());
+        String orderId= OrderUtil.getOrderIdByTime(user.getId());
         //锁定包房/散台
          MerchantRoomParamsSetEntity merchantRoomParamsSetEntity=merchantRoomParamsSetService.selectById(dto.getReservationId());
         if(merchantRoomParamsSetEntity==null){
@@ -101,20 +107,21 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
          int isUse=merchantRoomParamsSetEntity.getState();
          if(isUse==0){
-             merchantRoomParamsSetEntity.setState(1);
-             boolean bb=merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
-             if(!bb){
-                 return result.error(-4,"包房/散台预定出错！");
-             }
+//             merchantRoomParamsSetEntity.setState(1);
+//             boolean bb=merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
+//             if(!bb){
+//                 return result.error(-4,"包房/散台预定出错！");
+//             }
          }else if(isUse==1){
              return result.error(-1,"包房/散台已经预定,请重新选择！");
          }
          //是否使用赠送金
         if(dto.getGiftMoney().doubleValue()>0)
         {
-            ClientUserEntity clientUserEntity=clientUserService.selectById(dto.getId());
+            ClientUserEntity clientUserEntity=clientUserService.selectById(user.getId());
             BigDecimal gift=clientUserEntity.getGift();
-            BigDecimal useGift=new BigDecimal(dto.getGiftMoney().doubleValue()).setScale(2);
+            BigDecimal useGift=new BigDecimal(dto.getGiftMoney().toString());
+            useGift=useGift.setScale(2);
             if(gift.compareTo(useGift)==-1){
                 return result.error(-7,"您的赠送金不足！");
             }else{
@@ -140,12 +147,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             dtoList.forEach(slaveOrderEntity -> {
                 slaveOrderEntity.setOrderId(orderId);
                 slaveOrderEntity.setStatus(1);
+
+               slaveOrderService.insert(slaveOrderEntity);
+
             });
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
-            boolean b=slaveOrderService.insertBatch(dtoList);
-            if(!b){
-                return result.error(-3,"没有订单菜品数据！");
-            }
+//            boolean b=slaveOrderService.insertBatch(dtoList);
+
         }
         return result.ok(orderId);
     }

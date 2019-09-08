@@ -27,7 +27,11 @@ public class UserCouponController {
     public  Result selectMartCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId){
 
         List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
+     //   List merchantCouponEntitiesList = new ArrayList();
+     //   merchantCouponEntitiesList.add(merchantCouponEntities);
         List<MerchantCouponEntity> AllMerchantCouponEntities = userCouponService.selectBymartId(martId);
+      //  List AllMerchantCouponEntitiesList = new ArrayList();
+    //    AllMerchantCouponEntitiesList.add(AllMerchantCouponEntities);
         AllMerchantCouponEntities.removeAll(merchantCouponEntities);
 
           return new Result().ok(AllMerchantCouponEntities);
