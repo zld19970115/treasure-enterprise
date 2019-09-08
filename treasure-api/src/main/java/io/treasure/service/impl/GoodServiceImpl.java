@@ -28,11 +28,13 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
         String status=(String)params.get("status");
         //商户Id
         String merchantId=(String)params.get("merchantId");
-
+        //商品名称
+        String name=(String)params.get("name");
         QueryWrapper<GoodEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         wrapper.eq(StringUtils.isNotBlank(merchantId),"mart_id",merchantId);
+        wrapper.like(StringUtils.isNotBlank(name),"name",name);
         return wrapper;
     }
 

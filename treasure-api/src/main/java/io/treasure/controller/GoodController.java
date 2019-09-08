@@ -45,7 +45,8 @@ public class GoodController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="name",value="商品名称",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodDTO>> onPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_ON.getStatus()+"");
@@ -60,7 +61,8 @@ public class GoodController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="name",value="商品名称",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodDTO>> offPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_OFF.getStatus()+"");
@@ -78,11 +80,11 @@ public class GoodController {
         return new Result<GoodDTO>().ok(data);
     }
     @Login
-    @PostMapping
+    @PostMapping("save")
     @ApiOperation("保存")
     public Result save(@RequestBody GoodDTO dto){
         //效验数据
-   //     ValidatorUtils.validateEntity(dto, AddGroup.class);
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
         //根据菜品名称、商户查询该菜品名称是否存在
         List list=goodService.getByNameAndMerchantId(dto.getName(),dto.getMartId());
         if(null!=list && list.size()>0){
@@ -100,7 +102,7 @@ public class GoodController {
         return new Result();
     }
     @Login
-    @PutMapping
+    @PutMapping("update")
     @ApiOperation("修改")
     public Result update(@RequestBody GoodDTO dto){
         //效验数据

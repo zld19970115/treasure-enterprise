@@ -43,12 +43,11 @@ public class GoodCategoryController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String")
     })
-    public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params, String name, String merchantId){
+    public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));
-        params.put("name",name);
-        params.put("merchantId",merchantId);
         PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
@@ -60,12 +59,11 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "2", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String")
     })
-    public Result<PageData<GoodCategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params, String name, String merchantId){
+    public Result<PageData<GoodCategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", String.valueOf(Common.STATUS_OFF.getStatus()));
-        params.put("name",name);
-        params.put("merchantId",merchantId);
         PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
