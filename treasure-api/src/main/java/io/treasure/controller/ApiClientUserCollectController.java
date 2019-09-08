@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -108,7 +109,20 @@ public class ApiClientUserCollectController {
 
 
     }
-
+    @Login
+    @GetMapping("getCollectMerchantByUserId")
+    @ApiOperation("客户端-用书收藏列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "clientUserId", value = "用户ID", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<ClientUserCollectDTO>> getCollectMerchantByUserId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<ClientUserCollectDTO> page = clientUserCollectService.getCollectMerchantByUserId(params);
+        return new Result<PageData<ClientUserCollectDTO>>().ok(page);
+    }
 
 
 
