@@ -166,7 +166,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params) {
-       // int count= baseDao.selectCount(getQueryWrapper(params));
+        //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         String status=(String)params.get("status");
         if(StringUtils.isNotBlank(status)){
