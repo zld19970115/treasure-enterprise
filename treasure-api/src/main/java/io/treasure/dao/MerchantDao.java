@@ -4,6 +4,7 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据名称和身份账号查询
     MerchantEntity getByNameAndCards(@Param("name") String name,@Param("cards") String cards);
     //根据商户名查询
-    MerchantEntity getByName(String name,int status);
+    MerchantEntity getByName(@Param("name") String name, @Param("status") int status);
     //根据id修改状态
     void updateStatusById(long id,int status);
 

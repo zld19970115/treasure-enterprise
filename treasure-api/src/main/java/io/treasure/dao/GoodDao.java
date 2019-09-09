@@ -18,5 +18,5 @@ public interface GoodDao extends BaseDao<GoodEntity> {
     //根据菜品名称和商户id
     List getByNameAndMerchantId(String name,long martId);
     //上架、下架商品
-    void updateStatusById(long id,int status);
+    void updateStatusById(@Param("id") long id,@Param("status")int status);
 }

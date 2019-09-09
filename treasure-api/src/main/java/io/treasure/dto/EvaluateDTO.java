@@ -111,5 +111,20 @@ public class EvaluateDTO implements Serializable {
     @ApiModelProperty(value = "更新者")
     @NotNull(message = "更新者不能为空",groups = UpdateGroup.class)
     private long updater;
+    /**
+     * 昵称
+     */
+    @ApiModelProperty(value = "昵称")
+    private String username;
 
+    /**
+     * 头像图片地址
+     */
+    @ApiModelProperty(value = "头像图片地址")
+    private String headImg;
+    /**
+     * 个人栏平均分
+     */
+    @ApiModelProperty(value = "个人栏平均分")
+    private double avgUser;
 }
