@@ -8,6 +8,7 @@ import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.PayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,9 @@ public class ApiWXPayPrecreateController {
 
     @Autowired
     private IWXConfig wxPayConfig;
+
+    @Autowired
+    private PayService payService;
 
 
     /**
@@ -144,13 +148,12 @@ public class ApiWXPayPrecreateController {
              * 在对业务数据进行状态检查和处理之前，要采用数据锁进行并发控制，以避免函数重入造成的数据混乱。
              */
 
-            //东方匠心 调用业务
+            // 调用业务
             String out_trade_no = reqData.get("out_trade_no");
             //单位分变成元
             BigDecimal total_amount = new BigDecimal(reqData.get("total_fee")).divide(new BigDecimal("100"));
-            Map<String, String> responseMap = null;
+            Map<String, String> responseMap = payService.wxNotify(total_amount,out_trade_no);
             String responseXml = WXPayUtil.mapToXml(responseMap);
-
             response.setContentType("text/xml");
             response.getWriter().write(responseXml);
             response.flushBuffer();

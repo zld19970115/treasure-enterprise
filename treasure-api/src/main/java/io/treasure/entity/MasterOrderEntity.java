@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 订单表
@@ -121,4 +122,10 @@ public class MasterOrderEntity extends BaseEntity {
      */
 	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Long updater;
+
+	@TableField(exist=false)
+	private MerchantEntity merchantInfo;
+
+	@TableField(exist=false)
+	private List<SlaveOrderEntity> slaveOrder;
 }

@@ -84,7 +84,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO getOrder(String orderId) {
         MasterOrderEntity masterOrderEntity=baseDao.selectByOrderId(orderId);
         OrderDTO orderDTO=ConvertUtils.sourceToTarget(masterOrderEntity,OrderDTO.class);
-        //菜单信息
+        //商家信息
         MerchantEntity merchantEntity=merchantService.selectById(masterOrderEntity.getMerchantId());
         orderDTO.setMerchantInfo(merchantEntity);
         //菜单信息
@@ -166,12 +166,27 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public PageData<MasterOrderDTO> listPage(Map<String, Object> params) {
+    public PageData<OrderDTO> listPage(Map<String, Object> params) {
         IPage<MasterOrderEntity> page = baseDao.selectPage(
                 getPage(params, null, false),
                 getQueryWrapper(params)
         );
-        return getPageData(page, MasterOrderDTO.class);
+
+        List<MasterOrderEntity> masterOrderEntities=page.getRecords();
+        masterOrderEntities.forEach(masterOrderEntity -> {
+            //商家信息
+            MerchantEntity merchantEntity=merchantService.selectById(masterOrderEntity.getMerchantId());
+            masterOrderEntity.setMerchantInfo(merchantEntity);
+            //菜单信息
+            List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+            slaveOrderEntitys.forEach(slaveOrderEntity -> {
+                GoodEntity goodEntity=goodService.selectById(slaveOrderEntity.getGoodId());
+                slaveOrderEntity.setGoodInfo(goodEntity);
+            });
+            masterOrderEntity.setSlaveOrder(slaveOrderEntitys);
+        });
+
+        return getPageData(page, OrderDTO.class);
     }
 
     /**

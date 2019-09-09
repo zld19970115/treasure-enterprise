@@ -199,9 +199,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> allOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    public Result<PageData<OrderDTO>> allOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -214,10 +214,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> noPayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> noPayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.NOPAYORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -230,10 +230,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> receiptOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> receiptOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -246,10 +246,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> refusalOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> refusalOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -262,10 +262,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> payFinishOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> payFinishOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -278,10 +278,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> cancelNopayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> cancelNopayOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.CANCELNOPAYORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -294,10 +294,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> userApplyRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> userApplyRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -310,10 +310,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> refusesRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> refusesRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -326,10 +326,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> agreeRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> agreeRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
@@ -342,10 +342,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MasterOrderDTO>> deleteOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<OrderDTO>> deleteOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.DELETEORDER.getValue()+"");
-        PageData<MasterOrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 
     @Login
