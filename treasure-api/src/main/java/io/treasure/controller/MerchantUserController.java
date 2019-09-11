@@ -59,7 +59,7 @@ public class MerchantUserController {
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "weixinname" ,value = "微信名称", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="mobile", value = "手机号码", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",required = true,paramType = "query", dataType="Long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",required = true,paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantUserDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_ON.getStatus()+"");

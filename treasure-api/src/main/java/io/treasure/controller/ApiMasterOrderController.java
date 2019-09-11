@@ -67,6 +67,7 @@ public class ApiMasterOrderController {
 
         return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("appointmentPage")
     @ApiOperation("商户端-预约列表")
@@ -82,6 +83,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("chargePage")
     @ApiOperation("商户端-已退单列表")
@@ -97,6 +99,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("ongPage")
     @ApiOperation("商户端-进行中列表(已接受订单)")
@@ -112,6 +115,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("finishPage")
     @ApiOperation("商户端-已完成列表(翻台)")
@@ -127,6 +131,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("calcelPage")
     @ApiOperation("商户端-拒绝订单列表")
@@ -142,6 +147,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("applRefundPage")
     @ApiOperation("商户端-申请退款列表")
@@ -157,6 +163,7 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("allPage")
     @ApiOperation("商户端-全部列表")
@@ -413,6 +420,7 @@ public class ApiMasterOrderController {
         masterOrderService.delete(ids);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @Transient
     @PutMapping("cancelUpdate")
@@ -429,6 +437,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("acceptUpdate")
     @ApiOperation("商户端-接受订单")
@@ -440,6 +449,7 @@ public class ApiMasterOrderController {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         return new Result();
     }
+    @CrossOrigin
     @Login
     @Transient
     @PutMapping("finishUpdate")
@@ -455,6 +465,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
+    @CrossOrigin
     @Login
     @Transient
     @PutMapping("refundYesUpdate")
@@ -470,6 +481,7 @@ public class ApiMasterOrderController {
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("refundNoUpdate")
     @ApiOperation("商户端-拒绝退款")
