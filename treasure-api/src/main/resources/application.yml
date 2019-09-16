@@ -77,12 +77,12 @@ sms:
 #微信配置
 wx:
   config:
-    app_id: wxf2486962789c4507
-    appsecret: f740a7b079f256525c2a7c03ae809c1e
+    app_id: wxad740a938ece9c6d
+    appsecret: 693b0514dc0fb577b1852ef719eab96f
   pay:
     key: b3131519b52e377344a6ddeb8106c024
     mch_id: 1516500931
-    notifyUrl: http://www.aukuu.com:8081/treasure-api/api/wxprecreate/notify
+    notifyUrl: http://www.aukuu.com:8081/treasure-api/api/appPay/notify
 
 #支付宝配置
 pay:

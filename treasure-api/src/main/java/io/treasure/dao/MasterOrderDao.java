@@ -26,5 +26,5 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MerchantOrderDTO> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);
 
-    MasterOrderEntity selectByOrder(BigDecimal total_amount, String out_trade_no);
+    MasterOrderEntity selectByOrder(String out_trade_no);
 }
