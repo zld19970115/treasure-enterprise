@@ -33,7 +33,7 @@ public class EvaluateController {
     private EvaluateServiceImpl evaluateService;
     @Autowired
     private ClientUserServiceImpl clientUserService;
-    @RequestMapping("/add")
+    @PostMapping("/add")
     @ApiOperation("添加评价表")
     public Result addEvaluate(@RequestBody EvaluateDTO dto){
         EvaluateEntity evaluateEntity = new EvaluateEntity();
@@ -77,7 +77,7 @@ public class EvaluateController {
     })
     public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
 
-        params.put("status", Common.STATUS_OFF.getStatus()+"");
+        params.put("status", Common.STATUS_ON.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.page(params);
         List list = page.getList();
         Map map= new HashMap();
@@ -86,11 +86,11 @@ public class EvaluateController {
         Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
         Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
         Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
-        map.put("avgHygiene",avgHygiene);//平均环境卫生
-        map.put("avgAttitude",avgAttitude);//平均服务态度
-        map.put("avgFlavor",avgFlavor);//平均菜品口味
-        map.put("avgSpeed",avgSpeed);//平均上菜速度
-        map.put("avgAllScore",avgAllScore);//平均上菜速度
+        map.put("avgHygiene",Math.round(avgHygiene));//平均环境卫生
+        map.put("avgAttitude",Math.round(avgAttitude));//平均服务态度
+        map.put("avgFlavor",Math.round(avgFlavor));//平均菜品口味
+        map.put("avgSpeed",Math.round(avgSpeed));//平均上菜速度
+        map.put("avgAllScore",Math.round(avgAllScore));//平均上菜速度
         list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }

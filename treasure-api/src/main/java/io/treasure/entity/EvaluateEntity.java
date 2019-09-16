@@ -59,7 +59,7 @@ public class EvaluateEntity {
     /**
      * 订单id
      */
-    private long masterorderId;
+    private String masterorderId;
     /**
      * 状态 0=冻结,1=正常
      */
