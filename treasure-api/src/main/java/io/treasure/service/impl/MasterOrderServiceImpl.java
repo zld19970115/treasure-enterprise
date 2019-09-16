@@ -129,7 +129,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-1, "包房/散台已经预定,请重新选择！");
         }
         //是否使用赠送金
-        if (dto.getGiftMoney().doubleValue() > 0) {
+        if (dto.getGiftMoney()!=null&&dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
             BigDecimal gift = clientUserEntity.getGift();
             BigDecimal useGift = new BigDecimal(dto.getGiftMoney().toString());
@@ -151,7 +151,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-2, "没有订单数据！");
         }
         //保存订单菜品
-        if (masterOrderEntity.getReservationId() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+        if (masterOrderEntity.getReservationType() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             if (dtoList == null) {
                 return result.error(-6, "没有菜品数据！");
             }
