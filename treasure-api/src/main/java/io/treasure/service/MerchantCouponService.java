@@ -12,4 +12,6 @@ import io.treasure.entity.MerchantCouponEntity;
  */
 public interface MerchantCouponService extends CrudService<MerchantCouponEntity, MerchantCouponDTO> {
     void updateStatusById(long id,int status);
+
+    MerchantCouponEntity getAllById(Long id);
 }

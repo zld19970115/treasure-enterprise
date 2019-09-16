@@ -38,4 +38,9 @@ public class MerchantCouponServiceImpl extends CrudServiceImpl<MerchantCouponDao
     public void updateStatusById(long id, int status) {
         baseDao.updateStatusById(id,status);
     }
+
+    @Override
+    public MerchantCouponEntity getAllById(Long id) {
+        return baseDao.getAllById(id);
+    }
 }
