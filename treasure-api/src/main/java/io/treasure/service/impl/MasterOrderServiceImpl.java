@@ -93,10 +93,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         orderDTO.setMerchantInfo(merchantEntity);
         //菜单信息
         List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
-        slaveOrderEntitys.forEach(slaveOrderEntity -> {
+        int size=slaveOrderEntitys.size();
+        for (int i = 0; i < size; i++) {
+            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
             GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
             slaveOrderEntity.setGoodInfo(goodEntity);
-        });
+        }
         orderDTO.setSlaveOrder(slaveOrderEntitys);
         MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
         orderDTO.setMerchantRoomEntity(merchantRoomEntity);
@@ -153,13 +155,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (dtoList == null) {
                 return result.error(-6, "没有菜品数据！");
             }
-            dtoList.forEach(slaveOrderEntity -> {
+            int size=dtoList.size();
+            for (int n = 0; n < size; n++) {
+                SlaveOrderEntity slaveOrderEntity=dtoList.get(n);
                 slaveOrderEntity.setOrderId(orderId);
                 slaveOrderEntity.setStatus(1);
-
                 slaveOrderService.insert(slaveOrderEntity);
-
-            });
+            }
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //            boolean b=slaveOrderService.insertBatch(dtoList);
 
@@ -175,19 +177,22 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         );
 
         List<MasterOrderEntity> masterOrderEntities = page.getRecords();
-        masterOrderEntities.forEach(masterOrderEntity -> {
+        int size=masterOrderEntities.size();
+        for (int n = 0; n < size; n++) {
+            MasterOrderEntity masterOrderEntity=masterOrderEntities.get(n);
             //商家信息
             MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
             masterOrderEntity.setMerchantInfo(merchantEntity);
             //菜单信息
             List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
-            slaveOrderEntitys.forEach(slaveOrderEntity -> {
+            int size1=slaveOrderEntitys.size();
+            for (int i = 0; i < size1; i++) {
+                SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
                 GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
                 slaveOrderEntity.setGoodInfo(goodEntity);
-            });
+            }
             masterOrderEntity.setSlaveOrder(slaveOrderEntitys);
-        });
-
+        }
         return getPageData(page, OrderDTO.class);
     }
 
