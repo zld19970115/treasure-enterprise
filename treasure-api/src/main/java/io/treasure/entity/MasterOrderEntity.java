@@ -128,4 +128,9 @@ public class MasterOrderEntity extends BaseEntity {
 
 	@TableField(exist=false)
 	private List<SlaveOrderEntity> slaveOrder;
+
+	/**
+	 * 扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用
+	 */
+	private Integer preferentialType;
 }
