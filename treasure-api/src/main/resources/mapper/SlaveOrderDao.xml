@@ -11,6 +11,8 @@
         <result property="quantity" column="quantity"/>
         <result property="price" column="price"/>
         <result property="totalMoney" column="total_money"/>
+        <result property="freeGold" column="free_gold"/>
+        <result property="discountsMoney" column="discounts_money"/>
         <result property="payMoney" column="pay_money"/>
         <result property="status" column="status"/>
         <result property="description" column="description"/>
