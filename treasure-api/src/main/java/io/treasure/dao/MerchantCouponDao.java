@@ -13,4 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MerchantCouponDao extends BaseDao<MerchantCouponEntity> {
     void updateStatusById(long id,int status);
+
+    MerchantCouponEntity getAllById(Long id);
 }
