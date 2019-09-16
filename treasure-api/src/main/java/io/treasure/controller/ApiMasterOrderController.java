@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.dto.DesignConditionsDTO;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
@@ -482,5 +483,25 @@ public class ApiMasterOrderController {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
         return new Result();
     }
-    
+
+    @Login
+    @PostMapping("calculateGift")
+    @ApiOperation("客户端-使用赠送金")
+    public Result<DesignConditionsDTO> calculateGift(@RequestBody DesignConditionsDTO dct){
+        return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateGift(dct));
+    }
+
+    @Login
+    @PostMapping("calculateCoupon")
+    @ApiOperation("客户端-使用优惠卷")
+    public Result<DesignConditionsDTO> calculateCoupon(@RequestBody DesignConditionsDTO dct){
+        return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateCoupon(dct));
+    }
+
+    @Login
+    @PostMapping("calculateGiftCoupon")
+    @ApiOperation("客户端-使用优惠卷与赠送金")
+    public Result<DesignConditionsDTO> calculateGiftCoupon(@RequestBody DesignConditionsDTO dct){
+        return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateGiftCoupon(dct));
+    }
 }
