@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -141,11 +142,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             clientUserService.updateById(clientUserEntity);
         }
+        Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         masterOrderEntity.setInvoice("0");
+        masterOrderEntity.setCreator(user.getId());
+        masterOrderEntity.setCreateDate(d);
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
