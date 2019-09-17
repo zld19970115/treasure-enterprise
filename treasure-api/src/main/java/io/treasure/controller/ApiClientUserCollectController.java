@@ -65,7 +65,7 @@ public class ApiClientUserCollectController {
     @ApiOperation("收藏")
     public Result save(@RequestBody ClientUserCollectDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+       // ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
 
         clientUserCollectService.save(dto);
 
@@ -73,8 +73,13 @@ public class ApiClientUserCollectController {
         return new Result();
     }
 
-    @DeleteMapping
+    @GetMapping("/delete")
     @ApiOperation("取消收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "martId", value = "商家id", paramType = "query", required = true, dataType = "long"),
+
+    })
     public Result delete(long userId,long martId){
         //效验数据
        // AssertUtils.isNull(id,"id");

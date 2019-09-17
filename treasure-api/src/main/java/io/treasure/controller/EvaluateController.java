@@ -12,8 +12,10 @@ import io.treasure.dto.EvaluateDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.EvaluateEntity;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.service.impl.ClientUserServiceImpl;
 import io.treasure.service.impl.EvaluateServiceImpl;
+import io.treasure.service.impl.MerchantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -33,7 +35,9 @@ public class EvaluateController {
     private EvaluateServiceImpl evaluateService;
     @Autowired
     private ClientUserServiceImpl clientUserService;
-    @RequestMapping("/add")
+    @Autowired
+    private MerchantServiceImpl merchantService;
+    @PostMapping("/add")
     @ApiOperation("添加评价表")
     public Result addEvaluate(@RequestBody EvaluateDTO dto){
         EvaluateEntity evaluateEntity = new EvaluateEntity();
@@ -57,6 +61,10 @@ public class EvaluateController {
         evaluateEntity.setHeadImg(clientUserEntity.getHeadImg());
         evaluateEntity.setAvgUser((dto.getHygiene()+dto.getFlavor()+dto.getPrice()+dto.getSpeed()+dto.getAttitude())/5);
         evaluateService.insert(evaluateEntity);
+        Double avgAllScore = evaluateService.selectAvgAllScore(dto.getMartId());
+        MerchantEntity merchantEntity = merchantService.selectById(dto.getMartId());
+        merchantEntity.setScore(avgAllScore);
+        merchantService.updateById(merchantEntity);
         return new Result();
     }
     @RequestMapping("/del")
@@ -77,7 +85,7 @@ public class EvaluateController {
     })
     public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
 
-        params.put("status", Common.STATUS_OFF.getStatus()+"");
+        params.put("status", Common.STATUS_ON.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.page(params);
         List list = page.getList();
         Map map= new HashMap();
@@ -86,11 +94,12 @@ public class EvaluateController {
         Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
         Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
         Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
-        map.put("avgHygiene",avgHygiene);//平均环境卫生
-        map.put("avgAttitude",avgAttitude);//平均服务态度
-        map.put("avgFlavor",avgFlavor);//平均菜品口味
-        map.put("avgSpeed",avgSpeed);//平均上菜速度
-        map.put("avgAllScore",avgAllScore);//平均上菜速度
+
+        map.put("avgHygiene",Math.round(avgHygiene));//平均环境卫生
+        map.put("avgAttitude",Math.round(avgAttitude));//平均服务态度
+        map.put("avgFlavor",Math.round(avgFlavor));//平均菜品口味
+        map.put("avgSpeed",Math.round(avgSpeed));//平均上菜速度
+        map.put("avgAllScore",Math.round(avgAllScore));//平均总分
         list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }

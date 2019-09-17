@@ -80,7 +80,7 @@ public class EvaluateDTO implements Serializable {
     @ApiModelProperty(value = "订单id")
     @NotNull(message = "商户不能为空",groups= AddGroup.class)
     @NotNull(message = "商户不能为空",groups= UpdateGroup.class)
-    private long masterorderId;
+    private String masterorderId;
     /**
      * 状态 0=冻结,1=正常
      */

@@ -74,12 +74,12 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	private String icon;
 
 	@ApiModelProperty(value = "状态")
-	private Integer sr_status;
+	private Integer crstatus;
 
 	@ApiModelProperty(value = "可容纳最低人数")
-	private Integer num_low;
+	private Integer numlow;
 
 	@ApiModelProperty(value = "可容纳最高人数")
-	private Integer num_high;
+	private Integer numhigh;
 
 }

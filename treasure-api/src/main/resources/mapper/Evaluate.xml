@@ -28,18 +28,18 @@
         delete from ct_evaluate WHERE evaluate_id = #{evaluateId}
     </delete>
  <select id="selectAvgSpeed" parameterType="long" resultType="Double">
-    SELECT avg(speed) FROM ct_evaluate WHERE mart_id = #{martId};
+    SELECT avg(speed) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
     <select id="selectAvgHygiene" parameterType="long" resultType="Double">
-    SELECT avg(hygiene) FROM ct_evaluate WHERE mart_id = #{martId};
+    SELECT avg(hygiene) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
     <select id="selectAvgAttitude" parameterType="long" resultType="Double">
-    SELECT avg(attitude) FROM ct_evaluate WHERE mart_id = #{martId};
+    SELECT avg(attitude) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
     <select id="selectAvgFlavor" parameterType="long" resultType="Double">
-    SELECT avg(flavor) FROM ct_evaluate WHERE mart_id = #{martId};
+    SELECT avg(flavor) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
 <select id="selectAvgAllScore" parameterType="long" resultType="Double">
-    SELECT avg(avg_user) FROM ct_evaluate WHERE mart_id = #{martId};
+    SELECT avg(avg_user) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
 </mapper>

@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 @Service
-public class StatisticsServiceImpl extends CrudServiceImpl<StatisticsDao, MasterOrderEntity, MasterOrderDTO> implements StatisticsService {
+public class StatisticsServiceImpl
+        extends CrudServiceImpl<StatisticsDao, MasterOrderEntity, MasterOrderDTO> implements StatisticsService {
 
 
 
@@ -75,5 +76,25 @@ public class StatisticsServiceImpl extends CrudServiceImpl<StatisticsDao, Master
     @Override
     public double allMoney(Long merchantId) {
         return baseDao.allMoney(merchantId);
+    }
+
+    @Override
+    public int assignOrder(String startTime1, String endTime1, Long merchantId) {
+        return baseDao.assignOrder(startTime1,endTime1,merchantId);
+    }
+
+    @Override
+    public int assignReserve(String startTime1, String endTime1, Long merchantId) {
+        return baseDao.assignReserve(startTime1,endTime1,merchantId);
+    }
+
+    @Override
+    public int assignQuit(String startTime1, String endTime1, Long merchantId) {
+        return baseDao.assignQuit(startTime1,endTime1,merchantId);
+    }
+
+    @Override
+    public double assignMoney(String startTime1, String endTime1, Long merchantId) {
+        return baseDao.assignMoney(startTime1,endTime1,merchantId);
     }
 }

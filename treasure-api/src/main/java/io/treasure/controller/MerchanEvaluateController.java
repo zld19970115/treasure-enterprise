@@ -45,7 +45,7 @@ public class MerchanEvaluateController {
     })
     public Result<PageData<EvaluateDTO>> seeMarchanEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
 
-        params.put("status", Common.STATUS_OFF.getStatus()+"");
+        params.put("status", Common.STATUS_ON.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.page(params);
         Map map= new HashMap();
         Double avgSpeed = evaluateService.selectAvgSpeed(merchantId);
@@ -53,11 +53,11 @@ public class MerchanEvaluateController {
         Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
         Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
         Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
-        map.put("avgHygiene",avgHygiene);//平均环境卫生
-        map.put("avgAttitude",avgAttitude);//平均服务态度
-        map.put("avgFlavor",avgFlavor);//平均菜品口味
-        map.put("avgSpeed",avgSpeed);//平均上菜速度
-        map.put("avgAllScore",avgAllScore);//平均上菜速度
+        map.put("avgHygiene",Math.round(avgHygiene));//平均环境卫生
+        map.put("avgAttitude",Math.round(avgAttitude));//平均服务态度
+        map.put("avgFlavor",Math.round(avgFlavor));//平均菜品口味
+        map.put("avgSpeed",Math.round(avgSpeed));//平均上菜速度
+        map.put("avgAllScore",Math.round(avgAllScore));//平均上菜速度
         map.put("page",page);
         return new Result().ok(map);
     }

@@ -23,5 +23,5 @@ public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetE
     void updateStatus(long id, int status);
 
     //查询指定日期、时间段内可用包房
-    List<Map> getAvailableRoomsByData(@Param("useDate")Date useDate, @Param("roomParamsId")long roomParamsId,@Param("merchantId")long merchantId);
+    List<MerchantRoomParamsSetDTO> getAvailableRoomsByData(@Param("useDate")Date useDate, @Param("roomParamsId")long roomParamsId,@Param("merchantId")long merchantId);
 }

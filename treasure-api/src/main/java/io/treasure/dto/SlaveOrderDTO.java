@@ -68,5 +68,9 @@ public class SlaveOrderDTO implements Serializable {
 	@ApiModelProperty(value = "修改者")
 	private Long updater;
 
+	@ApiModelProperty(value = "赠送金金额（此菜品已经使用的赠送金抵扣的金额")
+	private BigDecimal freeGold;
 
+	@ApiModelProperty(value = "优惠卷金额（此菜品已经使用的优惠卷抵扣的金额）")
+	private BigDecimal discountsMoney;
 }

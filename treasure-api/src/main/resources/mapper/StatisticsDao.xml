@@ -71,4 +71,16 @@
 
        select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}   and status = "4"
     </select>
+    <select id="assignOrder" parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
+        select count(*) from ct_master_order where  merchant_id=#{merchantId} and status != "9" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </select>
+    <select id="assignReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Integer">
+         select count(*) from ct_master_order where  eat_time > now()  and merchant_id=#{merchantId} and status != "9" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </select>
+    <select id="assignQuit"  parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
+         select count(*) from ct_master_order where  merchant_id=#{merchantId} and status in (4,5,6) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </select>
+    <select id="assignMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Double">
+        select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and status = "4" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </select>
 </mapper>
