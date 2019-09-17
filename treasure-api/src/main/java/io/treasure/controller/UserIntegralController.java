@@ -43,10 +43,11 @@ public class UserIntegralController {
         BigDecimal a = new BigDecimal("100");
         BigDecimal b = new BigDecimal("2");
         if (integral.compareTo(a)==-1){
-
-            return  new Result().error("积分必须大于100");
+            return  new Result().error("积分必须大于等于100");
         }
-
+        if( integral.doubleValue()%100!=0){
+            return  new Result().error("请输入100的倍数");
+        }
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
 
         BigDecimal integral1 = clientUserEntity.getIntegral();
