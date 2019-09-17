@@ -11,6 +11,7 @@ import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.MerchantService;
+import io.treasure.service.impl.EvaluateServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,8 @@ import java.util.Map;
 @Api(tags="首页模块")
 public class
 ApiIndexController {
-
+    @Autowired
+    private EvaluateServiceImpl evaluateService;
     @Autowired
     private MerchantService merchantService;
 

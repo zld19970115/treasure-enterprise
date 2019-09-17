@@ -30,20 +30,34 @@ public class StatisticsController {
     private MerchantServiceImpl merchantService;
     @GetMapping("/sta")
     @ApiOperation("统计")
-    public Result todayOrder(@RequestParam long merchantId) {
+    public Result todayOrder(@RequestParam long merchantId,@RequestParam  Date startTime ,@RequestParam  Date endTime ) {
         Map map = new HashMap();
         //获取本日日期
         String format = DateUtil.getToday();
         //获取本月
         String month = new SimpleDateFormat("yyyy-MM").format(new Date());
+        //起始日期
+        String startTime1 = new SimpleDateFormat("yyyy-MM-dd").format(startTime);
+        //截止日期
+        String endTime1 = new SimpleDateFormat("yyyy-MM-dd").format(endTime);
         //查询今日订单
         int todayOrder = statisticsService.todayOrder( format,merchantId);
+        //查询指定日期得全部订单
+        int assignOrder = statisticsService.assignOrder(startTime1,endTime1,merchantId);
+
         //查询今日预定订单
         int todayReserve = statisticsService.todayReserve( format,merchantId);
+        //查询指定日期得预定订单
+        int assignReserve = statisticsService.assignReserve(startTime1,endTime1,merchantId);
+
         //查询今日退订订单
         int todayQuit = statisticsService.todayQuit( format,merchantId);
+        //查询指定日期得预定订单
+        int assignQuit = statisticsService.assignQuit(startTime1,endTime1,merchantId);
         //查询今日实际收入
         double todayMoney = statisticsService.todayMoney(format, merchantId);
+        //查询指定日期得实际收入
+        double assignMoney = statisticsService.assignMoney(startTime1,endTime1,merchantId);
         //查询本月全部订单
         int monthOrder = statisticsService.monthOrder(month,merchantId);
         //查询本月全部预定订单
@@ -53,7 +67,7 @@ public class StatisticsController {
         //查询本月实际收入
         Double monthMoney = statisticsService.monthMoney(month,merchantId);
         //查询全部实际收入
-        Double allMoney = statisticsService.allMoney(merchantId);
+     //  Double allMoney = statisticsService.allMoney(merchantId);
         MerchantEntity merchantEntity = merchantService.selectById(merchantId);
         if (merchantEntity!=null){
             //查询商家可提现总额
@@ -64,11 +78,14 @@ public class StatisticsController {
             map.put("not_cash",merchantEntity.getNotCash());
 
         }
-        //查询商家可提现总额
         map.put("todayOrder",todayOrder);
+        map.put("assignOrder",assignOrder);
         map.put("todayReserve",todayReserve);
+        map.put("assignReserve",assignReserve);
         map.put("todayQuit",todayQuit);
+        map.put("assignQuit",assignQuit);
         map.put("todayMoney",todayMoney);
+        map.put("assignMoney",assignMoney);
         map.put("monthOrder",monthOrder);
         map.put("monthReserve",monthReserve);
         map.put("monthQuit",monthQuit);

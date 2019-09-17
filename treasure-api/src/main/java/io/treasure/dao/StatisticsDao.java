@@ -16,5 +16,8 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     int monthQuit(@Param("month") String month, @Param("merchantId") Long merchantId);
     double monthMoney(@Param("month") String month, @Param("merchantId") Long merchantId);
     double allMoney(Long merchantId);
-
+    int assignOrder(@Param("startTime1") String startTime1,@Param("endTime1") String endTime1,@Param("merchantId") Long merchantId);
+    int assignReserve(@Param("startTime1") String startTime1,@Param("endTime1") String endTime1,@Param("merchantId") Long merchantId);
+    int assignQuit(@Param("startTime1") String startTime1,@Param("endTime1") String endTime1,@Param("merchantId") Long merchantId);
+    double assignMoney(@Param("startTime1") String startTime1,@Param("endTime1") String endTime1,@Param("merchantId") Long merchantId);
 }
