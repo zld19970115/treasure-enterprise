@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -101,4 +102,25 @@ public class MerchantCouponController {
         merchantCouponService.updateStatusById(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
+
+    /**
+     * 通过商户id查询此商户所有满减优惠
+     * @param merchantId
+     * @return
+     */
+    @Login
+    @GetMapping("getMoneyOffByMerchantId")
+    @ApiOperation("查询此用户所有满减优惠")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value ="商户id", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "totalMoney", value ="总价", paramType = "query", required = true, dataType="BigDecimal"),
+            @ApiImplicitParam(name = "userId", value ="用户ID", paramType = "query", required = true, dataType="userId")
+    })
+    public Result< MerchantCouponDTO> getMoneyOffByMerchantId(long merchantId, BigDecimal totalMoney,long userId){
+        Result difference = merchantCouponService.getDifference(merchantId, totalMoney,userId);
+
+        return new Result().ok(difference);
+    }
+
+
 }
