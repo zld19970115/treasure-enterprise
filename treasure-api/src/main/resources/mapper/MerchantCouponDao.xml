@@ -29,5 +29,11 @@
     <select id="getAllById" parameterType="io.treasure.entity.MerchantCouponEntity" resultType="io.treasure.entity.MerchantCouponEntity">
         SELECT * from ct_merchant_coupon where id=#{id} and `status`=1
     </select>
+    
+    <select id="getMoneyOffByMerchantId" parameterType="io.treasure.dto.MerchantCouponDTO" resultType="io.treasure.dto.MerchantCouponDTO">
+       select money ,discount from ct_merchant_coupon as cmc left join
+ ct_user_coupon cuc on cuc.coupon_id=cmc.id
+ where cmc.merchant_id=#{arg0}  and cmc.type=1 and cuc.user_id=#{arg1}
+    </select>
 
 </mapper>
