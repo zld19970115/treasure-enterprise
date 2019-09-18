@@ -112,4 +112,7 @@ public class MerchantOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "客户头像")
 	private String userHeadImg;
+
+	@ApiModelProperty(value = "加菜订单的orderId")
+	private String porderId;
 }
