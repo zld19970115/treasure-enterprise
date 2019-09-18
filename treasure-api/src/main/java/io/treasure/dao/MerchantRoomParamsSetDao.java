@@ -20,7 +20,7 @@ import java.util.Map;
 @Mapper
 public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetEntity> {
     //修改状态
-    void updateStatus(long id, int status);
+    void updateStatus(@Param("id")long id,@Param("status") int status);
 
     //查询指定日期、时间段内可用包房
     List<MerchantRoomParamsSetDTO> getAvailableRoomsByData(@Param("useDate")Date useDate, @Param("roomParamsId")long roomParamsId,@Param("merchantId")long merchantId);

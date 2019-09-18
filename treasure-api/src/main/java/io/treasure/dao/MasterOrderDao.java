@@ -5,6 +5,7 @@ import io.treasure.entity.MasterOrderEntity;
 import io.treasure.common.dao.BaseDao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.util.Map;
 @Mapper
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //refundReason
-    void updateStatusAndReason(long id, int status, long updater, Date refundDate, String refundReason);
+    void updateStatusAndReason(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate,@Param("refundReason")  String refundReason);
     //商户端查询
     List<MerchantOrderDTO> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);

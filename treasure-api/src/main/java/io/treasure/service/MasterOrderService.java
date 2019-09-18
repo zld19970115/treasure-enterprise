@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 1.0.0 2019-08-23
  */
 public interface MasterOrderService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
-    void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason);
+    void updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason);
 
     OrderDTO getOrder(String orderId);
 
