@@ -196,7 +196,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(PorderId);
         MasterOrderEntity masterOrderEntity1 = baseDao.selectByOrderId(orderId);
-        masterOrderEntity1.setPorderId(PorderId);
+        masterOrderEntity1.setPOrderId(PorderId);
         baseDao.updateById(masterOrderEntity1);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         masterOrderEntity.setInvoice("0");
