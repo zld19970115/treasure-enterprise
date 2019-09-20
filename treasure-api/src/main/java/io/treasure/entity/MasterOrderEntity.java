@@ -136,7 +136,7 @@ public class MasterOrderEntity extends BaseEntity {
 	/**
 	 * 加菜订单的orderId
 	 */
-	private String porderId;
+	private String pOrderId;
 
 
 }
