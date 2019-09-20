@@ -40,7 +40,9 @@ public class PayServiceImpl implements PayService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
-        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrder(out_trade_no);
+        System.out.println("---out_trade_no------------"+out_trade_no);
+        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+        System.out.println("---masterOrderEntity------------"+masterOrderEntity);
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");

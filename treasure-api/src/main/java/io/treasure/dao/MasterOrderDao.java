@@ -26,6 +26,4 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //商户端查询
     List<MerchantOrderDTO> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);
-
-    MasterOrderEntity selectByOrder(String out_trade_no);
 }
