@@ -4,6 +4,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.EvaluateDTO;
 import io.treasure.entity.EvaluateEntity;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 评价表
@@ -20,4 +21,5 @@ public interface EvaluateService  extends CrudService<EvaluateEntity, EvaluateDT
     Double selectAvgAttitude(long merchantId);
     Double selectAvgFlavor(long merchantId);
     Double selectAvgAllScore(long merchantId);
+    EvaluateEntity  selectByUserIdAndOid(long userId ,String merchantOrderId );
 }

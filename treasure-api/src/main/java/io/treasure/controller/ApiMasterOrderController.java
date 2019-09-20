@@ -196,7 +196,14 @@ public class ApiMasterOrderController {
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderSave(dto,dtoList,user);
     }
-
+    @Login
+    @PostMapping("generatePorder")
+    @ApiOperation("加菜")
+    public Result generatePorder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,@RequestParam String orderId ){
+        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
+        return  masterOrderService.orderSave(dto,dtoList,user,orderId);
+}
     @Login
     @GetMapping("allOrderPage")
     @ApiOperation("全部订单列表")

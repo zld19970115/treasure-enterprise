@@ -39,7 +39,7 @@ public class UserCouponController {
     @ApiOperation("用户领取商家优惠卷")
     public  Result addCoupon(@RequestBody UserCouponDTO dto){
          //查询用户是否领取过本优惠劵
-        UserCouponEntity userCouponEntity = userCouponService.selectByCouponId(dto.getCouponId());
+        UserCouponEntity userCouponEntity = userCouponService.selectByCouponId(dto.getCouponId(),dto.getUserId());
         if (userCouponEntity==null){
           //没领取付此类型优惠卷
             UserCouponEntity userCouponEntity1 = new UserCouponEntity();

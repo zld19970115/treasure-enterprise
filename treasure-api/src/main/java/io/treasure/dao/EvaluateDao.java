@@ -3,6 +3,7 @@ package io.treasure.dao;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.EvaluateEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 评价表
@@ -23,4 +24,5 @@ public interface EvaluateDao extends BaseDao<EvaluateEntity> {
     Double selectAvgAttitude(long merchantId);
     Double selectAvgFlavor(long merchantId);
     Double selectAvgAllScore(long merchantId);
+    EvaluateEntity selectByUserIdAndOid(@Param("userId") long userId ,@Param("merchantOrderId")  String merchantOrderId );
 }

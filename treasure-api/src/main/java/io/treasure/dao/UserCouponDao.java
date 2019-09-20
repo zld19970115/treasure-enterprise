@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserCouponDao  extends BaseDao<UserCouponEntity> {
     List selectByUserId(@Param("userId") Long userId, @Param("martId") long martId, @Param("money") double money);
     double  selectGift(Long userId);
-    UserCouponEntity   selectByCouponId(long couponId);
+    UserCouponEntity   selectByCouponId(@Param("couponId") long couponId,@Param("userId") long userId);
     List  selectMyCouponByUserId(long userId);
     List<MerchantCouponEntity>   selectMartCoupon(@Param("userId") Long userId, @Param("martId") long martId);
    List<MerchantCouponEntity> selectBymartId(long martId);

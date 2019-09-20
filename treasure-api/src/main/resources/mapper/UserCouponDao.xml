@@ -50,7 +50,7 @@
 </select>
 
     <select id="selectByCouponId" parameterType="io.treasure.entity.UserCouponEntity" resultType="io.treasure.entity.UserCouponEntity">
-    select * from ct_user_coupon where coupon_id = #{couponId}
+    select * from ct_user_coupon where coupon_id = #{couponId} and user_id=#{userId}
 
 </select>
     <select id="selectByUserId" resultType="java.util.Map">

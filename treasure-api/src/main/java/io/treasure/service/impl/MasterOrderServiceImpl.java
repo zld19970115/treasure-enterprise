@@ -174,6 +174,58 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public Result  orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user, String orderId) {
+        Result result = new Result();
+        //生成订单号
+        String PorderId = OrderUtil.getOrderIdByTime(user.getId());
+        //是否使用赠送金
+        if (dto.getGiftMoney()!=null&&dto.getGiftMoney().doubleValue() > 0) {
+            ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
+            BigDecimal gift = clientUserEntity.getGift();
+            BigDecimal useGift = new BigDecimal(dto.getGiftMoney().toString());
+            useGift = useGift.setScale(2);
+            if (gift.compareTo(useGift) == -1) {
+                return result.error(-7, "您的赠送金不足！");
+            } else {
+                clientUserEntity.setGift(gift.subtract(useGift));
+            }
+            clientUserService.updateById(clientUserEntity);
+        }
+        Date d = new Date();
+        //保存主订单
+        MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
+        masterOrderEntity.setOrderId(PorderId);
+        MasterOrderEntity masterOrderEntity1 = baseDao.selectByOrderId(orderId);
+        masterOrderEntity1.setPorderId(PorderId);
+        baseDao.updateById(masterOrderEntity1);
+        masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        masterOrderEntity.setInvoice("0");
+        masterOrderEntity.setCreator(user.getId());
+        masterOrderEntity.setCreateDate(d);
+        int i = baseDao.insert(masterOrderEntity);
+        if (i <= 0) {
+            return result.error(-2, "没有订单数据！");
+        }
+        //保存订单菜品
+        if (masterOrderEntity.getReservationType() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+            if (dtoList == null) {
+                return result.error(-6, "没有菜品数据！");
+            }
+            int size=dtoList.size();
+            for (int n = 0; n < size; n++) {
+                SlaveOrderEntity slaveOrderEntity=dtoList.get(n);
+                slaveOrderEntity.setOrderId(orderId);
+                slaveOrderEntity.setStatus(1);
+                slaveOrderService.insert(slaveOrderEntity);
+            }
+//        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
+//            boolean b=slaveOrderService.insertBatch(dtoList);
+
+        }
+        return result.ok(PorderId);
+    }
+
+    @Override
     public PageData<OrderDTO> listPage(Map<String, Object> params) {
         IPage<MasterOrderEntity> page = baseDao.selectPage(
                 getPage(params, null, false),

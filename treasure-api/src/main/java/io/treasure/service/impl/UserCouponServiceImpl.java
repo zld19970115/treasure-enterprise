@@ -41,8 +41,8 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
     }
 
     @Override
-    public UserCouponEntity selectByCouponId(long couponId) {
-        return baseDao.selectByCouponId(couponId);
+    public UserCouponEntity selectByCouponId(long couponId,long userId) {
+        return baseDao.selectByCouponId(couponId,userId);
     }
 
     @Override

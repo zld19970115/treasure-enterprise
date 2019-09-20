@@ -13,6 +13,7 @@
         <result property="proposal" column="proposal"/>
         <result property="uid" column="uid"/>
         <result property="martId" column="mart_id"/>
+        <result property="masterorderId" column="masterorder_id"/>
         <result property="totalScore" column="total_score"/>
         <result property="status" column="status"/>
         <result property="createDate" column="create_date"/>
@@ -42,4 +43,8 @@
 <select id="selectAvgAllScore" parameterType="long" resultType="Double">
     SELECT avg(avg_user) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
  </select>
+    <select id="selectByUserIdAndOid" parameterType="io.treasure.entity.EvaluateEntity" resultType="io.treasure.entity.EvaluateEntity">
+
+        select * from  ct_evaluate where uid = #{userId} and masterorder_id = #{merchantOrderId}
+    </select>
 </mapper>

@@ -12,7 +12,9 @@ import io.treasure.dto.EvaluateDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.EvaluateEntity;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.impl.ClientUserServiceImpl;
 import io.treasure.service.impl.EvaluateServiceImpl;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -40,6 +42,11 @@ public class EvaluateController {
     @PostMapping("/add")
     @ApiOperation("添加评价表")
     public Result addEvaluate(@RequestBody EvaluateDTO dto){
+
+        EvaluateEntity evaluateEntity1 = evaluateService.selectByUserIdAndOid(dto.getUid(), dto.getMasterorderId());
+        if (evaluateEntity1!=null){
+            return new Result().error("已评价");
+        }
         EvaluateEntity evaluateEntity = new EvaluateEntity();
         evaluateEntity.setHygiene(dto.getHygiene());
         evaluateEntity.setAttitude(dto.getAttitude());
@@ -65,7 +72,7 @@ public class EvaluateController {
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMartId());
         merchantEntity.setScore(avgAllScore);
         merchantService.updateById(merchantEntity);
-        return new Result();
+        return new Result().ok("评价成功 ");
     }
     @RequestMapping("/del")
     @ApiOperation("删除评价表")
@@ -94,7 +101,6 @@ public class EvaluateController {
         Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
         Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
         Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
-
         map.put("avgHygiene",Math.round(avgHygiene));//平均环境卫生
         map.put("avgAttitude",Math.round(avgAttitude));//平均服务态度
         map.put("avgFlavor",Math.round(avgFlavor));//平均菜品口味

@@ -1,12 +1,13 @@
 package io.treasure.service.impl;
 
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.EvaluateDao;
 import io.treasure.dto.EvaluateDTO;
 import io.treasure.entity.EvaluateEntity;
-import org.apache.commons.lang3.StringUtils;
+import io.treasure.service.EvaluateService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
  * 评价表
  */
 @Service
-public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEntity, EvaluateDTO> implements io.treasure.service.EvaluateService {
+public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEntity, EvaluateDTO> implements EvaluateService {
     @Override
     public QueryWrapper<EvaluateEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
@@ -66,6 +67,11 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
     @Override
     public Double selectAvgAllScore(long merchantId) {
         return baseDao.selectAvgAllScore(merchantId);
+    }
+
+    @Override
+    public EvaluateEntity selectByUserIdAndOid(long userId, String merchantOrderId) {
+        return baseDao.selectByUserIdAndOid(userId,merchantOrderId);
     }
 
 
