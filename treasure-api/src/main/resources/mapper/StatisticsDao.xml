@@ -39,16 +39,16 @@
     </select>
     <select id="todayReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where  eat_time > now()  and merchant_id=#{merchantId} and status != "9" and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
+       select count(*)  from ct_master_order    where  eat_time > now()  and merchant_id=#{merchantId} and status in (1,2,3,4,5,6,7) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
     </select>
     <select id="todayQuit" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where  merchant_id=#{merchantId} and status in (4,5,6) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
+       select count(*)  from ct_master_order    where  merchant_id=#{merchantId} and status in (6,7,8) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
     </select>
 
     <select id="todayMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
 
-       select IFNULL(sum(pay_money),0.00) from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format} and status = "4"
+       select IFNULL(sum(pay_money),0.00) from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format} and in(2,4,7) and check_status = 1
     </select>
     <select id="monthOrder" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
@@ -57,30 +57,30 @@
 
     <select id="monthReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where  eat_time > now()  and merchant_id=#{merchantId} and status != "9" and  DATE_FORMAT(create_date,'%Y-%m') = #{month}
+       select count(*)  from ct_master_order    where  eat_time > now()  and merchant_id=#{merchantId} and status  in (1,2,3,4,5,6,7) and  DATE_FORMAT(create_date,'%Y-%m') = #{month}
     </select>
     <select id="monthQuit" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where  merchant_id=#{merchantId} and status in (4,5,6) and  DATE_FORMAT(create_date,'%Y-%m') = #{month}
+       select count(*)  from ct_master_order    where  merchant_id=#{merchantId} and status in (6,7,8) and  DATE_FORMAT(create_date,'%Y-%m') = #{month}
     </select>
     <select id="monthMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
 
-       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m') = #{month} and status = "4"
+       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m') = #{month} and status = "4" and check_status = 1
     </select>
     <select id="allMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
 
-       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}   and status = "4"
+       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}   and status in(2,4,7)
     </select>
     <select id="assignOrder" parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
         select count(*) from ct_master_order where  merchant_id=#{merchantId} and status != "9" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
     </select>
     <select id="assignReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Integer">
-         select count(*) from ct_master_order where  eat_time > now()  and merchant_id=#{merchantId} and status != "9" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+         select count(*) from ct_master_order where  eat_time > now()  and merchant_id=#{merchantId} and status  in (1,2,3,4,5,6,7) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
     </select>
     <select id="assignQuit"  parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
-         select count(*) from ct_master_order where  merchant_id=#{merchantId} and status in (4,5,6) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+         select count(*) from ct_master_order where  merchant_id=#{merchantId} and status in (6,7,8) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
     </select>
     <select id="assignMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Double">
-        select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and status = "4" and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+        select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  merchant_id=#{merchantId}  and status in(2,4,7) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1} and check_status = 1
     </select>
 </mapper>

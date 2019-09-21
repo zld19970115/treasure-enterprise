@@ -4,6 +4,8 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.MerchantWithdrawEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
+
 /**
  * 提现表
  *
@@ -13,4 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
     void updateStatusById(long id,int status);
+    BigDecimal selectTotalCath(long  martId);
+    Double selectAlreadyCash(long  martId);
+    Double selectByMartId(long  martId);
 }

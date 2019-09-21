@@ -9,6 +9,7 @@ import io.treasure.service.MerchantWithdrawService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -43,5 +44,20 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     @Override
     public void updateStatusById(long id, int status) {
         baseDao.updateStatusById(id,status);
+    }
+
+    @Override
+    public BigDecimal selectTotalCath(long martId) {
+        return baseDao.selectTotalCath(martId);
+    }
+
+    @Override
+    public Double selectByMartId(long martId) {
+        return baseDao.selectByMartId(martId);
+    }
+
+    @Override
+    public Double selectAlreadyCash(long martId) {
+        return baseDao.selectAlreadyCash(martId);
     }
 }

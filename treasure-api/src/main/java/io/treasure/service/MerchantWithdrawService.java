@@ -4,6 +4,8 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.entity.MerchantWithdrawEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 提现表
  *
@@ -13,4 +15,9 @@ import io.treasure.entity.MerchantWithdrawEntity;
 public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEntity, MerchantWithdrawDTO> {
     //修改状态
     void updateStatusById(long id,int status);
+
+    BigDecimal selectTotalCath(long  martId);
+    Double selectByMartId(long  martId);
+
+    Double selectAlreadyCash(long  martId);
 }

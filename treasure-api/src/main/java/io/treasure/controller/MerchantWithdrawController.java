@@ -12,16 +12,19 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.WithdrawEnm;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.service.MerchantWithdrawService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.impl.MerchantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,8 @@ import java.util.Map;
 public class MerchantWithdrawController {
     @Autowired
     private MerchantWithdrawService merchantWithdrawService;
+    @Autowired
+    private MerchantServiceImpl merchantService;
     @Login
     @GetMapping("allPage")
     @ApiOperation("全部列表")
@@ -121,5 +126,58 @@ public class MerchantWithdrawController {
     public Result delete(@RequestParam long id){
         merchantWithdrawService.updateStatusById(id,Common.STATUS_DELETE.getStatus());
         return new Result();
+    }
+
+
+
+    @Login
+    @GetMapping("/selectTotalCath")
+    @ApiOperation("查询所有可提现金额")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result selectTotalCath(@RequestParam long martId){
+        BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        merchantEntity.setTotalCash(bigDecimal.doubleValue());
+        merchantService.updateById(merchantEntity);
+        return new Result().ok(bigDecimal.doubleValue());
+
+    }
+    @Login
+    @GetMapping("/selectAlreadyCash")
+    @ApiOperation("查询所有已提现金额")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result selectAlreadyCash(@RequestParam long martId){
+        Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
+
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        merchantEntity.setAlreadyCash(aDouble);
+        merchantService.updateById(merchantEntity);
+        return new Result().ok(aDouble);
+
+    }
+    @Login
+    @GetMapping("/selectNotCash")
+    @ApiOperation("查询所有未提现金额")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result selectNotCash(@RequestParam long martId){
+        double a = 0;
+        double v = 0;
+        double allMoney =0;
+        BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+        allMoney = merchantWithdrawService.selectByMartId(martId);
+        v = bigDecimal.doubleValue();
+        a = v - allMoney;
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        merchantEntity.setNotCash(a);
+        merchantService.updateById(merchantEntity);
+        return new Result().ok(a);
+
     }
 }
