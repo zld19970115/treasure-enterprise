@@ -40,12 +40,14 @@
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
         where masterOrder.merchant_id=#{merchantId}
+        and p_order_id = 0
         <if test="status != null">
             and masterOrder.status in
             <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">
                 #{item}
             </foreach>
         </if>
+
     </select>
     <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantEntity">
         update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},

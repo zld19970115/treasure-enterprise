@@ -67,6 +67,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String status = (String) params.get("status");
         //商户
         String merchantId = (String) params.get("merchantId");
+        String pOrderId = (String) params.get("pOrderId");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         if (StringUtils.isNotBlank(status) && status.indexOf(",") > -1) {
@@ -75,6 +76,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             wrapper.eq(StringUtils.isNotBlank(status), "pay_status", status);
         }
         wrapper.eq(StringUtils.isNotBlank(merchantId), "merchant_id", merchantId);
+      //  wrapper.eq(StringUtils.isNotBlank(pOrderId), "p_order_id", pOrderId);
         return wrapper;
     }
 
@@ -106,6 +108,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
         orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
         return orderDTO;
+    }
+
+    @Override
+    public MasterOrderEntity selectByOrderId(String orderId) {
+        return baseDao.selectByOrderId(orderId);
     }
 
     @Override
@@ -262,6 +269,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         String status = (String) params.get("status");
+     //   String pOrderId = (String) params.get("pOrderId");
         if (StringUtils.isNotBlank(status)) {
             String[] str = status.split(",");
             params.put("statusStr", str);
@@ -345,6 +353,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String userId = (String) params.get("userId");
         //状态
         String status = (String) params.get("status");
+        String pOrderId = (String) params.get("pOrderId");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(userId), "creator", userId);
         if (StringUtils.isNotBlank(status) && status.indexOf(",") > -1) {
@@ -352,6 +361,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         }
+        wrapper.eq(StringUtils.isNotBlank(pOrderId), "p_order_id", pOrderId);
         return wrapper;
     }
 
