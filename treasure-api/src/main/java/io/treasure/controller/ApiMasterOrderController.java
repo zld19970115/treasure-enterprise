@@ -9,6 +9,7 @@ import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.MasterOrderService;
 
@@ -184,7 +185,8 @@ public class ApiMasterOrderController {
     @GetMapping("order/{orderId}")
     @ApiOperation("订单详情")
     public Result<OrderDTO> getOrderInfo(@PathVariable("orderId") String orderId){
-            OrderDTO data = masterOrderService.getOrder(orderId);
+
+        OrderDTO data = masterOrderService.getOrder(orderId);
             return new Result<OrderDTO>().ok(data);
     }
 
