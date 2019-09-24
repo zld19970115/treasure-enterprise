@@ -174,10 +174,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public Result  orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user, String orderId) {
+    public Result  saveOrder(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result = new Result();
         //生成订单号
-        String PorderId = OrderUtil.getOrderIdByTime(user.getId());
+        String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金
         if (dto.getGiftMoney()!=null&&dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
@@ -194,10 +194,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
-        masterOrderEntity.setOrderId(PorderId);
-        MasterOrderEntity masterOrderEntity1 = baseDao.selectByOrderId(orderId);
-        masterOrderEntity1.setPOrderId(PorderId);
-        baseDao.updateById(masterOrderEntity1);
+        masterOrderEntity.setOrderId(orderId);
+        masterOrderEntity.setPOrderId(dto.getOrderId());
+        baseDao.updateById(masterOrderEntity);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
@@ -222,7 +221,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //            boolean b=slaveOrderService.insertBatch(dtoList);
 
         }
-        return result.ok(PorderId);
+        return result.ok(orderId);
     }
 
     @Override

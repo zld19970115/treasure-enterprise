@@ -199,10 +199,10 @@ public class ApiMasterOrderController {
     @Login
     @PostMapping("generatePorder")
     @ApiOperation("加菜")
-    public Result generatePorder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,@RequestParam String orderId ){
+    public Result generatePorder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user){
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
-        return  masterOrderService.orderSave(dto,dtoList,user,orderId);
+        return  masterOrderService.saveOrder(dto,dtoList,user);
 }
     @Login
     @GetMapping("allOrderPage")
@@ -523,4 +523,6 @@ public class ApiMasterOrderController {
     public Result<DesignConditionsDTO> calculateGiftCoupon(@RequestBody DesignConditionsDTO dct){
         return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateGiftCoupon(dct));
     }
+
+
 }

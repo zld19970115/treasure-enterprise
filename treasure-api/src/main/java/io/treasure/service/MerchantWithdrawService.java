@@ -18,6 +18,6 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
 
     BigDecimal selectTotalCath(long  martId);
     Double selectByMartId(long  martId);
-
+    MerchantWithdrawEntity selectPoByMartID(long  martId);
     Double selectAlreadyCash(long  martId);
 }

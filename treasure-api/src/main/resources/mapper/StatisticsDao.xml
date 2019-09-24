@@ -48,7 +48,7 @@
 
     <select id="todayMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
 
-       select IFNULL(sum(pay_money),0.00) from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format} and in(2,4,7) and check_status = 1
+       select IFNULL(sum(pay_money),0.00) from ct_master_order    where  merchant_id=#{merchantId}  and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format} and status in(2,4,7) and check_status = 1
     </select>
     <select id="monthOrder" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 

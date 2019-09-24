@@ -89,6 +89,8 @@ public class MasterOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "退款时间")
 	private Date refundDate;
+	@ApiModelProperty(value = "加菜")
+	private  String pOrderId;
 
 	@ApiModelProperty(value = "修改时间")
 	private Date updateDate;

@@ -57,6 +57,11 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     @Override
+    public MerchantWithdrawEntity selectPoByMartID(long martId) {
+        return baseDao.selectPoByMartID(martId);
+    }
+
+    @Override
     public Double selectAlreadyCash(long martId) {
         return baseDao.selectAlreadyCash(martId);
     }

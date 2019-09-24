@@ -30,14 +30,16 @@
         left join ct_slave_order s
         on ( find_in_set(m.order_id,s.order_id))
         WHERE m.merchant_id = #{martId} AND s.`status` IN (4,7,10) AND m.`status` IN (2,4,7) and m.check_status = 1
-
-
     </select>
     <select id="selectAlreadyCash" resultType="java.lang.Double">
         SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state= 2
     </select>
     <select id="selectByMartId" resultType="java.lang.Double">
          SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1,2)
+    </select>
+    <select id="selectPoByMartID" parameterType="io.treasure.entity.MerchantWithdrawEntity" resultType="io.treasure.entity.MerchantWithdrawEntity">
+              SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
+
     </select>
 
 

@@ -4,7 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.ClientUserService;
+import io.treasure.service.MasterOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +26,17 @@ public class UserIntegralController {
 
     @Autowired
     private ClientUserService clientUserService;
+    @Autowired
+    private MasterOrderService masterOrderService;
     @GetMapping("/getIntegral")
     @ApiOperation("用户获得积分")
-    public Result getIntegral(@RequestParam Long userId, @RequestParam BigDecimal payMoney){
+    public Result getIntegral(@RequestParam Long userId, @RequestParam BigDecimal payMoney,@RequestParam  String orderId){
+
+
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        if (masterOrderEntity.getCheckStatus() != 1){
+            return  new Result().error("未结账");
+        }
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
 

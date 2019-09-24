@@ -26,9 +26,9 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     void updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason);
 
     OrderDTO getOrder(String orderId);
-
+    MasterOrderEntity selectByOrderId(String orderId);
     Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
-    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user,String orderId);
+    Result saveOrder(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
     PageData<OrderDTO> listPage(Map<String, Object> params);
     //商户端订单列表
     PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params);

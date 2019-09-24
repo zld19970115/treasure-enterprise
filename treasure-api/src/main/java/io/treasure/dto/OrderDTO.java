@@ -102,6 +102,9 @@ public class OrderDTO implements Serializable {
 	@ApiModelProperty(value = "修改者")
 	private Long updater;
 
+	@ApiModelProperty(value = "加菜")
+	private  String pOrderId;
+
 	@ApiModelProperty(value = "订单菜品")
 	private List<SlaveOrderEntity> slaveOrder;
 

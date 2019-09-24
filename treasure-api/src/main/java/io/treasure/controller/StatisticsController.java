@@ -1,6 +1,8 @@
 package io.treasure.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.EvaluateDTO;
@@ -9,8 +11,12 @@ import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.service.impl.StatisticsServiceImpl;
 import io.treasure.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,16 +36,18 @@ public class StatisticsController {
     private MerchantServiceImpl merchantService;
     @GetMapping("/sta")
     @ApiOperation("统计")
-    public Result todayOrder(@RequestParam long merchantId,@RequestParam  Date startTime ,@RequestParam  Date endTime ) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "startTime1", value = "开始日期", paramType = "query", required = false, dataType="String"),
+            @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
+    })
+    public Result todayOrder(@RequestParam long merchantId, String startTime1 , String endTime1 ) {
         Map map = new HashMap();
         //获取本日日期
         String format = DateUtil.getToday();
         //获取本月
         String month = new SimpleDateFormat("yyyy-MM").format(new Date());
-        //起始日期
-        String startTime1 = new SimpleDateFormat("yyyy-MM-dd").format(startTime);
-        //截止日期
-        String endTime1 = new SimpleDateFormat("yyyy-MM-dd").format(endTime);
+
         //查询今日订单
         int todayOrder = statisticsService.todayOrder( format,merchantId);
         //查询指定日期得全部订单
@@ -92,6 +100,4 @@ public class StatisticsController {
         map.put("monthMoney",monthMoney);
         return new Result().ok(map);
     }
-
-
 }
