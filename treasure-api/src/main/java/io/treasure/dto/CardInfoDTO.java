@@ -7,41 +7,68 @@ import io.treasure.common.validator.group.UpdateGroup;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * 用户赠送金表
- * 2019.9.3
- */
 @Data
-@ApiModel(value = "用户赠送金表")
-public class UserGiftDTO {
+@ApiModel(value = "充值赠送金表")
+public class CardInfoDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     /**
      * id
      */
     @ApiModelProperty(value = "id")
     private long id;
     /**
-     * 卡劵账号
+     * 密码
      */
-    @ApiModelProperty(value = "卡劵账号")
-    private String number;
+    @ApiModelProperty(value = "密码")
+    private String password;
+
     /**
-     * 密碼
+     * 面值
      */
-    @ApiModelProperty(value = "密碼")
-    private Integer password;
+    @ApiModelProperty(value = "面值")
+    private BigDecimal money;
+
     /**
-     * 用戶賬號（手机号）
+     * P批次
      */
-    @ApiModelProperty(value = "用戶賬號（手机号）")
-    private String userNumber;
+    @ApiModelProperty(value = "批次")
+    private Integer batch;
+
     /**
-     * 状态 0--未使用 1--已使用
+     * 类型：1-赠送金
      */
-    @ApiModelProperty(value = "状态 0--未使用 1--已使用")
+    @ApiModelProperty(value = "类型")
+    private String type;
+    /**
+     * 卡状态：1-制卡，2-开卡，3-绑定卡，9-删除
+     */
+    @ApiModelProperty(value = "卡状态")
     private Integer status;
+    /**
+     * 开卡时间
+     */
+    @ApiModelProperty(value = "开卡时间")
+    private Date openCardDate;
+    /**
+     * 开卡人
+     */
+    @ApiModelProperty(value = "开卡人")
+    private Date openCardUser;
+    /**
+     * 绑定时间
+     */
+    @ApiModelProperty(value = "绑定时间")
+    private Date bindCardDate;
+    /**
+     * 绑定人
+     */
+    @ApiModelProperty(value = "绑定人")
+    private Date bindCardUser;
+
     /**
      * 修改时间
      */
@@ -65,11 +92,4 @@ public class UserGiftDTO {
     @ApiModelProperty(value = "更新者")
     @NotNull(message = "更新者不能为空",groups = UpdateGroup.class)
     private long updater;
-    /**
-     * 面额
-     */
-    @ApiModelProperty(value = "面额")
-    private BigDecimal money;
-    @ApiModelProperty(value = "截止日期")
-    private Date  endDate;
 }
