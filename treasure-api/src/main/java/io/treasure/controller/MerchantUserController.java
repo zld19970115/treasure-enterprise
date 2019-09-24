@@ -281,7 +281,10 @@ public class MerchantUserController {
     @CrossOrigin
     @PutMapping("code")
     @ApiOperation("获取验证码")
-    public Result registerCode(HttpServletRequest request,@RequestBody String mobile){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
+    })
+    public Result registerCode(HttpServletRequest request,@RequestParam String mobile){
         boolean bool= SendSMSUtil.sendCodeForRegister(mobile,request,smsConfig);
         return new Result().ok(bool);
     }
