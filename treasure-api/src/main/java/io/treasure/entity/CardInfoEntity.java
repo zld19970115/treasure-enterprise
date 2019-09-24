@@ -16,7 +16,7 @@ public class CardInfoEntity  extends BaseEntity {
 /**
  * id
  */
-private long id;
+private Long id;
     /**
      * 密码
      */
@@ -76,9 +76,9 @@ private long id;
     /**
      * 创建者
      */
-    private long creator;
+    private Long creator;
     /**
      * 修改者
      */
-    private long updater;
+    private Long updater;
 }

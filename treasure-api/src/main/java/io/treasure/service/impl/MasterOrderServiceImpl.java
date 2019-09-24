@@ -109,6 +109,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public MasterOrderEntity selectByOrderId(String orderId) {
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
         Result result = new Result();
