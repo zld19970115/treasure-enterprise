@@ -34,6 +34,10 @@ public class SlaveOrderEntity extends BaseEntity {
      * 数量
      */
 	private BigDecimal quantity;
+	/**
+	 * 退款数量
+	 */
+	private BigDecimal refundQuantity;
     /**
      * 单价
      */
