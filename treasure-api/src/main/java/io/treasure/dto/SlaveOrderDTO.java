@@ -32,6 +32,9 @@ public class SlaveOrderDTO implements Serializable {
 	@ApiModelProperty(value = "数量")
 	private BigDecimal quantity;
 
+	@ApiModelProperty(value = "退款数量")
+	private BigDecimal refundQuantity;
+
 	@ApiModelProperty(value = "单价")
 	private BigDecimal price;
 
@@ -73,4 +76,7 @@ public class SlaveOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "优惠卷金额（此菜品已经使用的优惠卷抵扣的金额）")
 	private BigDecimal discountsMoney;
+
+	@ApiModelProperty(value = "商户Id")
+	private String merchantId;
 }
