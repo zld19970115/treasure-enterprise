@@ -21,4 +21,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     Map<String, Object> login(LoginDTO dto);
 
+    ClientUserEntity getUserByPhone(String mobile);
+
 }

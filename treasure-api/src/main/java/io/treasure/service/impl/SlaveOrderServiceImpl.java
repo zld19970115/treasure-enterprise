@@ -41,6 +41,33 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         List<SlaveOrderEntity> slaveOrderEntityList=baseDao.selectList(queryWrapper(orderId));
         return slaveOrderEntityList;
     }
+    @Override
+    public SlaveOrderDTO getAllGoods(String orderId, long goodId) {
+        return baseDao.getAllGoods(orderId,goodId);
+    }
+
+    /**
+     * 更新订单菜品表中退款id
+     * @param refundId
+     * @param orderId
+     * @param goodId
+     */
+    @Override
+    public void updateRefundId(String refundId, String orderId, Long goodId) {
+        baseDao.updateRefundId(refundId,orderId,goodId);
+    }
+
+    /**
+     * 根据订单ID和商品ID更改订单菜品状态
+     * @param status
+     * @param orderId
+     * @param goodId
+     */
+    @Override
+    public void updateSlaveOrderStatus(int status, String orderId, Long goodId) {
+        baseDao.updateSlaveOrderStatus(status,orderId,goodId);
+    }
+
 
     private QueryWrapper<SlaveOrderEntity> queryWrapper(String orderId){
         QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();

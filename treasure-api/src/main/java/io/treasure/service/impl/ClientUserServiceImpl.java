@@ -77,4 +77,10 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
 
         return map;
     }
+
+    @Override
+    public ClientUserEntity getUserByPhone(String mobile) {
+       return baseDao.getUserByPhone(mobile);
+    }
+
 }
