@@ -8,6 +8,8 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
@@ -16,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -38,6 +41,8 @@ import java.util.Map;
 public class MerchantRoomController {
     @Autowired
     private MerchantRoomService merchantRoomService;
+    @Autowired
+    private MerchantService merchantService;//商户
     @Login
     @GetMapping("roomPage")
     @ApiOperation("包房列表")
@@ -131,7 +136,22 @@ public class MerchantRoomController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result delete(@RequestParam long id){
-        merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
+        //判断商户是否关闭店铺
+        MerchantRoomDTO roomDto=merchantRoomService.get(id);
+        long merchantId=roomDto.getMerchantId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行删除操作！");
+                }
+            }
+        }else {
+            return new Result().error("没有菜品到分类的商户!");
+        }
         return new Result();
     }
 }

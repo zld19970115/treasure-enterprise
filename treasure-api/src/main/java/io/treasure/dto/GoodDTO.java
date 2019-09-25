@@ -88,8 +88,6 @@ public class GoodDTO implements Serializable {
 	@NotBlank(message = "图片不能为空",groups=UpdateGroup.class)
 	private String icon;
 	@ApiModelProperty(value = "优惠价格")
-	@NotNull(message = "优惠价格不能为空",groups=AddGroup.class)
-	@NotNull(message = "优惠价格不能为空",groups=UpdateGroup.class)
 	private BigDecimal favorablePrice;
 	@ApiModelProperty(value = "库存量")
 	@NotNull(message = "库存量不能为空",groups=AddGroup.class)

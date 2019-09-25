@@ -4,18 +4,18 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
 import io.treasure.service.GoodService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -37,6 +37,8 @@ import java.util.Map;
 public class GoodController {
     @Autowired
     private GoodService goodService;
+    @Autowired
+    private MerchantService merchantService;//商户
     @Login
     @GetMapping("onPage")
     @ApiOperation("销售中商品列表")
@@ -135,7 +137,23 @@ public class GoodController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result delete(@RequestParam  Long id){
-       goodService.remove(id,Common.STATUS_DELETE.getStatus());
+        //判断商户是否关闭店铺
+        GoodDTO goodDto=goodService.get(id);
+        long merchantId=goodDto.getMartId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    goodService.remove(id,Common.STATUS_DELETE.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行删除操作！");
+                }
+            }
+        }else {
+            return new Result().error("没有找到菜品的商户!");
+        }
+
         return new Result();
     }
     @Login
@@ -150,7 +168,22 @@ public class GoodController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result on( @RequestParam Long id){
-        goodService.on(id,Common.STATUS_ON.getStatus());
+        //判断商户是否关闭店铺
+        GoodDTO goodDto=goodService.get(id);
+        long merchantId=goodDto.getMartId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    goodService.on(id,Common.STATUS_ON.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行上架操作！");
+                }
+            }
+        }else {
+            return new Result().error("没有找到菜品的商户!");
+        }
         return new Result();
     }
 
@@ -166,7 +199,22 @@ public class GoodController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result off(@RequestParam  Long id){
-        goodService.off(id,Common.STATUS_OFF.getStatus());
+        //判断商户是否关闭店铺
+        GoodDTO goodDto=goodService.get(id);
+        long merchantId=goodDto.getMartId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    goodService.off(id,Common.STATUS_OFF.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行下架操作！");
+                }
+            }
+        }else {
+            return new Result().error("没有获取到菜品的商户!");
+        }
         return new Result();
     }
 }

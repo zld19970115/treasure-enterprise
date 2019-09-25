@@ -15,50 +15,46 @@ import com.gexin.rp.sdk.template.*;
  * @since 2019-07-09
  */
 public class PushTemplate {
-    private static String appId = "B4euQGKmoz7CNl7uJeAq2A";
-    private static String appKey = "csgDRMt76p7TzOihQ0dLX1";
-    private static String masterSecret = "ZWbjUfdoFZAwpwt5esPPK1";
-    public static void main(String[] args) {
-        getNotificationTemplate();
-//        getLinkTemplate();
-//        getTransmissionTemplate();
-//        getStartActivityTemplate();
-//        getRevokeTemplate("XXXX");
-    }
 
     /**
      * 点击通知打开应用模板, 在通知栏显示一条含图标、标题等的通知，用户点击后激活您的应用。
      * 通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
+     * title 标题
+     * text 发送内容
+     * logo 图标
      * @return
      */
-    public static NotificationTemplate getNotificationTemplate() {
+    public static NotificationTemplate getNotificationTemplate(String appId,String appKey,String title,String text,String logo) {
         NotificationTemplate template = new NotificationTemplate();
         // 设置APPID与APPKEY
         template.setAppId(appId);
         template.setAppkey(appKey);
         //设置展示样式
-        template.setStyle(PushStyle.getStyle0());
-        template.setTransmissionType(1);  // 透传消息设置，收到消息是否立即启动应用： 1为立即启动，2则广播等待客户端自启动
-        template.setTransmissionContent("请输入您要透传的内容");
-//        template.setSmsInfo(PushSmsInfo.getSmsInfo()); //短信补量推送
+        template.setStyle(PushStyle.getStyle0(title,text,logo));
 
-//        template.setDuration("2019-07-09 11:40:00", "2019-07-09 12:24:00");  // 设置定时展示时间，安卓机型可用
+        template.setTransmissionType(1);  // 透传消息设置，收到消息是否立即启动应用： 1为立即启动，2则广播等待客户端自启动
+       // template.setTransmissionContent("内容");
+        // template.setSmsInfo(PushSmsInfo.getSmsInfo()); //短信补量推送
+        //template.setDuration("2019-07-09 11:40:00", "2019-07-09 12:24:00");  // 设置定时展示时间，安卓机型可用
         template.setNotifyid(123); // 在消息推送的时候设置notifyid。如果需要覆盖此条消息，则下次使用相同的notifyid发一条新的消息。客户端sdk会根据notifyid进行覆盖。
         return template;
     }
 
     /**
      * 点击通知打开(第三方)网页模板, 在通知栏显示一条含图标、标题等的通知，用户点击可打开您指定的网页。
+     * title 标题
+     * text 发送内容
+     * logo 头像
      * @return
      */
-    public static LinkTemplate getLinkTemplate() {
+    public static LinkTemplate getLinkTemplate(String appId,String appKey,String title,String text,String logo) {
         LinkTemplate template = new LinkTemplate();
         // 设置APPID与APPKEY
         template.setAppId(appId);
         template.setAppkey(appKey);
 
         //设置展示样式
-        template.setStyle(PushStyle.getStyle0());
+        template.setStyle(PushStyle.getStyle0(title,text,logo));
         template.setUrl("http://www.baidu.com");  // 设置打开的网址地址
         template.setNotifyid(123); // 在消息推送的时候设置notifyid。如果需要覆盖此条消息，则下次使用相同的notifyid发一条新的消息。客户端sdk会根据notifyid进行覆盖。
 //         template.setSmsInfo(PushSmsInfo.getSmsInfo()); //短信补量推送
@@ -68,9 +64,10 @@ public class PushTemplate {
 
     /**
      * 透传消息模版,透传消息是指消息传递到客户端只有消息内容，展现形式由客户端自行定义。客户端可自定义通知的展现形式，也可自定义通知到达之后的动作，或者不做任何展现。
+
      * @return
      */
-    public static TransmissionTemplate getTransmissionTemplate() {
+    public static TransmissionTemplate getTransmissionTemplate(String appId,String appKey) {
         TransmissionTemplate template = new TransmissionTemplate();
         // 设置APPID与APPKEY
         template.setAppId(appId);
@@ -85,14 +82,20 @@ public class PushTemplate {
         return template;
     }
 
-    //点击通知, 打开（自身）应用内任意页面
-    public static StartActivityTemplate getStartActivityTemplate() {
+    /**
+     * 点击通知, 打开（自身）应用内任意页面
+     * title 标题
+     * text 发送内容
+     * logo 头像
+     */
+
+    public static StartActivityTemplate getStartActivityTemplate(String appId,String appKey,String title,String text,String logo) {
         StartActivityTemplate template = new StartActivityTemplate();
         // 设置APPID与APPKEY
         template.setAppId(appId);
         template.setAppkey(appKey);
         //设置展示样式
-        template.setStyle(PushStyle.getStyle0());
+        template.setStyle(PushStyle.getStyle0(title,text,logo));
 
         String intent = "intent:#Intent;component=com.yourpackage/.NewsActivity;end";
         template.setIntent(intent); //最大长度限制为1000
@@ -107,7 +110,7 @@ public class PushTemplate {
      * @param taskId
      * @return
      */
-    public static RevokeTemplate getRevokeTemplate(String taskId) {
+    public static RevokeTemplate getRevokeTemplate(String taskId,String appId,String appKey) {
         RevokeTemplate template = new RevokeTemplate();
         // 设置APPID与APPKEY
         template.setAppId(appId);

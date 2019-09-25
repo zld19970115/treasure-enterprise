@@ -19,8 +19,9 @@ public class AppPushUtil {
     private static String url = "http://sdk.open.api.igexin.com/apiex.htm";
     public static IGtPush push = new IGtPush(appKey, masterSecret);
     public static void main(String[] args) throws IOException {
-
+            pushToSingle("订单管理","已经接单","");
     }
+
 
     /**
      * 对单个用户推送消息
@@ -30,8 +31,9 @@ public class AppPushUtil {
      * 场景2：用户定制了某本书的预订更新，当本书有更新时，需要向该用户及时下发一条更新提醒信息。
      * 这些需要向指定某个用户推送消息的场景，即需要使用对单个用户推送消息的接口。
      */
-    private static void pushToSingle() {
-        AbstractTemplate template = PushTemplate.getNotificationTemplate(); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
+    private static void pushToSingle(String title,String text,String logo) {
+
+        AbstractTemplate template = PushTemplate.getNotificationTemplate(appId,appKey,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
 //        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
 //        AbstractTemplate template = PushTemplate.getRevokeTemplate(); //消息撤回模版
@@ -41,9 +43,8 @@ public class AppPushUtil {
         SingleMessage message = getSingleMessage(template);
         Target target = new Target();
         target.setAppId(appId);
-        target.setClientId("");
+        target.setClientId("bed827bcb12f99ebb004180ee0cfa73d");
 //        target.setAlias(ALIAS); //别名需要提前绑定
-
         IPushResult ret = null;
         try {
             ret = push.pushMessageToSingle(message, target);

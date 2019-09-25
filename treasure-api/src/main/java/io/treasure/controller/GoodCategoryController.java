@@ -7,6 +7,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.service.GoodCategoryService;
@@ -14,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -35,6 +37,8 @@ import java.util.Map;
 public class GoodCategoryController {
     @Autowired
     private GoodCategoryService goodCategoryService;
+    @Autowired
+    private MerchantService merchantService;//商户
     @Login
     @GetMapping("pageOn")
     @ApiOperation("显示中列表")
@@ -138,10 +142,24 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result delete(@RequestParam  Long id){
-        goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
+        //判断商户是否关闭店铺
+        GoodCategoryDTO categortyDto=goodCategoryService.get(id);
+        long merchantId=categortyDto.getMerchantId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行下架操作！");
+                }
+            }
+        }else{
+            return new Result().error("没有获取到分类的商户!");
+        }
         return new Result();
     }
-
     /**
      * 显示数据
      * @param id
@@ -154,7 +172,22 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result on(@RequestParam  Long id){
-        goodCategoryService.on(id,Common.STATUS_ON.getStatus());
+        //判断商户是否关闭店铺
+        GoodCategoryDTO categortyDto=goodCategoryService.get(id);
+        long merchantId=categortyDto.getMerchantId();
+        if(merchantId>0){
+            MerchantDTO merchantDto= merchantService.get(merchantId);
+            if(merchantDto!=null){
+                int status=merchantDto.getStatus();//状态
+                if(status==Common.STATUS_CLOSE.getStatus()){
+                    goodCategoryService.on(id,Common.STATUS_ON.getStatus());
+                }else{
+                    return new Result().error("请关闭店铺后，在进行上架操作！");
+                }
+            }
+        }else {
+            return new Result().error("没有获取到分类的商户!");
+        }
         return new Result();
     }
 
@@ -170,7 +203,22 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result off(@RequestParam  Long id){
-        goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
+        //判断商户是否关闭店铺
+        GoodCategoryDTO categortyDto=goodCategoryService.get(id);
+        long merchantId=categortyDto.getMerchantId();
+        if(merchantId>0){
+           MerchantDTO merchantDto= merchantService.get(merchantId);
+           if(merchantDto!=null){
+               int status=merchantDto.getStatus();//状态
+               if(status==Common.STATUS_CLOSE.getStatus()){
+                   goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
+               }else{
+                   return new Result().error("请关闭店铺后，在进行下架操作！");
+               }
+           }
+        }else{
+            return new Result().error("没有获取到分类的商户!");
+        }
         return new Result();
     }
     /**
