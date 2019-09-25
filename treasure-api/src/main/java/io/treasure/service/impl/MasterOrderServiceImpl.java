@@ -92,22 +92,40 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //商家信息
         MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
         orderDTO.setMerchantInfo(merchantEntity);
-        //菜单信息
-        List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
-        int size=slaveOrderEntitys.size();
-        for (int i = 0; i < size; i++) {
-            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
-            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
-            slaveOrderEntity.setGoodInfo(goodEntity);
+        //加菜信息
+        List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderId(orderId);
+        List list = new ArrayList();
+        for (MasterOrderEntity orderEntity : masterOrderEntities) {
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderEntity.getOrderId());
+            for (int j = 0; j < slaveOrderEntities.size(); j++) {
+                SlaveOrderEntity slaveOrderEntity=slaveOrderEntities.get(j);
+                GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
+                slaveOrderEntity.setGoodInfo(goodEntity);
+            }
+            list.add(slaveOrderEntities);
+            orderDTO.setSlaveOrder(list);
         }
-        orderDTO.setSlaveOrder(slaveOrderEntitys);
+
+
+        //菜单信息
+//        List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
+////        int size=slaveOrderEntitys.size();
+////        for (int i = 0; i < size; i++) {
+////            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
+////            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
+////            slaveOrderEntity.setGoodInfo(goodEntity);
+////        }
+////        orderDTO.setSlaveOrder(slaveOrderEntitys);
         MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
         orderDTO.setMerchantRoomEntity(merchantRoomEntity);
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
         orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
         return orderDTO;
     }
-
+    @Override
+    public List<MasterOrderEntity> selectPOrderId(String orderId) {
+        return baseDao.selectPOrderId(orderId);
+    }
     @Override
     public MasterOrderEntity selectByOrderId(String orderId) {
         return null;
