@@ -14,4 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ClientUserDao extends BaseDao<ClientUserEntity> {
 
     ClientUserEntity getUserByMobile(String mobile);
+    ClientUserEntity getUserByPhone(String mobile);
 }

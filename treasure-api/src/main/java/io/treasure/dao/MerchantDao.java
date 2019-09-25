@@ -22,7 +22,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据商户名查询
     MerchantEntity getByName(@Param("name") String name, @Param("status") int status);
     //根据id修改状态
-    void updateStatusById(long id,int status);
+    void updateStatusById(@Param("id") long id,@Param("status") int status);
 
     List<MerchantEntity> getMerchantList(Map<String, Object> params);
 }
