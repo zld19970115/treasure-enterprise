@@ -47,4 +47,8 @@
 
         select * from  ct_evaluate where uid = #{userId} and masterorder_id = #{merchantOrderId}
     </select>
+    <select id="selectByMerchantId" resultType="io.treasure.entity.EvaluateEntity">
+
+        select * from ct_evaluate where mart_id = #{merchantId} and status = 1;
+    </select>
 </mapper>

@@ -10,6 +10,7 @@ import io.treasure.service.EvaluateService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,6 +73,11 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
     @Override
     public EvaluateEntity selectByUserIdAndOid(long userId, String merchantOrderId) {
         return baseDao.selectByUserIdAndOid(userId,merchantOrderId);
+    }
+
+    @Override
+    public List<EvaluateEntity> selectByMerchantId(long merchantId) {
+        return baseDao.selectByMerchantId(merchantId);
     }
 
 

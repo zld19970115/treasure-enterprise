@@ -105,30 +105,25 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             list.add(slaveOrderEntities);
             orderDTO.setSlaveOrder(list);
         }
-
-
-        //菜单信息
+//        //菜单信息
 //        List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
-////        int size=slaveOrderEntitys.size();
-////        for (int i = 0; i < size; i++) {
-////            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
-////            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
-////            slaveOrderEntity.setGoodInfo(goodEntity);
-////        }
-////        orderDTO.setSlaveOrder(slaveOrderEntitys);
+//        int size=slaveOrderEntitys.size();
+//        for (int i = 0; i < size; i++) {
+//            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
+//            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
+//            slaveOrderEntity.setGoodInfo(goodEntity);
+//        }
+//        orderDTO.setSlaveOrder(slaveOrderEntitys);
         MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
         orderDTO.setMerchantRoomEntity(merchantRoomEntity);
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
         orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
         return orderDTO;
     }
-    @Override
-    public List<MasterOrderEntity> selectPOrderId(String orderId) {
-        return baseDao.selectPOrderId(orderId);
-    }
+
     @Override
     public MasterOrderEntity selectByOrderId(String orderId) {
-        return null;
+        return baseDao.selectByOrderId(orderId);
     }
 
     @Override
@@ -310,6 +305,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-1, "结账失败！请联系商家！");
         }
         return result;
+    }
+
+    @Override
+    public List<MasterOrderEntity> selectPOrderId(String orderId) {
+        return baseDao.selectPOrderId(orderId);
     }
 
     @Override

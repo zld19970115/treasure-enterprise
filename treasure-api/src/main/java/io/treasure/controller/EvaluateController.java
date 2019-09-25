@@ -109,4 +109,10 @@ public class EvaluateController {
         list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }
+    @GetMapping("/seeComment")
+    @ApiOperation("查看评论表")
+    public Result seeComment(@RequestParam long merchantId){
+        List<EvaluateEntity> evaluateEntities = evaluateService.selectByMerchantId(merchantId);
+        return new Result().ok(evaluateEntities);
+    }
 }

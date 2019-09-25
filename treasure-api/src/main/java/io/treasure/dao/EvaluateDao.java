@@ -5,6 +5,8 @@ import io.treasure.entity.EvaluateEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 评价表
  */
@@ -18,7 +20,7 @@ public interface EvaluateDao extends BaseDao<EvaluateEntity> {
      * 删除评价
      */
     void delEvaluate(int id);
-
+    List<EvaluateEntity> selectByMerchantId(long merchantId);
     Double  selectAvgSpeed(long merchantId);
     Double selectAvgHygiene(long merchantId);
     Double selectAvgAttitude(long merchantId);
