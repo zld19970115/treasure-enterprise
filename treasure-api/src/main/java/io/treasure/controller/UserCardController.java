@@ -25,9 +25,9 @@ import java.util.List;
 @Api(tags="用户赠送金表")
 public class UserCardController {
     @Autowired
-    UserCardServiceImpl userCardService;
+    private UserCardServiceImpl userCardService;
     @Autowired
-    ClientUserServiceImpl clientUserService;
+    private ClientUserServiceImpl clientUserService;
     @GetMapping("/goCard")
     @ApiOperation("用户充值赠送金表")
     public Result selectMartCoupon(@RequestParam long userId, @RequestParam long id , @RequestParam String password){

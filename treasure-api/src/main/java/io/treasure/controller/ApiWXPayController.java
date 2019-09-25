@@ -9,7 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.service.RefundOrderService;
+import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,12 @@ public class ApiWXPayController {
     @Autowired
     private IWXConfig wxPayConfig;
 
+    @Autowired
+    private RefundOrderService refundOrderService;
+
+    @Autowired
+    private SlaveOrderService slaveOrderService;
+
 
 
     /**
@@ -76,12 +85,13 @@ public class ApiWXPayController {
             @ApiImplicitParam(name="total_fee",value="订单总金额单位分",required=true,paramType="query"),
             @ApiImplicitParam(name="refund_fee",value="退款金额单位分",required=true,paramType="query")
     })
-    public Object refund(String orderNo,String total_fee,String refund_fee,@LoginUser ClientUserEntity user) throws Exception {
+    public Object refund(String orderNo,String total_fee,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) throws Exception {
         Map<String, String> reqData = new HashMap<>();
         // 商户订单号
         reqData.put("out_trade_no", orderNo);
         // 授权码
         reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(user.getId()));
+
         // 订单总金额，单位为分，只能为整数
         BigDecimal totalAmount = new BigDecimal(total_fee);
         BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
@@ -97,6 +107,15 @@ public class ApiWXPayController {
         reqData.put("op_user_id", wxPayConfig.getMchID());
 
         Map<String, String> resultMap = wxPay.refund(reqData);
+
+
+        //将退款ID更新到refundOrder表中refund_id
+        refundOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()),orderNo,goodId);
+
+        //将退款ID更新到订单菜品表中
+        slaveOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()),orderNo,goodId);
+
+
         log.info(resultMap.toString());
 
         return resultMap;
