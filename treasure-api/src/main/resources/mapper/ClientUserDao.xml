@@ -39,4 +39,8 @@
     <select id="getUserByPhone" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where mobile = #{mobile}
     </select>
+
+    <select id="getUserByOpenId"  parameterType="io.treasure.entity.ClientUserEntity" resultType="io.treasure.entity.ClientUserEntity">
+        select * from ct_client_user where openid=#{openid}
+    </select>
 </mapper>
