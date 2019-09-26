@@ -7,7 +7,7 @@ import com.gexin.rp.sdk.base.impl.Target;
 import com.gexin.rp.sdk.exceptions.RequestException;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.AbstractTemplate;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Appinfo;
+
 
 import java.io.IOException;
 
