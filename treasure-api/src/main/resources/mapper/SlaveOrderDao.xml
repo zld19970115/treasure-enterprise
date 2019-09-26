@@ -25,5 +25,15 @@
         <result property="updater" column="updater"/>
     </resultMap>
 
+    <select id="getAllGoods" parameterType="io.treasure.dto.SlaveOrderDTO" resultType="io.treasure.dto.SlaveOrderDTO">
+        select * from ct_slave_order where order_id=#{arg0}and good_id=#{arg1}
+    </select>
 
+    <update id="updateRefundId" parameterType="io.treasure.dto.SlaveOrderDTO">
+        UPDATE ct_slave_order SET refund_id=#{refundId},status where order_id=#{orderId} and good_id=#{goodId}
+    </update>
+
+    <update id="updateSlaveOrderStatus" parameterType="io.treasure.dto.SlaveOrderDTO">
+        UPDATE ct_slave_order SET status=#{status} where order_id=#{orderId} and good_id=#{goodId}
+    </update>
 </mapper>
