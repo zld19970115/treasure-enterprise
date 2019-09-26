@@ -23,4 +23,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     ClientUserEntity getUserByPhone(String mobile);
 
+    ClientUserEntity getUserByOpenId(String openId);
+
 }

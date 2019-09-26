@@ -83,4 +83,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
        return baseDao.getUserByPhone(mobile);
     }
 
+    @Override
+    public ClientUserEntity getUserByOpenId(String openId) {
+        return baseDao.getUserByOpenId(openId);
+    }
+
 }
