@@ -19,9 +19,9 @@ import java.math.BigDecimal;
 @Mapper
 public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
 
-    void updateRefundId(String refundId,String orderId,Long goodId);
+    void updateRefundId(@Param("refundId") String refundId,@Param("orderId")  String orderId,@Param("goodId") Long goodId);
 
-    SlaveOrderDTO getAllGoods(String orderId, long goodId);
+    SlaveOrderDTO getAllGoods(@Param("orderId") String orderId,@Param("goodId") long goodId);
 
     void updateSlaveOrderStatus(@Param("status") int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
 }
