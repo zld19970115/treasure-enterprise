@@ -26,43 +26,15 @@ import java.util.List;
 public class UserCardController {
     @Autowired
     private UserCardServiceImpl userCardService;
-    @Autowired
-    private ClientUserServiceImpl clientUserService;
+
     @GetMapping("/goCard")
     @ApiOperation("用户充值赠送金表")
     public Result selectMartCoupon(@RequestParam long userId, @RequestParam long id , @RequestParam String password){
 
-        CardInfoEntity cardInfoEntity = userCardService.selectByIdAndPassword(id, password);
-          if (cardInfoEntity==null){
-              return new Result().error("账号密码错误");
-          }
-       if (cardInfoEntity.getStatus()==1){
-           return new Result().error("该卡密未激活");
-       }
-        if (cardInfoEntity.getStatus()==3){
-            return new Result().error("该卡密已使用");
-        }
-        if (cardInfoEntity.getStatus()==9){
-            return new Result().error("该卡密已删除");
-        }
-        BigDecimal a = new BigDecimal("50");
+        Result result = userCardService.selectByIdAndPassword(id, password, userId);
 
-        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
-        if (clientUserEntity==null){
-            return new Result().error("请登录");
-        }
-        if( clientUserEntity.getGift().compareTo(a)==1){
-            return new Result().error("赠送金余额大于50不可充值");
-        }
-        BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getGift());
-        clientUserEntity.setGift(money);
-        clientUserService.updateById(clientUserEntity);
-        Date date = new Date();
-        cardInfoEntity.setStatus(3);
-        cardInfoEntity.setBindCardDate(date);
-        cardInfoEntity.setBindCardUser(userId);
-        userCardService.updateById(cardInfoEntity);
-        return new Result().ok("充值成功");
+
+        return new Result().ok(result);
     }
 
 }

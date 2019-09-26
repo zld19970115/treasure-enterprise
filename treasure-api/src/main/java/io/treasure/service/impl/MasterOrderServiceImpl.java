@@ -132,21 +132,27 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Result result = new Result();
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
-        //锁定包房/散台
-        MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
-        if (merchantRoomParamsSetEntity == null) {
-            return result.error(-5, "没有此包房/散台");
-        }
-        int isUse = merchantRoomParamsSetEntity.getState();
-        if (isUse == 0) {
+        Integer reservationType = dto.getReservationType();
+
+        if (reservationType!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
+            if (merchantRoomParamsSetEntity == null) {
+                return result.error(-5, "没有此包房/散台");
+            }
+            int isUse = merchantRoomParamsSetEntity.getState();
+            if (isUse == 0) {
 //             merchantRoomParamsSetEntity.setState(1);
 //             boolean bb=merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
 //             if(!bb){
 //                 return result.error(-4,"包房/散台预定出错！");
 //             }
-        } else if (isUse == 1) {
-            return result.error(-1, "包房/散台已经预定,请重新选择！");
+            } else if (isUse == 1) {
+                return result.error(-1, "包房/散台已经预定,请重新选择！");
+            }
         }
+        //锁定包房/散台
+
+
         //是否使用赠送金
         if (dto.getGiftMoney()!=null&&dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
