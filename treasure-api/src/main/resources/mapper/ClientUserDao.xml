@@ -36,6 +36,6 @@
         select * from ct_client_user where mobile = #{value} and status=1
     </select>
     <select id="getUserByPhone" resultType="io.treasure.entity.ClientUserEntity">
-        select * from ct_client_user where mobile = #{value}
+        select * from ct_client_user where mobile = #{mobile}
     </select>
 </mapper>
