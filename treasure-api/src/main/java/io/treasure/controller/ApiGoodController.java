@@ -223,7 +223,7 @@ public class ApiGoodController {
 
 
     @Login
-    @GetMapping("   getShowInHotbyMartId")
+    @GetMapping("getShowInHotbyMartId")
     @ApiOperation("根据商户ID查询此商户热销菜品")
     public Result<List<GoodDTO>> getShowInHotbyMartId(long martId ) {
         return new Result<List<GoodDTO>>().ok(apigoodService.getShowInHotbyMartId(martId));
