@@ -241,4 +241,14 @@ public class ApiClientUserController {
 
 
 
+    @GetMapping("getUserByOpenId")
+    @ApiOperation("根据openId查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String")})
+    public Result<ClientUserEntity> getUserByOpenId(String openId){
+        ClientUserEntity userByOpenId = clientUserService.getUserByOpenId(openId);
+        return new Result<ClientUserEntity>().ok(userByOpenId);
+    }
+
+
 }
