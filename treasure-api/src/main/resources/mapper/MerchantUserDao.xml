@@ -19,6 +19,7 @@
         <result property="merchantid" column="merchantId"/>
         <result property="pid" column="pid"/>
         <result property="pidName" column="pid_name"/>
+        <result property="clientId" column="client_id"/>
     </resultMap>
 
     <select id="getByMobile" resultType="io.treasure.entity.MerchantUserEntity">

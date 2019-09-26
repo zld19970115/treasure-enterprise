@@ -216,6 +216,7 @@ public class MerchantUserController {
         entity.setCreateDate(new Date());
         entity.setStatus(Common.STATUS_ON.getStatus());
         entity.setMerchantid("0");
+        entity.setClientId(dto.getClientId());
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //根据用户名判断是否已经注册过了

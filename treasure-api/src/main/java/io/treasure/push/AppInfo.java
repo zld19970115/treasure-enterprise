@@ -10,10 +10,10 @@ import com.gexin.rp.sdk.http.IGtPush;
  * @since 2019-07-09
  */
 public class AppInfo {
-    public static final String APPID = "";
-    public static final String APPKEY = "";
-    public static final String MASTERSECRET = "";
 
+    public static final String APPID_CLIENT = "BmG8zbVe9g5TSODxGlyaT9";
+    public static final  String APPKEY_CLIENT = "fC1xbcskN486LTQmDNaeE";
+    public static final  String MASTERSECRET_CLIENT = "CvbbO5rQeR7c7kiwswdaaA";
     public static final String CID = "";
     public static final String CID_2 = "";
 

@@ -77,4 +77,6 @@ public class MerchantUserDTO {
 	private Long roleId;
 	@ApiModelProperty(value = "商户列表")
 	private List<MerchantDTO> merchantList;
+	@ApiModelProperty(value = "个推客户Id")
+	private String clientId;
 }

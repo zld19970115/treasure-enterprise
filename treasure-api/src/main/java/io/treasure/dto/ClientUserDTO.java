@@ -97,6 +97,7 @@ public class ClientUserDTO implements Serializable {
 
 	@ApiModelProperty(value = "更新者")
 	private Long updater;
-
+	@ApiModelProperty(value = "个推客户Id")
+	private String clientId;
 
 }

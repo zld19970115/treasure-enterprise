@@ -33,4 +33,6 @@ public class MerchantUserRegisterDTO {
 	private String weixinurl;
 	@ApiModelProperty(value = "")
 	private String openid;
+	@ApiModelProperty(value = "个推客户Id")
+	private String clientId;
 }

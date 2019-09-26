@@ -31,6 +31,7 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="clientId" column="client_id"/>
     </resultMap>
     <select id="getUserByMobile" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where mobile = #{value} and status=1

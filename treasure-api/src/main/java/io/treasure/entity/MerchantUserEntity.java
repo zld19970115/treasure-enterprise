@@ -74,5 +74,8 @@ public class MerchantUserEntity implements Serializable {
 	 */
 	private Long pid;
 	private String pidName;//父节点名称
-
+	/**
+	 * 个推客户id
+	 */
+	private String clientId;
 }

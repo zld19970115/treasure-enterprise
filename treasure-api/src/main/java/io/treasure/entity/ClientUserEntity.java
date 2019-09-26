@@ -118,4 +118,8 @@ public class ClientUserEntity extends BaseEntity {
      */
 	@TableField(fill=FieldFill.INSERT_UPDATE)
 	private Long updater;
+	/**
+	 * 个推客户id
+	 */
+	private String clientId;
 }

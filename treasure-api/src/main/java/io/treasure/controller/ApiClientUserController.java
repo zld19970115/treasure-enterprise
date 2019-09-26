@@ -170,6 +170,7 @@ public class ApiClientUserController {
         user.setUsername(dto.getMobile());
         user.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
         user.setCreateDate(new Date());
+        user.setClientId(dto.getClientId());
         clientUserService.insert(user);
         return new Result();
     }
