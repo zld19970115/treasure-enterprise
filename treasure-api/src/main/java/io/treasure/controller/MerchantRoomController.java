@@ -11,6 +11,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantRoomDTO;
+import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.service.MerchantRoomService;
@@ -24,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -60,6 +59,40 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
+    @Login
+    @GetMapping("roomDate")
+    @ApiOperation("查询日期")
+    public Result roomDate(@RequestParam long merchantId){
+
+        List<String> list = merchantRoomService.selectRoomDate(merchantId);
+        LinkedHashSet<String> set = new LinkedHashSet<>(list.size());
+        set.addAll(list);
+        list.clear();
+        list.addAll(set);
+//        HashSet h = new HashSet(list);
+//        list.clear();
+//        list.addAll(h);
+        return new Result().ok(list);
+    }
+    @Login
+    @GetMapping("roomAlreadyPage")
+    @ApiOperation("包房预约列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String"),
+            @ApiImplicitParam(name="date",value="日期",paramType ="query",required = true,dataType = "String"),
+            @ApiImplicitParam(name="state",value="使用状态1-已使用0-未使用",paramType ="query",required = true,dataType = "int")
+    })
+    public Result<PageData<MerchantRoomParamsSetDTO>> roomAlreadyPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_ROOM.getType()+"");
+        PageData<MerchantRoomParamsSetDTO> page = merchantRoomService.selectRoomAlreadyPage(params);
+        return new Result<PageData<MerchantRoomParamsSetDTO>>().ok(page);
+    }
+
     @Login
     @GetMapping("deskPage")
     @ApiOperation("桌列表")

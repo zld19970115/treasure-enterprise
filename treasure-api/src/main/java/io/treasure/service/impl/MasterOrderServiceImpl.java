@@ -238,7 +238,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setPOrderId(dto.getOrderId());
         baseDao.updateById(masterOrderEntity);
-        masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        masterOrderEntity.setStatus(Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue());
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
@@ -390,6 +390,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private Wrapper<MasterOrderEntity> getQueryWrapper(Map<String, Object> params) {
         String userId = (String) params.get("userId");
         //状态
+        String pOrderId = (String) params.get("pOrderId");
         String status = (String) params.get("status");
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(userId), "creator", userId);
@@ -398,6 +399,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         }
+        wrapper.eq(StringUtils.isNotBlank(pOrderId), "p_order_id", pOrderId);
         return wrapper;
     }
 
