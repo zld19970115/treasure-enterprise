@@ -132,7 +132,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         String status= (String) params.get("status");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
-        wrapper.in(StringUtils.isNotBlank(status),"status",status);
+        wrapper.ne(StringUtils.isNotBlank(status),"status",status);
         return wrapper;
     }
 }

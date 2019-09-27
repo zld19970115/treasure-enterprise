@@ -56,8 +56,7 @@ public class MerchantController {
             @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="Long")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-        int status=Common.STATUS_ON.getStatus();
-        params.put("status",Common.STATUS_ON.getStatus()+","+Common.STATUS_CLOSE.getStatus());
+        params.put("status",Common.STATUS_DELETE.getStatus()+"");
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }

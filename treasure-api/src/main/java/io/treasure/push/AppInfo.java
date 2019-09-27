@@ -11,9 +11,9 @@ import com.gexin.rp.sdk.http.IGtPush;
  */
 public class AppInfo {
 
-    public static final String APPID_CLIENT = "BmG8zbVe9g5TSODxGlyaT9";
-    public static final  String APPKEY_CLIENT = "fC1xbcskN486LTQmDNaeE";
-    public static final  String MASTERSECRET_CLIENT = "CvbbO5rQeR7c7kiwswdaaA";
+    public static final String APPID_CLIENT = "rYyK8qk3nw79tCGSjhjU2";
+    public static final  String APPKEY_CLIENT = "EKiSOBoqsu8Nfdv1tgVDo8";
+    public static final  String MASTERSECRET_CLIENT = "Y33UqarEgZ6HitTfxvkM54";
     public static final String CID = "";
     public static final String CID_2 = "";
 
