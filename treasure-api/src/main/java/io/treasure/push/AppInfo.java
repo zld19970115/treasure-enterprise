@@ -11,9 +11,18 @@ import com.gexin.rp.sdk.http.IGtPush;
  */
 public class AppInfo {
 
-    public static final String APPID_CLIENT = "B4euQGKmoz7CNl7uJeAq2A";
-    public static final  String APPKEY_CLIENT = "csgDRMt76p7TzOihQ0dLX1";
-    public static final  String MASTERSECRET_CLIENT = "ZWbjUfdoFZAwpwt5esPPK1";
+//    public static final String APPID_CLIENT = "B4euQGKmoz7CNl7uJeAq2A";
+//    public static final  String APPKEY_CLIENT = "csgDRMt76p7TzOihQ0dLX1";
+//    public static final  String MASTERSECRET_CLIENT = "ZWbjUfdoFZAwpwt5esPPK1";
+
+    //客户端
+    public static final String APPID_CLIENT = "rYyK8qk3nw79tCGSjhjU2";
+    public static final  String APPKEY_CLIENT = "EKiSOBoqsu8Nfdv1tgVDo8";
+    public static final  String MASTERSECRET_CLIENT = "Y33UqarEgZ6HitTfxvkM54";
+    //商户端
+    public static final String APPID_MERCHANT = "dCKau0urWf5eJW6AujqTy3";
+    public static final  String APPKEY_MERCHANT = "zrC5d4dLdb5Lqcp5UD3KK5";
+    public static final  String MASTERSECRET_MERCHANT = "u2GDCUoe5B7tUjYKqYv0P2";
     public static final String CID = "";
     public static final String CID_2 = "";
 

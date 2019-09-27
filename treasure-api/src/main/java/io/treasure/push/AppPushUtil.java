@@ -16,8 +16,8 @@ public class AppPushUtil {
     // STEP1：获取应用基本信息
     private static String url = "http://sdk.open.api.igexin.com/apiex.htm";
     public static void main(String[] args) throws IOException {
-        String clientId="bed827bcb12f99ebb004180ee0cfa73d";
-        //String clientId="177ac6ee032cca135247a6e49c0a895b";
+        //String clientId="bed827bcb12f99ebb004180ee0cfa73d";
+        String clientId="42a6ceff19d73a608bc2cbf61ed0d86b";
         pushToSingle("订单管理","已经接单","",
                 AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,AppInfo.MASTERSECRET_CLIENT,clientId);
     }
