@@ -23,6 +23,9 @@ import java.util.Map;
  * @since 1.0.0 2019-08-23
  */
 public interface MasterOrderService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
+
+    //取消订单
+    void caleclUpdate(long id,int status, long verify, Date verify_date, String refundReason);
     void updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason);
 
     OrderDTO getOrder(String orderId);

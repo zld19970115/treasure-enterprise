@@ -2,15 +2,15 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
-import io.treasure.dto.DesignConditionsDTO;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.dto.MerchantOrderDTO;
-import io.treasure.dto.OrderDTO;
+import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.push.AppInfo;
+import io.treasure.push.AppPushUtil;
+import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 
 
@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.MerchantRoomParamsSetService;
 import oracle.jdbc.driver.Const;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,9 @@ public class ApiMasterOrderController {
     private MasterOrderService masterOrderService;
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
+    //会员
+    @Autowired
+    private ClientUserService clientUserService;
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -443,7 +447,6 @@ public class ApiMasterOrderController {
     }
     @CrossOrigin
     @Login
-    @Transient
     @PutMapping("cancelUpdate")
     @ApiOperation("商户端-取消/拒绝订单")
     @ApiImplicitParams({
@@ -452,11 +455,28 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason){
-        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
-        MasterOrderDTO dto = masterOrderService.get(id);
-        //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
-        return new Result();
+        masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
+        Result result=new Result();
+        if(result.getCode()==200){
+            MasterOrderDTO dto= masterOrderService.get(id);
+            if(null!=dto){
+               ClientUserDTO userDto= clientUserService.get(dto.getCreator());
+               if(null!=userDto){
+                   String clientId=userDto.getClientId();
+                   if(StringUtils.isNotBlank(clientId)){
+                       //发送个推消息
+                       AppPushUtil.pushToSingle("商家拒绝接单",verify_reason,"",
+                               AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
+                               AppInfo.MASTERSECRET_CLIENT,
+                               clientId);
+                   }else{
+                       result.error("没有获取到clientid!");
+                       return result;
+                   }
+               }
+            }
+        }
+        return result;
     }
     @CrossOrigin
     @Login
@@ -468,7 +488,27 @@ public class ApiMasterOrderController {
     })
     public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify){
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
-        return new Result();
+        Result result=new Result();
+        if(result.getCode()==200){
+            MasterOrderDTO dto= masterOrderService.get(id);
+            if(null!=dto){
+                ClientUserDTO userDto= clientUserService.get(dto.getCreator());
+                if(null!=userDto){
+                    String clientId=userDto.getClientId();
+                    if(StringUtils.isNotBlank(clientId)){
+                        //发送个推消息
+                        AppPushUtil.pushToSingle("订单管理","接受订单","",
+                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
+                                AppInfo.MASTERSECRET_CLIENT,
+                                clientId);
+                    }else{
+                        result.error("没有获取到clientid!");
+                        return result;
+                    }
+                }
+            }
+        }
+        return result;
     }
     @CrossOrigin
     @Login

@@ -11,6 +11,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,7 +47,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MerchantRoomService merchantRoomService;
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
-
     @Autowired
     private ClientUserService clientUserService;
 
@@ -78,6 +78,23 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return wrapper;
     }
 
+    /**
+     * 取消订单
+     * @param id
+     * @param status
+     * @param verify
+     * @param verify_date
+     * @param refundReason
+     */
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void caleclUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
+        MasterOrderDTO dto=get(id);
+        baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+        //同时将包房或者桌设置成未使用状态
+        merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+    }
 
     @Override
     public void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason) {

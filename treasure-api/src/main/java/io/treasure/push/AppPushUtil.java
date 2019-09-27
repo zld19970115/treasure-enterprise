@@ -36,7 +36,7 @@ public class AppPushUtil {
      * masterSect
      * clientId
      */
-    private static void pushToSingle(String title,String text,String logo,String appId,String appKey,String masterSect,String clientId) {
+    public  static void pushToSingle(String title,String text,String logo,String appId,String appKey,String masterSect,String clientId) {
         IGtPush push = new IGtPush(appKey, masterSect);
         AbstractTemplate template = PushTemplate.getNotificationTemplate(appId,appKey,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
