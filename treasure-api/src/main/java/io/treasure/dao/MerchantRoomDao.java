@@ -1,11 +1,14 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.MerchantRoomDTO;
+import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.MerchantRoomEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 包房或者桌表
@@ -21,4 +24,6 @@ public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     List getByNameAndMerchantId(@Param("name") String name,@Param("merchantId") long merchantId, @Param("type")int type);
     //根据商户编号查询包房信息
     List getByMerchantId(@Param("merchantId") long merchantId,@Param("status") int status);
+    List<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
+    List<String> selectRoomDate(long merchantId);
 }

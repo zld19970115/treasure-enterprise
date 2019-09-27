@@ -29,4 +29,54 @@
     <select id="getByMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
         select * from ct_merchant_room  where merchant_id=#{merchantId} and status=#{status} order by id desc
     </select>
+    <select id="selectRoomAlreadyPage" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+
+  select
+    curps.id,
+	curps.room_params_id,
+
+	curps.room_id,
+
+	curps.room_name,
+
+	curps.type,
+
+	curps.merchant_id,
+
+	curps.state,
+
+	curps.status,
+
+	curps.remark,
+
+	curps.use_date,
+
+	curps.update_date,
+
+	curps.create_date,
+
+	curps.creator,
+
+	curps.updater,
+
+	cmr.name,
+
+	cmr.icon,
+
+	cmr.status as crstatus,
+
+	cmr.num_low,
+
+	cmr.num_high
+
+   from  ct_merchant_room_params_set curps  left join
+  ct_merchant_room  cmr
+ on cmr.id=curps.room_id
+ where curps. merchant_id=#{merchantId}  and curps.status=#{status} and curps.state = #{state} and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+    </select>
+    <select id="selectRoomDate" resultType="java.lang.String">
+
+        select DATE_FORMAT(use_date,'%Y-%m-%d') from ct_merchant_room_params_set where  merchant_id=#{merchantId} AND to_days(use_date) >= to_days(now()) order by use_date
+
+    </select>
 </mapper>
