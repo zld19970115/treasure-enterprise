@@ -116,6 +116,7 @@ public class MerchantRoomParamsSetController {
                         dto.setCreator(creator);
                         dto.setMerchantId(merchantId);
                         dto.setRoomId(Long.parseLong(roomId));
+                        dto.setType(params.getType());
                         dto.setRoomName(roomName);
                         dto.setState(MerchantRoomEnm.STATE_USE_NO.getType());
                         dto.setUseDate(DateUtils.stringToDate(setdate,"yyyy-MM-dd"));
