@@ -20,5 +20,10 @@
         <result property="updateDate" column="update_date"/>
     </resultMap>
 
-
+    <select id="getListById" parameterType="java.util.List"   resultType="io.treasure.entity.CategoryEntity">
+        select * from ct_category where
+        <foreach collection="list" item="item" index="index" separator="OR">
+            id=#{item}
+        </foreach>
+    </select>
 </mapper>

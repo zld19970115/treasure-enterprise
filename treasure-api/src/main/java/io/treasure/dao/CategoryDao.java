@@ -5,6 +5,8 @@ import io.treasure.common.dao.BaseDao;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 店铺类型分类表
  *
@@ -13,5 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CategoryDao extends BaseDao<CategoryEntity> {
-	
+    List<CategoryEntity> getListById(List<Long> id);
 }

@@ -12,6 +12,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,5 +44,13 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
         return wrapper;
     }
 
-
+    /**
+     * 查询分类信息
+     * @param id
+     * @return
+     */
+    @Override
+    public List<CategoryEntity> getListById(List<Long> id) {
+        return baseDao.getListById(id);
+    }
 }

@@ -13,6 +13,7 @@ import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
+import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,7 +41,10 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantUserService merchantUserService;
-
+    //店铺分类
+    @Autowired
+    private CategoryService categoryService;
+    @CrossOrigin
     @Login
     @GetMapping("page")
     @ApiOperation("列表")
@@ -46,7 +52,8 @@ public class MerchantController {
         @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+        @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="Long")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         int status=Common.STATUS_ON.getStatus();
@@ -54,6 +61,7 @@ public class MerchantController {
         PageData<MerchantDTO> page = merchantService.page(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
@@ -62,8 +70,29 @@ public class MerchantController {
     })
     public Result<MerchantDTO> get(@RequestParam  Long id){
         MerchantDTO data = merchantService.get(id);
+        //查询经营类型
+        String categoryId=data.getCategoryid();
+        List<Long> cateId=new ArrayList<Long>();
+        if(StringUtils.isNotBlank(categoryId)){
+            String[] cateIds=categoryId.split(",");
+            for(int i=0;i<cateIds.length;i++){
+                cateId.add(Long.parseLong(cateIds[i]));
+            }
+        }
+        data.setCategoryList(categoryService.getListById(cateId));
+        //查询二级分类
+        String categoryTwoId=data.getCategoryidtwo();
+        List<Long> cateTwoId=new ArrayList<Long>();
+        if(StringUtils.isNotBlank(categoryTwoId)){
+            String[] cateIds=categoryTwoId.split(",");
+            for(int i=0;i<cateIds.length;i++){
+                cateTwoId.add(Long.parseLong(cateIds[i]));
+            }
+        }
+        data.setCategoryTwoList(categoryService.getListById(cateTwoId));
         return new Result<MerchantDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -93,6 +122,7 @@ public class MerchantController {
         merchantUserService.update(user);
         return new Result().ok(entity);
     }
+    @CrossOrigin
     @Login
     @PutMapping("edit")
     @ApiOperation("修改")
@@ -120,6 +150,7 @@ public class MerchantController {
         merchantService.update(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("updateBasic")
     @ApiOperation("修改店铺名称")
@@ -179,6 +210,7 @@ public class MerchantController {
         merchantService.update(entity);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("updateHourse")
     @ApiOperation("修改店铺开店、闭店时间和联系电话")
@@ -202,6 +234,7 @@ public class MerchantController {
         merchantService.update(entity);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("updateCategory")
     @ApiOperation("修改店铺类型")
@@ -220,6 +253,7 @@ public class MerchantController {
         merchantService.update(entity);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping
     @ApiOperation("删除")
@@ -230,6 +264,7 @@ public class MerchantController {
         merchantService.remove(id,Common.STATUS_DELETE.getStatus());
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("closeShop")
     @ApiOperation("闭店")
@@ -240,6 +275,7 @@ public class MerchantController {
         merchantService.closeShop(id,Common.STATUS_CLOSE.getStatus());
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("setUpShop")
     @ApiOperation("营业中")

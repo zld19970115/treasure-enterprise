@@ -2,12 +2,15 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.treasure.entity.CategoryEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -124,4 +127,9 @@ public class MerchantDTO implements Serializable {
 	private Double notCash;
 	@ApiModelProperty(value = "审核失败原因")
 	private String reason;
+
+	@ApiModelProperty(value = "一级类别")
+	private List<CategoryEntity> categoryList;
+	@ApiModelProperty(value = "二级类别")
+	private List<CategoryEntity> categoryTwoList;
 }
