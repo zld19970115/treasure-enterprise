@@ -101,6 +101,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+        Result result=new Result();
+        if(null!=dto){
+            ClientUserDTO userDto= clientUserService.get(dto.getCreator());
+            if(null!=userDto){
+                String clientId=userDto.getClientId();
+                if(StringUtils.isNotBlank(clientId)){
+                    //发送个推消息
+                    AppPushUtil.pushToSingle("商家拒绝接单",refundReason,"",
+                            AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
+                            AppInfo.MASTERSECRET_CLIENT,
+                            clientId);
+                }
+            }
+        }
     }
 
     @Override
