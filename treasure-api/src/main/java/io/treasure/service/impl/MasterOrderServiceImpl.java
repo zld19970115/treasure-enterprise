@@ -100,6 +100,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(null!=dto){
             if(dto.getStatus()==Constants.OrderStatus.NOPAYORDER.getValue() || dto.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s:slaveOrderEntities) {
+                    slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
+                }
                  //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 Result result=new Result();
@@ -135,6 +139,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(null!=dto){
             if(dto.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s:slaveOrderEntities) {
+                    slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
+                }
                     ClientUserDTO userDto= clientUserService.get(dto.getCreator());
                     if(null!=userDto){
                         String clientId=userDto.getClientId();
@@ -169,6 +177,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s:slaveOrderEntities) {
+                    slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
+                }
             }else{
                 return new Result().error("无法翻台订单！");
             }
@@ -217,7 +229,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
                 //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s:slaveOrderEntities) {
+                    slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
+                }
             }else{
                 return new Result().error("无法退款！");
             }
@@ -243,6 +258,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(null!=dto){
             if(dto.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s:slaveOrderEntities) {
+                    slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
+                }
             }else{
                 return new Result().error("无法退款！");
             }
