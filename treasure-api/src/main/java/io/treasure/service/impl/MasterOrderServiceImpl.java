@@ -65,8 +65,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private IWXConfig wxPayConfig;
-
-
+    @Autowired
+    private PayServiceImpl payService;
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -103,6 +103,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //微信退款
                 if( dto.getPayMode().equals(Constants.PayMode.WXPAY.getValue())){
                     resultMap=refundWeiXinPay(dto);
+                }else if(dto.getPayMode().equals(Constants.PayMode.ALIPAY.getValue())){//支付宝回调
+                    return refundZfb(dto);
                 }
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
@@ -218,6 +220,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //微信退款
                 if( dto.getPayMode().equals(Constants.PayMode.WXPAY.getValue())){
                     resultMap=refundWeiXinPay(dto);
+                }else if(dto.getPayMode().equals(Constants.PayMode.ALIPAY.getValue())){//支付宝回调
+                    return refundZfb(dto);
                 }
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
                 if(null!=dto.getReservationId() && dto.getReservationId()>0){
@@ -264,6 +268,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         reqData.put("refund_fee_type", "CNY");
         reqData.put("op_user_id", wxPayConfig.getMchID());
         return wxPay.refund(reqData);
+    }
+
+    /**
+     * 支付宝退款
+     * @param dto
+     * @return
+     */
+    private Result refundZfb(MasterOrderDTO dto ){
+        ClientUserDTO userDto=clientUserService.get(dto.getCreator());
+        if(null!=userDto){
+            BigDecimal payMoney=dto.getPayMoney();
+            BigDecimal refund = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+            String result=payService.aliRefund(dto.getOrderId(),df.format(refund),null,userDto);
+            return new Result().ok(result);
+        }else{
+            return new Result().error("支付宝退款：【无法获取会员信息】");
+        }
     }
     /**
      * 拒绝退款订单

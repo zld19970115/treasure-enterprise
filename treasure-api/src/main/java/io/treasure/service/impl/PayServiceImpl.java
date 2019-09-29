@@ -7,6 +7,7 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.SlaveOrderDao;
+import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Constants;
@@ -133,7 +134,7 @@ public class PayServiceImpl implements PayService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserEntity user) {
+    public String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserDTO user) {
         AlipayTradeRefundRequest alipayRequest = new AlipayTradeRefundRequest();
 
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
