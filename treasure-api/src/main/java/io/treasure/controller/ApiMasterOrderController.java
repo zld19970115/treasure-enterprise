@@ -499,25 +499,6 @@ public class ApiMasterOrderController {
     public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify) throws Exception {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         Result result=new Result();
-        if(result.getCode()==200){
-            MasterOrderDTO dto= masterOrderService.get(id);
-            if(null!=dto){
-                ClientUserDTO userDto= clientUserService.get(dto.getCreator());
-                if(null!=userDto){
-                    String clientId=userDto.getClientId();
-                    if(StringUtils.isNotBlank(clientId)){
-                        //发送个推消息
-                        AppPushUtil.pushToSingle("订单管理","接受订单","",
-                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
-                                AppInfo.MASTERSECRET_CLIENT,
-                                clientId);
-                    }else{
-                        result.error("没有获取到clientid!");
-                        return result;
-                    }
-                }
-            }
-        }
         return result;
     }
     @CrossOrigin
