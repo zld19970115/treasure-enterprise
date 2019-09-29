@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.treasure.common.utils.Result;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +74,7 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result setRoom(long merchantId,long creator) {
         int days= MerchantRoomEnm.DAYS.getType();
         if(merchantId<=0){
