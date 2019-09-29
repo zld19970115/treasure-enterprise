@@ -7,15 +7,20 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.SlaveOrderDao;
+import io.treasure.dto.MerchantDTO;
+import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.push.AppPushUtil;
+import io.treasure.service.MerchantUserService;
 import io.treasure.service.PayService;
 import io.treasure.service.RefundOrderService;
 import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +48,16 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     SlaveOrderService slaveOrderService;
+
     @Autowired
     private AlipayClient alipayClient;
+
+
+
+    @Autowired
+    MerchantServiceImpl merchantService;
+    @Autowired
+    MerchantUserService merchantUserService;
 
     @Autowired
     private RefundOrderService refundOrderService;
@@ -66,6 +79,7 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
             return mapRtn;
         }
+
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
@@ -88,6 +102,30 @@ public class PayServiceImpl implements PayService {
                 }
             }
         }
+
+        MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
+        if(null!=merchantDto){
+            MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
+            if(null!=userDto){
+                String clientId=userDto.getClientId();
+                if(StringUtils.isNotBlank(clientId)){
+                    AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
+                }else{
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                    return mapRtn;
+                }
+            }else{
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+                return mapRtn;
+            }
+        }else{
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
+            return mapRtn;
+        }
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;

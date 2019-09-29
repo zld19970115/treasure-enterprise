@@ -48,7 +48,7 @@ public class SysOssController {
 
     private final static String KEY = Constant.CLOUD_STORAGE_CONFIG_KEY;
 
-
+    @CrossOrigin
     @Login
     @PostMapping("upload")
     @ApiOperation(value = "上传文件")

@@ -128,6 +128,8 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "审核失败原因")
 	private String reason;
 
+
+
 	@ApiModelProperty(value = "一级类别")
 	private List<CategoryEntity> categoryList;
 	@ApiModelProperty(value = "二级类别")

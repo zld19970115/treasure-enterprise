@@ -84,53 +84,7 @@ public class MerchantRoomParamsSetController {
             @ApiImplicitParam(name="creator",value="创建者",paramType = "query",required = true,dataType = "long")
     })
     public Result save(@RequestParam long merchantId,@RequestParam long creator){
-        int days=MerchantRoomEnm.DAYS.getType();
-        if(merchantId<=0){
-            return new Result().error("商户编号必须大于0！");
-        }
-        //获取商户得信息
-        MerchantDTO merchantDTO = merchantService.get(merchantId);
-        //开店时间
-        String businessShours=merchantDTO.getBusinesshours();
-        Date openHourse=DateUtils.stringToDate(businessShours,"HH:mm");
-        //闭店时间
-        String colseShopHourses=merchantDTO.getCloseshophours();
-        Date closeHorse=DateUtils.stringToDate(colseShopHourses,"HH:mm");
-        //根据编号查询该商户对应的包房信息
-        List list=merchantRoomService.getByMerchantId(merchantId, Common.STATUS_ON.getStatus());
-        if(null!=list && list.size()>0){
-            for(int i=1;i<=days;i++){
-                //设置时间
-               Date date= DateUtils.addDateDays(new Date(),i);
-               String setdate=DateUtils.format(date,"yyyy-MM-dd");
-               //预约参数
-                List<MerchantRoomParamsEntity> paramsList=merchantRoomParamsService.getAllByStatus(Common.STATUS_ON.getStatus());
-                for(int h=0;h<paramsList.size();h++){
-                    MerchantRoomParamsEntity params=paramsList.get(h);
-                    for(int room=0;room<list.size();room++){
-                        Map map= (Map) list.get(room);
-                        String roomId=String.valueOf(map.get("id"));
-                        String roomName=String.valueOf(map.get("name"));
-                        MerchantRoomParamsSetDTO dto=new MerchantRoomParamsSetDTO();
-                        dto.setCreateDate(new Date());
-                        dto.setCreator(creator);
-                        dto.setMerchantId(merchantId);
-                        dto.setRoomId(Long.parseLong(roomId));
-                        dto.setType(params.getType());
-                        dto.setRoomName(roomName);
-                        dto.setState(MerchantRoomEnm.STATE_USE_NO.getType());
-                        dto.setUseDate(DateUtils.stringToDate(setdate,"yyyy-MM-dd"));
-                        dto.setStatus(Common.STATUS_ON.getStatus());
-                        dto.setRoomParamsId(params.getId());
-                        merchantRoomParamsSetService.save(dto);
-                    }
-                }
-            }
-        }else{
-            return new Result().error("该商户没有包房信息！");
-        }
-        //merchantRoomParamsSetService.save(dto);
-        return new Result();
+       return merchantRoomParamsSetService.setRoom(merchantId,creator);
     }
 
 //    @PutMapping
