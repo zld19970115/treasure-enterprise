@@ -63,4 +63,10 @@
     <select id="updateOrderStatus" parameterType="io.treasure.entity.MerchantEntity">
         update ct_master_order set  status=#{status}  where order_id=#{orderId} ;
     </select>
+    <update id="updatePayMode" parameterType="io.treasure.entity.MasterOrderEntity">
+        update ct_master_order set pay_mode=#{payMode} where order_id=#{orderId}
+    </update>
+    <select id="getOrderById" parameterType="map" resultType="io.treasure.dto.MasterOrderDTO">
+        SELECT *  from ct_master_order where id=#{id}
+    </select>
 </mapper>

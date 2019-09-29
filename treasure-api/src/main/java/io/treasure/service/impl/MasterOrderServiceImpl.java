@@ -15,6 +15,8 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
+import io.treasure.push.AppInfo;
+import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -102,8 +104,61 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason) {
-        baseDao.updateStatusAndReason(id, status, verify, verify_date, verify_reason);
+    @Transactional(rollbackFor = Exception.class)
+    public Object updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason) throws Exception {
+        MasterOrderDTO masterOrderDTO = masterOrderService.get(id);
+        OrderDTO order = masterOrderService.getOrder(masterOrderDTO.getOrderId());
+        Map<String, String> reqData = new HashMap<>();
+        Map<String, String> resultMap=new HashMap<>();
+        if(order.getStatus()==6){
+            // 商户订单号
+            reqData.put("out_trade_no", order.getOrderId());
+            //获取用户ID
+            ClientUserEntity userByPhone = clientUserService.getUserByPhone(order.getContacts());
+            // 授权码
+            reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(userByPhone.getId()));
+
+            // 订单总金额，单位为分，只能为整数
+            BigDecimal payMoney = order.getPayMoney();
+            BigDecimal total = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+            reqData.put("total_fee", df.format(total));
+            //退款金额
+            BigDecimal refund = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            reqData.put("refund_fee", df.format(refund));
+            // 退款异步通知地址
+            reqData.put("notify_url", wxPayConfig.getNotifyUrl());
+            reqData.put("refund_fee_type", "CNY");
+            reqData.put("op_user_id", wxPayConfig.getMchID());
+            resultMap = wxPay.refund(reqData);
+        }
+        int i = baseDao.updateStatusAndReason(id, status, verify, verify_date, verify_reason);
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderDTO.getOrderId());
+        for (SlaveOrderEntity s:slaveOrderEntities) {
+            slaveOrderService.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),s.getOrderId(),s.getGoodId());
+        }
+        Result result=new Result();
+        if(result.getCode()==200){
+            MasterOrderDTO dto= masterOrderService.get(id);
+            if(null!=dto){
+                ClientUserDTO userDto= clientUserService.get(dto.getCreator());
+                if(null!=userDto){
+                    String clientId=userDto.getClientId();
+                    if(StringUtils.isNotBlank(clientId)){
+                        //发送个推消息
+                        AppPushUtil.pushToSingle("订单管理","接受订单","",
+                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
+                                AppInfo.MASTERSECRET_CLIENT,
+                                clientId);
+                    }else{
+                        result.error("没有获取到clientid!");
+                        return result;
+                    }
+                }
+            }
+        }
+        return resultMap;
+
     }
 
     @Override
@@ -672,5 +727,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderService.updateOrderStatus(5,order.getOrderId());
         }
         return resultMap;
+    }
+
+    @Override
+    public void updatePayMode(String payMode, String orderId) {
+        baseDao.updatePayMode(payMode,orderId);
+    }
+
+    @Override
+    public MasterOrderDTO getOrderById(long id) {
+        return baseDao.getOrderById(id);
     }
 }

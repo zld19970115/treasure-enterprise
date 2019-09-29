@@ -496,28 +496,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
-    public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify){
+    public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify) throws Exception {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         Result result=new Result();
-        if(result.getCode()==200){
-            MasterOrderDTO dto= masterOrderService.get(id);
-            if(null!=dto){
-                ClientUserDTO userDto= clientUserService.get(dto.getCreator());
-                if(null!=userDto){
-                    String clientId=userDto.getClientId();
-                    if(StringUtils.isNotBlank(clientId)){
-                        //发送个推消息
-                        AppPushUtil.pushToSingle("订单管理","接受订单","",
-                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
-                                AppInfo.MASTERSECRET_CLIENT,
-                                clientId);
-                    }else{
-                        result.error("没有获取到clientid!");
-                        return result;
-                    }
-                }
-            }
-        }
         return result;
     }
     @CrossOrigin
@@ -529,7 +510,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
-    public Result finishUpdate(@RequestParam  long id,@RequestParam  long verify){
+    public Result finishUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
         MasterOrderDTO dto = masterOrderService.get(id);
         //同时将包房或者桌设置成未使用状态
@@ -545,12 +526,12 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result refundYesUpdate(@RequestParam  long id,@RequestParam  long verify){
+    public Result refundYesUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
         MasterOrderDTO dto = masterOrderService.get(id);
-        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),verify,new Date(),"同意退款");
+        Object reason = masterOrderService.updateStatusAndReason(id, Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(), verify, new Date(), "同意退款");
         //同时将包房或者桌设置成未使用状态
         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-        return new Result();
+        return new Result().ok(reason);
     }
     @CrossOrigin
     @Login
@@ -561,7 +542,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "拒绝人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result refundNoUpdate(@RequestParam long id,@RequestParam long verify,@RequestParam String verify_reason){
+    public Result refundNoUpdate(@RequestParam long id,@RequestParam long verify,@RequestParam String verify_reason) throws Exception {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
         return new Result();
     }
