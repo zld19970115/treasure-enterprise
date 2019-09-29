@@ -43,4 +43,8 @@
     <select id="getUserByOpenId"  parameterType="io.treasure.entity.ClientUserEntity" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where openid=#{openid}
     </select>
+    <update id="updateOpenid" parameterType="io.treasure.entity.ClientUserEntity">
+        UPDATE `ct_client_user` SET `openid` = #{openId} where mobile=#{mobile}
+    </update>
+
 </mapper>

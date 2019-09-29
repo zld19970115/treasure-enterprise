@@ -56,4 +56,11 @@
         update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
         refund_date=#{refundDate} where id=#{id}
     </update>
+
+    <select id="getOrderByOrderId" parameterType="map" resultType="io.treasure.dto.MasterOrderDTO">
+        select *  from ct_master_order where order_id=#{orderId}
+    </select>
+    <select id="updateOrderStatus" parameterType="io.treasure.entity.MerchantEntity">
+        update ct_master_order set  status=#{status}  where order_id=#{orderId} ;
+    </select>
 </mapper>
