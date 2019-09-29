@@ -104,15 +104,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 for (SlaveOrderEntity s:slaveOrderEntities) {
                     slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
                 }
-                 //同时将包房或者桌设置成未使用状态
-                merchantRoomParamsSetService.updateStatus(dto.getRoomId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                if(null!=dto.getReservationId() && dto.getReservationId()>0){
+                    //同时将包房或者桌设置成未使用状态
+                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                }
                 Result result=new Result();
                 ClientUserDTO userDto= clientUserService.get(dto.getCreator());
                 if(null!=userDto){
                     String clientId=userDto.getClientId();
                     if(StringUtils.isNotBlank(clientId)){
                         //发送个推消息
-                        AppPushUtil.pushToSingleClient("商家拒绝接单",refundReason,"",clientId);
+                        AppPushUtil.pushToSingleClient("商家拒绝接单","您的订单商家已拒绝","",clientId);
                     }
                 }
             }else{
@@ -148,7 +150,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         String clientId=userDto.getClientId();
                         if(StringUtils.isNotBlank(clientId)){
                             //发送个推消息
-                            AppPushUtil.pushToSingleClient("订单管理",refundReason,"",clientId);
+                            AppPushUtil.pushToSingleClient("订单管理","商家已接单","",clientId);
                         }
                     }
              }else{
@@ -174,8 +176,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         if(null!=dto){
             if(dto.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
-                //同时将包房或者桌设置成未使用状态
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                if(null!=dto.getReservationId() && dto.getReservationId()>0){
+                    //同时将包房或者桌设置成未使用状态
+                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                }
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s:slaveOrderEntities) {
@@ -227,8 +231,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 reqData.put("op_user_id", wxPayConfig.getMchID());
                 resultMap = wxPay.refund(reqData);
                 baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
-                //同时将包房或者桌设置成未使用状态
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                if(null!=dto.getReservationId() && dto.getReservationId()>0){
+                    //同时将包房或者桌设置成未使用状态
+                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                }
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s:slaveOrderEntities) {
                     slaveOrderService.updateSlaveOrderStatus(status,s.getOrderId(),s.getGoodId());
