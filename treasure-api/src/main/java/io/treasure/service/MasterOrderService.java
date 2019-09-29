@@ -69,4 +69,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     void updateOrderStatus(int status,  String orderId);
 
     Object disposeRefund(String orderId) throws Exception;
+
+    void updatePayMode(@Param("payMode") String payMode,@Param("orderId") String orderId);
+    MasterOrderDTO getOrderById(long id);
 }

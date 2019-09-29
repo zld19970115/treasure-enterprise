@@ -15,6 +15,8 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
+import io.treasure.push.AppInfo;
+import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -130,7 +132,31 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             reqData.put("op_user_id", wxPayConfig.getMchID());
             resultMap = wxPay.refund(reqData);
         }
-        baseDao.updateStatusAndReason(id, status, verify, verify_date, verify_reason);
+        int i = baseDao.updateStatusAndReason(id, status, verify, verify_date, verify_reason);
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderDTO.getOrderId());
+        for (SlaveOrderEntity s:slaveOrderEntities) {
+            slaveOrderService.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),s.getOrderId(),s.getGoodId());
+        }
+        Result result=new Result();
+        if(result.getCode()==200){
+            MasterOrderDTO dto= masterOrderService.get(id);
+            if(null!=dto){
+                ClientUserDTO userDto= clientUserService.get(dto.getCreator());
+                if(null!=userDto){
+                    String clientId=userDto.getClientId();
+                    if(StringUtils.isNotBlank(clientId)){
+                        //发送个推消息
+                        AppPushUtil.pushToSingle("订单管理","接受订单","",
+                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
+                                AppInfo.MASTERSECRET_CLIENT,
+                                clientId);
+                    }else{
+                        result.error("没有获取到clientid!");
+                        return result;
+                    }
+                }
+            }
+        }
         return resultMap;
 
     }
@@ -701,5 +727,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderService.updateOrderStatus(5,order.getOrderId());
         }
         return resultMap;
+    }
+
+    @Override
+    public void updatePayMode(String payMode, String orderId) {
+        baseDao.updatePayMode(payMode,orderId);
+    }
+
+    @Override
+    public MasterOrderDTO getOrderById(long id) {
+        return baseDao.getOrderById(id);
     }
 }
