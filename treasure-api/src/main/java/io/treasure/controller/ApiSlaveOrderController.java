@@ -131,7 +131,7 @@ public class ApiSlaveOrderController {
             //用户申请退的数量
             BigDecimal quantity = slaveOrderDTO.getQuantity();
             SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
-        if (allGoods.getStatus() == 4 || allGoods.getStatus() == 2) {
+        if (allGoods.getStatus() == 2) {
             //此订单菜品总数量
             BigDecimal quantity1 = allGoods.getQuantity();
             if (quantity1.compareTo(quantity) == 0) {

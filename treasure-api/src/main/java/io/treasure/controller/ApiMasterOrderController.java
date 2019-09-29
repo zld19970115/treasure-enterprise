@@ -2,6 +2,8 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.config.IWXConfig;
+import io.treasure.config.IWXPay;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
@@ -30,6 +32,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.utils.OrderUtil;
 import oracle.jdbc.driver.Const;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,9 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +64,9 @@ public class ApiMasterOrderController {
     //会员
     @Autowired
     private ClientUserService clientUserService;
+
+
+
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -387,8 +395,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "refundReason", value = "取消订单原因", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "id", value = "主订单ID", paramType = "query",required=true, dataType="Long")
     })
-    public Result orderCancel(@ApiIgnore @RequestParam Map<String, Object> params){
-        return  masterOrderService.updateByCancel(params);
+    public Object orderCancel(@ApiIgnore @RequestParam Map<String, Object> params) throws Exception {
+        Long id = Long.valueOf(params.get("id").toString());
+        MasterOrderDTO masterOrderDTO = masterOrderService.get(id);
+        return new Result().ok(masterOrderService.disposeRefund(masterOrderDTO.getOrderId()));
     }
 
     @Login

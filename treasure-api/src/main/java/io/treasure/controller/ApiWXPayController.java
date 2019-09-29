@@ -108,14 +108,14 @@ public class ApiWXPayController {
 
         Map<String, String> resultMap = wxPay.refund(reqData);
 
+        if(goodId!=null) {
+            //将退款ID更新到refundOrder表中refund_id
+            refundOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()), orderNo, goodId);
 
-        //将退款ID更新到refundOrder表中refund_id
-        refundOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()),orderNo,goodId);
+            //将退款ID更新到订单菜品表中
+            slaveOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()), orderNo, goodId);
 
-        //将退款ID更新到订单菜品表中
-        slaveOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()),orderNo,goodId);
-
-
+        }
         log.info(resultMap.toString());
 
         return resultMap;

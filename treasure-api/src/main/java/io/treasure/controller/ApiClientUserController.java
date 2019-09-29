@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.LoginDTO;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 
 import io.treasure.service.TokenService;
@@ -33,6 +34,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -250,5 +252,56 @@ public class ApiClientUserController {
         return new Result<ClientUserEntity>().ok(userByOpenId);
     }
 
+    @GetMapping("estimateOpenId")
+    @ApiOperation("绑定微信-根据openId查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String")})
+    public Result<Map> estimateOpenId(String openId){
+        ClientUserEntity userByOpenId = clientUserService.getUserByOpenId(openId);
+        Map map=new HashMap();
+        boolean c=false;
+        if(userByOpenId==null){
+            c=c;
+            map.put("boolean",c);
+        }else {
+            c=true;
+            TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
+            map.put("boolean",c);
+            map.put("user",userByOpenId);
+            map.put("token",byUserId.getToken());
+        }
+        return new Result<Map>().ok(map);
+    }
 
+
+    @GetMapping("estimateMobile")
+    @ApiOperation("绑定微信-根据mobile查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="mobile",value="用户手机号",required=true,paramType="query",dataType="String")})
+    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile){
+        ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
+        ClientUserEntity user = new ClientUserEntity();
+        Map<String, Object> map = new HashMap<>();
+        if(userByPhone!=null){
+            TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+            clientUserService.updateOpenid(openId,mobile);
+            map.put("token",byUserId.getToken());
+            map.put("user",userByPhone);
+        }else {
+            user.setMobile(mobile);
+            user.setUsername(mobile);
+            user.setCreateDate(new Date());
+            user.setWay("2");
+            user.setOpenid(openId);
+            user.setPassword(mobile);
+            clientUserService.insert(user);
+            ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(mobile);
+            tokenService.createToken(userByPhone1.getId());
+            map.put("user",userByPhone1);
+            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+            map.put("token",byUserId.getToken());
+        }
+        return new Result<Map<String,Object>>().ok(map);
+    }
 }

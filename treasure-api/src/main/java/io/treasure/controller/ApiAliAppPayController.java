@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.utils.Result;
 import io.treasure.config.AlipayProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class ApiAliAppPayController  {
             @ApiImplicitParam(name="subject",value="订单标题",required=true,paramType="query"),
             @ApiImplicitParam(name="totalAmount",value="订单金额",required=true,paramType="query")
     })
-    public String appPay(String body,String subject,String orderNo,String totalAmount) {
+    public Result appPay(String body, String subject, String orderNo, String totalAmount) {
         // 获取项目中实际的订单的信息
         // 此处是相关业务代码
 
@@ -87,6 +88,6 @@ public class ApiAliAppPayController  {
         }
 
         // 返回支付相关信息(此处可以直接将getBody中的内容直接返回，无需再做一些其他操作)
-        return alipayResponse.getBody();
+        return new Result().ok(alipayResponse.getBody());
     }
 }
