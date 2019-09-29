@@ -12,6 +12,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,14 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(showInCommend), "show_in_commend", showInCommend);
         wrapper.eq(StringUtils.isNotBlank(showInNav), "show_in_nav", showInNav);
-        wrapper.eq(StringUtils.isNotBlank(pid),"pid", pid);
+        List<Long> cateList=new ArrayList<Long>();
+        if(StringUtils.isNotBlank(pid)){
+            String[] cateIds=pid.split(",");
+            for(int i=0;i<cateIds.length;i++){
+                cateList.add(Long.parseLong(cateIds[i]));
+            }
+        }
+        wrapper.in(StringUtils.isNotBlank(pid),"pid",cateList);
         return wrapper;
     }
 

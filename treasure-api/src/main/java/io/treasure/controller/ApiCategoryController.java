@@ -133,6 +133,7 @@ public class ApiCategoryController {
 
         return new Result();
     }
+    @CrossOrigin
     @GetMapping("categoryOnePage")
     @ApiOperation("一级分类列表")
     @ApiImplicitParams({
@@ -147,6 +148,7 @@ public class ApiCategoryController {
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
+    @CrossOrigin
     @GetMapping("categoryTwoPage")
     @ApiOperation("二级分类列表")
     @ApiImplicitParams({
@@ -154,7 +156,7 @@ public class ApiCategoryController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="pid",value="分类编号",paramType = "query",dataType = "long",required = true)
+            @ApiImplicitParam(name="pid",value="分类编号多个用,分割",paramType = "query",dataType = "String",required = true)
     })
     public Result<PageData<CategoryDTO>> categoryTwoPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Common.values()+"");
