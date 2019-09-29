@@ -27,7 +27,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     //取消订单
     void caleclUpdate(long id,int status, long verify, Date verify_date, String refundReason);
-    void updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason);
+    Object updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
 
     OrderDTO getOrder(String orderId);
     MasterOrderEntity selectByOrderId(String orderId);

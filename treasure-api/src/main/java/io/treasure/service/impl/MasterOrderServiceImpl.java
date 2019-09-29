@@ -102,8 +102,37 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public void updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason) {
+    @Transactional(rollbackFor = Exception.class)
+    public Object updateStatusAndReason(long id, int status, long verify, Date verify_date, String verify_reason) throws Exception {
+        MasterOrderDTO masterOrderDTO = masterOrderService.get(id);
+        OrderDTO order = masterOrderService.getOrder(masterOrderDTO.getOrderId());
+        Map<String, String> reqData = new HashMap<>();
+        Map<String, String> resultMap=new HashMap<>();
+        if(order.getStatus()==6){
+            // 商户订单号
+            reqData.put("out_trade_no", order.getOrderId());
+            //获取用户ID
+            ClientUserEntity userByPhone = clientUserService.getUserByPhone(order.getContacts());
+            // 授权码
+            reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(userByPhone.getId()));
+
+            // 订单总金额，单位为分，只能为整数
+            BigDecimal payMoney = order.getPayMoney();
+            BigDecimal total = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+            reqData.put("total_fee", df.format(total));
+            //退款金额
+            BigDecimal refund = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            reqData.put("refund_fee", df.format(refund));
+            // 退款异步通知地址
+            reqData.put("notify_url", wxPayConfig.getNotifyUrl());
+            reqData.put("refund_fee_type", "CNY");
+            reqData.put("op_user_id", wxPayConfig.getMchID());
+            resultMap = wxPay.refund(reqData);
+        }
         baseDao.updateStatusAndReason(id, status, verify, verify_date, verify_reason);
+        return resultMap;
+
     }
 
     @Override
