@@ -35,6 +35,7 @@ import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.utils.OrderUtil;
 import oracle.jdbc.driver.Const;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.io.ResolverUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
@@ -466,27 +467,7 @@ public class ApiMasterOrderController {
     })
     public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason){
         masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
-        Result result=new Result();
-        if(result.getCode()==200){
-            MasterOrderDTO dto= masterOrderService.get(id);
-            if(null!=dto){
-               ClientUserDTO userDto= clientUserService.get(dto.getCreator());
-               if(null!=userDto){
-                   String clientId=userDto.getClientId();
-                   if(StringUtils.isNotBlank(clientId)){
-                       //发送个推消息
-                       AppPushUtil.pushToSingle("商家拒绝接单",verify_reason,"",
-                               AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
-                               AppInfo.MASTERSECRET_CLIENT,
-                               clientId);
-                   }else{
-                       result.error("没有获取到clientid!");
-                       return result;
-                   }
-               }
-            }
-        }
-        return result;
+        return new Result();
     }
     @CrossOrigin
     @Login
@@ -498,8 +479,7 @@ public class ApiMasterOrderController {
     })
     public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify) throws Exception {
         masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
-        Result result=new Result();
-        return result;
+        return new Result();
     }
     @CrossOrigin
     @Login

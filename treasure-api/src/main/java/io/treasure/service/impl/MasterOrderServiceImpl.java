@@ -108,10 +108,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 String clientId=userDto.getClientId();
                 if(StringUtils.isNotBlank(clientId)){
                     //发送个推消息
-                    AppPushUtil.pushToSingle("商家拒绝接单",refundReason,"",
-                            AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
-                            AppInfo.MASTERSECRET_CLIENT,
-                            clientId);
+                    AppPushUtil.pushToSingleClient("商家拒绝接单",refundReason,"",clientId);
                 }
             }
         }
@@ -160,9 +157,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     String clientId=userDto.getClientId();
                     if(StringUtils.isNotBlank(clientId)){
                         //发送个推消息
-                        AppPushUtil.pushToSingle("订单管理","接受订单","",
-                                AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,
-                                AppInfo.MASTERSECRET_CLIENT,
+                        AppPushUtil.pushToSingleClient("订单管理","接受订单","",
                                 clientId);
                     }else{
                         result.error("没有获取到clientid!");
