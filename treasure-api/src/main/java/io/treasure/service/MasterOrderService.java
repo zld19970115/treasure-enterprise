@@ -9,6 +9,7 @@ import io.treasure.entity.MasterOrderEntity;
 
 import io.treasure.common.service.CrudService;
 import io.treasure.entity.SlaveOrderEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -64,4 +65,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
      * @return
      */
     DesignConditionsDTO calculateGiftCoupon(DesignConditionsDTO dct);
+
+    void updateOrderStatus(int status,  String orderId);
+
+    Object disposeRefund(String orderId) throws Exception;
 }

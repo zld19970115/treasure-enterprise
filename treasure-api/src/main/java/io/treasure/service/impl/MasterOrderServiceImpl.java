@@ -8,6 +8,8 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
+import io.treasure.config.IWXConfig;
+import io.treasure.config.IWXPay;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
@@ -25,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单表
@@ -58,6 +57,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private MerchantCouponService merchantCouponService;
+
+    @Autowired
+    private IWXPay wxPay;
+
+    @Autowired
+    private IWXConfig wxPayConfig;
 
 
     @Override
@@ -630,4 +635,42 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return dct;
     }
 
+    @Override
+    public void updateOrderStatus(int status, String orderId) {
+        baseDao.updateOrderStatus(status,orderId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Object disposeRefund(String orderId) throws Exception {
+        OrderDTO order = masterOrderService.getOrder(orderId);
+        Map<String, String> reqData = new HashMap<>();
+        Map<String, String> resultMap=new HashMap<>();
+        if(order.getStatus()==3||order.getStatus()==4){
+            // 商户订单号
+            reqData.put("out_trade_no", order.getOrderId());
+            //获取用户ID
+            ClientUserEntity userByPhone = clientUserService.getUserByPhone(order.getContacts());
+            // 授权码
+            reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(userByPhone.getId()));
+
+            // 订单总金额，单位为分，只能为整数
+            BigDecimal payMoney = order.getPayMoney();
+            BigDecimal total = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            java.text.DecimalFormat df=new java.text.DecimalFormat("0");
+            reqData.put("total_fee", df.format(total));
+            //退款金额
+            BigDecimal refund = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+            reqData.put("refund_fee", df.format(refund));
+            // 退款异步通知地址
+            reqData.put("notify_url", wxPayConfig.getNotifyUrl());
+            reqData.put("refund_fee_type", "CNY");
+            reqData.put("op_user_id", wxPayConfig.getMchID());
+            resultMap = wxPay.refund(reqData);
+        }
+        if(order.getStatus()==1){
+            masterOrderService.updateOrderStatus(5,order.getOrderId());
+        }
+        return resultMap;
+    }
 }

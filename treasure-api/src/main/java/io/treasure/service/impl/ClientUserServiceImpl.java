@@ -88,4 +88,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         return baseDao.getUserByOpenId(openId);
     }
 
+    @Override
+    public void updateOpenid(String openId,String mobile) {
+        baseDao.updateOpenid(openId,mobile);
+    }
+
 }

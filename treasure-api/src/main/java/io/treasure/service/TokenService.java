@@ -33,4 +33,6 @@ public interface TokenService extends BaseService<TokenEntity> {
 	 */
 	void expireToken(Long userId);
 
+	TokenEntity getByUserId(Long userId);
+
 }

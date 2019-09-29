@@ -86,6 +86,11 @@ public class TokenServiceImpl extends BaseServiceImpl<TokenDao, TokenEntity> imp
 		this.updateById(tokenEntity);
 	}
 
+	@Override
+	public TokenEntity getByUserId(Long userId) {
+		return baseDao.getByUserId(userId);
+	}
+
 	private String generateToken(){
 		return UUID.randomUUID().toString().replace("-", "");
 	}
