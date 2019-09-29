@@ -466,8 +466,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason){
-        masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
-        return new Result();
+       return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
     }
     @CrossOrigin
     @Login
@@ -478,8 +477,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
     public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify) throws Exception {
-        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
-        return new Result();
+       return  masterOrderService.acceptUpdate(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
     }
     @CrossOrigin
     @Login
@@ -491,11 +489,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
     public Result finishUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
-        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
-        MasterOrderDTO dto = masterOrderService.get(id);
-        //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-        return new Result();
+        return masterOrderService.finishUpdate(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
     }
     @CrossOrigin
     @Login
@@ -507,11 +501,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
     public Result refundYesUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
-        MasterOrderDTO dto = masterOrderService.get(id);
-        Object reason = masterOrderService.updateStatusAndReason(id, Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(), verify, new Date(), "同意退款");
-        //同时将包房或者桌设置成未使用状态
-        merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-        return new Result().ok(reason);
+        return masterOrderService.refundYesUpdate(id, Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(), verify, new Date(), "同意退款");
+
     }
     @CrossOrigin
     @Login
@@ -523,8 +514,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
     public Result refundNoUpdate(@RequestParam long id,@RequestParam long verify,@RequestParam String verify_reason) throws Exception {
-        masterOrderService.updateStatusAndReason(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
-        return new Result();
+       return masterOrderService.refundNoUpdate(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
     }
 
     @Login

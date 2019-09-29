@@ -26,8 +26,16 @@ import java.util.Map;
 public interface MasterOrderService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
 
     //取消订单
-    void caleclUpdate(long id,int status, long verify, Date verify_date, String refundReason);
-    Object updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
+    Result caleclUpdate(long id,int status, long verify, Date verify_date, String refundReason);
+    //接受订单
+    Result acceptUpdate(long id,int status, long verify, Date verify_date, String refundReason);
+    //完成订单
+    Result finishUpdate(long id,int status, long verify, Date verify_date, String refundReason);
+    //同意退款
+    Result refundYesUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
+    //拒绝退款订单
+    Result refundNoUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
+    //Object updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
 
     OrderDTO getOrder(String orderId);
     MasterOrderEntity selectByOrderId(String orderId);
