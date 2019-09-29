@@ -16,12 +16,16 @@ import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.config.AlipayProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.enm.Constants;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.PayService;
+import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -71,6 +75,9 @@ public class ApiAlipayController {
 
     @Autowired
     private MasterOrderService masterOrderService;
+
+    @Autowired
+    private PayService payService;
 
 
     /**
@@ -199,24 +206,9 @@ public class ApiAlipayController {
     @PostMapping("/refund")
     @ResponseBody
     @ApiOperation(value = "退款")
-    public String refund(String orderNo) throws AlipayApiException {
-        AlipayTradeRefundRequest alipayRequest = new AlipayTradeRefundRequest();
-
-        AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-        // 商户订单号
-        model.setOutTradeNo(orderNo);
-        // 退款金额
-        model.setRefundAmount("1001");
-        // 退款原因
-        model.setRefundReason("无理由退货");
-        // 退款订单号(同一个订单可以分多次部分退款，当分多次时必传)
-//        model.setOutRequestNo(UUID.randomUUID().toString());
-        alipayRequest.setBizModel(model);
-
-        AlipayTradeRefundResponse alipayResponse = alipayClient.execute(alipayRequest);
-        System.out.println(alipayResponse.getBody());
-
-        return alipayResponse.getBody();
+    public String refund(String orderNo,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) throws AlipayApiException {
+        String res=payService.aliRefund(orderNo,refund_fee,goodId,user);
+        return res;
     }
 
     /**

@@ -1,5 +1,7 @@
 package io.treasure.service;
 
+import io.treasure.entity.ClientUserEntity;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -12,4 +14,6 @@ import java.util.Map;
 public interface PayService {
 
     Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no);
+
+    String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserEntity user);
 }
