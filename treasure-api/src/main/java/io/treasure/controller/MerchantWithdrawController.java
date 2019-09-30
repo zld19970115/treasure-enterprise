@@ -12,6 +12,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.WithdrawEnm;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
@@ -138,26 +139,59 @@ public class MerchantWithdrawController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="long")
     })
-    public Result selectCath(@RequestParam long martId){
-
-     //   MerchantWithdrawEntity merchantWithdrawEntity = merchantWithdrawService.selectPoByMartID(martId);
+    public Result selectCath(@RequestParam long martId) {
 
 
-        BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
-        Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
-        double  allMoney = merchantWithdrawService.selectByMartId(martId);
-        double  v = bigDecimal.doubleValue();
-        double  a = v - allMoney;
-        MerchantEntity merchantEntity = merchantService.selectById(martId);
-        merchantEntity.setTotalCash(bigDecimal.doubleValue());
-        merchantEntity.setAlreadyCash(aDouble);
-        merchantEntity.setNotCash(a);
-        merchantService.updateById(merchantEntity);
-          Map map= new HashMap();
-        map.put("total_cash",bigDecimal.doubleValue());
-        map.put("alead_cash",aDouble);
-        map.put("not_cash",a);
-        return new Result().ok(map);
+        List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
+        if (masterOrderEntity==null){
+            MerchantEntity merchantEntity = merchantService.selectById(martId);
+            merchantEntity.setTotalCash(0.00);
+            merchantEntity.setAlreadyCash(0.00);
+            merchantEntity.setNotCash(0.00);
+            Map map = new HashMap();
+            map.put("total_cash", 0.00);
+            map.put("alead_cash", 0.00);
+            map.put("not_cash", 0.00);
+            return new Result().ok(map);
+        }
+
+        MerchantWithdrawEntity merchantWithdrawEntity = merchantWithdrawService.selectPoByMartID(martId);
+        if (merchantWithdrawEntity==null){
+
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            MerchantEntity merchantEntity = merchantService.selectById(martId);
+            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            merchantEntity.setAlreadyCash(0.00);
+            merchantEntity.setNotCash(bigDecimal.doubleValue());
+            Map map = new HashMap();
+            map.put("total_cash", bigDecimal.doubleValue());
+            map.put("alead_cash", 0.00);
+            map.put("not_cash", bigDecimal.doubleValue());
+            return new Result().ok(map);
+        }
+
+        if (merchantWithdrawEntity != null) {
+
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            if (bigDecimal==null){
+                bigDecimal = new BigDecimal("0.00");
+            }
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
+            double allMoney = merchantWithdrawService.selectByMartId(martId);
+            double v = bigDecimal.doubleValue();
+            double a = v - allMoney;
+            MerchantEntity merchantEntity = merchantService.selectById(martId);
+            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            merchantEntity.setAlreadyCash(aDouble);
+            merchantEntity.setNotCash(a);
+            merchantService.updateById(merchantEntity);
+            Map map = new HashMap();
+            map.put("total_cash", bigDecimal.doubleValue());
+            map.put("alead_cash", aDouble);
+            map.put("not_cash", a);
+            return new Result().ok(map);
 
     }
+        return new Result();
+}
 }

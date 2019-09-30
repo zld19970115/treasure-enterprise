@@ -41,6 +41,9 @@
               SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
 
     </select>
+    <select id="selectOrderByMartID" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from  ct_master_order where  merchant_id = #{martId}
+    </select>
 
 
 </mapper>

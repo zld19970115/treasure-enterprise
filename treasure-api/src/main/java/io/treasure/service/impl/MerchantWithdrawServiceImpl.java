@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,5 +66,10 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     @Override
     public Double selectAlreadyCash(long martId) {
         return baseDao.selectAlreadyCash(martId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> selectOrderByMartID(long martId) {
+        return baseDao.selectOrderByMartID(martId);
     }
 }
