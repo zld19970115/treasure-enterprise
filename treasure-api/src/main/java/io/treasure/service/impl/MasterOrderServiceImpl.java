@@ -276,12 +276,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @return
      */
     private Result refundZfb(MasterOrderDTO dto ){
-        ClientUserDTO userDto=clientUserService.get(dto.getCreator());
-        if(null!=userDto){
+        ClientUserEntity userEntity=clientUserService.selectById(dto.getCreator());
+        if(null!=userEntity){
             BigDecimal payMoney=dto.getPayMoney();
             BigDecimal refund = payMoney.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
             java.text.DecimalFormat df=new java.text.DecimalFormat("0");
-            String result=payService.aliRefund(dto.getOrderId(),df.format(refund),null,userDto);
+            String result=payService.aliRefund(dto.getOrderId(),df.format(refund),null,userEntity);
             return new Result().ok(result);
         }else{
             return new Result().error("支付宝退款：【无法获取会员信息】");
@@ -422,7 +422,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
 
-        if (reservationType!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+        if (reservationType!=Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
             if (merchantRoomParamsSetEntity == null) {
                 return result.error(-5, "没有此包房/散台");

@@ -134,7 +134,7 @@ public class PayServiceImpl implements PayService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserDTO user) {
+    public String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserEntity user) {
         AlipayTradeRefundRequest alipayRequest = new AlipayTradeRefundRequest();
 
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
