@@ -456,6 +456,19 @@ public class ApiMasterOrderController {
         masterOrderService.delete(ids);
         return new Result();
     }
+
+    @CrossOrigin
+    @Login
+    @PutMapping("refuseUpdate")
+    @ApiOperation("商户端-取消/拒绝订单(删除)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
+    })
+    public Result refuseUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason) throws Exception {
+        return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
+    }
     @CrossOrigin
     @Login
     @PutMapping("cancelUpdate")
@@ -466,8 +479,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason) throws Exception {
-       return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
+       return masterOrderService.caleclUpdate(id,verify,new Date(),verify_reason);
     }
+
     @CrossOrigin
     @Login
     @PutMapping("acceptUpdate")

@@ -9,6 +9,9 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
+import io.treasure.dto.OrderDTO;
+import io.treasure.enm.Constants;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
 import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.PayCommonUtil;
@@ -43,6 +46,9 @@ public class ApiWXAppPayController {
     @Autowired
     private PayService payService;
 
+    @Autowired
+    private MasterOrderService masterOrderService;
+
     /**
      * @param total_fee    支付金额
      * @param description    描述
@@ -59,6 +65,10 @@ public class ApiWXAppPayController {
     })
     public Result wxpay(HttpServletRequest request,String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
+        OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+        if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
+            return result.error(-1,"非未支付订单，请选择未支付订单支付！");
+        }
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
         data.put("out_trade_no", orderNo);

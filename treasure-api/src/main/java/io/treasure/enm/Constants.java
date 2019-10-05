@@ -136,13 +136,21 @@ public interface Constants {
          */
         MERCHANTAGREEREFUNDORDER(8),
         /**
-         * 翻台
+         * 结单
          */
         MERCHANTAGFINISHORDER(10),
         /**
          * 删除订单
          */
-        DELETEORDER(9);
+        DELETEORDER(9),
+        /**
+         * 商家超时订单
+         */
+        MERCHANTTIMEOUTORDER(11),
+        /**
+         * 取消支付订单
+         */
+        CANCELPAYORDER(12);
         private int value;
 
         OrderStatus(int value) {

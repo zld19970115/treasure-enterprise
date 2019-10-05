@@ -167,4 +167,73 @@ public class PayServiceImpl implements PayService {
         }
         return alipayResponse.getBody();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {
+        Map<String, String> mapRtn = new HashMap<>(2);
+        System.out.println("---out_trade_no------------"+out_trade_no);
+        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+        System.out.println("---masterOrderEntity------------"+masterOrderEntity);
+        if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
+            return mapRtn;
+        }
+        if(masterOrderEntity==null){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
+            return mapRtn;
+        }
+
+        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+        masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+        masterOrderEntity.setPayDate(new Date());
+        masterOrderDao.updateById(masterOrderEntity);
+        if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
+            if(slaveOrderEntitys==null){
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单菜品】");
+                return mapRtn;
+            }else{
+                slaveOrderEntitys.forEach(slaveOrderEntity -> {
+                    slaveOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+                });
+                boolean b=slaveOrderService.updateBatchById(slaveOrderEntitys);
+                if(!b){
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【更新菜品】");
+                    return mapRtn;
+                }
+            }
+        }
+
+        MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
+        if(null!=merchantDto){
+            MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
+            if(null!=userDto){
+                String clientId=userDto.getClientId();
+                if(StringUtils.isNotBlank(clientId)){
+                    AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
+                }else{
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                    return mapRtn;
+                }
+            }else{
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+                return mapRtn;
+            }
+        }else{
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
+            return mapRtn;
+        }
+
+        mapRtn.put("return_code", "SUCCESS");
+        mapRtn.put("return_msg", "OK");
+        return mapRtn;
+    }
 }

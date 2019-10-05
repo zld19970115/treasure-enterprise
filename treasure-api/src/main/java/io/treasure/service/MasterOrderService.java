@@ -80,4 +80,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     void updatePayMode(@Param("payMode") String payMode,@Param("orderId") String orderId);
     MasterOrderDTO getOrderById(long id);
+
+    Result caleclUpdate(long id, long verify, Date date, String verify_reason);
 }
