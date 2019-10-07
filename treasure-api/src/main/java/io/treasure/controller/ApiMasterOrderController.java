@@ -396,10 +396,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "refundReason", value = "取消订单原因", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "id", value = "主订单ID", paramType = "query",required=true, dataType="Long")
     })
-    public Object orderCancel(@ApiIgnore @RequestParam Map<String, Object> params) throws Exception {
+    public Result orderCancel(@ApiIgnore @RequestParam Map<String, Object> params) throws Exception {
         Long id = Long.valueOf(params.get("id").toString());
-        MasterOrderDTO masterOrderDTO = masterOrderService.get(id);
-        return new Result().ok(masterOrderService.disposeRefund(masterOrderDTO.getOrderId()));
+        return masterOrderService.cancelOrder(id);
     }
 
     @Login
@@ -456,6 +455,19 @@ public class ApiMasterOrderController {
         masterOrderService.delete(ids);
         return new Result();
     }
+
+    @CrossOrigin
+    @Login
+    @PutMapping("refuseUpdate")
+    @ApiOperation("商户端-取消/拒绝订单(删除)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
+    })
+    public Result refuseUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason) throws Exception {
+        return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
+    }
     @CrossOrigin
     @Login
     @PutMapping("cancelUpdate")
@@ -466,8 +478,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason) throws Exception {
-       return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
+       return masterOrderService.caleclUpdate(id,verify,new Date(),verify_reason);
     }
+
     @CrossOrigin
     @Login
     @PutMapping("acceptUpdate")

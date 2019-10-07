@@ -1,6 +1,6 @@
 package io.treasure.service;
 
-import io.treasure.dto.ClientUserDTO;
+import io.treasure.common.utils.Result;
 import io.treasure.entity.ClientUserEntity;
 
 import java.math.BigDecimal;
@@ -16,5 +16,19 @@ public interface PayService {
 
     Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no);
 
-    String aliRefund(String orderNo, String refund_fee, Long goodId, ClientUserEntity user);
+    Result aliRefund(String orderNo, String refund_fee, Long goodId);
+
+    Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no);
+
+    Result wxRefund(String orderNo, String refund_fee, Long goodId);
+
+    Result wxRefund(String orderNo, String refund_fee);
+
+    Result refundByGood(String payMode, String orderId, String refund_fee,Long goodId);
+
+    Result refundByOrder(String payMode, String orderId, String refund_fee);
+
+    Result refundByOrder(String orderId, String refund_fee);
+
+    Result refundByGood(String orderId, String refund_fee,Long goodId);
 }

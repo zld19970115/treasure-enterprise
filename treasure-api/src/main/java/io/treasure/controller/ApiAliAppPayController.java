@@ -13,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.config.AlipayProperties;
+import io.treasure.dto.OrderDTO;
+import io.treasure.enm.Constants;
+import io.treasure.service.MasterOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 public class ApiAliAppPayController  {
     @Autowired
     private AlipayProperties aliPayProperties;
+
+    @Autowired
+    private MasterOrderService masterOrderService;
+
     /**
      *app支付
      *
@@ -49,8 +56,10 @@ public class ApiAliAppPayController  {
     public Result appPay(String body, String subject, String orderNo, String totalAmount) {
         // 获取项目中实际的订单的信息
         // 此处是相关业务代码
-
-
+        OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+        if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
+            return new Result().error(-1,"非未支付订单，请选择未支付订单支付！");
+        }
         // 获取配置文件中支付宝相关信息(可以使用自己的方式获取)
 
         String aliPayGateway = aliPayProperties.getGatewayUrl();

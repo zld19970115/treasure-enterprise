@@ -3,6 +3,7 @@ package io.treasure.controller;
 
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.swagger.annotations.Api;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.service.PayService;
 import io.treasure.service.RefundOrderService;
 import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.OrderUtil;
@@ -53,7 +55,8 @@ public class ApiWXPayController {
     @Autowired
     private SlaveOrderService slaveOrderService;
 
-
+    @Autowired
+    private PayService payService;
 
     /**
      * 订单查询
@@ -85,40 +88,13 @@ public class ApiWXPayController {
             @ApiImplicitParam(name="total_fee",value="订单总金额单位分",required=true,paramType="query"),
             @ApiImplicitParam(name="refund_fee",value="退款金额单位分",required=true,paramType="query")
     })
-    public Object refund(String orderNo,String total_fee,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) throws Exception {
-        Map<String, String> reqData = new HashMap<>();
-        // 商户订单号
-        reqData.put("out_trade_no", orderNo);
-        // 授权码
-        reqData.put("out_refund_no", OrderUtil.getRefundOrderIdByTime(user.getId()));
-
-        // 订单总金额，单位为分，只能为整数
-        BigDecimal totalAmount = new BigDecimal(total_fee);
-        BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
-        java.text.DecimalFormat df=new java.text.DecimalFormat("0");
-        reqData.put("total_fee", df.format(total));
-        //退款金额
-        BigDecimal refundAmount = new BigDecimal(refund_fee);
-        BigDecimal refund = refundAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
-        reqData.put("refund_fee", df.format(refund));
-        // 退款异步通知地址
-        reqData.put("notify_url", wxPayConfig.getNotifyUrl());
-        reqData.put("refund_fee_type", "CNY");
-        reqData.put("op_user_id", wxPayConfig.getMchID());
-
-        Map<String, String> resultMap = wxPay.refund(reqData);
-
-        if(goodId!=null) {
-            //将退款ID更新到refundOrder表中refund_id
-            refundOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()), orderNo, goodId);
-
-            //将退款ID更新到订单菜品表中
-            slaveOrderService.updateRefundId(OrderUtil.getRefundOrderIdByTime(user.getId()), orderNo, goodId);
-
+    public Object refund(String orderNo,String total_fee,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) {
+        Result result=payService.wxRefund(orderNo,total_fee,refund_fee,goodId,user.getId());
+        if(result.success()){
+            return result.getData();
+        }else {
+            return result.getMsg();
         }
-        log.info(resultMap.toString());
-
-        return resultMap;
     }
 
 

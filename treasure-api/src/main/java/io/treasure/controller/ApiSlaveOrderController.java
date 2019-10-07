@@ -5,6 +5,7 @@ import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.RefundOrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.RefundOrderEntity;
@@ -47,19 +48,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/slaveOrder")
 @Api(tags = "订单菜品表")
-public class ApiSlaveOrderController {
+public class  ApiSlaveOrderController {
     @Autowired
     private SlaveOrderService slaveOrderService;
-    @Autowired
-    private RefundOrderService refundOrderService;
-    @Autowired
-    private MasterOrderService masterOrderService;
-    @Autowired
-    private MerchantRoomService merchantRoomService;
-    @Autowired
-    private GoodService goodService;
-    @Autowired
-    private ClientUserService clientUserService;
+
 
     @Login
     @GetMapping("page")
@@ -125,66 +117,7 @@ public class ApiSlaveOrderController {
     @PutMapping("refundGood")
     @ApiOperation("用户退单个菜品")
     public Result refundGood(@RequestBody SlaveOrderDTO slaveOrderDTO) {
-
-            Long goodId = slaveOrderDTO.getGoodId();
-            String orderId = slaveOrderDTO.getOrderId();
-            //用户申请退的数量
-            BigDecimal quantity = slaveOrderDTO.getQuantity();
-            SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
-        if (allGoods.getStatus() == 2) {
-            //此订单菜品总数量
-            BigDecimal quantity1 = allGoods.getQuantity();
-            if (quantity1.compareTo(quantity) == 0) {
-                slaveOrderService.updateSlaveOrderStatus(6, orderId, goodId);
-            }
-            if (quantity1.compareTo(quantity) == 1) {
-                slaveOrderService.updateSlaveOrderStatus(10, orderId, goodId);
-            }
-            BigDecimal price = slaveOrderDTO.getPrice();
-            BigDecimal totalMoney = price.multiply(quantity);
-            RefundOrderEntity ro = new RefundOrderEntity();
-            long id = System.currentTimeMillis();
-            Random random = new Random();
-            String refundID = "";
-            for (int i = 0; i < 8; i++) {
-                //首字母不能为0
-                refundID += (random.nextInt(9) + 1);
-            }
-            //组装退款ID
-            refundID = refundID + id;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            //获取当前时间作为退款申请时间
-            String date = sdf.format(new Date());
-            //查询出订单对应商户信息
-            MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(slaveOrderDTO.getOrderId());
-            //包房ID
-            Long roomId = masterOrderEntity.getRoomId();
-            //获取包房信息
-            MerchantRoomDTO merchantRoomDTO = merchantRoomService.get(roomId);
-            //获取商品信息
-            GoodDTO goodDTO = goodService.get(goodId);
-            //获取用户信息通过电话
-            ClientUserEntity userByPhone = clientUserService.getUserByPhone(masterOrderEntity.getContactNumber());
-            String s = slaveOrderDTO.getMerchantId();
-            long merchantID = Long.parseLong(s);
-            ro.setRefundId(refundID.trim());
-            ro.setGoodId(slaveOrderDTO.getGoodId());
-            ro.setOrderId(slaveOrderDTO.getOrderId());
-            ro.setPrice(slaveOrderDTO.getPrice());
-            ro.setRefundDate(date);
-            ro.setRefundQuantity(quantity);
-            ro.setRefundReason(slaveOrderDTO.getRefundReason());
-            ro.setTotalMoney(totalMoney);
-            ro.setMerchantId(merchantID);
-            ro.setContactNumber(masterOrderEntity.getContactNumber());
-            ro.setRoomName(merchantRoomDTO.getName());
-            ro.setGoodName(goodDTO.getName());
-            ro.setIcon(goodDTO.getIcon());
-            ro.setTotalFee(masterOrderEntity.getPayMoney().toString());
-            ro.setUserId(userByPhone.getId());
-            refundOrderService.insertRefundOrder(ro);
-
-        }
-        return new Result();
+        Result result=slaveOrderService.refundGood(slaveOrderDTO);
+        return result;
     }
 }

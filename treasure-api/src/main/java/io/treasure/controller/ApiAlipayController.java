@@ -145,7 +145,7 @@ public class ApiAlipayController {
             if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
                 try {
                     Map<String, String> responseMap = null;
-                    responseMap=masterOrderService.getNotify(Constants.PayMode.ALIPAY, new BigDecimal(total_amount), out_trade_no);
+                    responseMap=payService.getAliNotify(new BigDecimal(total_amount), out_trade_no);
                     return responseMap.get("return_code");
                 } catch (Exception ex) {
                     return "FAIL";
