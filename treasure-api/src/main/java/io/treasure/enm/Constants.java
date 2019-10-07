@@ -146,11 +146,7 @@ public interface Constants {
         /**
          * 商家超时订单
          */
-        MERCHANTTIMEOUTORDER(11),
-        /**
-         * 取消支付订单
-         */
-        CANCELPAYORDER(12);
+        MERCHANTTIMEOUTORDER(11);
         private int value;
 
         OrderStatus(int value) {

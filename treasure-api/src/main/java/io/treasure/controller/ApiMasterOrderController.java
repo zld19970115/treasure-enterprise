@@ -396,10 +396,9 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "refundReason", value = "取消订单原因", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "id", value = "主订单ID", paramType = "query",required=true, dataType="Long")
     })
-    public Object orderCancel(@ApiIgnore @RequestParam Map<String, Object> params) throws Exception {
+    public Result orderCancel(@ApiIgnore @RequestParam Map<String, Object> params) throws Exception {
         Long id = Long.valueOf(params.get("id").toString());
-        MasterOrderDTO masterOrderDTO = masterOrderService.get(id);
-        return new Result().ok(masterOrderService.disposeRefund(masterOrderDTO.getOrderId()));
+        return masterOrderService.cancelOrder(id);
     }
 
     @Login

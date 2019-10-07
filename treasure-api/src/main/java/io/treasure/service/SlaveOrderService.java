@@ -1,12 +1,12 @@
 package io.treasure.service;
 
+import io.treasure.common.utils.Result;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.SlaveOrderEntity;
 
 import io.treasure.common.service.CrudService;
 import org.apache.ibatis.annotations.Param;
 
-import javax.xml.transform.Result;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -42,5 +42,5 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
     void updateSlaveOrderStatus(@Param("status")int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
 
 
-
+    Result refundGood(SlaveOrderDTO slaveOrderDTO);
 }
