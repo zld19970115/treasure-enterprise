@@ -578,6 +578,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             String[] str = status.split(",");
             params.put("statusStr", str);
         }
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }

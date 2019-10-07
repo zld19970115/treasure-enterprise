@@ -39,7 +39,7 @@
         select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
-        where masterOrder.merchant_id=#{merchantId}
+        where 1=1
         and p_order_id = 0
         <if test="status != null">
             and masterOrder.status in
@@ -47,7 +47,12 @@
                 #{item}
             </foreach>
         </if>
-
+        <if test="merchantId != null">
+            and masterOrder.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
     <select id="selectPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} or order_id  = #{orderId}
