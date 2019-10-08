@@ -157,7 +157,12 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             //包房ID
             Long roomId = masterOrderEntity.getRoomId();
             //获取包房信息
-            MerchantRoomDTO merchantRoomDTO = merchantRoomService.get(roomId);
+            if(roomId!=null){
+                MerchantRoomDTO merchantRoomDTO = merchantRoomService.get(roomId);
+                ro.setRoomName(merchantRoomDTO.getName());
+            }
+
+
             //获取商品信息
             GoodDTO goodDTO = goodService.get(goodId);
             //获取用户信息通过电话
@@ -174,7 +179,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             ro.setTotalMoney(totalMoney);
             ro.setMerchantId(merchantID);
             ro.setContactNumber(masterOrderEntity.getContactNumber());
-            ro.setRoomName(merchantRoomDTO.getName());
+
             ro.setGoodName(goodDTO.getName());
             ro.setIcon(goodDTO.getIcon());
             ro.setTotalFee(masterOrderEntity.getPayMoney().toString());
