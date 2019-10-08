@@ -82,4 +82,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result caleclUpdate(long id, long verify, Date date, String verify_reason);
 
     Result cancelOrder(long id);
+
+    void updatePayMoney( BigDecimal PayMoney, String orderId);
 }

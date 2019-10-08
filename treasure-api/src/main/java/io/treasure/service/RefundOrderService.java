@@ -20,4 +20,6 @@ public interface RefundOrderService  extends CrudService<RefundOrderEntity, Refu
     PageData<RefundOrderEntity> getRefundOrderByMerchantId(Map<String, Object> params);
 
     void updateDispose( int dispose,String orderId,Long goodId);
+
+    void updateMasterOrderPayMoney(String orderId,Long goodId);
 }

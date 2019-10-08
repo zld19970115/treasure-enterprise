@@ -983,4 +983,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return new Result();
     }
+
+
+    /**
+     * 更新主订单实付金额
+     * @param PayMoney
+     * @param orderId
+     */
+    @Override
+    public void updatePayMoney(BigDecimal PayMoney, String orderId) {
+        baseDao.updatePayMoney(PayMoney,orderId);
+    }
 }

@@ -6,20 +6,33 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.RefundOrderDao;
+import io.treasure.dto.OrderDTO;
 import io.treasure.dto.RefundOrderDTO;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.RefundOrderEntity;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.RefundOrderService;
+import io.treasure.service.SlaveOrderService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
 @Service
-public class RefundOrderServiceImpl  extends CrudServiceImpl<RefundOrderDao, RefundOrderEntity, RefundOrderDTO> implements RefundOrderService {
+public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, RefundOrderEntity, RefundOrderDTO> implements RefundOrderService {
+    @Autowired
+    MasterOrderService masterOrderService;
+
+    @Autowired
+    SlaveOrderService slaveOrderService;
+
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
-        String refundId = (String)params.get("refundId");
+        String refundId = (String) params.get("refundId");
 
         QueryWrapper<RefundOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(refundId), "refundId", refundId);
@@ -34,30 +47,52 @@ public class RefundOrderServiceImpl  extends CrudServiceImpl<RefundOrderDao, Ref
 
     /**
      * 更新refund_order中主键ID
+     *
      * @param refundId
      * @param orderId
      * @param goodId
      */
     @Override
     public void updateRefundId(String refundId, String orderId, Long goodId) {
-        baseDao.updateRefundId(refundId,orderId,goodId);
+        baseDao.updateRefundId(refundId, orderId, goodId);
     }
 
     /**
      * 通过商户id查询此商户有多少退款信息
+     *
      * @param params
      * @return
      */
     @Override
     public PageData<RefundOrderEntity> getRefundOrderByMerchantId(Map<String, Object> params) {
-        IPage<RefundOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
-        List<RefundOrderEntity> list=baseDao.getRefundOrderByMerchantId(params);
-        return getPageData(list,pages.getTotal(), RefundOrderEntity.class);
+        IPage<RefundOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        List<RefundOrderEntity> list = baseDao.getRefundOrderByMerchantId(params);
+        return getPageData(list, pages.getTotal(), RefundOrderEntity.class);
     }
 
     @Override
-    public void updateDispose(int dispose ,String orderId, Long goodId) {
-        baseDao.updateDispose(dispose,orderId,goodId);
+    public void updateDispose(int dispose, String orderId, Long goodId) {
+        baseDao.updateDispose(dispose, orderId, goodId);
+    }
+
+    /**
+     * 商户同意退款后，更新主订单实付金额
+     *
+     * @param orderId
+     * @param goodId
+     */
+    @Override
+    public void updateMasterOrderPayMoney(String orderId, Long goodId) {
+        //获取主订单信息
+        OrderDTO order = masterOrderService.getOrder(orderId);
+        // 获取主订单实付金额
+        BigDecimal payMoney = order.getPayMoney();
+        //获取订单菜品表退菜信息
+        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
+        //退菜金额=退菜数量*退菜单价
+        BigDecimal  totalRefundMoney=(allGoods.getQuantity().multiply(allGoods.getPrice())).setScale(2,BigDecimal.ROUND_DOWN);
+        masterOrderService.updatePayMoney(totalRefundMoney,orderId);
+
     }
 
 
