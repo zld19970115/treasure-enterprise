@@ -17,6 +17,7 @@ import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.common.utils.Result;
 import io.treasure.config.AlipayProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -206,8 +207,8 @@ public class ApiAlipayController {
     @PostMapping("/refund")
     @ResponseBody
     @ApiOperation(value = "退款")
-    public String refund(String orderNo,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) throws AlipayApiException {
-        String res=payService.aliRefund(orderNo,refund_fee,goodId,user);
+    public Result refund(String orderNo, String refund_fee, Long goodId, @LoginUser ClientUserEntity user) throws AlipayApiException {
+        Result res=payService.aliRefund(orderNo,refund_fee,goodId);
         return res;
     }
 

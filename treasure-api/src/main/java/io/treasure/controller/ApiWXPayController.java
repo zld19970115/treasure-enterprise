@@ -89,7 +89,7 @@ public class ApiWXPayController {
             @ApiImplicitParam(name="refund_fee",value="退款金额单位分",required=true,paramType="query")
     })
     public Object refund(String orderNo,String total_fee,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) {
-        Result result=payService.wxRefund(orderNo,total_fee,refund_fee,goodId,user.getId());
+        Result result=payService.wxRefund(orderNo,refund_fee,goodId);
         if(result.success()){
             return result.getData();
         }else {
