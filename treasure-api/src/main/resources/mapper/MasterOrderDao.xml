@@ -74,4 +74,7 @@
     <select id="getOrderById" parameterType="map" resultType="io.treasure.dto.MasterOrderDTO">
         SELECT *  from ct_master_order where id=#{id}
     </select>
+    <update id="updatePayMoney" parameterType="io.treasure.entity.MasterOrderEntity">
+        update ct_master_order set pay_money=#{payMoney} where order_id=#{orderId}
+    </update>
 </mapper>
