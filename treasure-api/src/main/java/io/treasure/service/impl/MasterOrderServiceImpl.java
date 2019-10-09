@@ -352,16 +352,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OrderDTO getOrder(String orderId) {
+        BigDecimal a = new BigDecimal(0);
+        BigDecimal b = new BigDecimal(0);
         MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
         OrderDTO orderDTO = ConvertUtils.sourceToTarget(masterOrderEntity, OrderDTO.class);
+
         //商家信息
         MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
         orderDTO.setMerchantInfo(merchantEntity);
         //加菜信息
         List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderId(orderId);
+        List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderId);
         List list = new ArrayList();
         for (MasterOrderEntity orderEntity : masterOrderEntities) {
-            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderEntity.getOrderId());
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderIdAndStatus(orderEntity.getOrderId());
             for (int j = 0; j < slaveOrderEntities.size(); j++) {
                 SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
                 GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
@@ -369,7 +373,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             list.add(slaveOrderEntities);
             orderDTO.setSlaveOrder(list);
+
+
         }
+        for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+            a = a.add(orderEntity.getPayMoney());
+        }
+        b = a.add(orderDTO.getPayMoney())  ;
+        orderDTO.setPpaymoney(a);
+        orderDTO.setAllPaymoney(b);
 //        //菜单信息
 //        List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
 //        int size=slaveOrderEntitys.size();
@@ -378,7 +390,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
 //            slaveOrderEntity.setGoodInfo(goodEntity);
 //        }
-//        orderDTO.setSlaveOrder(slaveOrderEntitys);
         MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
         orderDTO.setMerchantRoomEntity(merchantRoomEntity);
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
@@ -556,7 +567,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params) {
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
-        String status = (String) params.get("status");
+        String status = params.get("status").toString();
         if (StringUtils.isNotBlank(status)) {
             String[] str = status.split(",");
             params.put("statusStr", str);

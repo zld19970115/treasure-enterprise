@@ -68,6 +68,11 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         return slaveOrderEntityList;
     }
     @Override
+    public List<SlaveOrderEntity> selectByOrderIdAndStatus(String orderId) {
+        List<SlaveOrderEntity> slaveOrderEntityList=baseDao.selectList(queryWrapper2(orderId));
+        return slaveOrderEntityList;
+    }
+    @Override
     public SlaveOrderDTO getAllGoods(String orderId, long goodId) {
         return baseDao.getAllGoods(orderId,goodId);
     }
@@ -100,28 +105,29 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         Result result=new Result();
         Long goodId = slaveOrderDTO.getGoodId();
         String orderId = slaveOrderDTO.getOrderId();
-        if(slaveOrderDTO.getStatus()!= Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()&&slaveOrderDTO.getStatus()!= Constants.OrderStatus.PAYORDER.getValue()){
-            result.error("此菜品无法退菜！");
-        }
+
         //用户申请退的数量
         BigDecimal quantity = slaveOrderDTO.getQuantity();
         SlaveOrderDTO allGoods = this.getAllGoods(orderId, goodId);
+        if(allGoods.getStatus()!= Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()&&slaveOrderDTO.getStatus()!= Constants.OrderStatus.PAYORDER.getValue()){
+            result.error("此菜品无法退菜！");
+        }
         if (allGoods.getStatus() == 2) {
             //此订单菜品总数量
             BigDecimal quantity1 = allGoods.getQuantity();
             if (quantity1.compareTo(quantity) >= 0) {
-                if(slaveOrderDTO.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
+                if(allGoods.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
                     this.updateSlaveOrderStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue(), orderId, goodId);
-                }else if(slaveOrderDTO.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
+                }else if(allGoods.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
                     this.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(), orderId, goodId);
                     MasterOrderEntity masterOrderEntity=masterOrderService.selectByOrderId(orderId);
-                        if(slaveOrderDTO.getCreator()==null){
+                        if(allGoods.getCreator()==null){
                             result.error("此菜品无法退菜！无创建用户信息！");
                         }
-                        if(slaveOrderDTO.getPayMoney().compareTo(new BigDecimal(0))==0){
+                        if(allGoods.getPayMoney().compareTo(new BigDecimal(0))==0){
                             result.error("此菜品价格为0元，无法退菜！");
                         }
-                        Result result1=payService.refundByGood(masterOrderEntity.getPayMode(),orderId,slaveOrderDTO.getPayMoney().toString(),goodId);
+                        Result result1=payService.refundByGood(masterOrderEntity.getPayMode(),orderId,allGoods.getPayMoney().toString(),goodId);
                         if(result1.success()){
                             boolean b= (boolean) result1.getData();
                             if(!b){
@@ -194,6 +200,14 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     private QueryWrapper<SlaveOrderEntity> queryWrapper(String orderId){
         QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
+
+        return wrapper;
+    }
+    private QueryWrapper<SlaveOrderEntity> queryWrapper2(String orderId){
+        QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
+        wrapper.ne("status", 1);
+        wrapper.ne("status", 9);
 
         return wrapper;
     }

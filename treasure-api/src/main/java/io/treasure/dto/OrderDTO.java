@@ -104,7 +104,10 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "加菜")
 	private  String pOrderId;
-
+	@ApiModelProperty(value = "总支付金额")
+	private  BigDecimal allPaymoney;
+	@ApiModelProperty(value = "加菜支付金额")
+	private  BigDecimal Ppaymoney;
 	@ApiModelProperty(value = "订单菜品")
 	private List<SlaveOrderEntity> slaveOrder;
 

@@ -278,8 +278,10 @@ public class ApiClientUserController {
     @ApiOperation("绑定微信-根据mobile查询用户信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String"),
-            @ApiImplicitParam(name="mobile",value="用户手机号",required=true,paramType="query",dataType="String")})
-    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile){
+            @ApiImplicitParam(name="mobile",value="用户手机号",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="password",value="密码",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="clientId",value="个推ID",required=true,paramType="query",dataType="String")})
+    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile,String password,String clientId){
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
         ClientUserEntity user = new ClientUserEntity();
         Map<String, Object> map = new HashMap<>();
@@ -294,7 +296,8 @@ public class ApiClientUserController {
             user.setCreateDate(new Date());
             user.setWay("2");
             user.setOpenid(openId);
-            user.setPassword(mobile);
+            user.setPassword(DigestUtils.sha256Hex(password));
+            user.setClientId(clientId);
             clientUserService.insert(user);
             ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(mobile);
             tokenService.createToken(userByPhone1.getId());

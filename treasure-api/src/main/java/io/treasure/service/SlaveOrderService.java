@@ -20,7 +20,7 @@ import java.util.List;
 public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOrderDTO> {
 
     List<SlaveOrderEntity> selectByOrderId(String orderId);
-
+    List<SlaveOrderEntity> selectByOrderIdAndStatus(String orderId);
 
 
     /**
