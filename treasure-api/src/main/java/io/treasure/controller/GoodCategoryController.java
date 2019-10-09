@@ -39,6 +39,7 @@ public class GoodCategoryController {
     private GoodCategoryService goodCategoryService;
     @Autowired
     private MerchantService merchantService;//商户
+    @CrossOrigin
     @Login
     @GetMapping("pageOn")
     @ApiOperation("显示中列表")
@@ -52,9 +53,10 @@ public class GoodCategoryController {
     })
     public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));
-        PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
+        PageData<GoodCategoryDTO> page = goodCategoryService.selectPage(params);
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("pageOff")
     @ApiOperation("隐藏中列表")
@@ -68,9 +70,10 @@ public class GoodCategoryController {
     })
     public Result<PageData<GoodCategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", String.valueOf(Common.STATUS_OFF.getStatus()));
-        PageData<GoodCategoryDTO> page = goodCategoryService.page(params);
+        PageData<GoodCategoryDTO> page = goodCategoryService.selectPage(params);
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
@@ -81,6 +84,7 @@ public class GoodCategoryController {
         GoodCategoryDTO data = goodCategoryService.get(id);
         return new Result<GoodCategoryDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -104,6 +108,7 @@ public class GoodCategoryController {
         goodCategoryService.insert(category);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
@@ -135,6 +140,7 @@ public class GoodCategoryController {
         goodCategoryService.updateById(category);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping("delete")
     @ApiOperation("删除")
@@ -160,6 +166,7 @@ public class GoodCategoryController {
         }
         return new Result();
     }
+    @CrossOrigin
     /**
      * 显示数据
      * @param id
@@ -184,13 +191,15 @@ public class GoodCategoryController {
                 }else{
                     return new Result().error("请关闭店铺后，在进行上架操作！");
                 }
+            }else{
+                return new Result().error("无法获取店铺信息！");
             }
         }else {
             return new Result().error("没有获取到分类的商户!");
         }
         return new Result();
     }
-
+    @CrossOrigin
     /**
      * 隐藏数据
      * @param id
@@ -215,6 +224,8 @@ public class GoodCategoryController {
                }else{
                    return new Result().error("请关闭店铺后，在进行下架操作！");
                }
+           }else{
+               return new Result().error("无法获取店铺信息！");
            }
         }else{
             return new Result().error("没有获取到分类的商户!");
@@ -226,6 +237,7 @@ public class GoodCategoryController {
      * @param merchantId
      * @return
      */
+    @CrossOrigin
     @Login
     @GetMapping("getAllByMerchantId")
     @ApiOperation("显示商户对应的分类")

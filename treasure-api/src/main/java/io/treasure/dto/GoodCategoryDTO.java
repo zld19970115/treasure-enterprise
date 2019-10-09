@@ -54,4 +54,8 @@ public class GoodCategoryDTO implements Serializable {
 	@NotNull(message = "商户不能为空",groups =AddGroup.class)
 	@NotNull(message = "商户不能为空",groups = UpdateGroup.class)
 	private Long merchantId;
+	@ApiModelProperty(value="创建时间")
+	private Date createDate;
+	@ApiModelProperty(value="店铺名称")
+	private String merchantName;
 }

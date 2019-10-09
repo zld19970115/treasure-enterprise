@@ -1,10 +1,12 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 店铺类型分类表
@@ -22,4 +24,6 @@ public interface GoodCategoryDao extends BaseDao<GoodCategoryEntity> {
     List getByNameAndMerchantId(String name, long merchantId);
     //根据商户显示分类信息
     List getAllByMerchantId(long merchantId);
+    //列表显示同时显示店铺名称
+    List<GoodCategoryDTO> selectPage(Map<String, Object> params);
 }

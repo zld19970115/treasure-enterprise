@@ -1,10 +1,13 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
+import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.entity.GoodCategoryEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 店铺类型分类表
@@ -23,4 +26,6 @@ public interface GoodCategoryService extends CrudService<GoodCategoryEntity, Goo
     List getAllByMerchantId (long merchantId);
     //删除
     void remove(Long id,int status);
+    //列表查询，显示店铺名称
+    PageData<GoodCategoryDTO> selectPage(Map<String, Object> params);
 }

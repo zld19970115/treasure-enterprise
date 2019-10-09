@@ -53,7 +53,8 @@ public class MerchantController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="Long")
+            @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name ="name", value = "店铺名称", paramType = "query", dataType="String"),
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_DELETE.getStatus()+"");
@@ -172,42 +173,46 @@ public class MerchantController {
         String id=(String)params.get("id");
         String name=(String)params.get("name");
         MerchantDTO entity=merchantService.get(Long.parseLong(id));
-        if(!entity.getName().equals(name)){
-            //根据修改的名称和身份账号查询
-            MerchantEntity  merchant= merchantService.getByName(name,Common.STATUS_DELETE.getStatus());
-            if(null!=merchant){
-                return new Result().error("该商户您已经注册过了！");
+        if(null!=entity){
+            if(!entity.getName().equals(name)){
+                //根据修改的名称和身份账号查询
+                MerchantEntity  merchant= merchantService.getByName(name,Common.STATUS_DELETE.getStatus());
+                if(null!=merchant){
+                    return new Result().error("该商户您已经注册过了！");
+                }
             }
+            String headurl=(String)params.get("headurl");
+            String brief=(String)params.get("brief");
+            String log=(String)params.get("log");
+            String lat=(String)params.get("lat");
+            String address=(String)params.get("address");
+
+
+            String cards=(String)params.get("cards");
+            String monetary=(String) params.get("monetary");
+            String updater=(String)params.get("updater");
+            String idcardBackImg=(String)params.get("idcardBackImg");
+            String idcardFrontImg=(String)params.get("idcardFrontImg");
+
+            entity.setHeadurl(headurl);
+            entity.setName(name);
+            entity.setBrief(brief);
+            entity.setLog(log);
+            entity.setLat(lat);
+            entity.setAddress(address);
+            entity.setCards(cards);
+            entity.setBusinesslicense(cards);
+            entity.setMonetary(Double.parseDouble(monetary));
+            entity.setUpdateDate(new Date());
+            entity.setUpdater(Long.parseLong(updater));
+            entity.setIdcardBackImg(idcardBackImg);
+            entity.setIdcardFrontImg(idcardFrontImg);
+            entity.setStatus(1);
+            merchantService.update(entity);
+            return new Result();
+        }else{
+            return new Result().error("记录不存在！");
         }
-        String headurl=(String)params.get("headurl");
-        String brief=(String)params.get("brief");
-        String log=(String)params.get("log");
-        String lat=(String)params.get("lat");
-        String address=(String)params.get("address");
-
-
-        String cards=(String)params.get("cards");
-        String monetary=(String) params.get("monetary");
-        String updater=(String)params.get("updater");
-        String idcardBackImg=(String)params.get("idcardBackImg");
-        String idcardFrontImg=(String)params.get("idcardFrontImg");
-
-        entity.setHeadurl(headurl);
-        entity.setName(name);
-        entity.setBrief(brief);
-        entity.setLog(log);
-        entity.setLat(lat);
-        entity.setAddress(address);
-        entity.setCards(cards);
-        entity.setBusinesslicense(cards);
-        entity.setMonetary(Double.parseDouble(monetary));
-        entity.setUpdateDate(new Date());
-        entity.setUpdater(Long.parseLong(updater));
-        entity.setIdcardBackImg(idcardBackImg);
-        entity.setIdcardFrontImg(idcardFrontImg);
-        entity.setStatus(1);
-        merchantService.update(entity);
-        return new Result();
     }
     @CrossOrigin
     @Login

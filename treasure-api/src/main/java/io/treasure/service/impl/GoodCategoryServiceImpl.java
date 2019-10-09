@@ -1,10 +1,15 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodCategoryDao;
 import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.GoodCategoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -62,6 +67,18 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
     @Override
     public void remove(Long id, int status) {
         baseDao.on(id,status);
+    }
+
+    /**
+     * 列表显示同时显示店铺名称
+     * @param params
+     * @return
+     */
+    @Override
+    public PageData<GoodCategoryDTO> selectPage(Map<String, Object> params) {
+        IPage<GoodCategoryEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        List<GoodCategoryDTO> list=baseDao.selectPage(params);
+        return getPageData(list,pages.getTotal(), GoodCategoryDTO.class);
     }
 
     @Override
