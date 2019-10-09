@@ -68,6 +68,11 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         return slaveOrderEntityList;
     }
     @Override
+    public List<SlaveOrderEntity> selectByOrderIdAndStatus(String orderId) {
+        List<SlaveOrderEntity> slaveOrderEntityList=baseDao.selectList(queryWrapper2(orderId));
+        return slaveOrderEntityList;
+    }
+    @Override
     public SlaveOrderDTO getAllGoods(String orderId, long goodId) {
         return baseDao.getAllGoods(orderId,goodId);
     }
@@ -195,6 +200,14 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     private QueryWrapper<SlaveOrderEntity> queryWrapper(String orderId){
         QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
+
+        return wrapper;
+    }
+    private QueryWrapper<SlaveOrderEntity> queryWrapper2(String orderId){
+        QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
+        wrapper.ne("status", 1);
+        wrapper.ne("status", 9);
 
         return wrapper;
     }
