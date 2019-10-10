@@ -541,6 +541,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         int size = masterOrderEntities.size();
         for (int n = 0; n < size; n++) {
             MasterOrderEntity masterOrderEntity = masterOrderEntities.get(n);
+            BigDecimal a = masterOrderEntity.getPayMoney();
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(masterOrderEntity.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+              a = a.add(orderEntity.getPayMoney());
+            }
+            masterOrderEntity.setPayMoney(a);
             //商家信息
             MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
             masterOrderEntity.setMerchantInfo(merchantEntity);
