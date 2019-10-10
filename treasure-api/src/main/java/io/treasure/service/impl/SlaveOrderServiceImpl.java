@@ -172,7 +172,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             //获取商品信息
             GoodDTO goodDTO = goodService.get(goodId);
             //获取用户信息通过电话
-            ClientUserEntity userByPhone = clientUserService.getUserByPhone(masterOrderEntity.getContactNumber());
+      //      ClientUserEntity userByPhone = clientUserService.getUserByPhone(masterOrderEntity.getContactNumber());
             String s = slaveOrderDTO.getMerchantId();
             long merchantID = Long.parseLong(s);
             ro.setRefundId(refundID.trim());
@@ -189,7 +189,8 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             ro.setGoodName(goodDTO.getName());
             ro.setIcon(goodDTO.getIcon());
             ro.setTotalFee(masterOrderEntity.getPayMoney().toString());
-            ro.setUserId(userByPhone.getId());
+            ro.setUserId(masterOrderEntity.getCreator());
+
             refundOrderService.insertRefundOrder(ro);
 
         }
