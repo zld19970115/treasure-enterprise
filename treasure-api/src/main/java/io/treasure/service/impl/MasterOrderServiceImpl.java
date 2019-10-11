@@ -365,7 +365,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderId);
         List list = new ArrayList();
         for (MasterOrderEntity orderEntity : masterOrderEntities) {
-            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderIdAndStatus(orderEntity.getOrderId());
+            if (orderEntity.getPOrderId()!="0" && orderEntity.getStatus() == 1){
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderIdAndStatus(orderEntity.getOrderId());
+                for (int j = 0; j < slaveOrderEntities.size(); j++) {
+                    SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
+                    GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
+                    slaveOrderEntity.setGoodInfo(goodEntity);
+                }
+                list.add(slaveOrderEntities);
+                orderDTO.setSlaveOrder(list);
+
+            }
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderEntity.getOrderId());
             for (int j = 0; j < slaveOrderEntities.size(); j++) {
                 SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
                 GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());

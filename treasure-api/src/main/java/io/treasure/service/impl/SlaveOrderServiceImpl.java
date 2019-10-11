@@ -209,7 +209,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         wrapper.eq(StringUtils.isNotBlank(orderId), "order_id", orderId);
         wrapper.ne("status", 1);
         wrapper.ne("status", 9);
-
+        wrapper.ne("status", 8);
         return wrapper;
     }
 }
