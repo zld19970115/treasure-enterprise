@@ -40,7 +40,7 @@
 	        ct_merchant_room_params_set as cs
 	        LEFT JOIN ct_merchant_room AS cr ON cr.id=cs.room_id
         WHERE
-	        cs.use_date=#{useDate}
+	       DATE_FORMAT(cs.use_date,'%Y-%m-%d')=DATE_FORMAT(#{useDate},'%Y-%m-%d')
 	      AND cs.room_params_id=#{roomParamsId}
 	      AND cs.status =1
 	      and cr.merchant_id=#{merchantId}
