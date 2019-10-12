@@ -115,7 +115,7 @@ public class MerchantRoomParamsSetController {
             @ApiImplicitParam(name = "useDate", value = "年月日", paramType = "query", required = true, dataType="Date"),
             @ApiImplicitParam(name = "roomParamsId", value = "时间段", paramType = "query", required = true, dataType="long")
     })
-    public Result<List<MerchantRoomParamsSetDTO>> getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId){
+    public Result<List<MerchantRoomParamsSetDTO>> getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId) throws ParseException {
         return new Result<List<MerchantRoomParamsSetDTO>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId,merchantId));
     }
 }

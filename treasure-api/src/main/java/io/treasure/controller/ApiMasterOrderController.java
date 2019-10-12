@@ -551,5 +551,15 @@ public class ApiMasterOrderController {
         return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateGiftCoupon(dct));
     }
 
+    @Login
+    @PostMapping("reserveRoom")
+    @ApiOperation("客户端-下单支付成功后，预定包房")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mainOrderId", value = "编号", paramType = "query", required = true, dataType="String")
+    })
+    public Result reserveRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId){
+        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        return  masterOrderService.reserveRoom(dto,user,mainOrderId);
+    }
 
 }
