@@ -1077,6 +1077,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
+        masterOrderEntity.setStatus(4);
         masterOrderEntity.setPOrderId(mainOrderId);
         masterOrderEntity.setRoomId(c.getRoomId());
         int i = baseDao.insert(masterOrderEntity);
