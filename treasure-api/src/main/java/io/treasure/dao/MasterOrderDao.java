@@ -30,6 +30,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderEntity selectByOrderId(String orderId);
       List<MasterOrderEntity>  selectPOrderId(String orderId);
     List<MasterOrderEntity>  selectBYPOrderId(String orderId);
+    List<MasterOrderEntity> selectPOrderIdAndS1(String orderId);
     MasterOrderDTO getOrderByOrderId(String orderId);
     void updateOrderStatus(@Param("status") int status,@Param("orderId") String orderId);
     void updatePayMode(@Param("payMode") String payMode,@Param("orderId") String orderId);

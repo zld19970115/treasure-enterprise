@@ -362,20 +362,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         orderDTO.setMerchantInfo(merchantEntity);
         //加菜信息
         List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderId(orderId);
+        //查找加菜订单未支付订单
+        List<MasterOrderEntity> masterOrderEntities2 = baseDao.selectPOrderIdAndS1(orderId);
+        masterOrderEntities.removeAll(masterOrderEntities2);
         List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderId);
         List list = new ArrayList();
         for (MasterOrderEntity orderEntity : masterOrderEntities) {
-            if (orderEntity.getPOrderId()!="0" && orderEntity.getStatus() == 1){
-                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderIdAndStatus(orderEntity.getOrderId());
-                for (int j = 0; j < slaveOrderEntities.size(); j++) {
-                    SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
-                    GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
-                    slaveOrderEntity.setGoodInfo(goodEntity);
-                }
-                list.add(slaveOrderEntities);
-                orderDTO.setSlaveOrder(list);
-
-            }
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderEntity.getOrderId());
             for (int j = 0; j < slaveOrderEntities.size(); j++) {
                 SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
