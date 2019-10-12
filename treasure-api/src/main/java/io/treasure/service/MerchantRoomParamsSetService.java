@@ -6,6 +6,7 @@ import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.MerchantRoomParamsSetEntity;
 
 import javax.xml.crypto.Data;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -22,5 +23,5 @@ public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomPa
     void updateStatus(long id,int status);
     Result setRoom(long merchantId,long creater);
     //查询指定日期、时间段内可用包房
-    List getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId);
+    List getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId) throws ParseException;
 }

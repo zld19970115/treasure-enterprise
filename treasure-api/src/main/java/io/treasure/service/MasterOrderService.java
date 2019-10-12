@@ -84,4 +84,18 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result cancelOrder(long id);
 
     void updatePayMoney( BigDecimal PayMoney, String orderId);
+
+    /**
+     *
+     * 下单后预定包房
+     * @Author: Zhangguanglin
+     * @Description:
+     * @Date: 2019/10/11
+     * @param dto: 主订单信息
+     * @param user: 用户信息
+     * @Return:
+     */
+    Result reserveRoom(OrderDTO dto, ClientUserEntity user,String orderId);
+
+    MasterOrderEntity getRoomOrderByPorderId(String orderId);
 }

@@ -401,10 +401,23 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
 //            slaveOrderEntity.setGoodInfo(goodEntity);
 //        }
-        MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
-        orderDTO.setMerchantRoomEntity(merchantRoomEntity);
-        MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
-        orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
+        //包房ID不为空并且订单状态为3（只预定菜）的时候
+        //查询出是否存在与主单相关联的包房订单
+        if(masterOrderEntity.getRoomId()==null && masterOrderEntity.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
+            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+            MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(roomOrderByPorderId.getRoomId());
+            orderDTO.setMerchantRoomEntity(merchantRoomEntity);
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
+            orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
+        }
+        //包房ID不为空并且订单状态为1（正常预定）的时候
+        if(masterOrderEntity.getRoomId()!=null && masterOrderEntity.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
+            MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
+            orderDTO.setMerchantRoomEntity(merchantRoomEntity);
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
+            orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
+        }
+
         return orderDTO;
     }
 
@@ -515,6 +528,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setPOrderId(dto.getOrderId());
         baseDao.updateById(masterOrderEntity);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        masterOrderEntity.setReservationType(dto.getReservationType());
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
@@ -1022,4 +1036,59 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public void updatePayMoney(BigDecimal PayMoney, String orderId) {
         baseDao.updatePayMoney(PayMoney,orderId);
     }
+    /**
+     * 下单后预定包房
+     * @Author: Zhangguanglin
+     * @Description:
+     * @Date: 2019/10/11
+     * @param dto: 主订单包房信息
+     * @param user: 用户信息
+     * @Return:
+     */
+    @Override
+    public Result reserveRoom(OrderDTO dto, ClientUserEntity user,String mainOrderId) {
+        Result result = new Result();
+        //生成订单号
+        String orderId = OrderUtil.getOrderIdByTime(user.getId());
+        Integer reservationType = dto.getReservationType();
+        MerchantRoomParamsSetEntity c=new MerchantRoomParamsSetEntity();
+        if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
+            if (merchantRoomParamsSetEntity == null) {
+                return result.error(-5, "没有此包房/散台");
+            }
+            int isUse = merchantRoomParamsSetEntity.getState();
+            c=merchantRoomParamsSetEntity;
+            if (isUse != 1) {
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
+
+            } else{
+                return result.error(-1, "包房/散台已经预定,请重新选择！");
+            }
+        }
+        Date d = new Date();
+        //保存主订单
+        MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
+        masterOrderEntity.setOrderId(orderId);
+        masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        if(reservationType==Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            masterOrderEntity.setReservationType(Constants.ReservationType.ONLYROOMRESERVATION.getValue());
+        }
+        masterOrderEntity.setInvoice("0");
+        masterOrderEntity.setCreator(user.getId());
+        masterOrderEntity.setCreateDate(d);
+        masterOrderEntity.setPOrderId(mainOrderId);
+        masterOrderEntity.setRoomId(c.getRoomId());
+        int i = baseDao.insert(masterOrderEntity);
+        if (i <= 0) {
+            return result.error(-2, "没有订单数据！");
+        }
+        return result.ok(orderId);
+    }
+
+    @Override
+    public MasterOrderEntity getRoomOrderByPorderId(String orderId) {
+        return baseDao.getRoomOrderByPorderId(orderId);
+    }
+
 }
