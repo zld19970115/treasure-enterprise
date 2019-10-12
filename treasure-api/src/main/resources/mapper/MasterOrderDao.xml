@@ -80,4 +80,7 @@
     <update id="updatePayMoney" parameterType="io.treasure.entity.MasterOrderEntity">
         update ct_master_order set pay_money=#{payMoney} where order_id=#{orderId}
     </update>
+    <select id="getRoomOrderByPorderId" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where p_order_id=#{orderId} and  reservation_type=2
+    </select>
 </mapper>
