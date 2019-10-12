@@ -397,10 +397,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //查询出是否存在与主单相关联的包房订单
         if(masterOrderEntity.getRoomId()==null && masterOrderEntity.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-            MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(roomOrderByPorderId.getRoomId());
-            orderDTO.setMerchantRoomEntity(merchantRoomEntity);
-            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
-            orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
+            if(roomOrderByPorderId!=null){
+                MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(roomOrderByPorderId.getRoomId());
+                orderDTO.setMerchantRoomEntity(merchantRoomEntity);
+                MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
+                orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
+            }
         }
         //包房ID不为空并且订单状态为1（正常预定）的时候
         if(masterOrderEntity.getRoomId()!=null && masterOrderEntity.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
@@ -710,17 +712,29 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public DesignConditionsDTO calculateCoupon(DesignConditionsDTO dct) {
         //获取此订餐所有菜品信息
         List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
-
+        //优惠券辅助运算
+        BigDecimal discount= new BigDecimal("0");
+        BigDecimal disc= new BigDecimal(0.1).setScale(2, BigDecimal.ROUND_DOWN);
+        //订单原总价
+        BigDecimal totalMoney1 = dct.getTotalMoney();
         MerchantCouponDTO merchantCouponDTO = merchantCouponService.get(dct.getId());
-        Double money = merchantCouponDTO.getDiscount();
-        //获取优惠卷金额
-        BigDecimal discount = new BigDecimal(money).setScale(2, BigDecimal.ROUND_DOWN);
+        if(merchantCouponDTO.getDisType()!=2){
+            Double money = merchantCouponDTO.getDiscount();
+            //获取优惠卷金额
+             discount = new BigDecimal(money).setScale(2, BigDecimal.ROUND_DOWN);
+        }else if (merchantCouponDTO.getDisType()==2){
+            Double money = merchantCouponDTO.getDiscount();
+            BigDecimal discounts=new BigDecimal(money);
+            //折扣后价格
+            BigDecimal bigDecimaMoney = totalMoney1.multiply(discounts.multiply(disc)).setScale(2, BigDecimal.ROUND_DOWN);
+            discount=totalMoney1.subtract(bigDecimaMoney);
+        }
+
         //优惠卷辅助运算
         BigDecimal x = new BigDecimal(0);
         /*优惠卷算法*/
 
-        //订单原总价
-        BigDecimal totalMoney1 = dct.getTotalMoney();
+
         ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
         for (int i = 0; i < slaveOrder.size(); i++) {
             //一条对象

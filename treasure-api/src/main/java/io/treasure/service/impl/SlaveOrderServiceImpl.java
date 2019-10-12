@@ -182,7 +182,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             ro.setRefundDate(date);
             ro.setRefundQuantity(quantity);
             ro.setRefundReason(slaveOrderDTO.getRefundReason());
-            ro.setTotalMoney(totalMoney);
+            ro.setTotalMoney(slaveOrderDTO.getPayMoney());
             ro.setMerchantId(merchantID);
             ro.setContactNumber(masterOrderEntity.getContactNumber());
 
