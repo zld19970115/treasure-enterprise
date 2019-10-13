@@ -1098,4 +1098,66 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return baseDao.getRoomOrderByPorderId(orderId);
     }
 
+    @Override
+    public Result orderFoodByRoom(OrderDTO dto,List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId) {
+        Result result = new Result();
+        OrderDTO orderDTO=masterOrderService.getOrder(mainOrderId);
+        Integer mainReservationType=orderDTO.getReservationType();
+        if(mainReservationType!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            return result.error(-9, "非只预定包房，不可以订餐！");
+        }
+        //生成订单号
+        String orderId = OrderUtil.getOrderIdByTime(user.getId());
+        Integer reservationType = dto.getReservationType();
+
+        if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
+            return result.error(-5, "非只预订菜品,不可以订餐！");
+        }
+        //锁定包房/散台
+
+        //是否使用赠送金
+        if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
+            ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
+            BigDecimal gift = clientUserEntity.getGift();
+            BigDecimal useGift = new BigDecimal(dto.getGiftMoney().toString());
+            useGift = useGift.setScale(2);
+            if (gift.compareTo(useGift) == -1) {
+                return result.error(-7, "您的赠送金不足！");
+            } else {
+                clientUserEntity.setGift(gift.subtract(useGift));
+            }
+            clientUserService.updateById(clientUserEntity);
+        }
+        Date d = new Date();
+        //保存主订单
+        MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
+        masterOrderEntity.setOrderId(orderId);
+        masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        masterOrderEntity.setInvoice("0");
+        masterOrderEntity.setCreator(user.getId());
+        masterOrderEntity.setCreateDate(d);
+        masterOrderEntity.setPOrderId(mainOrderId);
+        int i = baseDao.insert(masterOrderEntity);
+        if (i <= 0) {
+            return result.error(-2, "没有订单数据！");
+        }
+        //保存订单菜品
+        if (masterOrderEntity.getReservationType() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+            if (dtoList == null) {
+                return result.error(-6, "没有菜品数据！");
+            }
+            int size = dtoList.size();
+            for (int n = 0; n < size; n++) {
+                SlaveOrderEntity slaveOrderEntity = dtoList.get(n);
+                slaveOrderEntity.setOrderId(orderId);
+                slaveOrderEntity.setStatus(1);
+                slaveOrderService.insert(slaveOrderEntity);
+            }
+//        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
+//            boolean b=slaveOrderService.insertBatch(dtoList);
+
+        }
+        return result.ok(orderId);
+    }
+
 }

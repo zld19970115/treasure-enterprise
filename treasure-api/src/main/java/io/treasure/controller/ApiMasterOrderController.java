@@ -562,4 +562,16 @@ public class ApiMasterOrderController {
         return  masterOrderService.reserveRoom(dto,user,mainOrderId);
     }
 
+    @Login
+    @PostMapping("orderFoodByRoom")
+    @ApiOperation("预订包房后，再订餐")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mainOrderId", value = "预订包房订单号", paramType = "query", required = true, dataType="String")
+    })
+    public Result orderFoodByRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId){
+        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
+        return  masterOrderService.orderFoodByRoom(dto,dtoList,user,mainOrderId);
+    }
+
 }
