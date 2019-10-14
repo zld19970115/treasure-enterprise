@@ -8,6 +8,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.RefundOrderDTO;
 import io.treasure.entity.RefundOrderEntity;
 import io.treasure.service.RefundOrderService;
 import io.treasure.service.SlaveOrderService;
@@ -37,9 +38,9 @@ public class RefundOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "merchantId", value = "用户ID", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<RefundOrderEntity>> getRefundOrderByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<RefundOrderEntity> page = refundOrderService.getRefundOrderByMerchantId(params);
-        return new Result<PageData<RefundOrderEntity>>().ok(page);
+    public Result<PageData<RefundOrderDTO>> getRefundOrderByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<RefundOrderDTO> page = refundOrderService.getRefundOrderByMerchantId(params);
+        return new Result<PageData<RefundOrderDTO>>().ok(page);
     }
 
     @Login

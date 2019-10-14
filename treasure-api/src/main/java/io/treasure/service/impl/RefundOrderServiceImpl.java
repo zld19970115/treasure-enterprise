@@ -6,11 +6,14 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.RefundOrderDao;
+import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.RefundOrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.RefundOrderEntity;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.RefundOrderService;
 import io.treasure.service.SlaveOrderService;
 import org.apache.commons.lang.StringUtils;
@@ -25,10 +28,13 @@ import java.util.Map;
 @Service
 public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, RefundOrderEntity, RefundOrderDTO> implements RefundOrderService {
     @Autowired
-    MasterOrderService masterOrderService;
+    private MasterOrderService masterOrderService;
 
     @Autowired
-    SlaveOrderService slaveOrderService;
+    private SlaveOrderService slaveOrderService;
+
+    @Autowired
+    private MerchantRoomParamsSetService merchantRoomParamsSetService;
 
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
@@ -64,10 +70,18 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
      * @return
      */
     @Override
-    public PageData<RefundOrderEntity> getRefundOrderByMerchantId(Map<String, Object> params) {
+    public PageData<RefundOrderDTO> getRefundOrderByMerchantId(Map<String, Object> params) {
         IPage<RefundOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
-        List<RefundOrderEntity> list = baseDao.getRefundOrderByMerchantId(params);
-        return getPageData(list, pages.getTotal(), RefundOrderEntity.class);
+        List<RefundOrderDTO> list = baseDao.getRefundOrderByMerchantId(params);
+        for (RefundOrderDTO s:list) {
+            String orderId = s.getOrderId();
+            MasterOrderEntity order = masterOrderService.selectByOrderId(orderId);
+            if(order.getReservationId()!=null){
+                MerchantRoomParamsSetDTO merchantRoomParamsSetDTO = this.merchantRoomParamsSetService.get(order.getReservationId());
+                s.setRoomName(merchantRoomParamsSetDTO.getRoomName());
+            }
+        }
+        return getPageData(list, pages.getTotal(), RefundOrderDTO.class);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         //用户申请退的数量
         BigDecimal quantity = slaveOrderDTO.getQuantity();
         SlaveOrderDTO allGoods = this.getAllGoods(orderId, goodId);
-        if(allGoods.getStatus()!= Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()&&slaveOrderDTO.getStatus()!= Constants.OrderStatus.PAYORDER.getValue()){
+        if(allGoods.getStatus()!= Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()&&allGoods.getStatus()!= Constants.OrderStatus.PAYORDER.getValue()){
             result.error("此菜品无法退菜！");
         }
         if (allGoods.getStatus() == 2) {
