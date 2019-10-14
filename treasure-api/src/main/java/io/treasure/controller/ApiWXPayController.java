@@ -91,7 +91,12 @@ public class ApiWXPayController {
     public Object refund(String orderNo,String total_fee,String refund_fee,Long goodId,@LoginUser ClientUserEntity user) {
         Result result=payService.wxRefund(orderNo,refund_fee,goodId);
         if(result.success()){
-            return result.getData();
+            boolean data =(boolean) result.getData();
+            if(data){
+                return result.error("退款成功");
+            }else {
+                return result.error("退款失败");
+            }
         }else {
             return result.getMsg();
         }
