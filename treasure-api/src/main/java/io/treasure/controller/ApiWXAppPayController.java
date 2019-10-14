@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
@@ -83,8 +84,11 @@ public class ApiWXAppPayController {
         data.put("notify_url", wxPayConfig.getNotifyUrl());
         data.put("trade_type", "APP");//支付类型
         data.put("attach","ZF");//订单附加信息 (业务需要数据，自定义的)
+
         Map<String, String> orderInfo= wxPay.unifiedOrder(data);
-        if(orderInfo!=null) {
+        boolean rtn = orderInfo.get("return_code").equals(WXPayConstants.SUCCESS) && orderInfo.get("result_code").equals(WXPayConstants.SUCCESS);
+
+        if(rtn) {
 
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("appid", wxPayConfig.getAppID());
