@@ -128,6 +128,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
                             result.error("此菜品价格为0元，无法退菜！");
                         }
                         Result result1=payService.refundByGood(masterOrderEntity.getPayMode(),orderId,allGoods.getPayMoney().toString(),goodId);
+                        System.out.println(result1);
                         if(result1.success()){
                             boolean b= (boolean) result1.getData();
                             if(!b){

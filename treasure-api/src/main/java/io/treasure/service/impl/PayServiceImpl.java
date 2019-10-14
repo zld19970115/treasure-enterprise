@@ -78,6 +78,11 @@ public class PayServiceImpl implements PayService {
         Map<String, String> mapRtn = new HashMap<>(2);
         System.out.println("---out_trade_no------------"+out_trade_no);
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+        if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【非微支付状态】");
+            return mapRtn;
+        }
         System.out.println("---masterOrderEntity------------"+masterOrderEntity);
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
