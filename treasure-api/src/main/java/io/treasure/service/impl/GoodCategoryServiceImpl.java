@@ -14,6 +14,7 @@ import io.treasure.service.GoodCategoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
     @Override
     public PageData<GoodCategoryDTO> selectPage(Map<String, Object> params) {
         IPage<GoodCategoryEntity> pages=getPage(params, Constant.CREATE_DATE,false);
-        List<GoodCategoryDTO> list=baseDao.selectPage(params);
+        List<GoodCategoryDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), GoodCategoryDTO.class);
     }
 
@@ -90,11 +91,18 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
         String name=(String)params.get("name");
         //商户Id
         String merchantId=(String)params.get("merchantId");
+        List<Long> mId=new ArrayList<Long>();
+        if(StringUtils.isNotBlank(merchantId)){
+            String[] mIds=merchantId.split(",");
+            for(int i=0;i<mIds.length;i++){
+                mId.add(Long.parseLong(mIds[i]));
+            }
+        }
         QueryWrapper<GoodCategoryEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         wrapper.like(StringUtils.isNotBlank(name),"name",name);
-        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
+        wrapper.in(StringUtils.isNotBlank(merchantId),"merchant_id",mId);
         return wrapper;
     }
 

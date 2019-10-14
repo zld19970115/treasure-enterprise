@@ -290,4 +290,5 @@ public class MerchantController {
         merchantService.closeShop(id,Common.STATUS_ON.getStatus());
         return new Result();
     }
+
 }

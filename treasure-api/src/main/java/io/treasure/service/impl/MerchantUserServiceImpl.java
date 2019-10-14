@@ -11,9 +11,11 @@ import io.treasure.dao.MerchantUserDao;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
+import io.treasure.enm.Role;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
+import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import io.treasure.service.TokenService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -39,6 +41,8 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
     private TokenService tokenService;
     @Autowired
     private MerchantUserService userService;
+    @Autowired
+    private MerchantService merchantService;
     /**
      * 登陆
      * @param loginDTO
@@ -115,6 +119,24 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getMerchantByUserId(id);
     }
 
+    /**
+     * 根据Id和角色查询店铺
+     *  @param id
+     * @param role
+     * @return
+     */
+    @Override
+    public List<MerchantDTO> getMerchantByUserIdAndRole(Long id, String role) {
+        if (StringUtils.isNotEmpty(role) && StringUtils.isNotBlank(role)) {
+            if (role.indexOf(Role.ADMIN.getStatus()) > -1) {//管理员查询全部
+                return merchantService.getListByOn();
+            } else {
+                return baseDao.getMerchantByUserId(id);
+            }
+        }else{
+            return null;
+        }
+    }
     /**
      * 商户会员手机号码查询会员商户信息
      * @param mobile

@@ -42,6 +42,7 @@ public class MerchantRoomController {
     private MerchantRoomService merchantRoomService;
     @Autowired
     private MerchantService merchantService;//商户
+    @CrossOrigin
     @Login
     @GetMapping("roomPage")
     @ApiOperation("包房列表")
@@ -59,6 +60,25 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
+    @CrossOrigin
+    @Login
+    @GetMapping("roomListPage")
+    @ApiOperation("包房列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="name" ,value="名称", paramType="query",dataType = "String"),
+            @ApiImplicitParam(name="merchantId",value="当前登陆者id",paramType ="query",required = true,dataType = "String")
+    })
+    public Result<PageData<MerchantRoomDTO>> roomListPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_ROOM.getType()+"");
+        PageData<MerchantRoomDTO> page = merchantRoomService.listPage(params);
+        return new Result<PageData<MerchantRoomDTO>>().ok(page);
+    }
+    @CrossOrigin
     @Login
     @GetMapping("roomDate")
     @ApiOperation("查询日期")
@@ -74,6 +94,7 @@ public class MerchantRoomController {
 //        list.addAll(h);
         return new Result().ok(list);
     }
+    @CrossOrigin
     @Login
     @GetMapping("roomAlreadyPage")
     @ApiOperation("包房预约列表")
@@ -92,7 +113,7 @@ public class MerchantRoomController {
         PageData<MerchantRoomParamsSetDTO> page = merchantRoomService.selectRoomAlreadyPage(params);
         return new Result<PageData<MerchantRoomParamsSetDTO>>().ok(page);
     }
-
+    @CrossOrigin
     @Login
     @GetMapping("deskPage")
     @ApiOperation("桌列表")
@@ -110,6 +131,25 @@ public class MerchantRoomController {
         PageData<MerchantRoomDTO> page = merchantRoomService.page(params);
         return new Result<PageData<MerchantRoomDTO>>().ok(page);
     }
+    @CrossOrigin
+    @Login
+    @GetMapping("deskListPage")
+    @ApiOperation("包房列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="name" ,value="名称", paramType="query",dataType = "String"),
+            @ApiImplicitParam(name="merchantId",value="商户",paramType ="query",required = true,dataType = "String")
+    })
+    public Result<PageData<MerchantRoomDTO>> deskListPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_DESK.getType()+"");
+        PageData<MerchantRoomDTO> page = merchantRoomService.listPage(params);
+        return new Result<PageData<MerchantRoomDTO>>().ok(page);
+    }
+    @CrossOrigin
     @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
@@ -120,6 +160,7 @@ public class MerchantRoomController {
         MerchantRoomDTO data = merchantRoomService.get(id);
         return new Result<MerchantRoomDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping
     @ApiOperation("保存")
@@ -136,6 +177,7 @@ public class MerchantRoomController {
         merchantRoomService.save(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping
     @ApiOperation("修改")
@@ -162,6 +204,7 @@ public class MerchantRoomController {
         merchantRoomService.update(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")

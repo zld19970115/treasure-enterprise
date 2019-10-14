@@ -25,5 +25,5 @@ public interface GoodCategoryDao extends BaseDao<GoodCategoryEntity> {
     //根据商户显示分类信息
     List getAllByMerchantId(long merchantId);
     //列表显示同时显示店铺名称
-    List<GoodCategoryDTO> selectPage(Map<String, Object> params);
+    List<GoodCategoryDTO> listPage(Map<String, Object> params);
 }

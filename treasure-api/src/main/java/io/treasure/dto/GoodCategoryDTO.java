@@ -37,7 +37,6 @@ public class GoodCategoryDTO implements Serializable {
 
 	@ApiModelProperty(value = "是否推荐（0：不推荐 1：推荐）")
 	private Integer showInCommend;
-
 	@ApiModelProperty(value = "分类小图标")
 	@NotBlank(message = "分类图片不能为空")
 	private String icon;

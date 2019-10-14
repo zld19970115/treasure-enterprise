@@ -5,6 +5,7 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,4 +28,5 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
 
     PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);
+    List<MerchantDTO> getListByOn();
 }

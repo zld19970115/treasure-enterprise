@@ -19,6 +19,7 @@ import io.treasure.service.MerchantUserService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -313,8 +314,33 @@ public class MerchantUserController {
             @ApiImplicitParam(name="id",value="会员编号",required=true,paramType="query",dataType = "Long")
     })
     public Result<List<MerchantDTO>> getMerchantAllByUserId(@RequestParam Long id){
-        List<MerchantDTO> list=merchantUserService.getMerchantByUserId(id);
-        return new Result().ok(list);
+        if(id>0){
+            List<MerchantDTO> list=merchantUserService.getMerchantByUserId(id);
+            return new Result().ok(list);
+        }else{
+            return new Result().error("无法获取店铺信息");
+        }
+    }
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("getMerchantAllByUserIdAndRole")
+    @ApiOperation("根据会员Id显示商户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="会员编号",required=true,paramType="query",dataType = "Long"),
+            @ApiImplicitParam(name="role",value="角色编号",required=true,paramType="query",dataType = "String")
+    })
+    public Result<List<MerchantDTO>> getMerchantAllByUserIdAndRole(@RequestParam Long id,@RequestParam String role){
+        if(id>0){
+            List<MerchantDTO> list=merchantUserService.getMerchantByUserIdAndRole(id,role);
+            return new Result().ok(list);
+        }else{
+            return new Result().error("无法获取店铺信息");
+        }
     }
     /**
      *
@@ -329,8 +355,12 @@ public class MerchantUserController {
             @ApiImplicitParam(name="mobile",value="会员手机号码",required=true,paramType="query",dataType = "String")
     })
     public Result<List> getMerchantAllByMobile(@RequestParam String mobile){
-        List list=merchantUserService.getMerchantByMobile(mobile);
-        return new Result().ok(list);
+        if(StringUtils.isNotBlank(mobile) && StringUtils.isNotEmpty(mobile)){
+            List list=merchantUserService.getMerchantByMobile(mobile);
+            return new Result().ok(list);
+        }else{
+            return new Result().error("无法获取店铺信息");
+        }
     }
 
 }

@@ -23,6 +23,8 @@ public interface MerchantRoomService extends CrudService<MerchantRoomEntity, Mer
     List getByNameAndMerchantId(@Param("name") String name, @Param("merchantId")long merchantId, @Param("type")int type);
     //根据商户编号查询包房信息
     List getByMerchantId(long merchantId,int status);
+    PageData<MerchantRoomDTO> listPage(Map<String,Object> params);
+
     PageData<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
     List<String> selectRoomDate(long merchantId);
 }

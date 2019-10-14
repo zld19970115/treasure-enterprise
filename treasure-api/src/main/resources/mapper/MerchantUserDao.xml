@@ -27,8 +27,11 @@
     </select>
     <select id="getMerchantByUserId" resultType="io.treasure.dto.MerchantDTO">
         select m.* from ct_merchant_user user
-        left join ct_merchant m on ( find_in_set(m.id,user.merchantId))
-        where user.id=#{id}
+        left join ct_merchant m on ( find_in_set(m.id,user.merchantId) and m.status!=9)
+        where  1=1
+        <if test="id!=null">
+            and user.id=#{id}
+        </if>
     </select>
 
     <select id="getMerchantByMobile" resultType="java.util.Map">

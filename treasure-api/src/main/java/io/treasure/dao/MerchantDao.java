@@ -1,6 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,4 +26,5 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     void updateStatusById(@Param("id") long id,@Param("status") int status);
 
     List<MerchantEntity> getMerchantList(Map<String, Object> params);
+    List<MerchantDTO> getListByOn();
 }

@@ -84,6 +84,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public List<MerchantDTO> getListByOn() {
+        return baseDao.getListByOn();
+    }
+
+    @Override
     public PageData<MerchantDTO> queryPage(Map<String, Object> params) {
 //        IPage<MerchantEntity> page = baseDao.selectPage(
 //                getPage(params, null, false),

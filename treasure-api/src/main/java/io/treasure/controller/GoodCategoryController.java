@@ -48,7 +48,7 @@ public class GoodCategoryController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String"),
             @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params){
@@ -65,7 +65,7 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "2", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String"),
             @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodCategoryDTO>> pageOff(@ApiIgnore @RequestParam Map<String, Object> params){
@@ -117,9 +117,9 @@ public class GoodCategoryController {
         ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
         GoodCategoryDTO cate= goodCategoryService.get(dto.getId());
-        System.out.println(!cate.getName().equals(dto.getName()));
-        System.out.println(cate.getMerchantId()==dto.getMerchantId());
-        System.out.println(cate.getMerchantId()+"==="+dto.getMerchantId());
+        if(null==cate){
+            return new Result().error("无法获取分类信息！");
+        }
         if(!cate.getName().equals(dto.getName()) && cate.getMerchantId()==dto.getMerchantId()){
             //同一个商户，分类不能同名
              List flag= goodCategoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
@@ -137,6 +137,7 @@ public class GoodCategoryController {
         category.setUpdater(dto.getCreator());
         category.setSort(dto.getSort());
         category.setId(dto.getId());
+        category.setShowInCommend(dto.getShowInCommend());
         goodCategoryService.updateById(category);
         return new Result();
     }
@@ -160,6 +161,8 @@ public class GoodCategoryController {
                 }else{
                     return new Result().error("请关闭店铺后，在进行下架操作！");
                 }
+            }else{
+                return new Result().error("删除失败！");
             }
         }else{
             return new Result().error("没有获取到分类的商户!");
