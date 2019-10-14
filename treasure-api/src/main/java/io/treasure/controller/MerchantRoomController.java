@@ -164,6 +164,23 @@ public class MerchantRoomController {
     @Login
     @PostMapping
     @ApiOperation("保存")
+    public Result insert(@RequestBody MerchantRoomDTO dto){
+        //根据商户和名称判断是否存在
+        List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+        if(null!=roomList && roomList.size()>0){
+            return new Result().error("名称已经存在！");
+        }
+        //效验数据
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
+        dto.setStatus(Common.STATUS_ON.getStatus());
+        dto.setCreateDate(new Date());
+        merchantRoomService.save(dto);
+        return new Result();
+    }
+    @CrossOrigin
+    @Login
+    @PostMapping("save")
+    @ApiOperation("保存")
     public Result save(@RequestBody MerchantRoomDTO dto){
         //根据商户和名称判断是否存在
         List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
@@ -180,6 +197,33 @@ public class MerchantRoomController {
     @CrossOrigin
     @Login
     @PutMapping
+    @ApiOperation("修改")
+    public Result updateSave(@RequestBody MerchantRoomDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto, UpdateGroup.class);
+        MerchantRoomDTO data=merchantRoomService.get(dto.getId());
+        long merchantIdOld=data.getMerchantId();
+        long merchantId=dto.getMerchantId();
+        if(!data.getName().equals(dto.getName())){
+            //根据商户和名称判断是否存在
+            List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+            if(null!=roomList && roomList.size()>0){
+                return new Result().error("名称已经存在！");
+            }
+        }else if(merchantIdOld!=merchantId){
+            //根据商户和名称判断是否存在
+            List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
+            if(null!=roomList && roomList.size()>0){
+                return new Result().error("名称已经存在！");
+            }
+        }
+        dto.setUpdateDate(new Date());
+        merchantRoomService.update(dto);
+        return new Result();
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("update")
     @ApiOperation("修改")
     public Result update(@RequestBody MerchantRoomDTO dto){
         //效验数据
