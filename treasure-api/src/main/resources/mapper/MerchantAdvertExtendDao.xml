@@ -16,6 +16,20 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
-
+    <select id="listPage" resultType="io.treasure.dto.MerchantAdvertExtendDTO">
+        select advert.*,merchant.name merchantName
+        from ct_merchant_advert_extend advert
+        left join ct_merchant merchant on merchant.id=advert.merchant_id
+        where 1=1
+        <if test="status != null">
+            and advert.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and advert.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 
 </mapper>

@@ -60,6 +60,7 @@ public class MerchantAdvertExtendDTO implements Serializable {
 	@ApiModelProperty(value = "修改者")
 	@NotNull(message = "修改者不能为空",groups= UpdateGroup.class)
 	private Long updater;
-
+	@ApiModelProperty(value="店铺名称")
+	private String merchantName;
 
 }
