@@ -19,7 +19,7 @@ public interface RefundOrderDao extends BaseDao<RefundOrderEntity> {
 
     void updateRefundId(@Param("refundId") String refundId, @Param("orderId") String orderId,@Param("goodId")  Long goodId);
 
-    List<RefundOrderEntity> getRefundOrderByMerchantId(Map<String, Object> params);
+    List<RefundOrderDTO> getRefundOrderByMerchantId(Map<String, Object> params);
 
     void updateDispose(@Param("dispose") int dispose,@Param("orderId") String orderId,@Param("goodId") Long goodId);
 }
