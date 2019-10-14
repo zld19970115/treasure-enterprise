@@ -90,6 +90,9 @@
             from ct_merchant_room room
             left join ct_merchant merchant on merchant.id=room.merchant_id
             where 1=1
+            <if test="type != null">
+                and room.type=#{type}
+            </if>
             <if test="status != null">
                 and room.status = #{status}
             </if>
