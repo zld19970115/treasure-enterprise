@@ -397,7 +397,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //查询出是否存在与主单相关联的包房订单
         if(masterOrderEntity.getRoomId()==null && masterOrderEntity.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-            if(roomOrderByPorderId!=null){
+            //判断存在关联包房订单，并且包房状态为未支付
+            if(roomOrderByPorderId!=null&&roomOrderByPorderId.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
                 MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(roomOrderByPorderId.getRoomId());
                 orderDTO.setMerchantRoomEntity(merchantRoomEntity);
                 MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
