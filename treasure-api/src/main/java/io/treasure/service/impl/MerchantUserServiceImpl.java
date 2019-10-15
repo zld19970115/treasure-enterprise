@@ -100,6 +100,11 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.updateWeixin(openid,weixinname,weixinurl,id);
     }
 
+    @Override
+    public void updateMerchant(String merchantId, long id) {
+        baseDao.updateMerchant(merchantId,id);
+    }
+
     /**
      * 删除
      * @param id

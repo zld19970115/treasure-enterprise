@@ -362,5 +362,21 @@ public class MerchantUserController {
             return new Result().error("无法获取店铺信息");
         }
     }
-
+    /**
+     * 设置店铺
+     * @param merchantId
+     * @param  id
+     * @return
+     */
+    @Login
+    @PutMapping("updateMerchant")
+    @ApiOperation("设置店铺")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="merchantId",value="店铺id",required=true,paramType="query",dataType = "String"),
+            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query",dataType = "long")
+    })
+    public Result  updateMerchant(@RequestParam String merchantId,@RequestParam long id){
+        merchantUserService.updateMerchant(merchantId,id);
+        return new Result();
+    }
 }
