@@ -1,14 +1,20 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantActivityDao;
 import io.treasure.dto.MerchantActivityDTO;
+import io.treasure.dto.MerchantAdvertExtendDTO;
 import io.treasure.entity.MerchantActivityEntity;
+import io.treasure.entity.MerchantAdvertExtendEntity;
 import io.treasure.service.MerchantActivityService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,5 +47,19 @@ public class MerchantActivityServiceImpl extends CrudServiceImpl<MerchantActivit
     @Override
     public void remove(Long id,int status) {
         baseDao.updateStatusById(id,status);
+    }
+
+    @Override
+    public PageData<MerchantActivityDTO> listPage(Map<String, Object> params) {
+        IPage<MerchantActivityEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<MerchantActivityDTO> list=baseDao.listPage(params);
+        return getPageData(list,pages.getTotal(), MerchantActivityDTO.class);
     }
 }

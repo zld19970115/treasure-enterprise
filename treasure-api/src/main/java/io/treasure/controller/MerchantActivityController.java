@@ -43,6 +43,7 @@ import java.util.Map;
 public class MerchantActivityController {
     @Autowired
     private MerchantActivityService merchantActivityService;
+    @CrossOrigin
     @Login
     @GetMapping("page")
     @ApiOperation("列表")
@@ -55,9 +56,10 @@ public class MerchantActivityController {
     })
     public Result<PageData<MerchantActivityDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Common.STATUS_ON.getStatus()+"");
-        PageData<MerchantActivityDTO> page = merchantActivityService.page(params);
+        PageData<MerchantActivityDTO> page = merchantActivityService.listPage(params);
         return new Result<PageData<MerchantActivityDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getById")
     @ApiOperation("信息")
@@ -68,6 +70,7 @@ public class MerchantActivityController {
         MerchantActivityDTO data = merchantActivityService.get(id);
         return new Result<MerchantActivityDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -86,6 +89,7 @@ public class MerchantActivityController {
         merchantActivityService.insert(entity);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
@@ -105,6 +109,7 @@ public class MerchantActivityController {
         merchantActivityService.updateById(entity);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping("delete")
     @ApiOperation("删除")

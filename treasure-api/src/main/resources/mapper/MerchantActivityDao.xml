@@ -19,6 +19,24 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
+
+    <select id="listPage" resultType="io.treasure.dto.MerchantActivityDTO">
+        select activity.*,merchant.name merchantName
+        from ct_merchant_activity activity
+        left join ct_merchant merchant on merchant.id=activity.merchant_id
+        where 1=1
+        <if test="status != null">
+            and activity.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and activity.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant_activity set status=#{status} where id=#{id}
     </update>
