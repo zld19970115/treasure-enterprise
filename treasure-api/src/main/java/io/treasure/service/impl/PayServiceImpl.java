@@ -166,7 +166,9 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
-        merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
+        if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getRoomId()!=null){
+            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
+        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
