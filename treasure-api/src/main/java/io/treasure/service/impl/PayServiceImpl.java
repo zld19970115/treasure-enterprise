@@ -52,8 +52,12 @@ public class PayServiceImpl implements PayService {
     MasterOrderService masterOrderService;
 
     @Autowired
-    SlaveOrderService slaveOrderService;
+    ClientUserServiceImpl clientUserService;
 
+    @Autowired
+    SlaveOrderService slaveOrderService;
+    @Autowired
+    private RecordGiftServiceImpl recordGiftService;
     @Autowired
     private AlipayClient alipayClient;
 
@@ -145,7 +149,20 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
+        Long creator = masterOrderEntity.getCreator();
 
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+        BigDecimal a = new BigDecimal(0);
+        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+            a = a.add(slaveOrderEntity.getFreeGold());
+        }
+        ClientUserEntity clientUserEntity = clientUserService.selectById(creator);
+        BigDecimal gift = clientUserEntity.getGift();
+        gift=gift.subtract(a);
+        clientUserEntity.setGift(gift);
+        clientUserService.updateById(clientUserEntity);
+        Date date = new Date();
+        recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;

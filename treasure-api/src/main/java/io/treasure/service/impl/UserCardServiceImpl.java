@@ -3,6 +3,7 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.UserCardDao;
 import io.treasure.dto.CardInfoDTO;
 import io.treasure.entity.CardInfoEntity;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ import java.util.Map;
 public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEntity, CardInfoDTO> implements UserCardService {
     @Autowired
     private ClientUserServiceImpl clientUserService;
+    @Autowired
+    private RecordGiftServiceImpl recordGiftService;
     @Override
     public QueryWrapper<CardInfoEntity> getWrapper(Map<String, Object> params) {
         return null;
@@ -55,11 +59,14 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getGift());
         clientUserEntity.setGift(money);
         clientUserService.updateById(clientUserEntity);
+
         Date date = new Date();
         cardInfoEntity.setStatus(3);
         cardInfoEntity.setBindCardDate(date);
         cardInfoEntity.setBindCardUser(userId);
         baseDao.updateById(cardInfoEntity);
+
+        recordGiftService.insertRecordGift(userId,date,clientUserEntity.getGift(),cardInfoEntity.getMoney());
 
         return new Result().ok("充值成功");
     }
