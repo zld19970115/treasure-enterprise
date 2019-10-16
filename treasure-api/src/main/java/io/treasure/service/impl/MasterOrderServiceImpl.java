@@ -958,7 +958,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result caleclUpdate(long id, long verify, Date date, String verify_reason) {
         MasterOrderDTO dto = get(id);
         int status = dto.getStatus();
-        if (status == Constants.OrderStatus.NOPAYORDER.getValue()) {
+        if (status == Constants.OrderStatus.NOPAYORDER.getValue()||dto.getPOrderId()!=null) {
             int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
