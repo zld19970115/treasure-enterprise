@@ -76,6 +76,9 @@ public class PayServiceImpl implements PayService {
     @Autowired
     private RefundOrderService refundOrderService;
 
+    @Autowired
+    private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
@@ -163,6 +166,9 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
+        if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getRoomId()!=null){
+            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
+        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;

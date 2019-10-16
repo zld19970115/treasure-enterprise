@@ -59,7 +59,7 @@
     </select>
     <update id="updateStatusAndReason" parameterType="io.treasure.entity.MerchantEntity">
         update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
-        refund_date=#{refundDate} where id=#{id}
+        refund_date=#{refundDate},check_status=1 where id=#{id}
     </update>
 
     <select id="getOrderByOrderId" parameterType="map" resultType="io.treasure.dto.MasterOrderDTO">
