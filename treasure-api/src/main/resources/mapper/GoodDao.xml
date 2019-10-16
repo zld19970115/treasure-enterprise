@@ -34,6 +34,21 @@
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
     </select>
+    <select id="listPage" resultType="io.treasure.dto.GoodDTO">
+        select goods.*,merchant.name merchantName
+        from ct_good goods
+        left join ct_merchant merchant on merchant.id=goods.mart_id
+        where 1=1
+        <if test="status != null">
+            and goods.status = #{status}
+        </if>
+        <if test="mart_id != null">
+            and goods.mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}
     </update>

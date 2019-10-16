@@ -1,10 +1,15 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantRoomParamsDTO;
 import io.treasure.entity.GoodEntity;
+import io.treasure.entity.MerchantRoomParamsEntity;
 import io.treasure.service.GoodService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,6 +52,21 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     @Override
     public List getByNameAndMerchantId(String name, long martId) {
         return baseDao.getByNameAndMerchantId(name,martId);
+    }
+
+    @Override
+    public PageData<GoodDTO> listPage(Map<String, Object> params) {
+        IPage<GoodEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        params.put("mart_id",merchantId);
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("mart_id",null);
+        }
+        List<GoodDTO> list=baseDao.listPage(params);
+        return getPageData(list,pages.getTotal(), GoodDTO.class);
     }
 
     /**

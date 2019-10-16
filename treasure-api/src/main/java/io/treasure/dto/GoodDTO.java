@@ -97,4 +97,7 @@ public class GoodDTO implements Serializable {
 	private Integer status;
 	@ApiModelProperty(value = "数量")
 	private Integer number;
+
+	@ApiModelProperty(value = "店铺名称")
+	private String merchantName;
 }

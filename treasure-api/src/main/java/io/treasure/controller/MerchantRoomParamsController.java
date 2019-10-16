@@ -35,6 +35,7 @@ import java.util.Map;
 public class MerchantRoomParamsController {
     @Autowired
     private MerchantRoomParamsService merchantRoomParamsService;
+    @CrossOrigin
     @Login
     @GetMapping("page")
     @ApiOperation("列表")
@@ -51,6 +52,7 @@ public class MerchantRoomParamsController {
 
         return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("allPage")
     @ApiOperation("不根据商户查询列表")
@@ -65,6 +67,7 @@ public class MerchantRoomParamsController {
 
         return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getInfoById")
     @ApiOperation("信息")
@@ -76,6 +79,7 @@ public class MerchantRoomParamsController {
 
         return new Result<MerchantRoomParamsDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -91,6 +95,7 @@ public class MerchantRoomParamsController {
         merchantRoomParamsService.save(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
@@ -106,6 +111,7 @@ public class MerchantRoomParamsController {
         merchantRoomParamsService.update(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")

@@ -1,11 +1,14 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantRoomParamsDTO;
 import io.treasure.entity.GoodEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品表
@@ -15,6 +18,7 @@ import java.util.List;
  */
 @Mapper
 public interface GoodDao extends BaseDao<GoodEntity> {
+    List<GoodDTO> listPage(Map<String,Object> params);
     //根据菜品名称和商户id
     List getByNameAndMerchantId(String name,long martId);
     //上架、下架商品
