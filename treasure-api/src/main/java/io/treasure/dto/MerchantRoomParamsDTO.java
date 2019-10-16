@@ -56,5 +56,7 @@ public class MerchantRoomParamsDTO implements Serializable {
 	@NotNull(message = "修改者不能为空",groups = UpdateGroup.class)
 	private Long updater;
 
+	@ApiModelProperty(value = "店铺名称")
+	private String merchantName;
 
 }

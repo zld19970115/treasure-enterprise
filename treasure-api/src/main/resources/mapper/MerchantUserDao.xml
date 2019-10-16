@@ -52,4 +52,7 @@
     <update id="remove" parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set status=9 where id=#{id}
     </update>
+    <update id="updateMerchant"   parameterType="io.treasure.entity.MerchantUserEntity">
+        update ct_merchant_user set merchantid=#{merchantid} where id=#{id}
+    </update>
 </mapper>

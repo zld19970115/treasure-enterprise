@@ -43,10 +43,11 @@ public class MerchantRoomParamsController {
         @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "queury",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "queury",required = true,dataType = "String")
     })
     public Result<PageData<MerchantRoomParamsDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MerchantRoomParamsDTO> page = merchantRoomParamsService.page(params);
+        params.put("status",Common.STATUS_ON.getStatus()+"");
+        PageData<MerchantRoomParamsDTO> page = merchantRoomParamsService.listPage(params);
 
         return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);
     }

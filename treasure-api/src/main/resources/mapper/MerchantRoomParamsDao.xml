@@ -25,4 +25,19 @@
     <select id="getAllByStatus" parameterType="io.treasure.entity.MerchantRoomParamsEntity" resultType="io.treasure.entity.MerchantRoomParamsEntity">
         select * from  ct_merchant_room_params where  status=#{status}
     </select>
+    <select id="listPage" resultType="io.treasure.dto.MerchantRoomParamsDTO">
+        select room.*,merchant.name merchantName
+        from ct_merchant_room_params room
+        left join ct_merchant merchant on merchant.id=room.merchant_id
+        where 1=1
+        <if test="status != null">
+            and room.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and room.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 </mapper>

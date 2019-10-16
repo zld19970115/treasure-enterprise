@@ -1,9 +1,14 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantRoomParamsDao;
+import io.treasure.dto.MerchantActivityDTO;
 import io.treasure.dto.MerchantRoomParamsDTO;
+import io.treasure.entity.MerchantActivityEntity;
 import io.treasure.entity.MerchantRoomParamsEntity;
 import io.treasure.service.MerchantRoomParamsService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +34,20 @@ public class MerchantRoomParamsServiceImpl extends CrudServiceImpl<MerchantRoomP
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
 
         return wrapper;
+    }
+
+    @Override
+    public PageData<MerchantRoomParamsDTO> listPage(Map<String, Object> params) {
+        IPage<MerchantRoomParamsEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<MerchantRoomParamsDTO> list=baseDao.listPage(params);
+        return getPageData(list,pages.getTotal(), MerchantRoomParamsDTO.class);
     }
 
     /**
