@@ -12,6 +12,7 @@ import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Role;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
@@ -152,8 +153,21 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getMerchantByMobile(mobile);
     }
 
+    @Override
+    public void updateOpenid(String openId, String mobile) {
+        baseDao.updateOpenid(openId,mobile);
+    }
 
 
+    @Override
+    public MerchantUserEntity getUserByPhone(String mobile) {
+        return baseDao.getUserByPhone(mobile);
+    }
+
+    @Override
+    public MerchantUserEntity getUserByOpenId(String openid) {
+        return baseDao.getUserByOpenId(openid);
+    }
 
 
     /**
