@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,4 +33,10 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     List<MerchantDTO> getMerchantByUserId(@Param("id") Long id);
     //根据手机号码查询会员商户信息
     List getMerchantByMobile(String mobile);
+    //更新用户手机号
+    void updateOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
+    //通过手机号查询商户信息
+    MerchantUserEntity getUserByPhone(@Param("mobile") String mobile);
+    //通过openid查询商户管理员信息
+    MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
 }
