@@ -198,7 +198,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 masterOrderEntity.setStatus(status);
                 masterOrderEntity.setCheckStatus(1);
                 masterOrderEntity.setCheckMode(Constants.CheckMode.MERCHANTCHECK.getValue());
-                baseDao.updateStatusAndReason(id,status,verify,verify_date,refundReason);
+                baseDao.updateStatusById(id,status,verify,verify_date,refundReason);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s : slaveOrderEntities) {
                     if (s.getRefundId() == null || s.getRefundId().length() == 0) {
