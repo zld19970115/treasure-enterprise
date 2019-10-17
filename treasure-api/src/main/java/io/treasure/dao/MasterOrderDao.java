@@ -37,4 +37,5 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderDTO getOrderById(long id);
     void updatePayMoney(@Param("money") BigDecimal PayMoney,@Param("orderId") String orderId);
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
+    List<MasterOrderEntity> getOrderByPOrderId(String orderId);
 }

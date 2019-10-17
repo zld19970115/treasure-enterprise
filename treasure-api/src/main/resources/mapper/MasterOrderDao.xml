@@ -86,4 +86,7 @@
     <select id="getRoomOrderByPorderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  reservation_type=2
     </select>
+    <select id="getOrderByPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where p_order_id = #{orderId} and status  in (2,4,6)
+    </select>
 </mapper>
