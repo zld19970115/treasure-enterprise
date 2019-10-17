@@ -55,4 +55,13 @@
     <update id="updateMerchant"   parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set merchantid=#{merchantid} where id=#{id}
     </update>
+    <update id="updateOpenid" parameterType="io.treasure.entity.MerchantUserEntity">
+        UPDATE `ct_merchant_user` SET `openid` = #{openId} where mobile=#{mobile}
+    </update>
+    <select id="getUserByPhone" resultType="io.treasure.entity.MerchantUserEntity">
+        select * from ct_merchant_user where mobile = #{mobile}
+    </select>
+    <select id="getUserByOpenId"  resultType="io.treasure.entity.MerchantUserEntity">
+        select * from ct_merchant_user where openid=#{openid}
+    </select>
 </mapper>
