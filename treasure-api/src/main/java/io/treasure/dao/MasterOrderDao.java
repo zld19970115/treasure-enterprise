@@ -25,6 +25,7 @@ import java.util.Map;
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //refundReason
     int updateStatusAndReason(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason")  String refundReason);
+    int updateStatusById(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason")  String refundReason);
     //商户端查询
     List<MerchantOrderDTO> listMerchant(Map params);
     MasterOrderEntity selectByOrderId(String orderId);
