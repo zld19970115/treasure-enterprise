@@ -12,8 +12,10 @@ import io.treasure.dto.MerchantUserDTO;
 
 import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
+import io.treasure.entity.TokenEntity;
 import io.treasure.service.MerchantUserService;
 
 import io.treasure.service.TokenService;
@@ -378,5 +380,61 @@ public class MerchantUserController {
     public Result  updateMerchant(@RequestParam String merchantId,@RequestParam long id){
         merchantUserService.updateMerchant(merchantId,id);
         return new Result();
+    }
+
+
+    @GetMapping("estimateMobile")
+    @ApiOperation("商户端-绑定微信-根据mobile查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="mobile",value="用户手机号",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="password",value="密码",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="clientId",value="个推ID",required=true,paramType="query",dataType="String")})
+    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile,String password,String clientId){
+        MerchantUserEntity userByPhone = merchantUserService.getUserByPhone(mobile);
+        MerchantUserEntity user = new MerchantUserEntity();
+        Map<String, Object> map = new HashMap<>();
+        if(userByPhone!=null){
+            TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+            merchantUserService.updateOpenid(openId,mobile);
+            map.put("token",byUserId.getToken());
+            map.put("user",userByPhone);
+        }else {
+            user.setMobile(mobile);
+            user.setCreateDate(new Date());
+            user.setOpenid(openId);
+            user.setPassword(DigestUtils.sha256Hex(password));
+            user.setClientId(clientId);
+            user.setStatus(1);
+            merchantUserService.insert(user);
+            MerchantUserEntity userByPhone1 = merchantUserService.getUserByPhone(mobile);
+            tokenService.createToken(userByPhone1.getId());
+            map.put("user",userByPhone1);
+            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+            map.put("token",byUserId.getToken());
+        }
+        return new Result<Map<String,Object>>().ok(map);
+    }
+
+
+    @GetMapping("estimateOpenId")
+    @ApiOperation("商户端-绑定微信-根据openId查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String")})
+    public Result<Map> estimateOpenId(String openId){
+        MerchantUserEntity userByOpenId = merchantUserService.getUserByOpenId(openId);
+        Map map=new HashMap();
+        boolean c=false;
+        if(userByOpenId==null){
+            c=c;
+            map.put("boolean",c);
+        }else {
+            c=true;
+            TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
+            map.put("boolean",c);
+            map.put("user",userByOpenId);
+            map.put("token",byUserId.getToken());
+        }
+        return new Result<Map>().ok(map);
     }
 }
