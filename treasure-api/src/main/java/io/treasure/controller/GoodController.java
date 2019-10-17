@@ -81,8 +81,12 @@ public class GoodController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result<GoodDTO> get(Long id){
-        GoodDTO data = goodService.get(id);
-        return new Result<GoodDTO>().ok(data);
+        if(id>0){
+            GoodDTO data = goodService.getByInfo(id);
+            return new Result<GoodDTO>().ok(data);
+        }else{
+            return new Result<GoodDTO>().error(null);
+        }
     }
     @CrossOrigin
     @Login

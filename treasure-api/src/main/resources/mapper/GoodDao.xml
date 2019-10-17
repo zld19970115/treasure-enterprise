@@ -49,6 +49,16 @@
             </foreach>
         </if>
     </select>
+
+    <select id="getByInfo" resultType="io.treasure.dto.GoodDTO">
+        select goods.*,merchant.name merchantName,cate.name categoryName
+        from ct_good goods
+        left join ct_merchant merchant on merchant.id=goods.mart_id
+        left join ct_good_category cate on cate.id=goods.good_category_id
+        where 1=1 and goods.id=#{id}
+
+    </select>
+
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}
     </update>

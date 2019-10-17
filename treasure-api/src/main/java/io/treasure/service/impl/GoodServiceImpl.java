@@ -98,4 +98,14 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     public void remove(long id, int status) {
         baseDao.updateStatusById(id,status);
     }
+
+    /**
+     * 根据id查询
+     * @param id
+     * @return
+     */
+    @Override
+    public GoodDTO getByInfo(long id) {
+        return baseDao.getByInfo(id);
+    }
 }

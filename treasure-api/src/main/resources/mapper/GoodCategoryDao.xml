@@ -33,6 +33,15 @@
     <select id="getAllByMerchantId" parameterType="io.treasure.entity.GoodCategoryEntity" resultType="java.util.Map">
         select * from ct_good_category  where merchant_id=#{merchantId}  and status=1 order by id desc
     </select>
+    <select id="getAllByMerchantIds" resultType="io.treasure.dto.GoodCategoryDTO" parameterType="java.util.Map">
+        select * from ct_good_category
+        where 1=1
+        <if test=" merchantId != null and merchantId.trim() != ''">
+            and find_in_set(merchant_id,#{merchantId})
+        </if>
+        and status=1
+        order by id desc
+    </select>
     <select id="listPage" resultType="io.treasure.dto.GoodCategoryDTO">
         select cate.*,m.name merchantName from ct_good_category cate
         left join  ct_merchant m on cate.merchant_id=m.id

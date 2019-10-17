@@ -7,14 +7,17 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodCategoryDao;
 import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.GoodCategoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +61,11 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
     @Override
     public List getAllByMerchantId(long merchantId) {
         return baseDao.getAllByMerchantId(merchantId);
+    }
+
+    @Override
+    public List<GoodCategoryDTO> getAllByMerchantIds(Map<String,Object> params) {
+        return baseDao.getAllByMerchantIds(params);
     }
 
     /**

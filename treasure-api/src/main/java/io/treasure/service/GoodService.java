@@ -26,5 +26,7 @@ public interface GoodService extends CrudService<GoodEntity, GoodDTO> {
     void off(long id,int status);
     //删除
     void remove(long id,int status);
+    //根据id查询
+    GoodDTO getByInfo(long id);
 
 }
