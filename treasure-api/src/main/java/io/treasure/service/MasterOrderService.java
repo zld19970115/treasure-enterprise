@@ -100,4 +100,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
 
     Result orderFoodByRoom(OrderDTO dto,List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId);
+
+    List<MasterOrderEntity> getOrderByPOrderId(String orderId);
 }
