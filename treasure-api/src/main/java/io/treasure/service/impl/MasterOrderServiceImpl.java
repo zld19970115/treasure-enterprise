@@ -242,41 +242,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
-                //主单退款
+                //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-//                if (result1.success()) {
-//                    boolean b = (boolean) result1.getData();
-//                    if (!b) {
-//                        return new Result().error("支付失败！");
-//                    }
-//                } else {
-//                    return new Result().error(result1.getMsg());
-//                }
-                //查询出所有状态为246的从单做退款处理
-                List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(dto.getOrderId());
-                for (MasterOrderEntity  s:orderByPOrderId) {
-                    baseDao.updateStatusAndReason(s.getId(), status, verify, verify_date, refundReason);
-//                     判断从单如果为只定房并且porderid不为空就不做退款处理，
-//                     因为此单是先定菜后定的房，没有房子押金不需要把房押金退回
-                    if(s.getReservationType()!=2&&s.getPOrderId()!=null){
-                        Result result2 = payService.refundByOrder(s.getOrderId(), s.getPayMoney().toString());
-//                        if (result2.success()) {
-//                            boolean b = (boolean) result2.getData();
-//                            if (!b) {
-//                                return new Result().error("支付失败！");
-//                            }
-//                        } else {
-//                            return new Result().error(result2.getMsg());
-//                        }
-//                        根据orderid查询出从单菜品信息
-                        List<SlaveOrderEntity> slaveOrderEntitiess = slaveOrderService.selectByOrderId(s.getOrderId());
-//                        更新从单菜品状态
-                        for (SlaveOrderEntity ss : slaveOrderEntitiess) {
-                            if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                                slaveOrderService.updateSlaveOrderStatus(status, ss.getOrderId(), ss.getGoodId());
-                            }
-                        }
+                if (result1.success()) {
+                    boolean b = (boolean) result1.getData();
+                    if (!b) {
+                        return new Result().error("支付失败！");
                     }
+                } else {
+                    return new Result().error(result1.getMsg());
                 }
             } else {
                 return new Result().error("无法退款！");
