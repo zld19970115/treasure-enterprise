@@ -95,7 +95,7 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
-        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage2(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
     @CrossOrigin

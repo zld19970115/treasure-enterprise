@@ -39,8 +39,7 @@
         select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
-        where 1=1
-        and p_order_id = 0
+        where masterOrder.p_order_id = 0
         <if test="status != null">
             and masterOrder.status in
             <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">
@@ -92,5 +91,23 @@
     </select>
     <select id="getOrderByPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} and status  in (2,4,6)
+    </select>
+    <select id="listMerchant2" parameterType="Map" resultType="io.treasure.dto.MerchantOrderDTO">
+        select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
+        left join ct_merchant_room room on masterOrder.room_id=room.id
+        left join ct_client_user cuser on masterOrder.creator=cuser.id
+        where 1=1
+        <if test="status != null">
+            and masterOrder.status in
+            <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="merchantId != null">
+            and masterOrder.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
 </mapper>

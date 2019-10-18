@@ -632,9 +632,49 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             params.put("merchantId",null);
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal a = orderDTO.getPayMoney();
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                a = a.add(orderEntity.getPayMoney());
+            }
+            orderDTO.setPayMoney(a);
+        }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
-
+    /**
+     * 商户端订单预约列表查询
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public PageData<MerchantOrderDTO> listMerchantPage2(Map<String, Object> params) {
+        //int count= baseDao.selectCount(getWrapper(params));
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        String status = params.get("status").toString();
+        if (StringUtils.isNotBlank(status)) {
+            String[] str = status.split(",");
+            params.put("statusStr", str);
+        }
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<MerchantOrderDTO> list = baseDao.listMerchant2(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal a = orderDTO.getPayMoney();
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                a = a.add(orderEntity.getPayMoney());
+            }
+            orderDTO.setPayMoney(a);
+        }
+        return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
     @Override
     public Result updateByCheck(Long id) {
         Result result = new Result();
