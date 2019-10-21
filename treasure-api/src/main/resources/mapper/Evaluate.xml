@@ -51,4 +51,11 @@
 
         select * from ct_evaluate where mart_id = #{merchantId} and status = 1;
     </select>
+    <select id="selectEvaluateDTO" resultType="io.treasure.dto.EvaluateDTO">
+SELECT* FROM ct_evaluate
+
+    </select>
+    <select id="selectMerchantEntity" resultType="io.treasure.entity.MerchantEntity">
+        select * from  ct_merchant where id= #{martId}
+    </select>
 </mapper>

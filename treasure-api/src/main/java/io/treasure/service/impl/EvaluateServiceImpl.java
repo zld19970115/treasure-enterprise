@@ -2,10 +2,16 @@ package io.treasure.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.EvaluateDao;
 import io.treasure.dto.EvaluateDTO;
+import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.EvaluateEntity;
+import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.EvaluateService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -78,6 +84,18 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
     @Override
     public List<EvaluateEntity> selectByMerchantId(long merchantId) {
         return baseDao.selectByMerchantId(merchantId);
+    }
+
+    @Override
+    public PageData<EvaluateDTO> selectEvaluateDTO(Map<String, Object> params) {
+        IPage<EvaluateEntity> pages=getPage(params, null,false);
+        List<EvaluateDTO> list=baseDao.selectEvaluateDTO(params);
+        for (EvaluateDTO dto : list) {
+            MerchantEntity merchantEntity = baseDao.selectMerchantEntity(dto.getMartId());
+            dto.setMerchantInfo(merchantEntity);
+        }
+
+        return getPageData(list,pages.getTotal(), EvaluateDTO.class);
     }
 
 
