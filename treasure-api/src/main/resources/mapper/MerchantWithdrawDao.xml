@@ -44,6 +44,23 @@
     <select id="selectOrderByMartID" resultType="io.treasure.entity.MasterOrderEntity">
         select * from  ct_master_order where  merchant_id = #{martId}
     </select>
-
+    <select id="listPage" resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select draw.*,merchant.name merchantName
+        from ct_merchant_withdraw draw
+        left join ct_merchant merchant on merchant.id=draw.merchant_id
+        where 1=1
+        <if test="status != null">
+            and draw.status = #{status}
+        </if>
+        <if test="verifyState != null">
+            and draw.verify_state = #{verifyState}
+        </if>
+        <if test="merchantId != null">
+            and draw.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 
 </mapper>

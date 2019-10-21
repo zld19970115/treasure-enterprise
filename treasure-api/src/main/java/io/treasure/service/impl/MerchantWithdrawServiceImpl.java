@@ -1,9 +1,14 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantWithdrawDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
@@ -66,6 +71,25 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     @Override
     public Double selectAlreadyCash(long martId) {
         return baseDao.selectAlreadyCash(martId);
+    }
+
+    /**
+     * 列表查询
+     * @param params
+     * @return
+     */
+    @Override
+    public PageData<MerchantWithdrawDTO> listPage(Map<String, Object> params) {
+        IPage<MerchantWithdrawEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<MerchantWithdrawDTO> list=baseDao.listPage(params);
+        return getPageData(list,pages.getTotal(), MerchantWithdrawDTO.class);
     }
 
     @Override

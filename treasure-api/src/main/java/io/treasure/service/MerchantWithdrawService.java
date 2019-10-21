@@ -1,12 +1,15 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
+import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 提现表
@@ -22,6 +25,6 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     Double selectByMartId(long  martId);
     MerchantWithdrawEntity selectPoByMartID(long  martId);
     Double selectAlreadyCash(long  martId);
-
+    PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);
     List<MasterOrderEntity> selectOrderByMartID(long  martId);
 }

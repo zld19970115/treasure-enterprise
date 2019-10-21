@@ -78,8 +78,9 @@ public class MerchantController {
             for(int i=0;i<cateIds.length;i++){
                 cateId.add(Long.parseLong(cateIds[i]));
             }
+            data.setCategoryList(categoryService.getListById(cateId));
         }
-        data.setCategoryList(categoryService.getListById(cateId));
+
         //查询二级分类
         String categoryTwoId=data.getCategoryidtwo();
         List<Long> cateTwoId=new ArrayList<Long>();
@@ -88,8 +89,9 @@ public class MerchantController {
             for(int i=0;i<cateIds.length;i++){
                 cateTwoId.add(Long.parseLong(cateIds[i]));
             }
+            data.setCategoryTwoList(categoryService.getListById(cateTwoId));
         }
-        data.setCategoryTwoList(categoryService.getListById(cateTwoId));
+
         return new Result<MerchantDTO>().ok(data);
     }
     @CrossOrigin

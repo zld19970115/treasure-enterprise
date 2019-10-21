@@ -21,9 +21,13 @@
     </resultMap>
 
     <select id="getListById" parameterType="java.util.List"   resultType="io.treasure.entity.CategoryEntity">
-        select * from ct_category where
-        <foreach collection="list" item="item" index="index" separator="OR">
-            id=#{item}
-        </foreach>
+        select * from ct_category where 1=1
+        <if test="list!=null">
+            and
+            <foreach collection="list" item="item" index="index" separator="OR">
+                id=#{item}
+            </foreach>
+        </if>
+
     </select>
 </mapper>

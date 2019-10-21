@@ -71,12 +71,12 @@ public class MerchantWithdrawController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantWithdrawDTO>> agreePage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Common.STATUS_ON.getStatus()+"");
         params.put("verifyState", WithdrawEnm.STATUS_AGREE_YES.getStatus()+"");
-        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
     @Login
@@ -87,12 +87,28 @@ public class MerchantWithdrawController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "long")
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String")
     })
     public Result<PageData<MerchantWithdrawDTO>> agreeNoPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Common.STATUS_ON.getStatus()+"");
         params.put("verifyState", WithdrawEnm.STATUS_AGREE_NO.getStatus()+"");
-        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
+        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    }
+    @Login
+    @GetMapping("applPage")
+    @ApiOperation("拒绝提现列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String")
+    })
+    public Result<PageData<MerchantWithdrawDTO>> applPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        params.put("verifyState", WithdrawEnm.STATUS_NO.getStatus()+"");
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
     @Login

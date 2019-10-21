@@ -67,6 +67,6 @@ public class MerchantWithdrawDTO implements Serializable {
 
 	@ApiModelProperty(value = "审核意见")
 	private String verifyReason;
-
-
+	@ApiModelProperty(value = "商户名称")
+	private String merchantName;
 }
