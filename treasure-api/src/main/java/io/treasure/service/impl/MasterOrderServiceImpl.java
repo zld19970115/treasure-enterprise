@@ -247,7 +247,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if (result1.success()) {
                     boolean b = (boolean) result1.getData();
                     if (!b) {
-                        return new Result().error("支付失败！");
+                        return new Result().error("退款失败！");
                     }
                 } else {
                     return new Result().error(result1.getMsg());

@@ -472,7 +472,7 @@ public class PayServiceImpl implements PayService {
         }
 
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-        masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+        masterOrderEntity.setPayMode(Constants.PayMode.ALIPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
