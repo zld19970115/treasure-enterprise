@@ -18,4 +18,5 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     ClientUserEntity getUserByPhone(String mobile);
     ClientUserEntity getUserByOpenId(String openId);
     void updateOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
+    void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
 }
