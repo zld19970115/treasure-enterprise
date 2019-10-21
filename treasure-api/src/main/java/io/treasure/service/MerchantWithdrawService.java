@@ -8,6 +8,7 @@ import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,4 +28,6 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     Double selectAlreadyCash(long  martId);
     PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);
     List<MasterOrderEntity> selectOrderByMartID(long  martId);
+    //提现操作
+    void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate);
 }

@@ -47,6 +47,7 @@ public class MerchantWithdrawController {
     private MerchantWithdrawService merchantWithdrawService;
     @Autowired
     private MerchantServiceImpl merchantService;
+    @CrossOrigin
     @Login
     @GetMapping("allPage")
     @ApiOperation("全部列表")
@@ -63,6 +64,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.page(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("agreePage")
     @ApiOperation("同意提现列表")
@@ -79,6 +81,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("agreeNoPage")
     @ApiOperation("拒绝提现列表")
@@ -95,6 +98,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("applPage")
     @ApiOperation("拒绝提现列表")
@@ -111,6 +115,7 @@ public class MerchantWithdrawController {
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.listPage(params);
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getInfo")
     @ApiOperation("详细信息")
@@ -121,6 +126,7 @@ public class MerchantWithdrawController {
         MerchantWithdrawDTO data = merchantWithdrawService.get(id);
         return new Result<MerchantWithdrawDTO>().ok(data);
     }
+
     @Login
     @PostMapping("save")
     @ApiOperation("申请提现")
@@ -135,7 +141,7 @@ public class MerchantWithdrawController {
         merchantWithdrawService.save(dto);
         return new Result();
     }
-
+    @CrossOrigin
     @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")
@@ -148,7 +154,7 @@ public class MerchantWithdrawController {
     }
 
 
-
+    @CrossOrigin
     @Login
     @GetMapping("/selectCath")
     @ApiOperation("查询提现金额")
@@ -210,4 +216,29 @@ public class MerchantWithdrawController {
     }
         return new Result();
 }
+    @CrossOrigin
+    @Login
+    @PutMapping("agreeYes")
+    @ApiOperation("同意提现")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
+    })
+    public Result agreeYes(@RequestParam long id,@RequestParam long verify){
+        merchantWithdrawService.verify(id,verify,WithdrawEnm.STATUS_AGREE_YES.getStatus(),"同意提现",new Date());
+        return new Result().ok("提现成功");
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("agreeNo")
+    @ApiOperation("拒绝提现")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verifyReason", value = "拒绝原因", paramType = "query", required = true, dataType="String"),
+            @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
+    })
+    public Result agreeNo(@RequestParam long id,@RequestParam long verify,@RequestParam String verifyReason){
+        merchantWithdrawService.verify(id,verify,WithdrawEnm.STATUS_AGREE_NO.getStatus(),verifyReason,new Date());
+        return new Result().ok("提现成功");
+    }
 }

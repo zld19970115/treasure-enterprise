@@ -8,6 +8,7 @@ import io.treasure.entity.MerchantWithdrawEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,4 +27,5 @@ public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
     MerchantWithdrawEntity selectPoByMartID(long  martId);
     List<MasterOrderEntity>  selectOrderByMartID(long  martId);
     List<MerchantWithdrawDTO> listPage(Map<String,Object> params);
+    void verify(long id,long verify, int verifyState, String verifyReason, Date verifyDate);
 }

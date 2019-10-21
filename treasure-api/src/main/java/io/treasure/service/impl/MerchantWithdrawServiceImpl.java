@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -95,5 +96,10 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     @Override
     public List<MasterOrderEntity> selectOrderByMartID(long martId) {
         return baseDao.selectOrderByMartID(martId);
+    }
+
+    @Override
+    public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
+        baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);
     }
 }
