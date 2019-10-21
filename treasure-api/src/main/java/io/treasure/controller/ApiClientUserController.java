@@ -179,13 +179,16 @@ public class ApiClientUserController {
 
     @PostMapping("userLogin")
     @ApiOperation("用户登录")
-    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="cid",value="个推ID", required=true, paramType="query",dataType="String")
+    })
+    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto, String cid){
         //表单校验
         ValidatorUtils.validateEntity(dto);
 
         //用户登录
         Map<String, Object> map = clientUserService.login(dto);
-
+        clientUserService.updateCID(cid,dto.getMobile());
         return new Result().ok(map);
     }
 

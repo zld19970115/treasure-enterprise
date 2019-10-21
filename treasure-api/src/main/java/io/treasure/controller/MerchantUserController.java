@@ -125,11 +125,15 @@ public class MerchantUserController {
     @CrossOrigin
     @PostMapping("login")
     @ApiOperation("登录")
-    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="cid",value="个推ID",required=true,paramType="query", dataType="String")
+    })
+    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto,String cid){
         //表单校验
         ValidatorUtils.validateEntity(dto);
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
+        merchantUserService.updateCID(cid,dto.getMobile());
        return new Result().ok(map);
     }
     @Login
