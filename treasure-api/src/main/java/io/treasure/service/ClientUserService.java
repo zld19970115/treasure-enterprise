@@ -4,6 +4,7 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.entity.ClientUserEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 
@@ -26,5 +27,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     ClientUserEntity getUserByOpenId(String openId);
 
     void updateOpenid(String openId,String mobile);
+
+    void updateCID(String clientId,String mobile);
 
 }

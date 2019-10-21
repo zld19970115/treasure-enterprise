@@ -93,4 +93,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         baseDao.updateOpenid(openId,mobile);
     }
 
+    @Override
+    public void updateCID(String clientId, String mobile) {
+        baseDao.updateCID(clientId,mobile);
+    }
+
 }

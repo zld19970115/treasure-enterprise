@@ -169,6 +169,11 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getUserByOpenId(openid);
     }
 
+    @Override
+    public void updateCID(String clientId, String mobile) {
+        baseDao.updateCID(clientId,mobile);
+    }
+
 
     /**
      * 查询条件
