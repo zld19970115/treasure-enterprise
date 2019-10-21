@@ -64,4 +64,7 @@
     <select id="getUserByOpenId"  resultType="io.treasure.entity.MerchantUserEntity">
         select * from ct_merchant_user where openid=#{openid}
     </select>
+    <update id="updateCID" parameterType="io.treasure.entity.MerchantUserEntity">
+        update ct_merchant_user set client_id=#{clientId} where mobile=#{mobile}
+    </update>
 </mapper>
