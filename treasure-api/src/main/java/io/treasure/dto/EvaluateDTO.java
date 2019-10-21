@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MerchantEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -127,4 +128,6 @@ public class EvaluateDTO implements Serializable {
      */
     @ApiModelProperty(value = "个人栏平均分")
     private double avgUser;
+    @ApiModelProperty(value = "商家信息")
+    private MerchantEntity merchantInfo;
 }

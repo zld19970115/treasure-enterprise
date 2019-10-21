@@ -1,11 +1,15 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.common.page.PageData;
+import io.treasure.dto.EvaluateDTO;
 import io.treasure.entity.EvaluateEntity;
+import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 评价表
@@ -27,4 +31,7 @@ public interface EvaluateDao extends BaseDao<EvaluateEntity> {
     Double selectAvgFlavor(long merchantId);
     Double selectAvgAllScore(long merchantId);
     EvaluateEntity selectByUserIdAndOid(@Param("userId") long userId ,@Param("merchantOrderId")  String merchantOrderId );
+    List<EvaluateDTO> selectEvaluateDTO(Map<String, Object> params);
+    MerchantEntity selectMerchantEntity(long martId);
+
 }
