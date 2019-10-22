@@ -50,7 +50,7 @@
             and cate.name like  CONCAT('%',#{name},'%')
         </if>
         <if test=" merchantId != null and merchantId!='' ">
-            and find_in_set(merchantId,#{merchantId})
+            and find_in_set(merchant_id,#{merchantId})
         </if>
     </select>
 
