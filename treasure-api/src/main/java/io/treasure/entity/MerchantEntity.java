@@ -165,4 +165,8 @@ public class MerchantEntity implements Serializable {
 	 *审核失败原因
 	 */
 	private String reason;
+	/**
+	 *创建者
+	 */
+	private Long creator;
 }
