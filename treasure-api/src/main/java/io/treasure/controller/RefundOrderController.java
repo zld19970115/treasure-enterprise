@@ -51,8 +51,7 @@ public class RefundOrderController {
             @ApiImplicitParam(name = "goodId", value = "商品ID", paramType = "query",required = true, dataType="long")
     })
     public Result agreeToARefund(String orderId,Long goodId ){
-        slaveOrderService.updateSlaveOrderStatus(8,orderId,goodId);
-        refundOrderService.updateDispose(2,orderId,goodId);
+        refundOrderService.agreeToARefund(orderId,goodId);
         return  new Result();
     }
 
@@ -64,8 +63,7 @@ public class RefundOrderController {
             @ApiImplicitParam(name = "goodId", value = "商品ID", paramType = "query",required = true, dataType="long")
     })
     public Result DoNotAgreeToRefund(String orderId,Long goodId ){
-        slaveOrderService.updateSlaveOrderStatus(7,orderId,goodId);
-        refundOrderService.updateDispose(2,orderId,goodId);
+        refundOrderService.DoNotAgreeToRefund(orderId,goodId);
         return  new Result();
     }
 }
