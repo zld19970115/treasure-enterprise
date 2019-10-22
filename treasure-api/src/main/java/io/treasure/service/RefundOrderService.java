@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
+import io.treasure.common.utils.Result;
 import io.treasure.dto.RefundOrderDTO;
 import io.treasure.entity.RefundOrderEntity;
 import org.apache.ibatis.annotations.Param;
@@ -22,4 +23,8 @@ public interface RefundOrderService  extends CrudService<RefundOrderEntity, Refu
     void updateDispose( int dispose,String orderId,Long goodId);
 
     void updateMasterOrderPayMoney(String orderId,Long goodId);
+    //商户同意退款
+    void agreeToARefund(String orderId,Long goodId);
+    //商户拒绝退款
+    void DoNotAgreeToRefund(String orderId,Long goodId);
 }

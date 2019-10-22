@@ -5,17 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.RefundOrderDao;
-import io.treasure.dto.MerchantRoomParamsSetDTO;
-import io.treasure.dto.OrderDTO;
-import io.treasure.dto.RefundOrderDTO;
-import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.RefundOrderEntity;
-import io.treasure.service.MasterOrderService;
-import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.service.RefundOrderService;
-import io.treasure.service.SlaveOrderService;
+import io.treasure.push.AppPushUtil;
+import io.treasure.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +31,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
 
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
+    @Autowired
+    private ClientUserService clientUserService;
 
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
@@ -105,8 +104,34 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         //退菜金额=退菜数量*退菜单价
         BigDecimal  totalRefundMoney=(allGoods.getQuantity().multiply(allGoods.getPrice())).setScale(2,BigDecimal.ROUND_DOWN);
-        masterOrderService.updatePayMoney(totalRefundMoney,orderId);
+        BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
+        masterOrderService.updatePayMoney(newPayMoney,orderId);
 
+    }
+
+    @Override
+    public void agreeToARefund(String orderId, Long goodId) {
+        slaveOrderService.updateSlaveOrderStatus(8,orderId,goodId);
+        baseDao.updateDispose(2,orderId,goodId);
+        this.updateMasterOrderPayMoney(orderId,goodId);
+        OrderDTO order = masterOrderService.getOrder(orderId);
+        ClientUserDTO clientUserDTO = clientUserService.get(order.getMerchantId());
+        String clientId = clientUserDTO.getClientId();
+        if(StringUtils.isNotBlank(clientId)){
+            AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
+        }
+    }
+
+    @Override
+    public void DoNotAgreeToRefund(String orderId, Long goodId) {
+        slaveOrderService.updateSlaveOrderStatus(7,orderId,goodId);
+        baseDao.updateDispose(2,orderId,goodId);
+        OrderDTO order = masterOrderService.getOrder(orderId);
+        ClientUserDTO clientUserDTO = clientUserService.get(order.getMerchantId());
+        String clientId = clientUserDTO.getClientId();
+        if(StringUtils.isNotBlank(clientId)){
+            AppPushUtil.pushToSingleClient("商家不同意退菜", "您的退菜申请未通过", "", clientId);
+        }
     }
 
 
