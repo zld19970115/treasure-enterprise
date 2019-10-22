@@ -73,11 +73,19 @@
    from  ct_merchant_room_params_set curps  left join
   ct_merchant_room  cmr
  on cmr.id=curps.room_id
- where curps. merchant_id=#{merchantId}  and curps.status=#{status}
+ where 1=1
+        <if test="merchantId != null">
+        and curps.merchant_id in
+        <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </if>  and curps.status=#{status}
         <if test="state != null and state.trim() != ''">
  and curps.state = #{state}
         </if>
+        <if test="date != null and date.trim() != ''">
  and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+        </if>
     </select>
     <select id="selectRoomDate" resultType="java.lang.String">
 
