@@ -104,7 +104,7 @@ public class MerchantRoomController {
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String"),
-            @ApiImplicitParam(name="date",value="日期",paramType ="query",required = true,dataType = "String"),
+            @ApiImplicitParam(name="date",value="日期",paramType ="query",dataType = "String"),
             @ApiImplicitParam(name="state",value="使用状态1-已使用0-未使用",paramType ="query",dataType = "int")
     })
     public Result<PageData<MerchantRoomParamsSetDTO>> roomAlreadyPage(@ApiIgnore @RequestParam Map<String, Object> params){
