@@ -20,7 +20,7 @@ import java.util.Map;
 public interface GoodDao extends BaseDao<GoodEntity> {
     List<GoodDTO> listPage(Map<String,Object> params);
     //根据菜品名称和商户id
-    List getByNameAndMerchantId(String name,long martId);
+    List getByNameAndMerchantId(@Param("name") String name,@Param("martId")long martId);
     //上架、下架商品
     void updateStatusById(@Param("id") long id,@Param("status")int status);
     //根据id查询
