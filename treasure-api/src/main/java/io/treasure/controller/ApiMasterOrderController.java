@@ -117,7 +117,7 @@ public class ApiMasterOrderController {
     @CrossOrigin
     @Login
     @GetMapping("ongPage")
-    @ApiOperation("商户端-进行中列表(已接受订单、支付完成订单)")
+    @ApiOperation("商户端-进行中列表(已接受订单)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,

@@ -35,5 +35,19 @@
  ct_user_coupon cuc on cuc.coupon_id=cmc.id
  where cmc.merchant_id=#{arg0}  and cmc.type=1 and cuc.user_id=#{arg1}
     </select>
-
+    <select id="listPage" resultType="io.treasure.dto.MerchantCouponDTO">
+        select cmc.*,merchant.name merchantName
+        from ct_merchant_coupon cmc
+        left join ct_merchant merchant on merchant.id=cmc.merchant_id
+        where 1=1
+        <if test="status != null">
+            and cmc.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and cmc.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 </mapper>

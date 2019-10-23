@@ -1,11 +1,16 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantCouponDao;
 import io.treasure.dto.MerchantCouponDTO;
+import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.entity.MerchantCouponEntity;
+import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.MerchantCouponService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -108,5 +113,19 @@ public class MerchantCouponServiceImpl extends CrudServiceImpl<MerchantCouponDao
             }
         }
         return new Result<MerchantCouponDTO>().ok(mce);
+    }
+
+    @Override
+    public PageData<MerchantCouponDTO> listPage(Map<String, Object> param) {
+        IPage<MerchantCouponEntity> pages=getPage(param, Constant.CREATE_DATE,false);
+        String merchantId=(String)param.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            param.put("merchantIdStr", str);
+        }else{
+            param.put("merchantId",null);
+        }
+        List<MerchantCouponDTO> list=baseDao.listPage(param);
+        return getPageData(list,pages.getTotal(), MerchantCouponDTO.class);
     }
 }

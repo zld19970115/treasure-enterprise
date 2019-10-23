@@ -24,6 +24,15 @@
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantWithdrawEntity">
         update ct_merchant_withdraw set status=#{status} where id=#{id}
     </update>
+    <update id="verify" parameterType="io.treasure.entity.MerchantWithdrawEntity">
+        update ct_merchant_withdraw
+        set verify_state=#{verifyState},
+        verify_reason=#{verifyReason},
+        verify_date=#{verifyDate},
+        verify=#{verify} ,
+        updater=#{verify}
+        where id=#{id}
+    </update>
     <select id="selectTotalCath" resultType="java.math.BigDecimal">
         SELECT SUM(s.pay_money)+SUM(s.free_gold)
         FROM ct_master_order  m
@@ -45,9 +54,10 @@
         select * from  ct_master_order where  merchant_id = #{martId}
     </select>
     <select id="listPage" resultType="io.treasure.dto.MerchantWithdrawDTO">
-        select draw.*,merchant.name merchantName
+        select draw.*,merchant.name merchantName,user.name userName,user.mobile userMobile,user.username  nickName
         from ct_merchant_withdraw draw
         left join ct_merchant merchant on merchant.id=draw.merchant_id
+        left join ct_client_user user on user.id=draw.creator
         where 1=1
         <if test="status != null">
             and draw.status = #{status}

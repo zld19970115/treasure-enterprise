@@ -43,6 +43,7 @@ import java.util.Map;
 public class MerchantCouponController {
     @Autowired
     private MerchantCouponService merchantCouponService;
+    @CrossOrigin
     @Login
     @GetMapping("page")
     @ApiOperation("全部列表")
@@ -55,9 +56,10 @@ public class MerchantCouponController {
     })
     public Result<PageData<MerchantCouponDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_ON.getStatus()+"");
-        PageData<MerchantCouponDTO> page = merchantCouponService.page(params);
+        PageData<MerchantCouponDTO> page = merchantCouponService.listPage(params);
         return new Result<PageData<MerchantCouponDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getInfo")
     @ApiOperation("详细信息")
@@ -68,6 +70,7 @@ public class MerchantCouponController {
         MerchantCouponDTO data = merchantCouponService.get(id);
         return new Result<MerchantCouponDTO>().ok(data);
     }
+    @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -80,6 +83,7 @@ public class MerchantCouponController {
         merchantCouponService.save(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
@@ -92,6 +96,7 @@ public class MerchantCouponController {
         merchantCouponService.update(dto);
         return new Result();
     }
+    @CrossOrigin
     @Login
     @DeleteMapping("remove")
     @ApiOperation("删除")
@@ -108,6 +113,7 @@ public class MerchantCouponController {
      * @param merchantId
      * @return
      */
+    @CrossOrigin
     @Login
     @GetMapping("getMoneyOffByMerchantId")
     @ApiOperation("查询此用户所有满减优惠")

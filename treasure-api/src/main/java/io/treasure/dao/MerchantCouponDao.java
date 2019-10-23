@@ -2,10 +2,12 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MerchantCouponDTO;
+import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.entity.MerchantCouponEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商户端优惠卷
@@ -20,4 +22,6 @@ public interface MerchantCouponDao extends BaseDao<MerchantCouponEntity> {
     MerchantCouponEntity getAllById(Long id);
 
     List<MerchantCouponDTO> getMoneyOffByMerchantId(long merchantId,long userId);
+
+    List<MerchantCouponDTO> listPage(Map<String,Object> param);
 }
