@@ -1237,15 +1237,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public PageData<MasterOrderDTO> getAllMainOrder(Map<String, Object> params) {
+    public PageData<OrderDTO> getAllMainOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
-        List<MasterOrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
+        List<OrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
 
-        for (MasterOrderDTO s:allMainOrder) {
+        for (OrderDTO s:allMainOrder) {
             BigDecimal allpayMoney=new BigDecimal("0");
-            List<MasterOrderDTO> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
+            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
             if(auxiliaryOrderByOrderId!=null) {
-                for (MasterOrderDTO ss : auxiliaryOrderByOrderId) {
+                for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
                 }
             }
@@ -1256,13 +1256,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     s.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
                 allpayMoney=allpayMoney.add(s.getPayMoney());
             }
-            s.setAllpaymoney(allpayMoney);
+            s.setAllpaymoneys(allpayMoney);
+            s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+            s.setSlaveOrder(slaveOrderService.getOrderGoods(s.getOrderId()));
         }
-        return getPageData(allMainOrder,pages.getTotal(), MasterOrderDTO.class);
+        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
 
     @Override
-    public List<MasterOrderDTO> getAuxiliaryOrderByOrderId(String orderId) {
+    public List<MasterOrderEntity> getAuxiliaryOrderByOrderId(String orderId) {
         return baseDao.getAuxiliaryOrderByOrderId(orderId);
     }
 

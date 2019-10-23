@@ -105,9 +105,9 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
 
-    PageData<MasterOrderDTO> getAllMainOrder(Map<String, Object> params);
+    PageData<OrderDTO> getAllMainOrder(Map<String, Object> params);
 
-    List<MasterOrderDTO>getAuxiliaryOrderByOrderId(String orderId);
+    List<MasterOrderEntity>getAuxiliaryOrderByOrderId(String orderId);
 
     List<MasterOrderDTO>getAuxiliaryOrder(Map params);
 
