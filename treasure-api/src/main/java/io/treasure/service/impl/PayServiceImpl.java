@@ -110,6 +110,7 @@ public class PayServiceImpl implements PayService {
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
+        System.out.println(masterOrderEntity);
         masterOrderDao.updateById(masterOrderEntity);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
@@ -128,6 +129,7 @@ public class PayServiceImpl implements PayService {
                     return mapRtn;
                 }
             }
+            System.out.println(slaveOrderEntitys);
         }
 
         MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
