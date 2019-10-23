@@ -583,8 +583,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "orderId", value = "订单ID", paramType = "query",required=true, dataType="String")
     })
-    public Result<PageData<MasterOrderDTO>> getAuxiliaryOrder(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MasterOrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
-        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    public Result<PageData<OrderDTO>> getAuxiliaryOrder(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<OrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
+        return new Result<PageData<OrderDTO>>().ok(page);
     }
 }
