@@ -1302,6 +1302,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
         order.setSlaveOrder(orderGoods);
+        order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+        order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
         return order;
 
     }

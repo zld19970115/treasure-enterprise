@@ -30,4 +30,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     void updateCID(String clientId,String mobile);
 
+    ClientUserEntity getClientUser(Long id);
+
 }

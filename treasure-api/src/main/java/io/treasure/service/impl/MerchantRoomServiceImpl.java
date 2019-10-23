@@ -114,4 +114,9 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     public  List<String> selectRoomDate(long merchantId) {
         return baseDao.selectRoomDate(merchantId);
     }
+
+    @Override
+    public MerchantRoomEntity getmerchantroom(long merchantId) {
+        return baseDao.getmerchantroom(merchantId);
+    }
 }

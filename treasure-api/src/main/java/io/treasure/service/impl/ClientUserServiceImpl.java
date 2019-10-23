@@ -98,4 +98,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         baseDao.updateCID(clientId,mobile);
     }
 
+    @Override
+    public ClientUserEntity getClientUser(Long id) {
+        return baseDao.getClientUser(id);
+    }
+
 }
