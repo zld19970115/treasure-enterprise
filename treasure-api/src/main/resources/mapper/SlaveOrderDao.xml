@@ -36,4 +36,8 @@
     <update id="updateSlaveOrderStatus" parameterType="io.treasure.dto.SlaveOrderDTO">
         UPDATE ct_slave_order SET status=#{status} where order_id=#{orderId} and good_id=#{goodId}
     </update>
+
+    <select id="getOrderGoods" parameterType="io.treasure.dto.SlaveOrderDTO" resultType="io.treasure.entity.SlaveOrderEntity">
+        select * from ct_slave_order where order_id=#{orderId}
+    </select>
 </mapper>
