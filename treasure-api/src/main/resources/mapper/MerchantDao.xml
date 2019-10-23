@@ -64,4 +64,8 @@
             and categoryId = #{categoryId}
         </if>
     </select>
+    <select id="getMerchantById" parameterType="io.treasure.entity.MerchantEntity"
+            resultType="io.treasure.entity.MerchantEntity">
+        select * from ct_merchant where id=#{id}
+    </select>
 </mapper>
