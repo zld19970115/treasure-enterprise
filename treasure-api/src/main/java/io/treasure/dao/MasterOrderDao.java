@@ -1,6 +1,9 @@
 package io.treasure.dao;
+import io.treasure.common.page.PageData;
+import io.treasure.dto.ClientUserCollectDTO;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
+import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 
 import io.treasure.common.dao.BaseDao;
@@ -40,7 +43,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     void updatePayMoney(@Param("money") BigDecimal PayMoney,@Param("orderId") String orderId);
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
-    List<MasterOrderDTO>getAllMainOrder(Map params);
+    List<MasterOrderDTO> getAllMainOrder(Map params);
     List<MasterOrderDTO>getAuxiliaryOrderByOrderId(String orderId);
 
 }
