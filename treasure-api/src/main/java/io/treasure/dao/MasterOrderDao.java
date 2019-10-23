@@ -47,5 +47,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderDTO>getAuxiliaryOrderByOrderId(String orderId);
     List<MasterOrderDTO>getAuxiliaryOrder(Map params);
     MasterOrderDTO getMasterOrder(String orderId);
+    OrderDTO getOrder(String orderId);
 
 }

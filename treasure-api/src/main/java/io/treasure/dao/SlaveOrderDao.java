@@ -1,4 +1,5 @@
 package io.treasure.dao;
+import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.SlaveOrderEntity;
 
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 订单菜品表
@@ -24,4 +26,6 @@ public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
     SlaveOrderDTO getAllGoods(@Param("orderId") String orderId,@Param("goodId") long goodId);
 
     void updateSlaveOrderStatus(@Param("status") int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+
+    List<SlaveOrderEntity> getOrderGoods(String orderId);
 }
