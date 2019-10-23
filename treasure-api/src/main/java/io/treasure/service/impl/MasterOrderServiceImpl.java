@@ -13,6 +13,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.MasterOrderDao;
+import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
@@ -1287,5 +1288,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public MasterOrderDTO getMasterOrder(String orderId) {
         return baseDao.getMasterOrder(orderId);
+    }
+
+    @Override
+    public OrderDTO orderParticulars(String orderId) {
+        OrderDTO order = baseDao.getOrder(orderId);
+        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+        order.setSlaveOrder(orderGoods);
+        return order;
+
     }
 }
