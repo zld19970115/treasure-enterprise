@@ -121,4 +121,7 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "包房/散台信息")
 	private MerchantRoomEntity merchantRoomEntity;
+
+	@ApiModelProperty(value = "主单相关联的所有单的实付金额总和")
+	private BigDecimal allpaymoneys;
 }
