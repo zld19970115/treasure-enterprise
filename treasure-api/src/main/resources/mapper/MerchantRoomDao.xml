@@ -111,4 +111,8 @@
                 </foreach>
             </if>
     </select>
+
+    <select id="getmerchantroom" parameterType="io.treasure.entity.MerchantRoomEntity" resultType="io.treasure.entity.MerchantRoomEntity">
+        select * from ct_merchant_room where id=#{merchantId}
+    </select>
 </mapper>

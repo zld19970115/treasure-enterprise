@@ -49,5 +49,8 @@
     <update id="updateCID" parameterType="io.treasure.entity.ClientUserEntity">
         update ct_client_user set client_id=#{clientId} where mobile = #{mobile}
     </update>
+    <select id="getClientUser" parameterType="io.treasure.entity.ClientUserEntity" resultType="io.treasure.entity.ClientUserEntity">
+        select * from ct_client_user where id=#{id}
+    </select>
 
 </mapper>
