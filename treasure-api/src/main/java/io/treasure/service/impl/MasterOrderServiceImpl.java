@@ -1273,7 +1273,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public PageData<MasterOrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String orderId = params.get("orderId").toString();
+        MasterOrderDTO order = masterOrderService.getMasterOrder(orderId);
         List<MasterOrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
-        return getPageData(allMainOrder,pages.getTotal(), MasterOrderDTO.class);
+        allMainOrder.add(order);
+        long total = pages.getTotal();
+        if(total!=0){
+            total=total+1;
+        }
+        return getPageData(allMainOrder,total, MasterOrderDTO.class);
+    }
+
+    @Override
+    public MasterOrderDTO getMasterOrder(String orderId) {
+        return baseDao.getMasterOrder(orderId);
     }
 }
