@@ -237,27 +237,36 @@ public class PayServiceImpl implements PayService {
             if (goodId != null) {
                 //将退款ID更新到refundOrder表中refund_id
                 refundOrderService.updateRefundId(refundNo, orderNo, goodId);
-
+                System.out.println("11111111111111111111111111111111111111111");
                 //将退款ID更新到订单菜品表中
                 slaveOrderService.updateRefundId(refundNo, orderNo, goodId);
+                System.out.println("222222222222222222222222222222222222222222");
                 BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
                 masterOrderEntity.setPayMoney(bigDecimal);
+                System.out.println(masterOrderEntity);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
+                System.out.println("3333333333333333333333333333333333333333333");
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
+                System.out.println("4444444444444444444444444444444444444444444");
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
+                System.out.println(masterOrderEntity);
                 List<SlaveOrderEntity> slaveOrderEntityList=slaveOrderService.selectByOrderId(orderNo);
+                System.out.println(slaveOrderEntityList);
                 for(int i=0;i<slaveOrderEntityList.size();i++){
                     SlaveOrderEntity slaveOrderEntity=slaveOrderEntityList.get(i);
                     if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
                         slaveOrderEntity.setRefundId(refundNo);
                     }
+                    System.out.println("++++++++++++++++++");
                 }
                 slaveOrderService.updateBatchById(slaveOrderEntityList);
+                System.out.println("5555555555555555555555555555555555555555555555555555555");
                 return result.ok(true);
             }
         }
+        System.out.println(alipayResponse.getCode());
         return result.ok(false);
     }
 
