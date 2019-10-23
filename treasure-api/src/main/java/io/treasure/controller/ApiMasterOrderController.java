@@ -229,10 +229,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<OrderDTO>> allOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<MasterOrderDTO>> allOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("pOrderId","0");
-        PageData<OrderDTO> page = masterOrderService.listPage(params);
-        return new Result<PageData<OrderDTO>>().ok(page);
+        PageData<MasterOrderDTO> page = masterOrderService.getAllMainOrder(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
     }
 
     @Login
