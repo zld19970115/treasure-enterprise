@@ -110,4 +110,21 @@
             </foreach>
         </if>
     </select>
+    <select id="getAllMainOrder" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where creator=#{userId} and p_order_id=0
+    </select>
+    <select id="getAuxiliaryOrderByOrderId" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where p_order_id=#{orderId} and  status IN(2,4,6,10)
+    </select>
+    <select id="getAuxiliaryOrder" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where p_order_id=#{orderId}
+    </select>
+
+    <select id="getMasterOrder" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where order_id=#{orderId}
+    </select>
+    <select id="getOrder" resultType="io.treasure.dto.OrderDTO">
+        select * from ct_master_order where order_id=#{orderId}
+    </select>
+
 </mapper>

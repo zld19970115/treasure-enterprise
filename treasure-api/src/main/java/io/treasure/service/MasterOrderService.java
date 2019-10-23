@@ -104,4 +104,24 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderFoodByRoom(OrderDTO dto,List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId);
 
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
+
+    PageData<MasterOrderDTO> getAllMainOrder(Map<String, Object> params);
+
+    List<MasterOrderDTO>getAuxiliaryOrderByOrderId(String orderId);
+
+    List<MasterOrderDTO>getAuxiliaryOrder(Map params);
+
+    PageData<MasterOrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params);
+
+    MasterOrderDTO getMasterOrder(String orderId);
+    /***
+     *订单详情
+     * @Author: Zhangguanglin
+     * @Description:
+     * @Date: 2019/10/23
+     * @param orderId:
+     * @Return:
+     */
+    OrderDTO orderParticulars(String orderId);
+
 }

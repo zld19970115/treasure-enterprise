@@ -104,5 +104,7 @@ public class MasterOrderDTO implements Serializable {
 	@ApiModelProperty(value = "修改者")
 	private Long updater;
 
+	@ApiModelProperty(value = "主单相关联的所有单的实付金额总和")
+	private BigDecimal allpaymoney;
 
 }

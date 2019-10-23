@@ -1,6 +1,8 @@
 package io.treasure.service;
 
 import io.treasure.common.utils.Result;
+import io.treasure.dao.SlaveOrderDao;
+import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.SlaveOrderEntity;
 
@@ -43,4 +45,7 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
 
 
     Result refundGood(SlaveOrderDTO slaveOrderDTO);
+
+    List<SlaveOrderEntity> getOrderGoods(String orderId);
+
 }

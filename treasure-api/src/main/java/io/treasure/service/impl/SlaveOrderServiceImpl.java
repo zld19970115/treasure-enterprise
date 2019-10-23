@@ -218,6 +218,11 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         return result;
     }
 
+    @Override
+    public List<SlaveOrderEntity> getOrderGoods(String orderId) {
+        return baseDao.getOrderGoods(orderId);
+    }
+
 
     private QueryWrapper<SlaveOrderEntity> queryWrapper(String orderId) {
         QueryWrapper<SlaveOrderEntity> wrapper = new QueryWrapper<>();
