@@ -199,7 +199,7 @@ public class ApiMasterOrderController {
     @ApiOperation("订单详情")
     public Result<OrderDTO> getOrderInfo(@PathVariable("orderId") String orderId){
 
-        OrderDTO data = masterOrderService.getOrder(orderId);
+        OrderDTO data = masterOrderService.orderParticulars(orderId);
             return new Result<OrderDTO>().ok(data);
     }
 
