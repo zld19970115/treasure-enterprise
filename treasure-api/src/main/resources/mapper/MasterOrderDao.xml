@@ -116,11 +116,11 @@
     <select id="getAuxiliaryOrderByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  status IN(2,4,6,10)
     </select>
-    <select id="getAuxiliaryOrder" resultType="io.treasure.dto.MasterOrderDTO">
+    <select id="getAuxiliaryOrder" resultType="io.treasure.dto.OrderDTO">
         select * from ct_master_order where p_order_id=#{orderId}
     </select>
 
-    <select id="getMasterOrder" resultType="io.treasure.dto.MasterOrderDTO">
+    <select id="getMasterOrder" resultType="io.treasure.dto.OrderDTO">
         select * from ct_master_order where order_id=#{orderId}
     </select>
     <select id="getOrder" resultType="io.treasure.dto.OrderDTO">
