@@ -120,4 +120,8 @@
         select * from ct_master_order where p_order_id=#{orderId}
     </select>
 
+    <select id="getMasterOrder" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where order_id=#{orderId}
+    </select>
+
 </mapper>
