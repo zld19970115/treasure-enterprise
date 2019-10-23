@@ -91,7 +91,7 @@ public class MerchantCouponController {
         //效验数据
         ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
         dto.setUpdateDate(new Date());
-        dto.setGrants(CouponEnm.STATUS_GRANTS.getStatus());
+        //dto.setGrants(CouponEnm.STATUS_GRANTS.getStatus());
         dto.setStatus(Common.STATUS_ON.getStatus());
         merchantCouponService.update(dto);
         return new Result();
