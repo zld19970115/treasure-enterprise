@@ -232,7 +232,7 @@ public class MerchantUserController {
             return new Result().error("改注册账号已存在，请换个账号重新注册!");
         }
         merchantUserService.insert(entity);
-        return new Result();
+        return new Result().ok(entity.getId());
     }
     /**
      * 修改手机号码
