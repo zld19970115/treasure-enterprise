@@ -1235,4 +1235,33 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return baseDao.getOrderByPOrderId(orderId);
     }
 
+    @Override
+    public PageData<MasterOrderDTO> getAllMainOrder(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        List<MasterOrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
+
+        for (MasterOrderDTO s:allMainOrder) {
+            BigDecimal allpayMoney=new BigDecimal("0");
+            List<MasterOrderDTO> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
+            if(auxiliaryOrderByOrderId!=null) {
+                for (MasterOrderDTO ss : auxiliaryOrderByOrderId) {
+                    allpayMoney = allpayMoney.add(ss.getPayMoney());
+                }
+            }
+            Integer status = s.getStatus();
+            if(s.getStatus()==Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()||
+                    s.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()||
+                    s.getStatus()==Constants.OrderStatus.PAYORDER.getValue()||
+                    s.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
+                allpayMoney=allpayMoney.add(s.getPayMoney());
+            }
+            s.setAllpaymoney(allpayMoney);
+        }
+        return getPageData(allMainOrder,pages.getTotal(), MasterOrderDTO.class);
+    }
+
+    @Override
+    public List<MasterOrderDTO> getAuxiliaryOrderByOrderId(String orderId) {
+        return baseDao.getAuxiliaryOrderByOrderId(orderId);
+    }
 }

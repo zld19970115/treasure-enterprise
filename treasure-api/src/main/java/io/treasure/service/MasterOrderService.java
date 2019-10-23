@@ -104,4 +104,9 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderFoodByRoom(OrderDTO dto,List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId);
 
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
+
+    PageData<MasterOrderDTO> getAllMainOrder(Map<String, Object> params);
+
+    List<MasterOrderDTO>getAuxiliaryOrderByOrderId(String orderId);
+
 }
