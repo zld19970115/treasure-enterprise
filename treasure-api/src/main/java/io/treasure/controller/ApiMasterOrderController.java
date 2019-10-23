@@ -573,5 +573,18 @@ public class ApiMasterOrderController {
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderFoodByRoom(dto,dtoList,user,mainOrderId);
     }
-
+    @Login
+    @GetMapping("getAuxiliaryOrder")
+    @ApiOperation("获取关联订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单ID", paramType = "query",required=true, dataType="String")
+    })
+    public Result<PageData<MasterOrderDTO>> getAuxiliaryOrder(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MasterOrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
+        return new Result<PageData<MasterOrderDTO>>().ok(page);
+    }
 }
