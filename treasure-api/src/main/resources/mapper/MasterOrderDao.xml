@@ -116,4 +116,8 @@
     <select id="getAuxiliaryOrderByOrderId" resultType="io.treasure.dto.MasterOrderDTO">
         select * from ct_master_order where p_order_id=#{orderId} and  status IN(2,4,6,10)
     </select>
+    <select id="getAuxiliaryOrder" resultType="io.treasure.dto.MasterOrderDTO">
+        select * from ct_master_order where p_order_id=#{orderId}
+    </select>
+
 </mapper>
