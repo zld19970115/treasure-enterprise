@@ -1327,4 +1327,99 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return order;
 
     }
+
+    @Override
+    public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {
+        return baseDao.selectPOrderIdHavePaid(orderId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> selectAgreeRefundOrder(String orderId) {
+        return baseDao.selectAgreeRefundOrder(orderId);
+    }
+
+    /***
+     *用户端支付完成列表
+     * @Author: Zhangguanglin
+     * @Description:
+     * @Date: 2019/10/24
+     * @param params:
+     * @Return:
+     */
+    @Override
+    public PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        params.put("status",Constants.OrderStatus.PAYORDER.getValue());
+        List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
+
+        for (OrderDTO s:allMainOrder) {
+            int status1 = Integer.parseInt(params.get("status").toString());
+            BigDecimal allpayMoney=new BigDecimal("0");
+            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(),status1);
+            if(auxiliaryOrderByOrderId!=null) {
+                for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
+                    allpayMoney = allpayMoney.add(ss.getPayMoney());
+                }
+            }
+            Integer status = s.getStatus();
+            if(s.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
+                allpayMoney=allpayMoney.add(s.getPayMoney());
+            }
+            s.setAllpaymoneys(allpayMoney);
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+            for (SlaveOrderEntity order:orderGoods) {
+                GoodEntity byid = goodService.getByid(order.getGoodId());
+                order.setGoodInfo(byid);
+            }
+            s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+            s.setSlaveOrder(orderGoods);
+            if(s.getRoomId()!=null){
+                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+            }
+        }
+        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
+    }
+/***
+ *用户端已退款列表
+ * @Author: Zhangguanglin
+ * @Description:
+ * @Date: 2019/10/24
+ * @param params:
+ * @Return:
+ */
+    @Override
+    public PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        params.put("status",Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
+
+        for (OrderDTO s:allMainOrder) {
+            int status1 = Integer.parseInt(params.get("status").toString());
+            BigDecimal allpayMoney=new BigDecimal("0");
+            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(),status1);
+            if(auxiliaryOrderByOrderId!=null) {
+                for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
+                    allpayMoney = allpayMoney.add(ss.getPayMoney());
+                }
+            }
+            Integer status = s.getStatus();
+            if(s.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                allpayMoney=allpayMoney.add(s.getPayMoney());
+            }
+            s.setAllpaymoneys(allpayMoney);
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+            for (SlaveOrderEntity order:orderGoods) {
+                GoodEntity byid = goodService.getByid(order.getGoodId());
+                order.setGoodInfo(byid);
+            }
+            s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+            s.setSlaveOrder(orderGoods);
+            if(s.getRoomId()!=null){
+                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+            }
+        }
+        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
+    }
+
+
 }
