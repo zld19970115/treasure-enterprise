@@ -1264,6 +1264,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
             s.setSlaveOrder(orderGoods);
+            if(s.getRoomId()!=null){
+                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+            }
         }
         return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
@@ -1293,6 +1296,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             s.setSlaveOrder(orderGoods);
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+            if(s.getRoomId()!=null){
+                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+            }
         }
         long total = pages.getTotal();
         if(total!=0){
@@ -1310,9 +1316,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO orderParticulars(String orderId) {
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+        for (SlaveOrderEntity og:orderGoods) {
+            og.setGoodInfo(goodService.getByid(og.getGoodId()));
+        }
         order.setSlaveOrder(orderGoods);
         order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-        order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+        if(order.getRoomId()!=null){
+            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+        }
         return order;
 
     }
