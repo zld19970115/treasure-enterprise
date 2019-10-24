@@ -25,4 +25,6 @@ public interface GoodDao extends BaseDao<GoodEntity> {
     void updateStatusById(@Param("id") long id,@Param("status")int status);
     //根据id查询
     GoodDTO getByInfo(long id);
+
+    GoodEntity getByid(long id);
 }
