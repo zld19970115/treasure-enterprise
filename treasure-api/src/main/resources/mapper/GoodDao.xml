@@ -62,4 +62,7 @@
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}
     </update>
+    <select id="getByid" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
+        select * from ct_good where id=#{id}
+    </select>
 </mapper>
