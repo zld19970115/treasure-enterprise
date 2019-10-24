@@ -111,7 +111,7 @@
         </if>
     </select>
     <select id="getAllMainOrder" resultType="io.treasure.dto.OrderDTO">
-        select * from ct_master_order where creator=#{userId} and p_order_id=0
+        select * from ct_master_order where creator=#{userId} and p_order_id='0'
     </select>
     <select id="getAuxiliaryOrderByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  status IN(2,4,6,10)
