@@ -56,19 +56,19 @@ public class SysOssController {
         if (file.isEmpty()) {
             return new Result<Map<String, Object>>().error(ErrorCode.UPLOAD_FILE_EMPTY);
         }
-        File folder = new File("D:/images/");
-        if (!folder.exists() && !folder.isDirectory()) {
-            folder.mkdirs();
-        }
-        String originalFilename = file.getOriginalFilename();
-        File dest = new File(folder + originalFilename);
-        Thumbnails.of(file.getInputStream()).scale(1f).outputQuality(0.25f).toFile(dest);
-        InputStream in = new FileInputStream(dest);
-        byte[] data1 = toByteArray(in);
-        in.close();
+//        File folder = new File("D:/images/");
+//        if (!folder.exists() && !folder.isDirectory()) {
+//            folder.mkdirs();
+//        }
+//        String originalFilename = file.getOriginalFilename();
+//        File dest = new File(folder + originalFilename);
+//        Thumbnails.of(file.getInputStream()).scale(1f).outputQuality(0.25f).toFile(dest);
+//        InputStream in = new FileInputStream(dest);
+//        byte[] data1 = toByteArray(in);
+//        in.close();
         //上传文件
-        String extension = FilenameUtils.getExtension(originalFilename);
-        String url = OSSFactory.build().uploadSuffix(data1, extension);
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String url = OSSFactory.build().uploadSuffix(file.getBytes(), extension);
 
         //保存文件信息
         SysOssEntity ossEntity = new SysOssEntity();
