@@ -5,12 +5,12 @@
     <insert id="insertRecordGift">
         insert into ct_record_gift (id ,userId,use_gift,balance_gift,status,create_date,creator )
          VALUES
-        ( default ,#{arg0},#{arg3},#{arg2},0,#{arg1},#{arg0});
+        ( default ,#{userId},#{useGift},#{balanceGift},0,#{date},#{userId});
     </insert>
 
     <insert id="insertRecordGift2">
         insert into ct_record_gift (id ,userId,use_gift,balance_gift,status,create_date,creator )
          VALUES
-        ( default ,#{arg0},#{arg3},#{arg2},1,#{arg1},#{arg0});
+        ( default ,#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
     </insert>
 </mapper>
