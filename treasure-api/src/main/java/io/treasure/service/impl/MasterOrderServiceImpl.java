@@ -1257,8 +1257,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 allpayMoney=allpayMoney.add(s.getPayMoney());
             }
             s.setAllpaymoneys(allpayMoney);
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+            for (SlaveOrderEntity order:orderGoods) {
+                GoodEntity byid = goodService.getByid(order.getGoodId());
+                order.setGoodInfo(byid);
+            }
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
-            s.setSlaveOrder(slaveOrderService.getOrderGoods(s.getOrderId()));
+            s.setSlaveOrder(orderGoods);
         }
         return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
@@ -1282,7 +1287,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
         allMainOrder.add(order);
         for (OrderDTO s:allMainOrder) {
-            s.setSlaveOrder(slaveOrderService.getOrderGoods(s.getOrderId()));
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+            for (SlaveOrderEntity og:orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
+            }
+            s.setSlaveOrder(orderGoods);
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
         }
         long total = pages.getTotal();

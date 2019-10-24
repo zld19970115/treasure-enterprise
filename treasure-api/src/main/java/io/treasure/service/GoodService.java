@@ -29,4 +29,6 @@ public interface GoodService extends CrudService<GoodEntity, GoodDTO> {
     //根据id查询
     GoodDTO getByInfo(long id);
 
+    GoodEntity getByid(long id);
+
 }
