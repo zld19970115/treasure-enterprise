@@ -730,10 +730,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             int i = baseDao.updateById(masterOrderEntity);
             if (i > 0) {
-                result.ok(true);
                 if (StringUtils.isNotBlank(clientId)) {
                     AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
                 }
+                result.ok(true);
             } else {
                 return result.error(-1, "申请退款失败！");
             }
