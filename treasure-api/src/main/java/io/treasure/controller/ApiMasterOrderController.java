@@ -306,7 +306,7 @@ public class ApiMasterOrderController {
     public Result<PageData<OrderDTO>> payFinishOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
         params.put("pOrderId","0");
-        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        PageData<OrderDTO> page = masterOrderService.selectPOrderIdHavePaids(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
 
@@ -375,7 +375,7 @@ public class ApiMasterOrderController {
     public Result<PageData<OrderDTO>> agreeRefundOrderPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+"");
         params.put("pOrderId","0");
-        PageData<OrderDTO> page = masterOrderService.listPage(params);
+        PageData<OrderDTO> page = masterOrderService.selectAgreeRefundOrders(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
 

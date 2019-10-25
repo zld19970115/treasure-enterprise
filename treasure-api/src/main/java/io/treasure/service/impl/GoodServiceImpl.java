@@ -108,4 +108,9 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     public GoodDTO getByInfo(long id) {
         return baseDao.getByInfo(id);
     }
+
+    @Override
+    public GoodEntity getByid(long id) {
+        return baseDao.getByid(id);
+    }
 }

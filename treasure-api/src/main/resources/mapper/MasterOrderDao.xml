@@ -117,7 +117,7 @@
         </if>
     </select>
     <select id="getAllMainOrder" resultType="io.treasure.dto.OrderDTO">
-        select * from ct_master_order where creator=#{userId} and p_order_id=0
+        select * from ct_master_order where creator=#{userId} and p_order_id='0'
     </select>
     <select id="getAuxiliaryOrderByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  status IN(2,4,6,10)
@@ -131,6 +131,23 @@
     </select>
     <select id="getOrder" resultType="io.treasure.dto.OrderDTO">
         select * from ct_master_order where order_id=#{orderId}
+    </select>
+
+    <select id="selectPOrderIdHavePaid" resultType="io.treasure.entity.MasterOrderEntity">
+         select * from ct_master_order where p_order_id = #{orderId} and status  not in (1,5,8,9)
+    </select>
+
+    <select id="selectAgreeRefundOrder" resultType="io.treasure.entity.MasterOrderEntity">
+         select * from ct_master_order where p_order_id = #{orderId} and status=8
+    </select>
+
+
+    <select id="getPayOrder" resultType="io.treasure.dto.OrderDTO">
+        select * from ct_master_order where creator=#{userId} and p_order_id='0' and status=#{status}
+    </select>
+
+    <select id="getAuxiliaryPayOrder" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where p_order_id=#{orderId} and  status=#{status}
     </select>
 
 </mapper>
