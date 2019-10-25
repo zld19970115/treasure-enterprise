@@ -41,10 +41,10 @@
     <select id="getGoodCategoryByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodCategoryEntity">
       select  *  from  ct_good_category   where merchant_id=#{martId} and status= 1
     </select>
-    <select id="getGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.List">
+    <select id="getGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
         select * FROM ct_good where mart_id=#{martId} and `status`=1
     </select>
-    <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.List">
+    <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
        select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1
     </select>
     <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
