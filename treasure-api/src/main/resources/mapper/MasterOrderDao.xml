@@ -52,6 +52,9 @@
                 #{item}
             </foreach>
         </if>
+        <if test="orderId != null  and orderId.trim() != '' ">
+            and masterOrder.order_id like CONCAT('%',#{orderId},'%')
+        </if>
     </select>
     <select id="selectPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} or order_id  = #{orderId}
@@ -97,6 +100,9 @@
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
         where 1=1
+        <if test="orderId != null  and orderId.trim() != '' ">
+            and masterOrder.order_id like CONCAT('%',#{orderId},'%')
+        </if>
         <if test="status != null">
             and masterOrder.status in
             <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">

@@ -91,7 +91,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> appointmentPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.PAYORDER.getValue()+"");
@@ -107,7 +108,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> chargePage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+"");
@@ -123,7 +125,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+"");
@@ -139,7 +142,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> finishPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+"");
@@ -155,7 +159,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> calcelPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+"");
@@ -171,7 +176,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> applRefundPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+"");
@@ -187,7 +193,8 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData page = masterOrderService.listMerchantPage(params);
