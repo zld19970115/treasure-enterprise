@@ -49,6 +49,9 @@
         <if test=" name != null and name.trim() != ''">
             and cate.name like  CONCAT('%',#{name},'%')
         </if>
+        <if test=" showInCommend != null and showInCommend.trim() != ''">
+            and cate.show_in_commend = #{showInCommend}
+        </if>
         <if test=" merchantId != null and merchantId!='' ">
             and find_in_set(merchant_id,#{merchantId})
         </if>

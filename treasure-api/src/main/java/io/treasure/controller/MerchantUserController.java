@@ -66,7 +66,7 @@ public class MerchantUserController {
     })
     public Result<PageData<MerchantUserDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_ON.getStatus()+"");
-        PageData<MerchantUserDTO> page = merchantUserService.page(params);
+        PageData<MerchantUserDTO> page = merchantUserService.listPage(params);
         return new Result<PageData<MerchantUserDTO>>().ok(page);
     }
     @CrossOrigin

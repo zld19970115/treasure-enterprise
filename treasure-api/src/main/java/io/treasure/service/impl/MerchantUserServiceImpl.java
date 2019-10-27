@@ -2,20 +2,19 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.MerchantUserDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Role;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MerchantEntity;
-import io.treasure.entity.MerchantUserEntity;
-import io.treasure.entity.TokenEntity;
+import io.treasure.entity.*;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import io.treasure.service.TokenService;
@@ -172,6 +171,21 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
     @Override
     public void updateCID(String clientId, String mobile) {
         baseDao.updateCID(clientId,mobile);
+    }
+
+    @Override
+    public PageData<MerchantUserDTO> listPage(Map<String, Object> params) {
+        IPage<MerchantUserEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        params.put("mart_id",merchantId);
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("mart_id",null);
+        }
+        List<MerchantUserDTO> list=baseDao.listPage(params);
+        return getPageData(list,pages.getTotal(), MerchantUserDTO.class);
     }
 
 

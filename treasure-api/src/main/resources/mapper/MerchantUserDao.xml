@@ -40,6 +40,29 @@
         where user.mobile=#{mobile} and user.status=1
     </select>
 
+    <select id="listPage" resultType="io.treasure.dto.MerchantUserDTO">
+        select users.*,merchant.name merchantName
+        from ct_merchant_user users
+        left join ct_merchant merchant on find_in_set(merchant.id,users.merchantId)
+        where 1=1
+        <if test="status != null">
+            and users.status = #{status}
+        </if>
+        <if test="mobile != null">
+            and users.mobile like  CONCAT('%',#{mobile},'%')
+        </if>
+        <if test="name != null">
+            and users.name like  CONCAT('%',#{name},'%')
+        </if>
+        <if test="mart_id != null">
+            and users.merchantId in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+         order by users.id desc
+    </select>
+
     <update id="updatePassword"   parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set password=#{password} where id=#{id}
     </update>

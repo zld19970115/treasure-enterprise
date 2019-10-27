@@ -79,4 +79,6 @@ public class MerchantUserDTO {
 	private List<MerchantDTO> merchantList;
 	@ApiModelProperty(value = "个推客户Id")
 	private String clientId;
+	@ApiModelProperty(value = "商户名称")
+	private String merchantName;
 }

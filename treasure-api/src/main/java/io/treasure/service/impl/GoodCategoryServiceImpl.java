@@ -99,6 +99,8 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
         String name=(String)params.get("name");
         //商户Id
         String merchantId=(String)params.get("merchantId");
+        //是否推荐
+        String showInCommend=(String)params.get("showInCommend");
         List<Long> mId=new ArrayList<Long>();
         if(StringUtils.isNotBlank(merchantId)){
             String[] mIds=merchantId.split(",");
@@ -111,6 +113,7 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
         wrapper.eq(StringUtils.isNotBlank(status), "status", status);
         wrapper.like(StringUtils.isNotBlank(name),"name",name);
         wrapper.in(StringUtils.isNotBlank(merchantId),"merchant_id",mId);
+        wrapper.eq(StringUtils.isNotBlank(showInCommend),"show_in_commend",showInCommend);
         return wrapper;
     }
 

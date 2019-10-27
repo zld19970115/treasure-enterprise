@@ -49,7 +49,8 @@ public class GoodCategoryController {
         @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
         @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String"),
-            @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String")
+            @ApiImplicitParam(name="name",value="分类名称",paramType = "query",dataType = "String"),
+            @ApiImplicitParam(name="showInCommend",value="是否推荐",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodCategoryDTO>> pageOn(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", String.valueOf(Common.STATUS_ON.getStatus()));

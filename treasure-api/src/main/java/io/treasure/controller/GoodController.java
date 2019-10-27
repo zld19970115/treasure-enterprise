@@ -159,9 +159,11 @@ public class GoodController {
                 }else{
                     return new Result().error("请关闭店铺后，在进行删除操作！");
                 }
+            }else {
+                return new Result().error("没有找到菜品的店铺!");
             }
         }else {
-            return new Result().error("没有找到菜品的商户!");
+            return new Result().error("没有找到菜品的店铺!");
         }
 
         return new Result();
@@ -192,9 +194,11 @@ public class GoodController {
                 }else{
                     return new Result().error("请关闭店铺后，在进行上架操作！");
                 }
+            }else {
+                return new Result().error("没有找到菜品的店铺!");
             }
         }else {
-            return new Result().error("没有找到菜品的商户!");
+            return new Result().error("没有找到菜品的店铺!");
         }
         return new Result();
     }
@@ -224,9 +228,11 @@ public class GoodController {
                 }else{
                     return new Result().error("请关闭店铺后，在进行下架操作！");
                 }
+            }else{
+                return new Result().error("没有获取到菜品的店铺!");
             }
         }else {
-            return new Result().error("没有获取到菜品的商户!");
+            return new Result().error("没有获取到菜品的店铺!");
         }
         return new Result();
     }

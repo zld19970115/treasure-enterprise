@@ -42,6 +42,9 @@
         <if test="status != null">
             and goods.status = #{status}
         </if>
+        <if test=" name != null and name.trim() != ''">
+            and goods.name like  CONCAT('%',#{name},'%')
+        </if>
         <if test="mart_id != null">
             and goods.mart_id in
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">

@@ -55,6 +55,7 @@ public class MerchantController {
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="name", value = "店铺名称", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name ="mobile", value = "手机号码", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_DELETE.getStatus()+"");
@@ -116,11 +117,7 @@ public class MerchantController {
         //根据商户名称、身份证号查询商户信息
         MerchantEntity  entity= merchantService.getByNameAndCards(dto.getName(),dto.getCards());
         String merchantId=user.getMerchantid();
-        if(StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)){
-            user.setMerchantid(merchantId+","+entity.getId());
-        }else{
-            user.setMerchantid(String.valueOf(entity.getId()));
-        }
+        user.setMerchantid(String.valueOf(entity.getId()));
         merchantUserService.update(user);
         return new Result().ok(entity);
     }
@@ -189,7 +186,7 @@ public class MerchantController {
             String lat=(String)params.get("lat");
             String address=(String)params.get("address");
 
-
+            String businesslicense=(String)params.get("businesslicense");
             String cards=(String)params.get("cards");
             String monetary=(String) params.get("monetary");
             String updater=(String)params.get("updater");
@@ -203,7 +200,7 @@ public class MerchantController {
             entity.setLat(lat);
             entity.setAddress(address);
             entity.setCards(cards);
-            entity.setBusinesslicense(cards);
+            entity.setBusinesslicense(businesslicense);
             entity.setMonetary(Double.parseDouble(monetary));
             entity.setUpdateDate(new Date());
             entity.setUpdater(Long.parseLong(updater));

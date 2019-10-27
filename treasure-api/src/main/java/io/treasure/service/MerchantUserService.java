@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
@@ -58,4 +59,6 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
 
     void updateCID(String clientId,String mobile);
+    PageData<MerchantUserDTO> listPage(Map<String,Object> params);
+
 }

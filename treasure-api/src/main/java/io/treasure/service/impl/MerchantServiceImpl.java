@@ -127,8 +127,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     public QueryWrapper<MerchantEntity> getQueryWrapper(Map<String, Object> params){
         //店铺名称
         String name= (String) params.get("name");
+        //手机号码
+        String mobile=(String)params.get("mobile");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
         wrapper.like(StringUtils.isNotBlank(name), "name", name);
+        wrapper.like(StringUtils.isNotBlank(mobile),"mobile",mobile);
         wrapper.eq("status",1);
         return wrapper;
     }
@@ -145,11 +148,16 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         String status= (String) params.get("status");
         //店铺名称
         String name= (String) params.get("name");
-
+        //手机号码
+        String mobile=(String)params.get("mobile");
+        //店铺
+        String merchantId=(String)params.get("merchantId");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
+        wrapper.like(StringUtils.isNotBlank(mobile),"mobile",mobile);
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.like(StringUtils.isNotBlank(name), "name", name);
         wrapper.ne(StringUtils.isNotBlank(status),"status",status);
+        wrapper.eq(StringUtils.isNotBlank(merchantId), "id", merchantId);
         return wrapper;
     }
 }

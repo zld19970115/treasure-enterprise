@@ -1,7 +1,9 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.dto.MerchantUserDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantUserEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -40,4 +42,5 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     //通过openid查询商户管理员信息
     MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
     void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
+    List<MerchantUserDTO> listPage(Map<String,Object> params);
 }
