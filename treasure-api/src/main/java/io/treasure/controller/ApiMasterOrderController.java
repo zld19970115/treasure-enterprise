@@ -130,7 +130,7 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
-        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
     @CrossOrigin
