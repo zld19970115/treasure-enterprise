@@ -24,7 +24,7 @@ public interface RefundOrderService  extends CrudService<RefundOrderEntity, Refu
 
     void updateMasterOrderPayMoney(String orderId,Long goodId);
     //商户同意退款
-    void agreeToARefund(String orderId,Long goodId);
+    Result agreeToARefund(String orderId,Long goodId);
     //商户拒绝退款
     void DoNotAgreeToRefund(String orderId,Long goodId);
 }
