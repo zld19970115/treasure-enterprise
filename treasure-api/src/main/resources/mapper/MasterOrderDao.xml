@@ -87,7 +87,7 @@
          select * from ct_master_order where p_order_id = #{orderId} and status  in (1,8,9)
     </select>
     <update id="updatePayMoney" parameterType="io.treasure.entity.MasterOrderEntity">
-        update ct_master_order set pay_money=#{payMoney} where order_id=#{orderId}
+        update ct_master_order set pay_money=#{PayMoney} where order_id=#{orderId}
     </update>
     <select id="getRoomOrderByPorderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  reservation_type=2
