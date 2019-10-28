@@ -1421,5 +1421,41 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
 
+    @Override
+    public PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params) {
+        //int count= baseDao.selectCount(getWrapper(params));
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        String status = params.get("status").toString();
+        if (StringUtils.isNotBlank(status)) {
+            String[] str = status.split(",");
+            params.put("statusStr", str);
+        }
+        String merchantId = (String) params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+//            boolean contains = merchantId.contains(",");
+//            if(contains){
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+//            }else{
+//                String[] str = merchantId.split(",");
+//                str.
+//                params.put("merchantIdStr", str);
+//            }
 
+        } else {
+            params.put("merchantId", null);
+        }
+        List<MerchantOrderDTO> list = baseDao.listMerchant(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal a = orderDTO.getPayMoney();
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                if(orderEntity.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
+                    a = a.add(orderEntity.getPayMoney());
+                }
+            }
+            orderDTO.setPayMoney(a);
+        }
+        return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
 }
