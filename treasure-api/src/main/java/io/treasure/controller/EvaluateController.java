@@ -68,8 +68,8 @@ public class EvaluateController {
         evaluateEntity.setHeadImg(clientUserEntity.getHeadImg());
         evaluateEntity.setAvgUser((dto.getHygiene()+dto.getFlavor()+dto.getPrice()+dto.getSpeed()+dto.getAttitude())/5);
         evaluateService.insert(evaluateEntity);
-        Double avgAllScore = evaluateService.selectAvgAllScore(dto.getMartId());
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMartId());
+        Double avgAllScore = evaluateService.selectAvgAllScore2(dto.getMartId());
         merchantEntity.setScore(avgAllScore);
         merchantService.updateById(merchantEntity);
         return new Result().ok("评价成功 ");
@@ -90,17 +90,17 @@ public class EvaluateController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true, dataType="long")
     })
-    public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params, long merchantId){
+    public Result<PageData<EvaluateDTO>> seeEvaluate(@ApiIgnore @RequestParam Map<String, Object> params){
 
         params.put("status", Common.STATUS_ON.getStatus()+"");
-        PageData<EvaluateDTO> page = evaluateService.page(params);
+        PageData<EvaluateDTO> page = evaluateService.selectPage(params);
         List list = page.getList();
         Map map= new HashMap();
-        Double avgSpeed = evaluateService.selectAvgSpeed(merchantId);
-        Double avgHygiene = evaluateService.selectAvgHygiene(merchantId);
-        Double avgAttitude = evaluateService.selectAvgAttitude(merchantId);
-        Double avgFlavor = evaluateService.selectAvgFlavor(merchantId);
-        Double avgAllScore = evaluateService.selectAvgAllScore(merchantId);
+        Double avgSpeed = evaluateService.selectAvgSpeed(params);
+        Double avgHygiene = evaluateService.selectAvgHygiene(params);
+        Double avgAttitude = evaluateService.selectAvgAttitude(params);
+        Double avgFlavor = evaluateService.selectAvgFlavor(params);
+        Double avgAllScore = evaluateService.selectAvgAllScore(params);
         map.put("avgHygiene",Math.round(avgHygiene));//平均环境卫生
         map.put("avgAttitude",Math.round(avgAttitude));//平均服务态度
         map.put("avgFlavor",Math.round(avgFlavor));//平均菜品口味
