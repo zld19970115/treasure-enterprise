@@ -31,16 +31,14 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
         //状态
         String status = (String)params.get("status");
         String merchantId=(String)params.get("merchantId");
-       //商户id
+        //商户id
         QueryWrapper<EvaluateEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
-        wrapper.eq(StringUtils.isNotBlank(merchantId),"mart_id",merchantId);
+        wrapper.in(StringUtils.isNotBlank(merchantId),"mart_id",merchantId);
         return wrapper;
     }
-    /**
-     * 商品添加
-     */
+
     @Override
     public void addEvaluate(EvaluateEntity evaluateEntity) {
         baseDao.addEvaluate(evaluateEntity);
@@ -52,30 +50,63 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
     }
 
     @Override
-    public Double selectAvgSpeed(long merchantId) {
-        return baseDao.selectAvgSpeed(merchantId);
+    public Double selectAvgSpeed(Map<String, Object> params) {
+        return baseDao.selectAvgSpeed(params);
     }
 
     @Override
-    public Double selectAvgHygiene(long merchantId) {
-        return baseDao.selectAvgHygiene(merchantId);
+    public Double selectAvgHygiene(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.selectAvgHygiene(params);
     }
 
     @Override
-    public Double selectAvgAttitude(long merchantId) {
-        return baseDao.selectAvgAttitude(merchantId);
+    public Double selectAvgAttitude(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.selectAvgAttitude(params);
     }
 
     @Override
-    public Double selectAvgFlavor(long merchantId) {
-        return baseDao.selectAvgFlavor(merchantId);
+    public Double selectAvgFlavor(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.selectAvgFlavor(params);
     }
 
     @Override
-    public Double selectAvgAllScore(long merchantId) {
-        return baseDao.selectAvgAllScore(merchantId);
-    }
+    public Double selectAvgAllScore(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
 
+        return baseDao.selectAvgAllScore(params);
+    }
+    @Override
+    public Double selectAvgAllScore2(long merchantId) {
+
+        return baseDao.selectAvgAllScore2(merchantId);
+    }
     @Override
     public EvaluateEntity selectByUserIdAndOid(long userId, String merchantOrderId) {
         return baseDao.selectByUserIdAndOid(userId,merchantOrderId);
@@ -98,5 +129,18 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
         return getPageData(list,pages.getTotal(), EvaluateDTO.class);
     }
 
-
+    @Override
+    public PageData<EvaluateDTO> selectPage(Map<String, Object> params) {
+        IPage<EvaluateEntity> pages=getPage(params, null,false);
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<EvaluateDTO> list=baseDao.selectPage(params);
+        return getPageData(list,pages.getTotal(), EvaluateDTO.class);
+    }
 }
+

@@ -29,27 +29,61 @@
         delete from ct_evaluate WHERE evaluate_id = #{evaluateId}
     </delete>
  <select id="selectAvgSpeed" parameterType="long" resultType="Double">
-    SELECT avg(speed) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
+    SELECT avg(speed) FROM ct_evaluate WHERE  status = 1
+     <if test="merchantId != null">
+         and mart_id in
+         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+             #{item}
+         </foreach>
+     </if>
  </select>
     <select id="selectAvgHygiene" parameterType="long" resultType="Double">
-    SELECT avg(hygiene) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
+    SELECT avg(hygiene) FROM ct_evaluate WHERE  status = 1
+        <if test="merchantId != null">
+            and mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
  </select>
     <select id="selectAvgAttitude" parameterType="long" resultType="Double">
-    SELECT avg(attitude) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
+    SELECT avg(attitude) FROM ct_evaluate WHERE  status = 1
+        <if test="merchantId != null">
+            and mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
  </select>
     <select id="selectAvgFlavor" parameterType="long" resultType="Double">
-    SELECT avg(flavor) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
+    SELECT avg(flavor) FROM ct_evaluate  WHERE  status = 1
+        <if test="merchantId != null">
+            and mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
  </select>
 <select id="selectAvgAllScore" parameterType="long" resultType="Double">
-    SELECT avg(avg_user) FROM ct_evaluate WHERE mart_id = #{martId} and status = 1;
+    SELECT avg(avg_user) FROM ct_evaluate  WHERE  status = 1
+    <if test="merchantId != null">
+        and mart_id in
+        <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </if>
  </select>
+
+    <select id="selectAvgAllScore2" parameterType="long" resultType="Double">
+        SELECT avg(avg_user) FROM ct_evaluate  WHERE  status = 1 and mart_id=#{merchantId}
+    </select>
     <select id="selectByUserIdAndOid" parameterType="io.treasure.entity.EvaluateEntity" resultType="io.treasure.entity.EvaluateEntity">
 
         select * from  ct_evaluate where uid = #{userId} and masterorder_id = #{merchantOrderId}
     </select>
     <select id="selectByMerchantId" resultType="io.treasure.entity.EvaluateEntity">
 
-        select * from ct_evaluate where mart_id = #{merchantId} and status = 1;
+        select * from ct_evaluate where mart_id = #{merchantId} and status = 1
     </select>
     <select id="selectEvaluateDTO" resultType="io.treasure.dto.EvaluateDTO">
 SELECT* FROM ct_evaluate
@@ -57,5 +91,15 @@ SELECT* FROM ct_evaluate
     </select>
     <select id="selectMerchantEntity" resultType="io.treasure.entity.MerchantEntity">
         select * from  ct_merchant where id= #{martId}
+    </select>
+    <select id="selectPage" resultType="io.treasure.dto.EvaluateDTO">
+         select * from ct_evaluate  WHERE  status = 1
+        <if test="merchantId != null">
+            and mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
     </select>
 </mapper>
