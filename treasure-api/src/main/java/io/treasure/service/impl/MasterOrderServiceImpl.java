@@ -237,6 +237,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
+                OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                if(order.getPOrderId().equals("0")&&order.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
+                    List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
+                    for (MasterOrderEntity s:orderByPOrderId) {
+                        if(s.getPOrderId().equals(dto.getOrderId())&&s.getReservationType()==2){
+                            merchantRoomParamsSetService.updateStatus(s.getReservationId(),0);
+                        }
+                    }
+                }
+
 
                 baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
                 if (null != dto.getReservationId() && dto.getReservationId() > 0) {
