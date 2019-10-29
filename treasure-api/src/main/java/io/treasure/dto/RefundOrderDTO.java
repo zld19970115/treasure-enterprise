@@ -75,4 +75,9 @@ public class RefundOrderDTO {
      * 用户ID
      */
     private Long userId;
+    /**
+     * 用户ID
+     */
+    private String payMode;
+
 }
