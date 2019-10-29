@@ -84,12 +84,16 @@
  and curps.state = #{state}
         </if>
         <if test="date != null and date.trim() != ''">
- and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+            and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
         </if>
     </select>
-    <select id="selectRoomDate" resultType="java.lang.String">
-
-        select DATE_FORMAT(use_date,'%Y-%m-%d') from ct_merchant_room_params_set where  merchant_id=#{merchantId} AND to_days(use_date) >= to_days(now()) order by use_date
+    <select id="selectRoomDate" resultType="io.treasure.dto.MerchantRoomParamsSetDTO" parameterType="java.util.Map">
+        select DISTINCT DATE_FORMAT(use_date,'%Y-%m-%d') useDate from ct_merchant_room_params_set
+        where to_days(use_date) >= to_days(now())
+        <if test="merchantId != null and merchantId>0 ">
+            and merchant_id=#{merchantId}
+         </if>
+        order by use_date
 
     </select>
 

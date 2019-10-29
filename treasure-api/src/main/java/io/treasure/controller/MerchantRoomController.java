@@ -82,17 +82,14 @@ public class MerchantRoomController {
     @Login
     @GetMapping("roomDate")
     @ApiOperation("查询日期")
-    public Result roomDate(@RequestParam long merchantId){
-
-        List<String> list = merchantRoomService.selectRoomDate(merchantId);
-        LinkedHashSet<String> set = new LinkedHashSet<>(list.size());
-        set.addAll(list);
-        list.clear();
-        list.addAll(set);
-//        HashSet h = new HashSet(list);
-//        list.clear();
-//        list.addAll(h);
-        return new Result().ok(list);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String")
+    })
+    public Result<PageData<MerchantRoomParamsSetDTO>>  roomDate(@ApiIgnore @RequestParam Map<String,Object> params){
+        PageData<MerchantRoomParamsSetDTO> page = merchantRoomService.selectRoomDate(params);
+        return new Result<PageData<MerchantRoomParamsSetDTO>>().ok(page);
     }
     @CrossOrigin
     @Login

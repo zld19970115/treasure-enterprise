@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.utils.DateUtils;
 import io.treasure.dao.MerchantRoomDao;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.MerchantRoomService;
+import io.treasure.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -106,13 +109,25 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         }else{
             params.put("merchantId",null);
         }
+        String useDate=(String)params.get("date");
+        Date date= DateUtils.parse(useDate,"yyyy-MM-dd");
+        params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
         List<MerchantRoomParamsSetDTO> list=baseDao.selectRoomAlreadyPage(params);
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 
     @Override
-    public  List<String> selectRoomDate(long merchantId) {
-        return baseDao.selectRoomDate(merchantId);
+    public PageData<MerchantRoomParamsSetDTO> selectRoomDate(Map<String,Object> params) {
+        IPage<MerchantRoomEntity> pages=getPage(params,Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List<MerchantRoomParamsSetDTO> list=baseDao.selectRoomDate(params);
+        return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 
     @Override

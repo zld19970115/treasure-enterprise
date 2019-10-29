@@ -26,7 +26,7 @@ public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     List getByMerchantId(@Param("merchantId") long merchantId,@Param("status") int status);
     List<MerchantRoomDTO> listPage(Map<String,Object> params);
     List<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
-    List<String> selectRoomDate(long merchantId);
+    List<MerchantRoomParamsSetDTO>  selectRoomDate(Map<String,Object> params);
 
     MerchantRoomEntity getmerchantroom(long merchantId);
 }

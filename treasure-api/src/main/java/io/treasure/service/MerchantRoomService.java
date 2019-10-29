@@ -26,6 +26,6 @@ public interface MerchantRoomService extends CrudService<MerchantRoomEntity, Mer
     PageData<MerchantRoomDTO> listPage(Map<String,Object> params);
 
     PageData<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
-    List<String> selectRoomDate(long merchantId);
+    PageData<MerchantRoomParamsSetDTO> selectRoomDate(Map<String,Object> params);
     MerchantRoomEntity getmerchantroom(long merchantId);
 }
