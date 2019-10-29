@@ -75,7 +75,7 @@
   ct_merchant_room  cmr
  on cmr.id=curps.room_id    left join   ct_merchant cm on cm.id = curps.merchant_id
  where 1=1
-        <if test="merchantId != null">
+        <if test="merchantId != null and merchantId>0 ">
         and curps.merchant_id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
