@@ -115,46 +115,15 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
 
     @Override
     public Result agreeToARefund(String orderId, Long goodId) {
-        OrderDTO order1 = masterOrderService.getOrder(orderId);
-        String payMode = order1.getPayMode();
-        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         slaveOrderService.updateSlaveOrderStatus(8,orderId,goodId);
         baseDao.updateDispose(2,orderId,goodId);
         this.updateMasterOrderPayMoney(orderId,goodId);
         OrderDTO order = masterOrderService.getOrder(orderId);
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
-        if(payMode.equals(Constants.PayMode.WXPAY.getValue())){
-            Result result = payService.wxRefund(orderId, allGoods.getPayMoney() + "", goodId);
-            if (result.success()) {
-                boolean b = (boolean) result.getData();
-                if (!b) {
-                    return new Result().error("退款失败！");
-                }else {
-
-                    if(StringUtils.isNotBlank(clientId)){
-                        AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
-                    }
-                }
-            } else {
-                return new Result().error(result.getMsg());
-            }
-        }
-        if(payMode.equals(Constants.PayMode.ALIPAY.getValue())){
-            Result result = payService.aliRefund(orderId, allGoods.getPayMoney() + "", goodId);
-            if (result.success()) {
-                boolean b = (boolean) result.getData();
-                if (!b) {
-                    return new Result().error("退款失败！");
-                }else {
-                    if(StringUtils.isNotBlank(clientId)){
-                        AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
-                    }
-                }
-            } else {
-                return new Result().error(result.getMsg());
-            }
-        }
+          if(StringUtils.isNotBlank(clientId)){
+             AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
+           }
         return new Result();
     }
 
