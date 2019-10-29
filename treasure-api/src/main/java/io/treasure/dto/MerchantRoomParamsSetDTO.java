@@ -82,4 +82,8 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	@ApiModelProperty(value = "可容纳最高人数")
 	private Integer numhigh;
 
+	@ApiModelProperty(value = "店铺名称")
+	private String Dname;
+
+
 }

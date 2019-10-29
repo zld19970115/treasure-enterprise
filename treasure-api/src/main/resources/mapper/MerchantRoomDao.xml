@@ -68,11 +68,12 @@
 
 	cmr.num_low,
 
-	cmr.num_high
+	cmr.num_high,
 
+    cm.name as Dname
    from  ct_merchant_room_params_set curps  left join
   ct_merchant_room  cmr
- on cmr.id=curps.room_id
+ on cmr.id=curps.room_id    left join   ct_merchant cm on cm.id = curps.merchant_id
  where 1=1
         <if test="merchantId != null">
         and curps.merchant_id in
