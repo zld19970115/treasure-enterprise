@@ -181,7 +181,20 @@ public class MerchantWithdrawController {
         if (merchantWithdrawEntity==null){
 
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+
             MerchantEntity merchantEntity = merchantService.selectById(martId);
+
+
+            if (null==bigDecimal ){
+                merchantEntity.setTotalCash(0.00);
+                merchantEntity.setAlreadyCash(0.00);
+                merchantEntity.setNotCash(0.00);
+                Map map = new HashMap();
+                map.put("total_cash", 0.00);
+                map.put("alead_cash", 0.00);
+                map.put("not_cash", 0.00);
+                return new Result().ok(map);
+            }
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
