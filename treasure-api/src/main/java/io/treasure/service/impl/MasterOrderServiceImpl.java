@@ -495,6 +495,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
+        MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+        if(reservationType == Constants.ReservationType.NORMALRESERVATION.getValue()&& merchantDTO.getDepost()==0){
+                masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+        }
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
