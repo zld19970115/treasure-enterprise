@@ -266,9 +266,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if (!b) {
                         return new Result().error("退款失败！");
                     }else {
-                        if(StringUtils.isNoneBlank(clientId)){
-                            AppPushUtil.pushToSingleClient("商家同意退单", "您的退单申请已通过审核！", "", clientId);
-                        }
+
                     }
                 } else {
                     return new Result().error(result1.getMsg());
@@ -278,6 +276,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         } else {
             return new Result().error("无法获取订单！");
+        }
+        if(StringUtils.isNoneBlank(clientId)){
+            AppPushUtil.pushToSingleClient("商家同意退单", "您的退单申请已通过审核！", "", clientId);
         }
         return new Result();
     }
