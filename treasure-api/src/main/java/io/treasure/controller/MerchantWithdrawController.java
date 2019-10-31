@@ -258,7 +258,15 @@ public class MerchantWithdrawController {
         return new Result().ok("提现成功");
     }
 
+    @CrossOrigin
+    @Login
+    @PutMapping("selectWithStatus")
+    @ApiOperation("查询可提现状态")
+    public Result selectWithStatus(){
+        String s = merchantWithdrawService.selectWithStatus();
 
+        return new Result().ok(s);
+    }
 
 
 

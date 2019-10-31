@@ -123,7 +123,14 @@ public class MerchantEntity implements Serializable {
 	 * 特色菜；多个菜名用英文逗号分隔
 	 */
 	private String characteristic;
-
+	/**
+	 * 收款支付宝账户
+	 */
+	private String aliAccountNumber;
+	/**
+	 * 支付宝收款人真实姓名
+	 */
+	private String aliAccountRealname;
 	/**
 	 * 距离
 	 */

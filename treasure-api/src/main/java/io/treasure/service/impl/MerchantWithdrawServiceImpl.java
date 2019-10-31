@@ -102,4 +102,20 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
         baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);
     }
+
+    @Override
+    public String selectWithStatus() {
+        String s = baseDao.selectWithStatus();
+
+        if ("1".equals(s)){
+            return "只能适应支付宝提现";
+        }
+        if ("2".equals(s)){
+            return "只能适应微信提现";
+        }
+        if ("3".equals(s)){
+            return "支付宝微信都可以使用";
+        }
+        return  null;
+    }
 }

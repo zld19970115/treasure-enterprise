@@ -30,4 +30,5 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     List<MasterOrderEntity> selectOrderByMartID(long  martId);
     //提现操作
     void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate);
+    String selectWithStatus();
 }
