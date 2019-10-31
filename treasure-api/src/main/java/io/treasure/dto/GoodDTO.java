@@ -63,11 +63,12 @@ public class GoodDTO implements Serializable {
 	@NotNull(message = "商户不能为空",groups=AddGroup.class)
 	@NotNull(message = "商户不能为空",groups=UpdateGroup.class)
 	private Long martId;
-
 	@ApiModelProperty(value = "菜品分类id")
 	@NotNull(message = "分类不能为空",groups=AddGroup.class)
 	@NotNull(message = "分类不能为空",groups=UpdateGroup.class)
 	private Long goodCategoryId;
+	@ApiModelProperty(value = "菜品分类名称")
+	private String goodCategoryName;
 	@ApiModelProperty(value = "销售量")
 	private Integer sales;
 	@ApiModelProperty(value = "购买人数")

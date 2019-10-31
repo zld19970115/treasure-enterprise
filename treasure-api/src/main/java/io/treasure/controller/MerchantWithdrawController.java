@@ -212,6 +212,9 @@ public class MerchantWithdrawController {
                 bigDecimal = new BigDecimal("0.00");
             }
             Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
+            if (aDouble==null){
+                aDouble=0.00;
+            }
             double allMoney = merchantWithdrawService.selectByMartId(martId);
             double v = bigDecimal.doubleValue();
             double a = v - allMoney;

@@ -98,8 +98,16 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
      * @return
      */
     @Override
-    public List getGoodsByMartId(long martId){
-        List goodsByMartId = baseDao.getGoodsByMartId(martId);
+    public List getGoodsByMartId( Map<String, Object> params){
+        String martId=(String)params.get("martId");
+        if (StringUtils.isNotBlank(martId) && StringUtils.isNotEmpty(martId)) {
+            String[] str = martId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("martId",null);
+        }
+
+        List goodsByMartId = baseDao.getGoodsByMartId(params);
         return goodsByMartId;
     }
 

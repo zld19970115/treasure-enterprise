@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品表
@@ -28,7 +29,7 @@ public interface ApiGoodDao extends BaseDao<GoodEntity> {
     List<GoodCategoryEntity> getGoodCategoryByMartId(long martId);
 
     //通过商户ID查询此商户所有菜品
-    List<GoodEntity> getGoodsByMartId(long martId);
+    List<GoodEntity> getGoodsByMartId(Map<String, Object> params);
 
     //通过商户ID与菜品分类ID查询此分类的所有菜
     List<GoodEntity> getGoodsByGoodCategoryId(@Param("martId") long martId, @Param("goodCategoryId") long goodCategoryId);

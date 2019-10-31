@@ -254,7 +254,7 @@ public class GoodCategoryController {
       }
     /**
      * 根据商户Id显示商户分类
-     * @param merchantId
+     * @param
      * @return
      */
     @CrossOrigin

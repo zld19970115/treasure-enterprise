@@ -94,7 +94,11 @@ public class EvaluateController {
 
         params.put("status", Common.STATUS_ON.getStatus()+"");
         PageData<EvaluateDTO> page = evaluateService.selectPage(params);
+
         List list = page.getList();
+        if (list.size()==0){
+            return new Result().ok("该商户没有评价");
+        }
         Map map= new HashMap();
         Double avgSpeed = evaluateService.selectAvgSpeed(params);
         Double avgHygiene = evaluateService.selectAvgHygiene(params);

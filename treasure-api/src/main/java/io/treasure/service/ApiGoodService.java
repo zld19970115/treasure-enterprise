@@ -6,6 +6,7 @@ import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品表
@@ -26,7 +27,7 @@ public interface ApiGoodService extends CrudService<GoodEntity, GoodDTO> {
     List<GoodCategoryEntity> getGoodCategoryByMartId(long martId);
 
     //通过商户ID查询此商户所有菜品
-    List getGoodsByMartId(long martId);
+    List getGoodsByMartId( Map<String, Object> params);
 
     //通过商户ID与菜品分类ID查询此分类的所有菜
     List getGoodsByGoodCategoryId(long martId, long goodCategoryId);

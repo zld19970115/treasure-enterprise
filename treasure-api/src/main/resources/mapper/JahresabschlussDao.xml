@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.treasure.dao.ApiGoodDao">
+<mapper namespace="io.treasure.dao.JahresabschlussDao">
 
     <resultMap type="io.treasure.entity.GoodEntity" id="goodMap">
 
@@ -18,7 +18,6 @@
         <result property="shelveBy" column="shelve_by"/>
         <result property="offShelveTime" column="off_shelve_time"/>
         <result property="offShelveBy" column="off_shelve_by"/>
-        <result property="offShelveReson" column="off_shelve_reason"/>
         <result property="martId" column="mart_id"/>
         <result property="goodCategoryId" column="good_category_id"/>
         <result property="sales" column="sales"/>
@@ -32,28 +31,33 @@
         <result property="favorablePrice" column="favorable_price"/>
         <result property="stock" column="stock"/>
     </resultMap>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
+
+    <select id="selectCategory" resultType="io.treasure.entity.GoodCategoryEntity">
+
+
+SELECT*
+
+        FROM ct_good_category  where 1=1
+        <if test="merchantId != null">
+        and .merchant_id in
+        <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        </if>
     </select>
-    <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
-        update ct_good set status=#{status} where id=#{id}
-    </update>
-    <select id="getGoodCategoryByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodCategoryEntity">
-      select  *  from  ct_good_category   where merchant_id=#{martId} and status= 1
+    <select id="selectBYgoodID" resultType="io.treasure.dto.SlaveOrderDTO">
+
+        select * from ct_slave_order where good_id =#{id} and status in(2,4,7,9)
+        <if test="startTime1 != null and startTime1.trim() != ''">
+        <if test="endTime1 != null and endTime1.trim() != ''">
+        and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+        </if>
+        </if>
     </select>
-    <select id="getGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
-        select * FROM ct_good where 1=1
-        <if test="martId != null">
-            and mart_id in
-            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if> and `status`=1
-    </select>
-    <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
-       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1
-    </select>
-    <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
-        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1
+    <select id="selectByCategoeyid" resultType="io.treasure.dto.GoodDTO">
+
+        SELECT*
+
+        FROM ct_good where good_category_id = #{categoeyId}
     </select>
 </mapper>
