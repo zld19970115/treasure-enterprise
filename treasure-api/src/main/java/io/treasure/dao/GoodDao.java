@@ -1,6 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.common.page.PageData;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomParamsDTO;
 import io.treasure.entity.GoodEntity;

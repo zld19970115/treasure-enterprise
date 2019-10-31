@@ -120,4 +120,20 @@ public class  ApiSlaveOrderController {
         Result result=slaveOrderService.refundGood(slaveOrderDTO);
         return result;
     }
+
+    @Login
+    @GetMapping("getOandPoGood")
+    @ApiOperation("获取主从单全部菜品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单ID", paramType = "query",required=true, dataType="String")
+    })
+    public Result<PageData<SlaveOrderDTO>> getOandPoGood(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<SlaveOrderDTO> oandPoGood = slaveOrderService.getOandPoGood(params);
+        return new Result<PageData<SlaveOrderDTO>>().ok(oandPoGood);
+    }
+
 }

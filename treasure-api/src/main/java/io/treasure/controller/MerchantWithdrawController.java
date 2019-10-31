@@ -257,4 +257,10 @@ public class MerchantWithdrawController {
         merchantWithdrawService.verify(id,verify,WithdrawEnm.STATUS_AGREE_NO.getStatus(),verifyReason,new Date());
         return new Result().ok("提现成功");
     }
+
+
+
+
+
+
 }

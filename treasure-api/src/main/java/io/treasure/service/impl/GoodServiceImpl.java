@@ -26,6 +26,7 @@ import java.util.Map;
 @Service
 public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDTO> implements GoodService {
 
+
     @Override
     public QueryWrapper<GoodEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");

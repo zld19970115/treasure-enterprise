@@ -68,4 +68,5 @@
     <select id="getByid" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
         select * from ct_good where id=#{id}
     </select>
+
 </mapper>

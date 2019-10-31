@@ -2,14 +2,14 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.RefundOrderEntity;
-import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -64,7 +64,15 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         return wrapper;
     }
 
+    @Override
+    public PageData<SlaveOrderDTO> getOandPoGood(Map<String, Object> params) {
 
+        IPage<SlaveOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+
+        List<SlaveOrderDTO> list=baseDao.getOandPoGood(params);
+        return getPageData(list,pages.getTotal(), SlaveOrderDTO.class);
+
+    }
     @Override
     public List<SlaveOrderEntity> selectByOrderId(String orderId) {
         List<SlaveOrderEntity> slaveOrderEntityList = baseDao.selectList(queryWrapper(orderId));

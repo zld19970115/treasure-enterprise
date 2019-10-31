@@ -1,7 +1,9 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.SlaveOrderDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.SlaveOrderEntity;
@@ -11,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -23,7 +26,7 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
 
     List<SlaveOrderEntity> selectByOrderId(String orderId);
     List<SlaveOrderEntity> selectByOrderIdAndStatus(String orderId);
-
+    PageData<SlaveOrderDTO> getOandPoGood(Map<String, Object> params);
 
     /**
      * 通过订单ID和商品ID查询此商品信息
