@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +44,9 @@ public class JahresabschlussController {
             List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());
             for (GoodDTO goodDTO : goodDTOS) {
                 List<SlaveOrderDTO> slaveOrderDTOS = JahresabschlussService.selectBYgoodID(goodDTO.getId(),startTime1,endTime1);
-
-
+                for (SlaveOrderDTO slaveOrderDTO : slaveOrderDTOS) {
+                    slaveOrderDTO.getPayMoney();
+                }
 
 
 

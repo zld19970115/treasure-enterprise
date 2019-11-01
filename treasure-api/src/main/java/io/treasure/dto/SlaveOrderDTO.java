@@ -79,4 +79,8 @@ public class SlaveOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "商户Id")
 	private String merchantId;
+	@ApiModelProperty(value = "菜品名称")
+	private String cgName;
+	@ApiModelProperty(value = "菜品图片")
+	private String cgeIcon;
 }
