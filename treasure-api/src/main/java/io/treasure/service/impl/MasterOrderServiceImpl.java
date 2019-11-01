@@ -472,7 +472,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
-        //锁定包房/散台
 
 
         //是否使用赠送金
@@ -493,6 +492,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        //如果包房押金未0，先房后菜情况下设置订单状态未已支付
+        if (dto.getReservationType()==2&&dto.getPayMoney().compareTo(BigDecimal.ZERO)==0){
+            masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+
+        }
+
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
@@ -640,7 +645,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
         for (MerchantOrderDTO orderDTO : list) {
-            BigDecimal a = orderDTO.getPayMoney();
+
+                BigDecimal a = orderDTO.getPayMoney();
+
             List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
             for (MasterOrderEntity orderEntity : masterOrderEntities1) {
                 a = a.add(orderEntity.getPayMoney());
@@ -1466,6 +1473,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
         for (MerchantOrderDTO orderDTO : list) {
             BigDecimal a = orderDTO.getPayMoney();
+            if (orderDTO.getStatus()==8){
+                a = new BigDecimal("0");
+            }
             List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
             for (MasterOrderEntity orderEntity : masterOrderEntities1) {
                 if(orderEntity.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
