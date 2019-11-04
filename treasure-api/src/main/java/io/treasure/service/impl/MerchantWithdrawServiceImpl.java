@@ -94,7 +94,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     @Override
-    public List<MasterOrderEntity> selectOrderByMartID(long martId) {
+    public List<MasterOrderEntity> selectOrderByMartID(Long martId) {
         return baseDao.selectOrderByMartID(martId);
     }
 

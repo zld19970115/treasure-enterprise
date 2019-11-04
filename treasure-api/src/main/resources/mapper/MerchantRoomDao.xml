@@ -103,6 +103,9 @@
             from ct_merchant_room room
             left join ct_merchant merchant on merchant.id=room.merchant_id
             where 1=1
+            <if test="name != null and name!='' ">
+                and room.name  like  CONCAT('%',#{name},'%')
+            </if>
             <if test="type != null">
                 and room.type=#{type}
             </if>

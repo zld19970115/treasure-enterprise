@@ -159,32 +159,29 @@ public class MerchantWithdrawController {
     @GetMapping("/selectCath")
     @ApiOperation("查询提现金额")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="Long")
     })
-    public Result selectCath(@RequestParam long martId) {
-
+    public Result selectCath(@RequestParam Long martId) {
 
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         if (masterOrderEntity==null){
             MerchantEntity merchantEntity = merchantService.selectById(martId);
-            merchantEntity.setTotalCash(0.00);
-            merchantEntity.setAlreadyCash(0.00);
-            merchantEntity.setNotCash(0.00);
-            Map map = new HashMap();
-            map.put("total_cash", 0.00);
-            map.put("alead_cash", 0.00);
-            map.put("not_cash", 0.00);
-            return new Result().ok(map);
+            if(null!=merchantEntity){
+                merchantEntity.setTotalCash(0.00);
+                merchantEntity.setAlreadyCash(0.00);
+                merchantEntity.setNotCash(0.00);
+                Map map = new HashMap();
+                map.put("total_cash", 0.00);
+                map.put("alead_cash", 0.00);
+                map.put("not_cash", 0.00);
+                return new Result().ok(map);
+            }
+            return new Result().error("无法获取店铺信息!");
         }
-
         MerchantWithdrawEntity merchantWithdrawEntity = merchantWithdrawService.selectPoByMartID(martId);
         if (merchantWithdrawEntity==null){
-
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
-
             MerchantEntity merchantEntity = merchantService.selectById(martId);
-
-
             if (null==bigDecimal ){
                 merchantEntity.setTotalCash(0.00);
                 merchantEntity.setAlreadyCash(0.00);
@@ -204,7 +201,6 @@ public class MerchantWithdrawController {
             map.put("not_cash", bigDecimal.doubleValue());
             return new Result().ok(map);
         }
-
         if (merchantWithdrawEntity != null) {
 
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
@@ -224,11 +220,10 @@ public class MerchantWithdrawController {
             merchantEntity.setNotCash(a);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());
-            map.put("alead_cash", aDouble);
-            map.put("not_cash", a);
+            map.put("total_cash", bigDecimal.doubleValue());//可提现
+            map.put("alead_cash", aDouble);//已提现
+            map.put("not_cash", a);//未体现
             return new Result().ok(map);
-
     }
         return new Result();
 }

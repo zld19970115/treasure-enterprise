@@ -50,8 +50,12 @@
               SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
 
     </select>
-    <select id="selectOrderByMartID" resultType="io.treasure.entity.MasterOrderEntity">
-        select * from  ct_master_order where  merchant_id = #{martId}
+    <select id="selectOrderByMartID" resultType="io.treasure.entity.MasterOrderEntity" parameterType="io.treasure.dto.MasterOrderDTO">
+        select * from  ct_master_order where 1=1
+        <if test="merchantId!=null and merchantId>0 ">
+            and merchant_id = #{merchantId}
+        </if>
+
     </select>
     <select id="listPage" resultType="io.treasure.dto.MerchantWithdrawDTO">
         select draw.*,merchant.name merchantName,user.name userName,user.mobile userMobile,user.username  nickName
