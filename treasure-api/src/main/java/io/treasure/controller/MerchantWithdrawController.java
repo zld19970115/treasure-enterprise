@@ -175,8 +175,9 @@ public class MerchantWithdrawController {
                 map.put("alead_cash", 0.00);
                 map.put("not_cash", 0.00);
                 return new Result().ok(map);
+            }else{
+                return new Result().error("无法获取店铺信息!");
             }
-            return new Result().error("无法获取店铺信息!");
         }
         MerchantWithdrawEntity merchantWithdrawEntity = merchantWithdrawService.selectPoByMartID(martId);
         if (merchantWithdrawEntity==null){
