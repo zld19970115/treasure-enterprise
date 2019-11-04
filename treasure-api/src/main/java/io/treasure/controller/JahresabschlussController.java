@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.sun.org.apache.xml.internal.utils.res.XResources_zh_CN;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,7 +11,9 @@ import io.treasure.dto.GoodDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.service.JahresabschlussService;
+import oracle.sql.JAVA_STRUCT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,64 +45,34 @@ public class JahresabschlussController {
         String startTime1 = (String) params.get("startTime1");
         String endTime1 = (String) params.get("endTime1");
         List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);
+        List list = new ArrayList();
         for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
+
             List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());
+            List a = new ArrayList();
+            BigDecimal AllPayMoney = new BigDecimal("0");
+            BigDecimal Alquantity = new BigDecimal("0");
+            BigDecimal liyun = new BigDecimal("0.15");
             for (GoodDTO goodDTO : goodDTOS) {
                 List<SlaveOrderDTO> slaveOrderDTOS = JahresabschlussService.selectBYgoodID(goodDTO.getId(),startTime1,endTime1);
                 for (SlaveOrderDTO slaveOrderDTO : slaveOrderDTOS) {
-                    slaveOrderDTO.getPayMoney();
+                    BigDecimal payMoney = slaveOrderDTO.getPayMoney();
+                    AllPayMoney=AllPayMoney.add(payMoney);
+                    BigDecimal quantity = slaveOrderDTO.getQuantity();
+                    Alquantity=Alquantity.add(quantity);
                 }
-
-
-
-
-
-
-
-
             }
-
-
-
-
+            BigDecimal multiply = AllPayMoney.multiply(liyun);
+            BigDecimal subtract = AllPayMoney.subtract(multiply);
+            a.add(goodCategoryEntity.getName());//类别名称
+            a.add(Alquantity);//销量
+            a.add(AllPayMoney);//当日交易金额
+            a.add(subtract);//可提现金额
+            a.add(multiply);//平台服务费
+            list.add(a);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//        BigDecimal Umsatz = new BigDecimal("0");
-//        Map map = new HashMap();
-//        for (GoodDTO goodCategoryEntity : goodCategoryEntities) {
-//            Long goodCategoryId = goodCategoryEntity.getGoodCategoryId();
-//            if (goodCategoryEntity.getGoodCategoryId()){
-//
-//            }
-//            List<SlaveOrderDTO> slaveOrderDTOS = JahresabschlussService.selectBYgoodID(goodCategoryEntity.getId(),startTime1,endTime1);
-//            BigDecimal a = new BigDecimal("0");
-//            for (SlaveOrderDTO slaveOrderDTO : slaveOrderDTOS) {
-//                BigDecimal quantity = slaveOrderDTO.getQuantity();
-//                a = a.add(quantity);
-//            }
-//            Umsatz = Umsatz.add(a);
-//            map.put("Umsatz",Umsatz);
-//
-//        }
-
-
-
-     return new Result().ok(goodCategoryEntities);
+        return new Result().ok(list);
 
 
 

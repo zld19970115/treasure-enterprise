@@ -92,7 +92,7 @@ SELECT* FROM ct_evaluate
     <select id="selectMerchantEntity" resultType="io.treasure.entity.MerchantEntity">
         select * from  ct_merchant where id= #{martId}
     </select>
-    <select id="selectPage" resultType="io.treasure.dto.EvaluateDTO">
+    <select id="selectPage1" resultType="io.treasure.dto.EvaluateDTO">
          select * from ct_evaluate  WHERE  status = 1
         <if test="merchantId != null">
             and mart_id in
