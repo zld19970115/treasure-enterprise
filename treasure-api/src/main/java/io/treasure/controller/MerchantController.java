@@ -294,15 +294,26 @@ public class MerchantController {
     @PutMapping("inserZFB")
     @ApiOperation("绑定商户支付宝")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "ali_account_number", value = "收款支付宝账户", paramType = "query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "ali_account_realname", value = "支付宝收款人真实姓名", paramType = "query", required = true, dataType = "string")
     })
-    public Result inserZFB(@RequestParam String ali_account_number,@RequestParam String ali_account_realname,@RequestParam long martId){
+    public Result inserZFB(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
         MerchantEntity merchantEntity = merchantService.selectById(martId);
-        merchantEntity.setAliAccountNumber(ali_account_number);
-        merchantEntity.setAliAccountRealname(ali_account_realname);
-        merchantService.updateById(merchantEntity);
-        return new Result();
+        if (merchantEntity.getAliAccountNumber()!=null||merchantEntity.getAliAccountRealname()!=null){
+            return new Result().ok("1");//已绑定支付宝
+        }
+       String ali_account_number = (String) params.get("ali_account_number");
+        String ali_account_realname = (String) params.get("ali_account_realname");
+        if (ali_account_number!=null&&ali_account_realname!=null){
+            merchantEntity.setAliAccountNumber(ali_account_number);
+            merchantEntity.setAliAccountRealname(ali_account_realname);
+            merchantService.updateById(merchantEntity);
+            return new Result().ok("绑定成功");
+        }
+
+
+        return new Result().ok("0");//未绑定支付宝
     }
 }

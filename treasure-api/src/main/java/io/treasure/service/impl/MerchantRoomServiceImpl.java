@@ -110,8 +110,11 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
             params.put("merchantId",null);
         }
         String useDate=(String)params.get("date");
-        Date date= DateUtils.parse(useDate,"yyyy-MM-dd");
-        params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
+        if(useDate!=null){
+            Date date= DateUtils.parse(useDate,"yyyy-MM-dd");
+            params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
+        }
+
         List<MerchantRoomParamsSetDTO> list=baseDao.selectRoomAlreadyPage(params);
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
@@ -127,6 +130,18 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
             params.put("merchantId",null);
         }
         List<MerchantRoomParamsSetDTO> list=baseDao.selectRoomDate(params);
+        for (MerchantRoomParamsSetDTO merchantRoomParamsSetDTO : list) {
+            Date useDate = merchantRoomParamsSetDTO.getUseDate();
+            if(useDate!=null){
+                params.put("date",DateUtils.format(useDate,"yyyy-MM-dd"));
+                params.remove("limit");
+                params.remove("page");
+            }
+            List<MerchantRoomParamsSetDTO> merchantRoomParamsSetDTOS = baseDao.selectByDateAndMartId(params);//已使用总数
+            List<MerchantRoomParamsSetDTO> merchantRoomParamsSetDTOS1 = baseDao.selectByDateAndMartId2(params);//未使用总数
+            merchantRoomParamsSetDTO.setAllaleady(merchantRoomParamsSetDTOS.size());
+            merchantRoomParamsSetDTO.setAllNOT(merchantRoomParamsSetDTOS1.size());
+        }
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 

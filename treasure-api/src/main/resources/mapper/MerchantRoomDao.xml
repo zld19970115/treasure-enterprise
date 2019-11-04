@@ -35,7 +35,7 @@
   select
     curps.id,
 	curps.room_params_id,
-
+    curp.content as roomContent,
 	curps.room_id,
 
 	curps.room_name,
@@ -73,7 +73,7 @@
     cm.name as Dname
    from  ct_merchant_room_params_set curps  left join
   ct_merchant_room  cmr
- on cmr.id=curps.room_id    left join   ct_merchant cm on cm.id = curps.merchant_id
+ on cmr.id=curps.room_id    left join   ct_merchant cm on cm.id = curps.merchant_id   left join ct_merchant_room_params curp on curp.id=curps.room_params_id
  where 1=1
         <if test="merchantId != null and merchantId>0 ">
         and curps.merchant_id in
@@ -123,4 +123,36 @@
     <select id="getmerchantroom" parameterType="io.treasure.entity.MerchantRoomEntity" resultType="io.treasure.entity.MerchantRoomEntity">
         select * from ct_merchant_room where id=#{merchantId}
     </select>
+    <select id="selectByDateAndMartId" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+        SELECT *  FROM  ct_merchant_room_params_set curps where 1=1
+        <if test="merchantId != null and merchantId>0 ">
+            and curps.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>  and curps.status=1
+
+            and curps.state = 1
+
+        <if test="date != null and date.trim() != ''">
+            and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+        </if>
+    </select>
+    <select id="selectByDateAndMartId2" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+        SELECT *  FROM  ct_merchant_room_params_set curps where 1=1
+        <if test="merchantId != null and merchantId>0 ">
+            and curps.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>  and curps.status=1
+
+        and curps.state = 0
+
+        <if test="date != null and date.trim() != ''">
+            and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+        </if>
+
+    </select>
+
 </mapper>

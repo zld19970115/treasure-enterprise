@@ -24,7 +24,7 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
 
     BigDecimal selectTotalCath(long  martId);
     Double selectByMartId(long  martId);
-    MerchantWithdrawEntity selectPoByMartID(long  martId);
+    List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);
     Double selectAlreadyCash(long  martId);
     PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);
     List<MasterOrderEntity> selectOrderByMartID(Long  martId);

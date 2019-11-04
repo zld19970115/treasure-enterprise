@@ -179,8 +179,8 @@ public class MerchantWithdrawController {
                 return new Result().error("无法获取店铺信息!");
             }
         }
-        MerchantWithdrawEntity merchantWithdrawEntity = merchantWithdrawService.selectPoByMartID(martId);
-        if (merchantWithdrawEntity==null){
+        List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(martId);
+        if (merchantWithdrawEntities.size()==0){
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
             if (null==bigDecimal ){
                 if(null!=merchantEntity){
@@ -205,7 +205,7 @@ public class MerchantWithdrawController {
             map.put("not_cash", bigDecimal.doubleValue());
             return new Result().ok(map);
         }
-        if (merchantWithdrawEntity != null) {
+        if (merchantWithdrawEntities.size() != 0) {
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
             if (bigDecimal==null){
                 bigDecimal = new BigDecimal("0.00");
