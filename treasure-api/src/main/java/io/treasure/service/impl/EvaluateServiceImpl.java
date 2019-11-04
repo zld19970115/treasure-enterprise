@@ -139,7 +139,7 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
         }else{
             params.put("merchantId",null);
         }
-        List<EvaluateDTO> list=baseDao.selectPage(params);
+        List<EvaluateDTO> list=baseDao.selectPage1(params);
         return getPageData(list,pages.getTotal(), EvaluateDTO.class);
     }
 }

@@ -34,6 +34,6 @@ public interface EvaluateDao extends BaseDao<EvaluateEntity> {
     EvaluateEntity selectByUserIdAndOid(@Param("userId") long userId ,@Param("merchantOrderId")  String merchantOrderId );
     List<EvaluateDTO> selectEvaluateDTO(Map<String, Object> params);
     MerchantEntity selectMerchantEntity(long martId);
-    List<EvaluateDTO> selectPage(Map<String, Object> params);
+    List<EvaluateDTO> selectPage1(Map<String, Object> params);
 
 }

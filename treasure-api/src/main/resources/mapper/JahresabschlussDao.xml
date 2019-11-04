@@ -35,23 +35,21 @@
     <select id="selectCategory" resultType="io.treasure.entity.GoodCategoryEntity">
 
 
-SELECT*
-
-        FROM ct_good_category  where 1=1
+        SELECT * FROM ct_good_category  where 1=1
         <if test="merchantId != null">
-        and .merchant_id in
-        <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+            and merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
     </select>
     <select id="selectBYgoodID" resultType="io.treasure.dto.SlaveOrderDTO">
 
         select * from ct_slave_order where good_id =#{id} and status in(2,4,7,9)
         <if test="startTime1 != null and startTime1.trim() != ''">
-        <if test="endTime1 != null and endTime1.trim() != ''">
-        and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
-        </if>
+            <if test="endTime1 != null and endTime1.trim() != ''">
+                and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+            </if>
         </if>
     </select>
     <select id="selectByCategoeyid" resultType="io.treasure.dto.GoodDTO">
