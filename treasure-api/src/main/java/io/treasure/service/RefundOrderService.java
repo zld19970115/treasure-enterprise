@@ -22,7 +22,7 @@ public interface RefundOrderService  extends CrudService<RefundOrderEntity, Refu
 
     void updateDispose( int dispose,String orderId,Long goodId);
 
-    void updateMasterOrderPayMoney(String orderId,Long goodId);
+    Result updateMasterOrderPayMoney(String orderId,Long goodId);
     //商户同意退款
     Result agreeToARefund(String orderId,Long goodId);
     //商户拒绝退款
