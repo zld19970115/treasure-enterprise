@@ -15,6 +15,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,43 +38,47 @@ public class StatisticsController {
     @GetMapping("/sta")
     @ApiOperation("统计")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "merchantId", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "merchantId", value = "编号", paramType = "query", required = false, dataType="String"),
             @ApiImplicitParam(name = "startTime1", value = "开始日期", paramType = "query", required = false, dataType="String"),
             @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
     })
-    public Result todayOrder(@RequestParam long merchantId, String startTime1 , String endTime1 ) {
+    public Result todayOrder(@ApiIgnore @RequestParam Map<String, Object> params) {
+        String merchantId = (String) params.get("merchantId");
+
         Map map = new HashMap();
-        //获取本日日期
+        //获取本日日期`111111q    `
         String format = DateUtil.getToday();
+
         //获取本月
         String month = new SimpleDateFormat("yyyy-MM").format(new Date());
-
+        params.put("format",format);
+        params.put("month",month);
         //查询今日订单
-        int todayOrder = statisticsService.todayOrder( format,merchantId);
+        int todayOrder = statisticsService.todayOrder(params);
         //查询指定日期得全部订单
-        int assignOrder = statisticsService.assignOrder(startTime1,endTime1,merchantId);
+        int assignOrder = statisticsService.assignOrder(params);
 
         //查询今日预定订单
-        int todayReserve = statisticsService.todayReserve( format,merchantId);
+        int todayReserve = statisticsService.todayReserve( params);
         //查询指定日期得预定订单
-        int assignReserve = statisticsService.assignReserve(startTime1,endTime1,merchantId);
+        int assignReserve = statisticsService.assignReserve(params);
 
         //查询今日退订订单
-        int todayQuit = statisticsService.todayQuit( format,merchantId);
+        int todayQuit = statisticsService.todayQuit(params);
         //查询指定日期得预定订单
-        int assignQuit = statisticsService.assignQuit(startTime1,endTime1,merchantId);
+        int assignQuit = statisticsService.assignQuit(params);
         //查询今日实际收入
-        double todayMoney = statisticsService.todayMoney(format, merchantId);
+        double todayMoney = statisticsService.todayMoney(params);
         //查询指定日期得实际收入
-        double assignMoney = statisticsService.assignMoney(startTime1,endTime1,merchantId);
+        double assignMoney = statisticsService.assignMoney(params);
         //查询本月全部订单
-        int monthOrder = statisticsService.monthOrder(month,merchantId);
+        int monthOrder = statisticsService.monthOrder(params);
         //查询本月全部预定订单
-        int monthReserve = statisticsService.monthReserve(month,merchantId);
+        int monthReserve = statisticsService.monthReserve(params);
         //查询本月全部退订订单
-        int monthQuit = statisticsService.monthQuit(month,merchantId);
+        int monthQuit = statisticsService.monthQuit(params);
         //查询本月实际收入
-        Double monthMoney = statisticsService.monthMoney(month,merchantId);
+        Double monthMoney = statisticsService.monthMoney(params);
         //查询全部实际收入
      //  Double allMoney = statisticsService.allMoney(merchantId);
         MerchantEntity merchantEntity = merchantService.selectById(merchantId);
@@ -86,18 +91,18 @@ public class StatisticsController {
             map.put("not_cash",merchantEntity.getNotCash());
 
         }
-        map.put("todayOrder",todayOrder);
-        map.put("assignOrder",assignOrder);
-        map.put("todayReserve",todayReserve);
-        map.put("assignReserve",assignReserve);
-        map.put("todayQuit",todayQuit);
-        map.put("assignQuit",assignQuit);
-        map.put("todayMoney",todayMoney);
-        map.put("assignMoney",assignMoney);
-        map.put("monthOrder",monthOrder);
-        map.put("monthReserve",monthReserve);
-        map.put("monthQuit",monthQuit);
-        map.put("monthMoney",monthMoney);
+        map.put("todayOrder",todayOrder); //查询今日订单
+        map.put("assignOrder",assignOrder); //查询指定日期得全部订单
+        map.put("todayReserve",todayReserve); //查询今日预定订单
+        map.put("assignReserve",assignReserve); //查询指定日期得预定订单
+        map.put("todayQuit",todayQuit); //查询今日退订订单
+        map.put("assignQuit",assignQuit);  //查询指定日期得退订订单
+        map.put("todayMoney",todayMoney);    //查询今日实际收入
+        map.put("assignMoney",assignMoney);  //查询指定日期得实际收入
+        map.put("monthOrder",monthOrder); //查询本月全部订单
+        map.put("monthReserve",monthReserve);   //查询本月全部预定订单
+        map.put("monthQuit",monthQuit); //查询本月全部退订订单
+        map.put("monthMoney",monthMoney);   //查询本月实际收入
         return new Result().ok(map);
     }
 }

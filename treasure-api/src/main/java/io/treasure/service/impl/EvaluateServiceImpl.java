@@ -51,6 +51,13 @@ public class EvaluateServiceImpl extends CrudServiceImpl<EvaluateDao, EvaluateEn
 
     @Override
     public Double selectAvgSpeed(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(merchantId) && org.apache.commons.lang3.StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
         return baseDao.selectAvgSpeed(params);
     }
 

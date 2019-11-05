@@ -5,19 +5,21 @@ import io.treasure.dto.MasterOrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Map;
+
 public interface StatisticsService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
 
-    int todayOrder(String format, Long merchantId);
-    int todayReserve(String format, Long merchantId);
-    int todayQuit(String format, Long merchantId);
-    double todayMoney(String format, Long merchantId);
-    int monthOrder(String month, Long merchantId);
-     int monthReserve(String month, Long merchantId);
-    int monthQuit(String month, Long merchantId);
-    double monthMoney(String month, Long merchantId);
+    int todayOrder(Map<String, Object> params);
+    int todayReserve(Map<String, Object> params);
+    int todayQuit(Map<String, Object> params);
+    double todayMoney(Map<String, Object> params);
+    int monthOrder(Map<String, Object> params);
+     int monthReserve(Map<String, Object> params);
+    int monthQuit(Map<String, Object> params);
+    double monthMoney(Map<String, Object> params);
     double allMoney(Long merchantId);
-    int assignOrder(String startTime1,String endTime1,Long merchantId);
-    int assignReserve(String startTime1,String endTime1,Long merchantId);
-    int assignQuit(String startTime1,String endTime1,Long merchantId);
-    double assignMoney(String startTime1,String endTime1,Long merchantId);
+    int assignOrder(Map<String, Object> params);
+    int assignReserve(Map<String, Object> params);
+    int assignQuit(Map<String, Object> params);
+    double assignMoney(Map<String, Object> params);
 }

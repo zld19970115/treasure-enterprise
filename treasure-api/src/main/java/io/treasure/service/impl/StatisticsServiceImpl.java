@@ -34,67 +34,154 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public int todayOrder(String format, Long merchantId) {
-        return baseDao.todayOrder(format,merchantId);
+    public int todayOrder( Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.todayOrder(params);
     }
 
     @Override
-    public int todayReserve(String format, Long merchantId) {
-        return baseDao.todayReserve(format,merchantId);
+    public int todayReserve(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.todayReserve(params);
     }
 
     @Override
-    public int todayQuit(String format, Long merchantId) {
-        return baseDao.todayQuit(format,merchantId);
+    public int todayQuit(Map<String, Object> params) {
+
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+
+        return baseDao.todayQuit(params);
     }
 
     @Override
-    public double todayMoney(String format, Long merchantId) {
-        return baseDao.todayMoney(format,merchantId);
+    public double todayMoney( Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.todayMoney(params);
     }
 
     @Override
-    public int monthOrder(String month, Long merchantId) {
-        return baseDao.monthOrder(month,merchantId);
+    public int monthOrder(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.monthOrder(params);
     }
 
     @Override
-    public int monthReserve(String month, Long merchantId) {
-        return baseDao.monthReserve(month,merchantId);
+    public int monthReserve(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.monthReserve(params);
     }
 
     @Override
-    public int monthQuit(String month, Long merchantId) {
-        return baseDao.monthQuit(month,merchantId);
+    public int monthQuit(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.monthQuit(params);
     }
 
     @Override
-    public double monthMoney(String month, Long merchantId) {
-        return baseDao.monthMoney(month,merchantId);
+    public double monthMoney(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.monthMoney(params);
     }
 
     @Override
     public double allMoney(Long merchantId) {
+
         return baseDao.allMoney(merchantId);
     }
 
     @Override
-    public int assignOrder(String startTime1, String endTime1, Long merchantId) {
-        return baseDao.assignOrder(startTime1,endTime1,merchantId);
+    public int assignOrder(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.assignOrder(params);
     }
 
     @Override
-    public int assignReserve(String startTime1, String endTime1, Long merchantId) {
-        return baseDao.assignReserve(startTime1,endTime1,merchantId);
+    public int assignReserve(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.assignReserve(params);
     }
 
     @Override
-    public int assignQuit(String startTime1, String endTime1, Long merchantId) {
-        return baseDao.assignQuit(startTime1,endTime1,merchantId);
+    public int assignQuit(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.assignQuit(params);
     }
 
     @Override
-    public double assignMoney(String startTime1, String endTime1, Long merchantId) {
-        return baseDao.assignMoney(startTime1,endTime1,merchantId);
+    public double assignMoney(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.assignMoney(params);
     }
 }
