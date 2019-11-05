@@ -334,7 +334,7 @@ public class MerchantController {
         if (merchantEntity==null){
             return new Result().ok("没有该商户");
         }
-        if (merchantEntity.getWxAccountOpenid()!=null){
+        if (merchantEntity.getWxAccountOpenid()!=null&&merchantEntity.getWxAccountOpenid()!=""){
             return new Result().ok("1");//已绑定微信
         }
         String wx_account_openid = (String) params.get("wx_account_openid");
