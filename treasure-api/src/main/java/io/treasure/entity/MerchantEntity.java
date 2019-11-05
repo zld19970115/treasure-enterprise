@@ -132,6 +132,15 @@ public class MerchantEntity implements Serializable {
 	 */
 	private String aliAccountRealname;
 	/**
+	 * 收款微信openid
+	 */
+	private String wxAccountOpenid;
+	/**
+	 * 微信收款人真实姓名
+	 */
+	private String wxAccountRealname;
+
+	/**
 	 * 距离
 	 */
 	@TableField(exist=false)

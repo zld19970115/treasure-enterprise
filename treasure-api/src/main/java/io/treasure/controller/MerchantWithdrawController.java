@@ -214,17 +214,18 @@ public class MerchantWithdrawController {
             if (aDouble==null){
                 aDouble=0.00;
             }
-            double allMoney = merchantWithdrawService.selectByMartId(martId);
-            double v = bigDecimal.doubleValue();
-            double a = v - allMoney;
+            String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(martId));
+            BigDecimal v = new BigDecimal(allMoney);
+            BigDecimal a = bigDecimal.subtract(v);
+            double c = a.doubleValue();
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(aDouble);
-            merchantEntity.setNotCash(a);
+            merchantEntity.setNotCash(c);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
             map.put("total_cash", bigDecimal.doubleValue());//可提现
             map.put("alead_cash", aDouble);//已提现
-            map.put("not_cash", a);//未体现
+            map.put("not_cash", c);//未体现
             return new Result().ok(map);
     }
         return new Result();
