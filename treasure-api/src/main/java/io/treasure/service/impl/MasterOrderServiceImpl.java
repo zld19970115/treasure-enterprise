@@ -1145,6 +1145,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public Result reserveRoom(OrderDTO dto, ClientUserEntity user, String mainOrderId) {
         Result result = new Result();
+        List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(mainOrderId);
+           if (masterOrderEntities.size()!=0){
+               return result.error("已预定包房，不可重复预定");
+           }
+
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();

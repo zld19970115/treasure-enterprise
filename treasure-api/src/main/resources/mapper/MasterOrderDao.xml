@@ -83,6 +83,9 @@
     <select id="selectBYPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
           select * from ct_master_order where p_order_id = #{orderId} and status not in (1,8,9)
     </select>
+    <select id="selectPOrderIdByMainOrderID" resultType="io.treasure.entity.MasterOrderEntity">
+          select * from ct_master_order where p_order_id = #{orderId} and reservation_type = 2
+    </select>
     <select id="selectPOrderIdAndS1" resultType="io.treasure.entity.MasterOrderEntity">
          select * from ct_master_order where p_order_id = #{orderId} and status  in (1,8,9)
     </select>
