@@ -1113,6 +1113,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                 //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+
             }
         } else {
             return new Result().error("无法取消订单！");

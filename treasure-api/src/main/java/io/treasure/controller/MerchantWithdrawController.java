@@ -136,7 +136,6 @@ public class MerchantWithdrawController {
         dto.setCreateDate(new Date());
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
-        dto.setType(WithdrawEnm.TYPE_WEIXIN.getStatus());
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
         merchantWithdrawService.save(dto);
         return new Result();
@@ -223,7 +222,7 @@ public class MerchantWithdrawController {
             merchantEntity.setNotCash(c);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());//可提现
+            map.put("total_cash", bigDecimal.doubleValue());//可提现总额
             map.put("alead_cash", aDouble);//已提现
             map.put("not_cash", c);//未体现
             return new Result().ok(map);
