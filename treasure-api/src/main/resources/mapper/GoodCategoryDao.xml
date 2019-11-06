@@ -26,7 +26,7 @@
     <update id="off" parameterType="io.treasure.entity.GoodCategoryEntity">
         update ct_good_category set status=#{status} where id=#{id}
     </update>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.GoodCategoryEntity" resultType="java.util.Map">
+    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.GoodCategoryEntity" resultType="io.treasure.dto.GoodCategoryDTO">
         select * from ct_good_category  where name = #{name} and merchant_id=#{merchantId}  and status!=9 order by id desc
     </select>
 

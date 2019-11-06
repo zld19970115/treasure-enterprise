@@ -99,6 +99,8 @@ public class GoodDTO implements Serializable {
 
 	@ApiModelProperty(value = "店铺名称")
 	private String merchantName;
+	@ApiModelProperty(value = "店铺头像")
+	private String merchantIcon;
 	@ApiModelProperty(value = "分类名称")
 	private String categoryName;
 }

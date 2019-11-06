@@ -7,15 +7,22 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dto.ExportGoodDTO;
+import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.enm.CategoryEnm;
 import io.treasure.enm.Common;
+import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.MerchantEntity;
+import io.treasure.service.GoodCategoryService;
 import io.treasure.service.GoodService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.service.MerchantService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -39,6 +46,8 @@ public class GoodController {
     private GoodService goodService;
     @Autowired
     private MerchantService merchantService;//商户
+    @Autowired
+    private GoodCategoryService goodCategoryService;//分类
     @CrossOrigin
     @Login
     @GetMapping("onPage")
@@ -236,4 +245,63 @@ public class GoodController {
         }
         return new Result();
     }
+
+    @CrossOrigin
+    @PostMapping("exportGoods")
+    @ApiOperation("导入")
+    public Result exportGoods(@RequestBody ExportGoodDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
+        String name=dto.getName();
+        //商户名称
+        String martId=dto.getMartId();
+        //分类名称
+        String goodCategoryId=dto.getGoodCategoryId();
+        //创建者
+        long creator=dto.getCreator();
+        //根据商户名称查询商户编号
+        MerchantEntity merchantEntity=merchantService.getByName(martId,Common.STATUS_DELETE.getStatus());
+        if(null==merchantEntity){
+            return new Result().error("商户不存在，请先注册商户！");
+        }
+        long merchantId=merchantEntity.getId();
+        //根据分类名称查询分类编号
+        List goodCategoryList=goodCategoryService.getByNameAndMerchantId(goodCategoryId,merchantId);
+        if(null==goodCategoryList || goodCategoryList.size()==0){
+            GoodCategoryEntity categoryEntity=new GoodCategoryEntity();
+            categoryEntity.setName(goodCategoryId);
+            categoryEntity.setCreateDate(new Date());
+            categoryEntity.setCreator(creator);
+            categoryEntity.setShowInCommend(CategoryEnm.SHOW_IN_COMMEND_NO.getStatus());
+            categoryEntity.setStatus(Common.STATUS_ON.getStatus());
+            categoryEntity.setMerchantId(merchantId);
+            goodCategoryService.insert(categoryEntity);
+            goodCategoryList=goodCategoryService.getByNameAndMerchantId(goodCategoryId,merchantId);
+        }
+        GoodCategoryDTO categoryMap=(GoodCategoryDTO)goodCategoryList.get(0);
+        long categoryId=categoryMap.getId();
+        //根据菜品名称、商户查询该菜品名称是否存在
+        List goodsList=goodService.getByNameAndMerchantId(name,merchantId);
+        if(null!=goodsList && goodsList.size()>0){
+            return new Result().error("菜品名称已经存在！");
+        }
+        GoodDTO goodDTO=new GoodDTO();
+        goodDTO.setUnits(dto.getUnits());
+        goodDTO.setName(dto.getName());
+        goodDTO.setMartId(merchantId);
+        goodDTO.setGoodCategoryId(categoryId);
+        goodDTO.setPrice(dto.getPrice());
+        goodDTO.setFavorablePrice(dto.getFavorablePrice());
+        goodDTO.setShowInHot(dto.getShowInHot());
+        goodDTO.setIntroduce(dto.getIntroduce());
+        goodDTO.setBarcode(dto.getBarcode());
+        goodDTO.setStatus(Common.STATUS_ON.getStatus());
+        goodDTO.setShelveTime(new Date());
+        goodDTO.setShelveBy(dto.getCreator());
+        goodDTO.setCreateDate(new Date());
+        goodDTO.setCreator(creator);
+        goodService.save(goodDTO);
+        return new Result();
+    }
+
 }

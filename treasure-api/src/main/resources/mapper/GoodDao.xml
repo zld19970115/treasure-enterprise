@@ -31,11 +31,11 @@
         <result property="favorablePrice" column="favorable_price"/>
         <result property="stock" column="stock"/>
     </resultMap>
-    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.List">
+    <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.dto.GoodDTO">
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
     </select>
     <select id="listPage" resultType="io.treasure.dto.GoodDTO">
-        select goods.*,merchant.name merchantName
+        select goods.*,merchant.name merchantName,merchant.headUrl merchantIcon
         from ct_good goods
         left join ct_merchant merchant on merchant.id=goods.mart_id
         where 1=1
