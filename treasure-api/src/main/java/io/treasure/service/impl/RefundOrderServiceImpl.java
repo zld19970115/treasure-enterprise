@@ -132,10 +132,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             if(soe.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
                 num=num+1;
             }
-            if(num==orderGoods.size()){
-                masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
-            }
-
+        }
+        if(num==orderGoods.size()){
+            masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
         }
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
