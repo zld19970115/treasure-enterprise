@@ -92,13 +92,15 @@ public class StatisticsController {
 
         }
         map.put("todayOrder",todayOrder); //查询今日订单
-        map.put("assignOrder",assignOrder); //查询指定日期得全部订单
         map.put("todayReserve",todayReserve); //查询今日预定订单
-        map.put("assignReserve",assignReserve); //查询指定日期得预定订单
         map.put("todayQuit",todayQuit); //查询今日退订订单
-        map.put("assignQuit",assignQuit);  //查询指定日期得退订订单
         map.put("todayMoney",todayMoney);    //查询今日实际收入
+
+        map.put("assignOrder",assignOrder); //查询指定日期得全部订单
+        map.put("assignReserve",assignReserve); //查询指定日期得预定订单
+        map.put("assignQuit",assignQuit);  //查询指定日期得退订订单
         map.put("assignMoney",assignMoney);  //查询指定日期得实际收入
+
         map.put("monthOrder",monthOrder); //查询本月全部订单
         map.put("monthReserve",monthReserve);   //查询本月全部预定订单
         map.put("monthQuit",monthQuit); //查询本月全部退订订单
