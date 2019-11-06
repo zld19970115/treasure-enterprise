@@ -40,7 +40,7 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if> and status != "9"
+    </if> and status != "9" and p_order_id="0"
     </select>
     <select id="todayReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
@@ -49,11 +49,11 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if> and status in (1,2,3,4,5,6,7) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
+    </if> and status in (1,2,3,4,5,6,7) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format} and p_order_id="0"
     </select>
     <select id="todayQuit" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where status in (6,7,8) and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}   <if test="merchantId != null">
+       select count(*)  from ct_master_order    where status in (6,7,8) and p_order_id="0" and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}   <if test="merchantId != null">
         and merchant_id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
@@ -77,7 +77,7 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if>  and status != "9"
+    </if>  and status != "9" and p_order_id="0"
     </select>
 
     <select id="monthReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
@@ -87,11 +87,11 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if>  and status  in (1,2,3,4,5,6,7,10) and  DATE_FORMAT(create_date,'%Y-%m') = #{month}
+    </if>  and status  in (1,2,3,4,5,6,7,10) and  DATE_FORMAT(create_date,'%Y-%m') = #{month} and p_order_id="0"
     </select>
     <select id="monthQuit" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
-       select count(*)  from ct_master_order    where  status in (6,7,8) and  DATE_FORMAT(create_date,'%Y-%m') = #{month}  <if test="merchantId != null">
+       select count(*)  from ct_master_order    where  status in (6,7,8) and p_order_id="0" and  DATE_FORMAT(create_date,'%Y-%m') = #{month}  <if test="merchantId != null">
         and merchant_id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
@@ -117,7 +117,7 @@
     </if>
     </select>
     <select id="assignOrder" parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
-        select count(*) from ct_master_order where  status != "9"     <if test="merchantId != null">
+        select count(*) from ct_master_order where  status != "9"  and p_order_id="0"   <if test="merchantId != null">
         and merchant_id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
@@ -130,7 +130,7 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if>  and status  in (1,2,3,4,5,6,7,10) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </if>  and status  in (1,2,3,4,5,6,7,10) and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1} and p_order_id="0"
     </select>
     <select id="assignQuit"  parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
          select count(*) from ct_master_order where status in (6,7,8)   <if test="merchantId != null">
@@ -138,7 +138,7 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if>  and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+    </if>  and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1} and p_order_id="0"s
     </select>
     <select id="assignMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Double">
         select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  status in(2,4,7,10)   <if test="merchantId != null">

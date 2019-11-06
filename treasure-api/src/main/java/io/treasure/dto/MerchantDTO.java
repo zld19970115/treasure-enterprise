@@ -94,7 +94,27 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "身份证号")
 	@NotBlank(message = "身份证号不能为空")
 	private String cards;
-
+	/**
+	 * 收款支付宝账户
+	 */
+	@ApiModelProperty(value = "收款支付宝账户")
+	private String aliAccountNumber;
+	/**
+	 * 支付宝收款人真实姓名
+	 */
+	@ApiModelProperty(value = "支付宝收款人真实姓名")
+	private String aliAccountRealname;
+	/**
+	 * 收款微信openid
+	 */
+	@ApiModelProperty(value = "收款微信openid")
+	private String wxAccountOpenid;
+	/**
+	 * 微信收款人真实姓名
+	 */
+	@ApiModelProperty(value = "微信收款人真实姓名")
+	@NotBlank(message = "微信收款人真实姓名不能为空")
+	private String wxAccountRealname;
 	@ApiModelProperty(value = "1-未审核，2-审核通过，3-审核未通过;审核状态")
 	private Integer auditstatus;
 	@ApiModelProperty(value = "闭店时间")
