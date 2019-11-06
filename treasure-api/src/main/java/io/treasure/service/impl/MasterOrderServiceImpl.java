@@ -1487,6 +1487,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     a = a.add(orderEntity.getPayMoney());
                 }
             }
+//            if (a.compareTo(BigDecimal.ZERO)==0){
+//                List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(orderDTO.getOrderId());
+//                if(masterOrderEntities.size()!=0){
+//                    for (MasterOrderEntity masterOrderEntity : masterOrderEntities) {
+//                        if (null != masterOrderEntity.getReservationId() && masterOrderEntity.getReservationId() > 0) {
+//                            //同时将包房或者桌设置成未使用状态
+//                            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+//                        }
+//                        masterOrderEntity.setCheckStatus(1);
+//                        masterOrderEntity.setCheckMode(Constants.CheckMode.MERCHANTCHECK.getValue());
+//                        baseDao.updateById(masterOrderEntity);
+//                    }
+//                }
+//            }
             orderDTO.setPayMoney(a);
         }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
