@@ -11,6 +11,7 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.RefundOrderEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import org.apache.commons.lang.StringUtils;
@@ -124,6 +125,18 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         baseDao.updateDispose(2,orderId,goodId);
         this.updateMasterOrderPayMoney(orderId,goodId);
         OrderDTO order = masterOrderService.getOrder(orderId);
+        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+        System.out.println(orderGoods.size());
+        int num=0;
+        for (SlaveOrderEntity soe:orderGoods) {
+            if(soe.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                num=num+1;
+            }
+            if(num==orderGoods.size()){
+                masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
+            }
+
+        }
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
           if(StringUtils.isNotBlank(clientId)){
