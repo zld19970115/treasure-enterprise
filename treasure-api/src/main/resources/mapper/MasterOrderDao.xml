@@ -153,4 +153,11 @@
         select * from ct_master_order where p_order_id=#{orderId} and  status=#{status}
     </select>
 
+    <select id="getAuxiliaryPayOrders" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where p_order_id=#{orderId} and  status in (2,7)
+    </select>
+    <select id="getAuxiliaryPayOrderss" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where p_order_id=#{orderId} and  status in (2,7,10)
+    </select>
+
 </mapper>
