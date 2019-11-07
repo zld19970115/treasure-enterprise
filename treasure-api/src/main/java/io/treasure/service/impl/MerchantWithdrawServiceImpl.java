@@ -106,16 +106,6 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     @Override
     public String selectWithStatus() {
         String s = baseDao.selectWithStatus();
-
-        if ("1".equals(s)){
-            return "只能适应支付宝提现";
-        }
-        if ("2".equals(s)){
-            return "只能适应微信提现";
-        }
-        if ("3".equals(s)){
-            return "支付宝微信都可以使用";
-        }
-        return  null;
+        return  s;
     }
 }
