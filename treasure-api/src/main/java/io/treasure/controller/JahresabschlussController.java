@@ -47,7 +47,6 @@ public class JahresabschlussController {
         List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);
         List list = new ArrayList();
         for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
-
             List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());
             List a = new ArrayList();
             BigDecimal AllPayMoney = new BigDecimal("0");
@@ -73,9 +72,6 @@ public class JahresabschlussController {
         }
 
         return new Result().ok(list);
-
-
-
-    }
+ }
 
 }

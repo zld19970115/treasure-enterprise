@@ -1,11 +1,14 @@
 package io.treasure.service;
 
 import io.treasure.common.service.CrudService;
+import io.treasure.common.utils.Result;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -31,5 +34,5 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     void updateCID(String clientId,String mobile);
 
     ClientUserEntity getClientUser(Long id);
-
+   Result userGiftToUser(long userId, String mobile,BigDecimal giftMoney) ;
 }
