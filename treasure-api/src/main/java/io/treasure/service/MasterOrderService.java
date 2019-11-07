@@ -132,5 +132,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params);
 
+    List<MasterOrderEntity>getAuxiliaryPayOrders(String orderId);
+
+    List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
 
 }

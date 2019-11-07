@@ -210,7 +210,22 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
-            } else {
+            } else if(dto.getStatus() == Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                List<MasterOrderEntity> auxiliaryPayOrders = baseDao.getAuxiliaryPayOrders(dto.getOrderId());
+                for (MasterOrderEntity s:auxiliaryPayOrders) {
+                    if(s.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
+                        baseDao.updateOrderStatus(Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),s.getOrderId());
+                        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+                        for (SlaveOrderEntity soe:orderGoods) {
+                            slaveOrderService.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),soe.getOrderId(),soe.getGoodId());
+                        }
+                    }
+                    if(s.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+                        merchantRoomParamsSetService.updateStatus(s.getReservationId(),0);
+                        baseDao.updateOrderStatus(Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),s.getOrderId());
+                    }
+                }
+            }else {
                 return new Result().error("无法翻台订单！");
             }
         } else {
@@ -1453,6 +1468,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public List<MasterOrderEntity> getAuxiliaryPayOrders(String orderId) {
+        return baseDao.getAuxiliaryPayOrders(orderId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> getAuxiliaryPayOrderss(String orderId) {
+        return baseDao.getAuxiliaryPayOrderss(orderId);
+    }
+
+    @Override
     public PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params) {
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
@@ -1502,7 +1527,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                    }
 //                }
 //            }
+            BigDecimal c=new BigDecimal("0");
+            List<MasterOrderEntity> auxiliaryPayOrders = masterOrderService.getAuxiliaryPayOrderss(orderDTO.getOrderId());
+            for (MasterOrderEntity s:auxiliaryPayOrders) {
+                c=c.add(s.getPayMoney());
+            }
             orderDTO.setPayMoney(a);
+            orderDTO.setAllMoney(a.add(c));
         }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
