@@ -195,9 +195,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() || dto.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()) {
-                if (null != dto.getReservationId() && dto.getReservationId() > 0) {
-                    //同时将包房或者桌设置成未使用状态
-                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                if (null == dto.getReservationId()) {
+                    MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(dto.getOrderId());
+                    if(roomOrderByPorderId!=null){
+                        //同时将包房或者桌设置成未使用状态
+                        merchantRoomParamsSetService.updateStatus(roomOrderByPorderId.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                    }
+
                 }
                 MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
                 masterOrderEntity.setStatus(status);
@@ -1369,6 +1373,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
         if(order.getRoomId()!=null){
             order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+        }else if(order.getPOrderId().equals("0")) {
+            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+            order.setRoomId(roomOrderByPorderId.getRoomId());
+            order.setReservationId(roomOrderByPorderId.getReservationId());
         }
         return order;
 
