@@ -663,16 +663,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             params.put("merchantId", null);
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
-        for (MerchantOrderDTO orderDTO : list) {
-
-                BigDecimal a = orderDTO.getPayMoney();
-
-            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
-            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
-                a = a.add(orderEntity.getPayMoney());
-            }
-            orderDTO.setPayMoney(a);
-        }
+//        for (MerchantOrderDTO orderDTO : list) {
+//
+//                BigDecimal a = orderDTO.getPayMoney();
+//
+//            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+//            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+//                a = a.add(orderEntity.getPayMoney());
+//            }
+//            orderDTO.setPayMoney(a);
+//        }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
 
