@@ -6,10 +6,12 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.dto.GoodCategoryDTO;
-import io.treasure.dto.MerchantDTO;
+import io.treasure.common.validator.group.AddGroup;
+import io.treasure.dto.*;
+import io.treasure.enm.CategoryEnm;
 import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.service.GoodCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -267,5 +269,45 @@ public class GoodCategoryController {
     public Result<List> getAllByMerchantIds(@RequestParam  Map<String,Object> params){
         List list= goodCategoryService.getAllByMerchantIds(params);
         return new Result().ok(list);
+    }
+
+    @CrossOrigin
+    @PostMapping("exportGoods")
+    @ApiOperation("导入")
+    public Result exportGoods(@RequestBody ExcelGoodCategoryDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
+        String name=dto.getName();
+        //商户名称
+        String martId=dto.getMerchantId();
+        //创建者
+        long creator=dto.getCreator();
+        //根据商户名称查询商户编号
+        MerchantEntity merchantEntity=merchantService.getByName(martId,Common.STATUS_DELETE.getStatus());
+        if(null==merchantEntity){
+            return new Result().error("商户不存在，请先注册商户！");
+        }
+        long merchantId=merchantEntity.getId();
+        //根据分类名称查询分类编号
+        List goodCategoryList=goodCategoryService.getByNameAndMerchantId(name,merchantId);
+        if(null!=goodCategoryList && goodCategoryList.size()>0){
+           return new Result().error(name+"该分类已经存在");
+        }else{
+            GoodCategoryEntity categoryEntity=new GoodCategoryEntity();
+            categoryEntity.setName(name);
+            categoryEntity.setCreateDate(new Date());
+            categoryEntity.setCreator(creator);
+            //是否推荐
+            if("是".equals(dto.getShowInCommend())){
+                categoryEntity.setShowInCommend(CategoryEnm.SHOW_IN_COMMEND_YES.getStatus());
+            }else{
+                categoryEntity.setShowInCommend(CategoryEnm.SHOW_IN_COMMEND_NO.getStatus());
+            }
+            categoryEntity.setStatus(Common.STATUS_OFF.getStatus());
+            categoryEntity.setMerchantId(merchantId);
+            categoryEntity.setBrief(dto.getBrief());
+            goodCategoryService.insert(categoryEntity);
+        }
+        return new Result();
     }
 }

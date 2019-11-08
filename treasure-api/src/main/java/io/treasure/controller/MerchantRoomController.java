@@ -8,12 +8,13 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantRoomDTO;
-import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.dto.*;
+import io.treasure.enm.CategoryEnm;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
+import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.MerchantRoomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -268,6 +269,49 @@ public class MerchantRoomController {
             }
         }else {
             return new Result().error("没有菜品到分类的商户!");
+        }
+        return new Result();
+    }
+    @CrossOrigin
+    @PostMapping("exportGoods")
+    @ApiOperation("导入")
+    public Result exportGoods(@RequestBody ExportMerchantRoomDTO dto){
+        //效验数据
+        ValidatorUtils.validateEntity(dto, AddGroup.class);
+        String name=dto.getName();
+        //商户名称
+        String martId=dto.getMerchantId();
+        //创建者
+        long creator=dto.getCreator();
+        //根据商户名称查询商户编号
+        MerchantEntity merchantEntity=merchantService.getByName(martId,Common.STATUS_DELETE.getStatus());
+        if(null==merchantEntity){
+            return new Result().error("商户不存在，请先注册商户！");
+        }
+        long merchantId=merchantEntity.getId();
+        MerchantRoomEntity roomEntity=new MerchantRoomEntity();
+        roomEntity.setMerchantId(merchantId);
+        //类型
+        String type=dto.getType();
+        if("桌".equals(type)){
+            roomEntity.setType(MerchantRoomEnm.TYPE_DESK.getType());
+        }else{
+            roomEntity.setType(MerchantRoomEnm.TYPE_ROOM.getType());
+        }
+        //根据包房或者桌名称查询
+        List goodCategoryList=merchantRoomService.getByNameAndMerchantId(name,merchantId,roomEntity.getType());
+        if(null!=goodCategoryList && goodCategoryList.size()>0){
+            return new Result().error(name+"该"+type+"已经存在");
+        }else{
+            roomEntity.setName(name);
+            roomEntity.setCreateDate(new Date());
+            roomEntity.setCreator(creator);
+            roomEntity.setStatus(Common.STATUS_OFF.getStatus());
+            roomEntity.setBrief(dto.getBrief());
+            roomEntity.setDescription(dto.getDescription());
+            roomEntity.setNumHigh(dto.getNumHigh());
+            roomEntity.setNumLow(dto.getNumLow());
+            merchantRoomService.insert(roomEntity);
         }
         return new Result();
     }
