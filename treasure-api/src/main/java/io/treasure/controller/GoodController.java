@@ -273,7 +273,7 @@ public class GoodController {
             categoryEntity.setCreateDate(new Date());
             categoryEntity.setCreator(creator);
             categoryEntity.setShowInCommend(CategoryEnm.SHOW_IN_COMMEND_NO.getStatus());
-            categoryEntity.setStatus(Common.STATUS_ON.getStatus());
+            categoryEntity.setStatus(Common.STATUS_OFF.getStatus());
             categoryEntity.setMerchantId(merchantId);
             goodCategoryService.insert(categoryEntity);
             goodCategoryList=goodCategoryService.getByNameAndMerchantId(goodCategoryId,merchantId);

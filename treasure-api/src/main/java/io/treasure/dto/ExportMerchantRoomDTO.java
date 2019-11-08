@@ -31,10 +31,10 @@ public class ExportMerchantRoomDTO implements Serializable {
 	private String brief;
 	@ApiModelProperty(value = "可容纳最低人数")
 	@NotNull(message = "可容纳最低人数不能为空",groups=AddGroup.class)
-	private Integer numLow;
+	private String numLow;
 	@ApiModelProperty(value = "可容纳最高人数")
 	@NotNull(message = "可容纳最高人数不能为空",groups=AddGroup.class)
-	private Integer numHigh;
+	private String numHigh;
 	@ApiModelProperty(value = "类型，1-包房，2-桌")
 	@NotNull(message = "类型不能为空",groups=AddGroup.class)
 	private String type;

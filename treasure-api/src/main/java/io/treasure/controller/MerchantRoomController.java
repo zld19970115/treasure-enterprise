@@ -306,11 +306,13 @@ public class MerchantRoomController {
             roomEntity.setName(name);
             roomEntity.setCreateDate(new Date());
             roomEntity.setCreator(creator);
-            roomEntity.setStatus(Common.STATUS_OFF.getStatus());
+            roomEntity.setStatus(Common.STATUS_ON.getStatus());
             roomEntity.setBrief(dto.getBrief());
             roomEntity.setDescription(dto.getDescription());
-            roomEntity.setNumHigh(dto.getNumHigh());
-            roomEntity.setNumLow(dto.getNumLow());
+            String numHigh=dto.getNumHigh();
+            roomEntity.setNumHigh(Integer.parseInt(numHigh));
+            String numLow=dto.getNumLow();
+            roomEntity.setNumLow(Integer.parseInt(numLow));
             merchantRoomService.insert(roomEntity);
         }
         return new Result();
