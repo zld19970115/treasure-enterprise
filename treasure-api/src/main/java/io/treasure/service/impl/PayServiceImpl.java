@@ -83,7 +83,6 @@ public class PayServiceImpl implements PayService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
-        System.out.println("---out_trade_no------------"+out_trade_no);
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
         if(masterOrderEntity==null||"".equals(masterOrderEntity)){
             mapRtn.put("return_code", "FAIL");
@@ -95,7 +94,6 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
-        System.out.println("---masterOrderEntity------------"+masterOrderEntity);
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
@@ -110,7 +108,6 @@ public class PayServiceImpl implements PayService {
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
-        System.out.println(masterOrderEntity);
         masterOrderDao.updateById(masterOrderEntity);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
@@ -129,7 +126,6 @@ public class PayServiceImpl implements PayService {
                     return mapRtn;
                 }
             }
-            System.out.println(slaveOrderEntitys);
         }
 
         MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
@@ -234,41 +230,30 @@ public class PayServiceImpl implements PayService {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        System.out.println(alipayResponse.getBody());
         if(alipayResponse.getCode()=="10000"){
             if (goodId != null) {
                 //将退款ID更新到refundOrder表中refund_id
                 refundOrderService.updateRefundId(refundNo, orderNo, goodId);
-                System.out.println("11111111111111111111111111111111111111111");
                 //将退款ID更新到订单菜品表中
                 slaveOrderService.updateRefundId(refundNo, orderNo, goodId);
-                System.out.println("222222222222222222222222222222222222222222");
                 BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
                 masterOrderEntity.setPayMoney(bigDecimal);
-                System.out.println(masterOrderEntity);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
-                System.out.println("3333333333333333333333333333333333333333333");
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
-                System.out.println("4444444444444444444444444444444444444444444");
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
-                System.out.println(masterOrderEntity);
                 List<SlaveOrderEntity> slaveOrderEntityList=slaveOrderService.selectByOrderId(orderNo);
-                System.out.println(slaveOrderEntityList);
                 for(int i=0;i<slaveOrderEntityList.size();i++){
                     SlaveOrderEntity slaveOrderEntity=slaveOrderEntityList.get(i);
                     if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
                         slaveOrderEntity.setRefundId(refundNo);
                     }
-                    System.out.println("++++++++++++++++++");
                 }
                 slaveOrderService.updateBatchById(slaveOrderEntityList);
-                System.out.println("5555555555555555555555555555555555555555555555555555555");
                 return result.ok(true);
             }
         }
-        System.out.println(alipayResponse.getCode());
         return result.ok(false);
     }
 
@@ -468,9 +453,7 @@ public class PayServiceImpl implements PayService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
-        System.out.println("---out_trade_no------------"+out_trade_no);
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
-        System.out.println("---masterOrderEntity------------"+masterOrderEntity);
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");

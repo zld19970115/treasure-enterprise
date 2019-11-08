@@ -251,7 +251,6 @@ public class ApiAlipayController {
         alipayRequest.setBizModel(model);
 
         AlipayTradeCloseResponse alipayResponse = alipayClient.execute(alipayRequest);
-        System.out.println(alipayResponse.getBody());
 
         return alipayResponse.getBody();
     }
@@ -278,11 +277,9 @@ public class ApiAlipayController {
             AlipayDataDataserviceBillDownloadurlQueryResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
                 String billDownloadUrl = response.getBillDownloadUrl();
-                System.out.println(billDownloadUrl);
 
                 // 2. 下载对账单
                 List<String> orderList = this.downloadBill(billDownloadUrl);
-                System.out.println(orderList);
                 if (orderList != null && orderList.size() > 0) {
                     for (int i = 5; i <= orderList.size() - 4; i++) {
                         String order = orderList.get(i);

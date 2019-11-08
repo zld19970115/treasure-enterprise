@@ -122,9 +122,7 @@ public class ApiWXAppPayController {
     @RequestMapping("/notify")
     @ApiOperation(value="回调地址")
     public void precreateNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        System.out.println("----------------pda微信回调-------" + request);
         Map<String, String> reqData = wxPay.getNotifyParameter(request);
-        System.out.println("----------------pda微信回调Map-------" + reqData);
         /**
          * {
          * transaction_id=4200000138201806180751222945,
