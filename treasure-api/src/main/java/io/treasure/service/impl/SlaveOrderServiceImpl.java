@@ -146,7 +146,6 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
                     MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
                     String clientId = merchantUserDTO.getClientId();
                     Result result1 = payService.refundByGood(masterOrderEntity.getPayMode(), orderId, allGoods.getPayMoney().toString(), goodId);
-                    System.out.println(result1);
                     if (result1.success()) {
                         boolean b = (boolean) result1.getData();
                         if (!b) {

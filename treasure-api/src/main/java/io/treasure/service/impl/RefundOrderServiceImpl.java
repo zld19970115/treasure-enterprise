@@ -126,7 +126,6 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         this.updateMasterOrderPayMoney(orderId,goodId);
         OrderDTO order = masterOrderService.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        System.out.println(orderGoods.size());
         int num=0;
         for (SlaveOrderEntity soe:orderGoods) {
             if(soe.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
