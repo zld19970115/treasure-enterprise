@@ -1536,13 +1536,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                    }
 //                }
 //            }
-            BigDecimal c=new BigDecimal("0");
-            List<MasterOrderEntity> auxiliaryPayOrders = masterOrderService.getAuxiliaryPayOrderss(orderDTO.getOrderId());
-            for (MasterOrderEntity s:auxiliaryPayOrders) {
-                c=c.add(s.getPayMoney());
-            }
             orderDTO.setPayMoney(a);
-            orderDTO.setAllMoney(a.add(c));
         }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
