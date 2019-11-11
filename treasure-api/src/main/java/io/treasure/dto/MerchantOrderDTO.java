@@ -105,9 +105,6 @@ public class MerchantOrderDTO implements Serializable {
 	@ApiModelProperty(value = "修改者")
 	private Long updater;
 
-	@ApiModelProperty(value = "修改者")
-	private BigDecimal allMoney;
-
 	@ApiModelProperty(value = "包房名称")
 	private String roomName;
 
