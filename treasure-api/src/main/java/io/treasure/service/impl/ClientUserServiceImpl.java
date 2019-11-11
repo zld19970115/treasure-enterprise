@@ -109,27 +109,34 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result userGiftToUser(long userId, String mobile, BigDecimal giftMoney) {
-        ClientUserEntity clientUserEntity = baseDao.selectById(userId);
-        if (clientUserEntity!=null) {
-            ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
-            if (clientUserEntity1!=null){
-                BigDecimal gift = clientUserEntity.getGift();
-                BigDecimal gift1 = clientUserEntity1.getGift();
-                if(gift.compareTo(giftMoney)> -1){
-                    gift = gift.subtract(giftMoney);
-                    gift1=gift1.add(giftMoney);
-                    clientUserEntity.setGift(gift);
-                    clientUserEntity1.setGift(gift1);
-                    baseDao.updateById(clientUserEntity);
-                    baseDao.updateById(clientUserEntity1);
-                    return new Result().ok("赠送成功");
-                }else {
-                    return new Result().error("您得赠送金余额不足");
+        String s = giftMoney.toString();
+        String[] split = s.split(".");
+        BigDecimal c=new BigDecimal("0");
+        if(split.length==0 && giftMoney.compareTo(c)==1) {
+            ClientUserEntity clientUserEntity = baseDao.selectById(userId);
+            if (clientUserEntity != null) {
+                ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
+                if (clientUserEntity1 != null) {
+                    BigDecimal gift = clientUserEntity.getGift();
+                    BigDecimal gift1 = clientUserEntity1.getGift();
+                    if (gift.compareTo(giftMoney) > -1) {
+                        gift = gift.subtract(giftMoney);
+                        gift1 = gift1.add(giftMoney);
+                        clientUserEntity.setGift(gift);
+                        clientUserEntity1.setGift(gift1);
+                        baseDao.updateById(clientUserEntity);
+                        baseDao.updateById(clientUserEntity1);
+                        return new Result().ok("赠送成功");
+                    } else {
+                        return new Result().error("您得赠送金余额不足");
+                    }
+                } else {
+                    return new Result().error("该用户没有注册");
                 }
-            }else {
-                return new Result().error("该用户没有注册");
             }
-     }
+        }else {
+            return new Result().error("赠送金额不能包含小数且必须大于0");
+        }
         return new Result().error("请重新登录");
     }
 
