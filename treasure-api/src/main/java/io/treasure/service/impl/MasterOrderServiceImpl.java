@@ -1375,9 +1375,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
         }else if(order.getPOrderId().equals("0")) {
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+            if(roomOrderByPorderId!=null){
             order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
             order.setRoomId(roomOrderByPorderId.getRoomId());
             order.setReservationId(roomOrderByPorderId.getReservationId());
+            }
         }
         return order;
 

@@ -134,6 +134,15 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         }
         if(num==orderGoods.size()){
             masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
+            if(order.getReservationId()!=null){
+                merchantRoomParamsSetService.updateStatus(order.getReservationId(),0);
+            }else{
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if(roomOrderByPorderId!=null){
+                    merchantRoomParamsSetService.updateStatus(roomOrderByPorderId.getReservationId(),0);
+                    masterOrderService.updateOrderStatus(8,roomOrderByPorderId.getOrderId());
+                }
+            }
         }
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
