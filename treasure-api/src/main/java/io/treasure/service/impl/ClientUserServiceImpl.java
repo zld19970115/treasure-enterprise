@@ -110,9 +110,10 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Transactional(rollbackFor = Exception.class)
     public Result userGiftToUser(long userId, String mobile, BigDecimal giftMoney) {
         String s = giftMoney.toString();
-        String[] split = s.split(".");
+        String[] split = s.split("\\.");
+        System.out.println(split);
         BigDecimal c=new BigDecimal("0");
-        if(split.length==0 && giftMoney.compareTo(c)==1) {
+        if(split.length==1 && giftMoney.compareTo(c)==1) {
             ClientUserEntity clientUserEntity = baseDao.selectById(userId);
             if (clientUserEntity != null) {
                 ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
