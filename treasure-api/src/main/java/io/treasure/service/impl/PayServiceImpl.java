@@ -167,6 +167,9 @@ public class PayServiceImpl implements PayService {
         if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getRoomId()!=null){
             merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
         }
+        if(masterOrderEntity.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
+            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
+        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -467,6 +470,8 @@ public class PayServiceImpl implements PayService {
 
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.ALIPAY.getValue());
+        OrderDTO order = masterOrderService.getOrder(out_trade_no);
+        merchantRoomParamsSetService.updateStatus(order.getReservationId(),1);
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){

@@ -483,10 +483,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             int isUse = merchantRoomParamsSetEntity.getState();
             if (isUse == 0) {
              merchantRoomParamsSetEntity.setState(1);
-             boolean bb=merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
-             if(!bb){
-                 return result.error(-4,"包房/散台预定出错！");
-             }
+
             } else if (isUse == 1) {
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
