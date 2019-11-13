@@ -75,6 +75,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
      * @return
      */
     DesignConditionsDTO calculateGiftCoupon(DesignConditionsDTO dct);
+    DesignConditionsDTO notDiscounts(DesignConditionsDTO dct);
 
     void updateOrderStatus(int status,  String orderId);
 

@@ -825,6 +825,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal disc = new BigDecimal(0.1).setScale(2, BigDecimal.ROUND_DOWN);
         //订单原总价
         BigDecimal totalMoney1 = dct.getTotalMoney();
+
         MerchantCouponDTO merchantCouponDTO = merchantCouponService.get(dct.getId());
         if (merchantCouponDTO.getDisType() != 2) {
             Double money = merchantCouponDTO.getDiscount();
@@ -840,6 +841,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         //优惠卷辅助运算
         BigDecimal x = new BigDecimal(0);
+//---------------------------------------------------平台扣点算法-----------------------------------------------------
+        //扣点基数
+        BigDecimal base=new BigDecimal("1");
+        //扣点比例
+        BigDecimal ratio=new BigDecimal("0.15");
+        BigDecimal payMoney = totalMoney1.subtract(discount);
+        //商户所得金额
+        BigDecimal subtract2 = payMoney.multiply(base.subtract(ratio));
+        //平台扣点金额
+        BigDecimal subtract3 = payMoney.multiply(ratio);
+
+
         /*优惠卷算法*/
 
 
@@ -857,6 +870,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
                 slaveOrderEnti.setDiscountsMoney(discount.subtract(x));
                 slaveOrderEnti.setTotalMoney(newPrive.multiply(quantity));
+                slaveOrderEnti.setMerchantProceeds(subtract2);
+                slaveOrderEnti.setPlatformBrokerage(subtract3);
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
@@ -870,7 +885,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
                 BigDecimal subtract = multiply.multiply(quantity);
                 slaveOrderEnti.setDiscountsMoney(subtract);
-                slaveOrderEnti.setTotalMoney(aGoodfreeGoldMoney.multiply(quantity));
+                //实际支付总金额（扣除掉优惠券平均到菜品的钱）
+                BigDecimal multiply1 = aGoodfreeGoldMoney.multiply(quantity);
+                slaveOrderEnti.setTotalMoney(multiply1);
+                BigDecimal subtract1 = base.subtract(ratio);
+                //计算平台扣点金额
+                slaveOrderEnti.setPlatformBrokerage(multiply1.multiply(ratio));
+                subtract3=subtract3.subtract(multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_DOWN);
+                slaveOrderEnti.setMerchantProceeds(multiply1.multiply(subtract1));
+                //计算商户实际可得金额
+                subtract2=subtract2.subtract(multiply1.multiply(multiply1.multiply(subtract1)).setScale(2, BigDecimal.ROUND_DOWN));
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
@@ -909,6 +933,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         //订单原总价
         BigDecimal totalMoney1 = dct.getTotalMoney();
+
+        //---------------------------------------------------平台扣点算法-----------------------------------------------------
+        //扣点基数
+        BigDecimal base=new BigDecimal("1");
+        //扣点比例
+        BigDecimal ratio=new BigDecimal("0.15");
+        BigDecimal payMoney = totalMoney1.subtract(discount);
+        //商户所得金额
+        BigDecimal subtract2 = payMoney.multiply(base.subtract(ratio));
+        //平台扣点金额
+        BigDecimal subtract3 = payMoney.multiply(ratio);
+
+
         ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
         for (int i = 0; i < slaveOrder.size(); i++) {
             //一条对象
@@ -929,6 +966,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal newPrice = price.subtract((freeGoldMoney.subtract(x).divide(quantity)));
                 slaveOrderEnti.setNewPrice(newPrice);
                 slaveOrderEnti.setTotalMoney(newPrice.multiply(quantity));
+                slaveOrderEnti.setPlatformBrokerage(subtract3);
+                slaveOrderEnti.setMerchantProceeds(subtract2);
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
@@ -941,6 +980,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal multiply = divide.multiply(freeGoldMoney).setScale(2, BigDecimal.ROUND_DOWN);
                 //赠送金平均到单个菜品金额=菜品单价-（菜品单价/订单总金额）*赠送金总金额
                 BigDecimal aGoodfreeGoldMoney = price.subtract((multiply)).setScale(2, BigDecimal.ROUND_DOWN);
+                BigDecimal multiply1 = price.multiply(quantity);
+                //平台所得金额
+                BigDecimal platformBrokerage = multiply1.multiply(ratio);
+                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
+                subtract3=subtract3.subtract(platformBrokerage);
+                //商户所的金额
+                BigDecimal merchantProceeds = multiply1.multiply(base.subtract(ratio));
+                subtract2=subtract2.subtract(merchantProceeds);
+
+                slaveOrderEnti.setMerchantProceeds(merchantProceeds);
+                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
                 slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
                 BigDecimal subtract = multiply.multiply(quantity);
                 slaveOrderEnti.setFreeGold(subtract);
@@ -1017,6 +1067,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setNewPrice(newPrice);
                 slaveOrderEnti.setTotalMoney(newPrice.multiply(quantity));
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
+                slaveOrderEnti.setMerchantProceeds(slaveOrder.get(i).getMerchantProceeds());
+                slaveOrderEnti.setPlatformBrokerage(slaveOrder.get(i).getPlatformBrokerage());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
                 //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
@@ -1031,6 +1083,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
                 BigDecimal subtract = multiply.multiply(quantity);
                 slaveOrderEnti.setFreeGold(subtract);
+                slaveOrderEnti.setMerchantProceeds(slaveOrder.get(i).getMerchantProceeds());
+                slaveOrderEnti.setPlatformBrokerage(slaveOrder.get(i).getPlatformBrokerage());
                 slaveOrderEnti.setTotalMoney(aGoodfreeGoldMoney.multiply(quantity));
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
@@ -1043,6 +1097,75 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         dct.setSlaveOrder(slaveOrderEntityArrayList);
 
+        return dct;
+    }
+
+    /**
+     * 无任何优惠（只计算扣点）
+     *
+     * @param dct
+     * @return
+     */
+    @Override
+    public DesignConditionsDTO notDiscounts(DesignConditionsDTO dct) {
+        //获取此订餐所有菜品信息
+        List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
+
+        //订单原总价
+        BigDecimal totalMoney1 = dct.getTotalMoney();
+
+        //---------------------------------------------------平台扣点算法-----------------------------------------------------
+        //扣点基数
+        BigDecimal base=new BigDecimal("1");
+        //扣点比例
+        BigDecimal ratio=new BigDecimal("0.15");
+        //商户所得金额
+        BigDecimal subtract2 = totalMoney1.multiply(base.subtract(ratio));
+        //平台扣点金额
+        BigDecimal subtract3 = totalMoney1.multiply(ratio);
+
+
+        ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
+        for (int i = 0; i < slaveOrder.size(); i++) {
+            //一条对象
+            calculationAmountDTO slaveOrderEnti = slaveOrder.get(i);
+            //获取菜品单价
+            BigDecimal price = slaveOrder.get(i).getPrice();
+            //单个菜品数量
+            BigDecimal quantity = slaveOrder.get(i).getQuantity();
+            //此菜品总价
+            BigDecimal AGreensMoney = price.multiply(quantity);
+            //获取用户信息
+            ClientUserDTO clientUserDTO = clientUserService.get(dct.getUserId());
+
+            if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
+                slaveOrderEnti.setTotalMoney(AGreensMoney);
+                slaveOrderEnti.setPlatformBrokerage(subtract3);
+                slaveOrderEnti.setMerchantProceeds(subtract2);
+                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
+                slaveOrderEnti.setName(goodDTO.getName());
+                slaveOrderEnti.setIcon(goodDTO.getIcon());
+            } else {
+                //平台所得金额
+                BigDecimal platformBrokerage = AGreensMoney.multiply(ratio);
+                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
+                subtract3=subtract3.subtract(platformBrokerage);
+                //商户所的金额
+                BigDecimal merchantProceeds = AGreensMoney.multiply(base.subtract(ratio));
+                subtract2=subtract2.subtract(merchantProceeds);
+
+                slaveOrderEnti.setMerchantProceeds(merchantProceeds);
+                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
+                slaveOrderEnti.setNewPrice(price);
+                slaveOrderEnti.setTotalMoney(AGreensMoney);
+                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
+                slaveOrderEnti.setName(goodDTO.getName());
+                slaveOrderEnti.setIcon(goodDTO.getIcon());
+            }
+            slaveOrderEntityArrayList.add(slaveOrderEnti);
+
+        }
+        dct.setSlaveOrder(slaveOrderEntityArrayList);
         return dct;
     }
 
