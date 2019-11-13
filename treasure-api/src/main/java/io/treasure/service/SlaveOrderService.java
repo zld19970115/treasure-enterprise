@@ -51,4 +51,6 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
 
     List<SlaveOrderEntity> getOrderGoods(String orderId);
 
+    void updateSlaveOrderPointDeduction(BigDecimal mp,BigDecimal pb,String orderId,Long goodId);
+
 }

@@ -124,6 +124,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //同时将包房或者桌设置成未使用状态
                     merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 }
+                BigDecimal v=new BigDecimal("0");
+                masterOrderService.updateSlaveOrderPointDeduction(v,v,dto.getOrderId());
+
                 ClientUserDTO userDto = clientUserService.get(dto.getCreator());
                 if (null != userDto) {
                     String clientId = userDto.getClientId();
@@ -278,6 +281,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
+                BigDecimal v=new BigDecimal("0");
+                masterOrderService.updateSlaveOrderPointDeduction(v,v,order.getOrderId());
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
                 if (result1.success()) {
@@ -508,6 +513,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType()==2&&dto.getPayMoney().compareTo(BigDecimal.ZERO)==0){
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
@@ -523,21 +529,41 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
                 }
         }
-        int i = baseDao.insert(masterOrderEntity);
-        if (i <= 0) {
-            return result.error(-2, "没有订单数据！");
-        }
+
         //保存订单菜品
         if (masterOrderEntity.getReservationType() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             if (dtoList == null) {
                 return result.error(-6, "没有菜品数据！");
             }
             int size = dtoList.size();
+            ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
             for (int n = 0; n < size; n++) {
                 SlaveOrderEntity slaveOrderEntity = dtoList.get(n);
                 slaveOrderEntity.setOrderId(orderId);
                 slaveOrderEntity.setStatus(1);
+                slaveOrderEntity.setCreateDate(new Date());
+                slaveOrderEntity.setCreator(clientUserEntity.getId());
                 slaveOrderService.insert(slaveOrderEntity);
+            }
+            //商户所得金额
+            BigDecimal b1=new BigDecimal("0");
+            //平台所得金额
+            BigDecimal b2=new BigDecimal("0");
+            for (SlaveOrderEntity  dl:dtoList) {
+                if(dl.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()||
+                        dl.getStatus()==Constants.OrderStatus.PAYORDER.getValue()||
+                        dl.getStatus()==Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()||
+                        dl.getStatus()==Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()
+                ){
+                    b1=b1.add(dl.getMerchantProceeds());
+                    b2=b2.add(dl.getPlatformBrokerage());
+                }
+            }
+            masterOrderEntity.setMerchantProceeds(b1);
+            masterOrderEntity.setPlatformBrokerage(b2);
+            int i = baseDao.insert(masterOrderEntity);
+            if (i <= 0) {
+                return result.error(-2, "没有订单数据！");
             }
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //            boolean b=slaveOrderService.insertBatch(dtoList);
@@ -1254,6 +1280,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
 
             }
+            BigDecimal v=new BigDecimal("0");
+            masterOrderService.updateSlaveOrderPointDeduction(v,v,dto.getOrderId());
         } else {
             return new Result().error("无法取消订单！");
         }
@@ -1606,6 +1634,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public List<MasterOrderEntity> getAuxiliaryPayOrderss(String orderId) {
         return baseDao.getAuxiliaryPayOrderss(orderId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
+        return baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
     }
 
     @Override

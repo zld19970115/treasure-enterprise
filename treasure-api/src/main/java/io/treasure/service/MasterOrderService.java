@@ -137,4 +137,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
 
+    List<MasterOrderEntity>updateSlaveOrderPointDeduction(BigDecimal mp,BigDecimal pb, String orderId);
+
 }

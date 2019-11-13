@@ -144,6 +144,18 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 }
             }
         }
+        BigDecimal v=new BigDecimal("0");
+        BigDecimal o_p=new BigDecimal("0");
+        BigDecimal o_m=new BigDecimal("0");
+        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
+        BigDecimal sgood_platformBrokerage1 = allGoods.getPlatformBrokerage();
+        BigDecimal sgood_merchantProceeds1 = allGoods.getMerchantProceeds();
+        BigDecimal o_platformBrokerage = order.getPlatformBrokerage();
+        BigDecimal o_merchantProceeds = order.getMerchantProceeds();
+        o_p=o_platformBrokerage.subtract(sgood_platformBrokerage1);
+        o_m=o_merchantProceeds.subtract(sgood_merchantProceeds1);
+        slaveOrderService.updateSlaveOrderPointDeduction(v,v,orderId,goodId);
+        masterOrderService.updateSlaveOrderPointDeduction(o_m,o_p,orderId);
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
           if(StringUtils.isNotBlank(clientId)){
