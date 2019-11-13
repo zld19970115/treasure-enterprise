@@ -22,7 +22,8 @@
         <result property="updateDate" column="update_date"/>
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
-        <result property="updater" column="updater"/>
+        <result property="platformBrokerage" column="platform_brokerage"/>
+        <result property="merchantProceeds" column="merchant_proceeds"/>
     </resultMap>
 
     <select id="getAllGoods" parameterType="io.treasure.dto.SlaveOrderDTO" resultType="io.treasure.dto.SlaveOrderDTO">
