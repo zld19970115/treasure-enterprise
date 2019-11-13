@@ -552,6 +552,13 @@ public class ApiMasterOrderController {
     }
 
     @Login
+    @PostMapping("notDiscounts")
+    @ApiOperation("客户端-无任何优惠")
+    public Result<DesignConditionsDTO> notDiscounts(@RequestBody DesignConditionsDTO dct){
+        return new Result<DesignConditionsDTO>().ok(masterOrderService.notDiscounts(dct));
+    }
+
+    @Login
     @PostMapping("calculateGiftCoupon")
     @ApiOperation("客户端-使用优惠卷与赠送金")
     public Result<DesignConditionsDTO> calculateGiftCoupon(@RequestBody DesignConditionsDTO dct){
