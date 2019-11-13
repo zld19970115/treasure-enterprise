@@ -95,5 +95,15 @@ public class SlaveOrderEntity extends BaseEntity {
 	 */
 	private BigDecimal discountsMoney;
 
+	/**
+	 * 平台扣点金额
+	 */
+	private BigDecimal platformBrokerage;
+
+	/**
+	 * 商户实际所得金额（扣除平台扣点不包含赠送金）
+	 */
+	private BigDecimal merchantProceeds;
+
 
 }
