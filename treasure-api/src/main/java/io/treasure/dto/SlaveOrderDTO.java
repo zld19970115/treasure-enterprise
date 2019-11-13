@@ -83,4 +83,10 @@ public class SlaveOrderDTO implements Serializable {
 	private String cgName;
 	@ApiModelProperty(value = "菜品图片")
 	private String cgeIcon;
+
+	@ApiModelProperty(value = "平台扣点金额")
+	private BigDecimal platformBrokerage;
+
+	@ApiModelProperty(value = "商户实际所得金额（扣除平台扣点不包含赠送金）")
+	private BigDecimal merchantProceeds;
 }
