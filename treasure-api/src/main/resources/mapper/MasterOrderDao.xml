@@ -31,6 +31,8 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="platformBrokerage" column="platform_brokerage"/>
+        <result property="merchantProceeds" column="merchant_proceeds"/>
     </resultMap>
     <select id="selectByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order  where order_id=#{orderId}
@@ -159,5 +161,9 @@
     <select id="getAuxiliaryPayOrderss" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id=#{orderId} and  status in (2,7,10)
     </select>
+
+    <update id="updateSlaveOrderPointDeduction" parameterType="io.treasure.entity.MasterOrderEntity">
+        update ct_master_order SET merchant_proceeds=#{mp},platform_brokerage=#{pb} where order_id=#{orderId}
+    </update>
 
 </mapper>
