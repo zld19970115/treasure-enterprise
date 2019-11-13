@@ -29,6 +29,8 @@ public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
 
     void updateSlaveOrderStatus(@Param("status") int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
 
+    void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp,@Param("pb") BigDecimal pb,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+
     List<SlaveOrderEntity> getOrderGoods(String orderId);
 
     List<SlaveOrderDTO> getOandPoGood(Map<String, Object> params);
