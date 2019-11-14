@@ -165,5 +165,9 @@
     <update id="updateSlaveOrderPointDeduction" parameterType="io.treasure.entity.MasterOrderEntity">
         update ct_master_order SET merchant_proceeds=#{mp},platform_brokerage=#{pb} where order_id=#{orderId}
     </update>
+    
+    <select id="getOrderByReservationId" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where reservation_id=#{reservationId}
+    </select>
 
 </mapper>
