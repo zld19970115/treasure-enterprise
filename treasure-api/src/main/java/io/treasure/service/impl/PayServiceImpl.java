@@ -135,6 +135,12 @@ public class PayServiceImpl implements PayService {
                 String clientId=userDto.getClientId();
                 if(StringUtils.isNotBlank(clientId)){
                     AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
+
+
+
+
+
+
                 }else{
                     mapRtn.put("return_code", "FAIL");
                     mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");

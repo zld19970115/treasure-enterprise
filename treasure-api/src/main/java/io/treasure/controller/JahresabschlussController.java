@@ -1,6 +1,4 @@
 package io.treasure.controller;
-
-import com.sun.org.apache.xml.internal.utils.res.XResources_zh_CN;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -8,24 +6,20 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantOrderDTO;
+import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodCategoryEntity;
-import io.treasure.service.JahresabschlussService;
-import oracle.sql.JAVA_STRUCT;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @RestController
 @RequestMapping("/Jahresabschluss")
 @Api(tags="商户端财务报表")
@@ -45,6 +39,9 @@ public class JahresabschlussController {
         String startTime1 = (String) params.get("startTime1");
         String endTime1 = (String) params.get("endTime1");
         List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);
+        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);
+        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);
+
         List list = new ArrayList();
         for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
             List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());
@@ -65,12 +62,13 @@ public class JahresabschlussController {
             BigDecimal subtract = AllPayMoney.subtract(multiply);
             a.add(goodCategoryEntity.getName());//类别名称
             a.add(Alquantity);//销量
-            a.add(AllPayMoney);//当日交易金额
+            a.add(AllPayMoney);//交易金额
             a.add(subtract);//可提现金额
             a.add(multiply);//平台服务费
             list.add(a);
         }
-
+        list.add(merchantOrderDTOS);
+        list.add(merchantWithdrawDTO);
         return new Result().ok(list);
  }
 
