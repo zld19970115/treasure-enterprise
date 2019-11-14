@@ -7,12 +7,17 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.DateUtils;
 import io.treasure.dao.MerchantRoomDao;
+import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantRoomEntity;
+import io.treasure.service.ClientUserService;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomService;
 import io.treasure.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,6 +32,11 @@ import java.util.Map;
  */
 @Service
 public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, MerchantRoomEntity, MerchantRoomDTO> implements MerchantRoomService {
+    @Autowired
+    private ClientUserService clientUserService;
+
+    @Autowired
+    private MasterOrderService masterOrderService;
 
     @Override
     public QueryWrapper<MerchantRoomEntity> getWrapper(Map<String, Object> params){
@@ -116,6 +126,13 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         }
 
         List<MerchantRoomParamsSetDTO> list=baseDao.selectRoomAlreadyPage(params);
+        for (MerchantRoomParamsSetDTO s:list) {
+            MasterOrderEntity orderByReservationId = masterOrderService.getOrderByReservationId(s.getId());
+            if(orderByReservationId!=null){
+                ClientUserDTO clientUserDTO = clientUserService.get(orderByReservationId.getCreator());
+                s.setClientUserDTO(clientUserDTO);
+            }
+        }
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 

@@ -139,4 +139,5 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     void updateSlaveOrderPointDeduction(BigDecimal mp,BigDecimal pb, String orderId);
 
+    MasterOrderEntity getOrderByReservationId(long reservationId);
 }

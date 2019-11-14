@@ -1626,6 +1626,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public MasterOrderEntity getOrderByReservationId(long reservationId) {
+        return baseDao.getOrderByReservationId(reservationId);
+    }
+
+    @Override
     public PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params) {
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
