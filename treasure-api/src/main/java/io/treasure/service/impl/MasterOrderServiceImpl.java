@@ -1251,10 +1251,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (status == Constants.OrderStatus.NOPAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, dto.getCreator(), new Date(), null);
+            BigDecimal a=new BigDecimal("0");
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             for (SlaveOrderEntity s : slaveOrderEntities) {
                 if (s.getRefundId() == null || s.getRefundId().length() == 0) {
                     slaveOrderService.updateSlaveOrderStatus(status_new, s.getOrderId(), s.getGoodId());
+                    slaveOrderService.updateSlaveOrderPointDeduction(a,a,s.getOrderId(),s.getGoodId());
                 }
             }
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
@@ -1262,6 +1264,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
 
             }
+            masterOrderService.updateSlaveOrderPointDeduction(a,a,dto.getOrderId());
+
         } else {
             return new Result().error("无法取消订单！");
         }
@@ -1617,8 +1621,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public MasterOrderEntity updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
-        return baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
+    public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
+         baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
     }
 
     @Override
