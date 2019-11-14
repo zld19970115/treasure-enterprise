@@ -525,9 +525,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         BigDecimal a=new BigDecimal("0");
         BigDecimal b=new BigDecimal("0");
+        if(dtoList!=null){
         for (SlaveOrderEntity s:dtoList) {
             a=a.add(s.getPlatformBrokerage());
             b=b.add(s.getMerchantProceeds());
+        }
         }
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
