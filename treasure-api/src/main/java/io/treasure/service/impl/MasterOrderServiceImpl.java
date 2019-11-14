@@ -523,6 +523,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
                 }
         }
+        BigDecimal a=new BigDecimal("0");
+        BigDecimal b=new BigDecimal("0");
+        for (SlaveOrderEntity s:dtoList) {
+            a=a.add(s.getPlatformBrokerage());
+            b=b.add(s.getMerchantProceeds());
+        }
+        masterOrderEntity.setPlatformBrokerage(a);
+        masterOrderEntity.setMerchantProceeds(b);
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
