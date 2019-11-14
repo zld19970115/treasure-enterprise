@@ -145,6 +145,10 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             }
         }
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
+        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
+        BigDecimal gift = clientUserDTO.getGift();
+        clientUserDTO.setGift(gift.add(allGoods.getFreeGold()));
+        clientUserService.update(clientUserDTO);
         String clientId = clientUserDTO.getClientId();
           if(StringUtils.isNotBlank(clientId)){
              AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
