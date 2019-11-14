@@ -170,15 +170,6 @@ public class PayServiceImpl implements PayService {
         if(masterOrderEntity.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
             merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
         }
-        List<SlaveOrderEntity> orderGoods = slaveOrderDao.getOrderGoods(masterOrderEntity.getOrderId());
-        BigDecimal mp=new BigDecimal("0");
-        BigDecimal pb=new BigDecimal("0");
-
-        for (SlaveOrderEntity s:orderGoods) {
-                mp=mp.add(s.getMerchantProceeds());
-                pb=pb.add(s.getPlatformBrokerage());
-        }
-        masterOrderService.updateSlaveOrderPointDeduction(mp,pb,out_trade_no);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -483,15 +474,6 @@ public class PayServiceImpl implements PayService {
         merchantRoomParamsSetService.updateStatus(order.getReservationId(),1);
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
-        List<SlaveOrderEntity> orderGoods = slaveOrderDao.getOrderGoods(masterOrderEntity.getOrderId());
-        BigDecimal mp=new BigDecimal("0");
-        BigDecimal pb=new BigDecimal("0");
-
-        for (SlaveOrderEntity s:orderGoods) {
-            mp=mp.add(s.getMerchantProceeds());
-            pb=pb.add(s.getPlatformBrokerage());
-        }
-        masterOrderService.updateSlaveOrderPointDeduction(mp,pb,out_trade_no);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             if(slaveOrderEntitys==null){
