@@ -433,18 +433,36 @@ public class PayServiceImpl implements PayService {
                 BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
                 masterOrderEntity.setPayMoney(bigDecimal);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
+                SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
+                BigDecimal p=new BigDecimal("0");
+                BigDecimal m=new BigDecimal("0");
+                p=p.add(allGoods.getPlatformBrokerage());
+                m=m.add(allGoods.getMerchantProceeds());
+                BigDecimal a=new BigDecimal("0");
+                allGoods.setPlatformBrokerage(a);
+                allGoods.setMerchantProceeds(a);
+                slaveOrderService.update(allGoods);
+                OrderDTO order = masterOrderService.getOrder(orderNo);
+                BigDecimal platformBrokerage = order.getPlatformBrokerage();
+                BigDecimal merchantProceeds = order.getMerchantProceeds();
+                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(m),platformBrokerage.subtract(p),orderNo);
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 List<SlaveOrderEntity> slaveOrderEntityList=slaveOrderService.selectByOrderId(orderNo);
+                BigDecimal a=new BigDecimal("0");
                 for(int i=0;i<slaveOrderEntityList.size();i++){
                     SlaveOrderEntity slaveOrderEntity=slaveOrderEntityList.get(i);
                     if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
                         slaveOrderEntity.setRefundId(refundNo);
                     }
+
+                    slaveOrderEntity.setPlatformBrokerage(a);
+                    slaveOrderEntity.setMerchantProceeds(a);
                 }
                 slaveOrderService.updateBatchById(slaveOrderEntityList);
+                masterOrderService.updateSlaveOrderPointDeduction(a,a,orderNo);
                 return result.ok(true);
             }
 
