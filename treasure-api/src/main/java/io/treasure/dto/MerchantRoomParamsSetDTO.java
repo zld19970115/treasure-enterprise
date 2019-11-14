@@ -91,4 +91,9 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 
 	@ApiModelProperty(value = "未使用总数")
 	private Integer AllNOT;
+
+	@ApiModelProperty(value = "包房目前所属用户")
+	private ClientUserDTO clientUserDTO ;
+
+
 }
