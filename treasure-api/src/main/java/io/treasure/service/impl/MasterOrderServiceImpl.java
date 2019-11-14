@@ -1609,6 +1609,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public MasterOrderEntity updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
+        return baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
+    }
+
+    @Override
     public PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params) {
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
