@@ -32,7 +32,7 @@ public class StimmeController {
     public Result sti(@ApiIgnore @RequestParam Map<String, Object> params) {
      List<StimmeEntity> stimmeEntities = stimmeService.selectBymerchantId(params);
         if (stimmeEntities.size()!=0){
-            return new Result().ok(1);//存在新订单
+            return new Result().ok(stimmeEntities.size());//存在新订单
         }
     return  new Result().ok(0);//不存在新订单
     }
