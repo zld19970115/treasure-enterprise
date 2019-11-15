@@ -37,9 +37,9 @@ public class StimmeEntity extends BaseEntity {
     /**
      * 创建者
      */
-    private long creator;
+    private Long creator;
     /**
      * 修改者
      */
-    private long updater;
+    private Long updater;
 }
