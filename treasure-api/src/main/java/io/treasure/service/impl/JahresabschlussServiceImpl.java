@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodCategoryDao;
 import io.treasure.dao.JahresabschlussDao;
-import io.treasure.dto.GoodCategoryDTO;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.service.JahresabschlussService;
@@ -44,4 +42,28 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
     public List<GoodDTO> selectByCategoeyid(long categoeyId) {
         return baseDao.selectByCategoeyid(categoeyId);
     }
+
+    @Override
+    public List<MerchantOrderDTO> selectBymerchantId(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.selectBymerchantId(params);
+    }
+
+    @Override
+    public List<MerchantWithdrawDTO> selectBymerchantId2(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        return baseDao.selectBymerchantId2(params);
+}
 }

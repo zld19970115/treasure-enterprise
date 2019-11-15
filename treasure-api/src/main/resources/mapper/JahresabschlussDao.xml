@@ -58,4 +58,28 @@
 
         FROM ct_good where good_category_id = #{categoeyId}
     </select>
+    <select id="selectBymerchantId" resultType="io.treasure.dto.MerchantOrderDTO">
+
+
+        SELECT * FROM ct_master_order  where 1=1
+        <if test="merchantId != null">
+            and merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+
+
+
+    </select>
+    <select id="selectBymerchantId2" resultType="io.treasure.dto.MerchantWithdrawDTO">
+        SELECT * FROM ct_merchant_withdraw  where 1=1
+        <if test="merchantId != null">
+            and merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 </mapper>
