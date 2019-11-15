@@ -243,18 +243,14 @@ public class PayServiceImpl implements PayService {
                 masterOrderEntity.setPayMoney(bigDecimal);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
-                BigDecimal p=new BigDecimal("0");
-                BigDecimal m=new BigDecimal("0");
-                p=p.add(allGoods.getPlatformBrokerage());
-                m=m.add(allGoods.getMerchantProceeds());
-                BigDecimal a=new BigDecimal("0");
-                allGoods.setPlatformBrokerage(a);
-                allGoods.setMerchantProceeds(a);
-                slaveOrderService.update(allGoods);
                 OrderDTO order = masterOrderService.getOrder(orderNo);
                 BigDecimal platformBrokerage = order.getPlatformBrokerage();
                 BigDecimal merchantProceeds = order.getMerchantProceeds();
-                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(m),platformBrokerage.subtract(p),orderNo);
+                //退菜后将平台扣点金额和商户所得更新到主订单表中
+                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(allGoods.getMerchantProceeds()),platformBrokerage.subtract(allGoods.getPlatformBrokerage()),orderNo);
+                BigDecimal a=new BigDecimal("0");
+                //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
+                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
@@ -266,10 +262,8 @@ public class PayServiceImpl implements PayService {
                     if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
                         slaveOrderEntity.setRefundId(refundNo);
                     }
-                    slaveOrderEntity.setPlatformBrokerage(a);
-                    slaveOrderEntity.setMerchantProceeds(a);
                 }
-                slaveOrderService.updateBatchById(slaveOrderEntityList);
+                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
                 masterOrderService.updateSlaveOrderPointDeduction(a,a,orderNo);
                 return result.ok(true);
             }
@@ -451,18 +445,14 @@ public class PayServiceImpl implements PayService {
                 masterOrderEntity.setPayMoney(bigDecimal);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
-                BigDecimal p=new BigDecimal("0");
-                BigDecimal m=new BigDecimal("0");
-                p=p.add(allGoods.getPlatformBrokerage());
-                m=m.add(allGoods.getMerchantProceeds());
-                BigDecimal a=new BigDecimal("0");
-                allGoods.setPlatformBrokerage(a);
-                allGoods.setMerchantProceeds(a);
-                slaveOrderService.update(allGoods);
                 OrderDTO order = masterOrderService.getOrder(orderNo);
                 BigDecimal platformBrokerage = order.getPlatformBrokerage();
                 BigDecimal merchantProceeds = order.getMerchantProceeds();
-                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(m),platformBrokerage.subtract(p),orderNo);
+                //退菜后将平台扣点金额和商户所得更新到主订单表中
+                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(allGoods.getMerchantProceeds()),platformBrokerage.subtract(allGoods.getPlatformBrokerage()),orderNo);
+                BigDecimal a=new BigDecimal("0");
+                //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
+                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
@@ -474,11 +464,8 @@ public class PayServiceImpl implements PayService {
                     if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
                         slaveOrderEntity.setRefundId(refundNo);
                     }
-
-                    slaveOrderEntity.setPlatformBrokerage(a);
-                    slaveOrderEntity.setMerchantProceeds(a);
+                    slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
                 }
-                slaveOrderService.updateBatchById(slaveOrderEntityList);
                 masterOrderService.updateSlaveOrderPointDeduction(a,a,orderNo);
                 return result.ok(true);
             }
