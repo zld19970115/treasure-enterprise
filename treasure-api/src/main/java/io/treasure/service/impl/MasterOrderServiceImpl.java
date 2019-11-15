@@ -52,7 +52,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private GoodService goodService;
-
+    @Autowired
+    private StimmeService stimmeService;
     @Autowired
     private MasterOrderService masterOrderService;
 
@@ -1517,6 +1518,31 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return order;
 
+    }
+
+    @Override
+    public OrderDTO orderParticulars1(String orderId) {
+        OrderDTO order = baseDao.getOrder(orderId);
+        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+        for (SlaveOrderEntity og:orderGoods) {
+            og.setGoodInfo(goodService.getByid(og.getGoodId()));
+        }
+        order.setSlaveOrder(orderGoods);
+        order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+        if(order.getRoomId()!=null){
+            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+        }else if(order.getPOrderId().equals("0")) {
+            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+            if(roomOrderByPorderId!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                order.setRoomId(roomOrderByPorderId.getRoomId());
+                order.setReservationId(roomOrderByPorderId.getReservationId());
+            }
+        }
+        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(orderId);
+        stimmeDTO.setStatus(1);//改为已查看
+        stimmeService.update(stimmeDTO);
+        return order;
     }
 
     @Override

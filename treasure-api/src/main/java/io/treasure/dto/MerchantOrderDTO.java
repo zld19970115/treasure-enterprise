@@ -113,4 +113,7 @@ public class MerchantOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "加菜订单的orderId")
 	private String porderId;
+
+	@ApiModelProperty(value = "是否查看过 0 ---未查看 1----已查看")
+	private Integer csStatus;
 }

@@ -101,9 +101,10 @@
         select * from ct_master_order where p_order_id = #{orderId} and status  in (2,4,6)
     </select>
     <select id="listMerchant2" parameterType="Map" resultType="io.treasure.dto.MerchantOrderDTO">
-        select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
+        select masterOrder.*,room.name roomName,cuser.head_img userHeadImg ,cs.status as csStatus from ct_master_order masterOrder
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
+        left join ct_stimme cs on cs.order_id =masterOrder.order_id
         where 1=1
         <if test="orderId != null  and orderId.trim() != '' ">
             and masterOrder.order_id like CONCAT('%',#{orderId},'%')

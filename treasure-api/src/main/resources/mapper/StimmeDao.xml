@@ -4,10 +4,10 @@
 <mapper namespace="io.treasure.dao.StimmeDao">
 
 
-
-
-
-
-
-
+    <select id="selectBymerchantId" resultType="io.treasure.entity.StimmeEntity">
+        select * from ct_stimme where type=1 and status = 0 and merchant_id = #{merchantId}
+    </select>
+    <select id="selectByOrderId" resultType="io.treasure.dto.StimmeDTO">
+        select * from ct_stimme where order_id = #{orderIds}
+    </select>
 </mapper>

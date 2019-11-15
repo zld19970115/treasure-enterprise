@@ -17,6 +17,10 @@ public class StimmeEntity extends BaseEntity {
      */
     private String orderId;
     /**
+     * 商家id
+     */
+    private Long merchantId;
+    /**
      * 类型 1---生成订单
      */
     private Integer type;

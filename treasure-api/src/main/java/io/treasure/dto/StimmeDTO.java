@@ -17,6 +17,9 @@ public class StimmeDTO implements Serializable {
 
     @ApiModelProperty(value = "订单号")
     private String orderId;
+    @ApiModelProperty(value = "商家ID")
+    private Long merchantId;
+
     @ApiModelProperty(value = "类型")
     private Integer type;
     @ApiModelProperty(value = "状态")

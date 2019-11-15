@@ -141,13 +141,10 @@ public class PayServiceImpl implements PayService {
                     Date date = new Date();
                     stimmeEntity.setCreateDate(date);
                     stimmeEntity.setOrderId(masterOrderEntity.getOrderId());
+                    stimmeEntity.setType(1);
+                    stimmeEntity.setMerchantId(masterOrderEntity.getMerchantId());
                     stimmeEntity.setCreator(masterOrderEntity.getCreator());
-                 //   stimmeService.insert()
-
-
-
-
-
+                    stimmeService.insert(stimmeEntity);
                 }else{
                     mapRtn.put("return_code", "FAIL");
                     mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
