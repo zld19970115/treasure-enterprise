@@ -1434,12 +1434,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             Integer status = s.getStatus();
-            if(s.getStatus()==Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()||
-                    s.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()||
-                    s.getStatus()==Constants.OrderStatus.PAYORDER.getValue()||
-                    s.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
                 allpayMoney=allpayMoney.add(s.getPayMoney());
-            }
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
             for (SlaveOrderEntity order:orderGoods) {
