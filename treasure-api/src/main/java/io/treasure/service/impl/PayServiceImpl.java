@@ -18,6 +18,7 @@ import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.entity.StimmeEntity;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
@@ -50,7 +51,8 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     MasterOrderService masterOrderService;
-
+    @Autowired
+    StimmeService stimmeService;
     @Autowired
     ClientUserServiceImpl clientUserService;
 
@@ -135,7 +137,12 @@ public class PayServiceImpl implements PayService {
                 String clientId=userDto.getClientId();
                 if(StringUtils.isNotBlank(clientId)){
                     AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
-
+                    StimmeEntity stimmeEntity = new StimmeEntity();
+                    Date date = new Date();
+                    stimmeEntity.setCreateDate(date);
+                    stimmeEntity.setOrderId(masterOrderEntity.getOrderId());
+                    stimmeEntity.setCreator(masterOrderEntity.getCreator());
+                 //   stimmeService.insert()
 
 
 

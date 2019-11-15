@@ -36,11 +36,11 @@ public class JahresabschlussController {
             @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
     })
     public Result getJahresabschluss(@ApiIgnore @RequestParam Map<String, Object> params) {
-        String startTime1 = (String) params.get("startTime1");
-        String endTime1 = (String) params.get("endTime1");
-        List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);
-        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);
-        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);
+        String startTime1 = (String) params.get("startTime1");//开始日期
+        String endTime1 = (String) params.get("endTime1");//截止日期
+        List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);//根据商户查询商户全部菜品类别
+        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);//根据商户查询商户所有订单
+        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);//根据商户查询商户所有提现
 
         List list = new ArrayList();
         for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
@@ -67,8 +67,8 @@ public class JahresabschlussController {
             a.add(multiply);//平台服务费
             list.add(a);
         }
-        list.add(merchantOrderDTOS);
-        list.add(merchantWithdrawDTO);
+        list.add(merchantOrderDTOS);//全部订单
+        list.add(merchantWithdrawDTO);//全部提现
         return new Result().ok(list);
  }
 
