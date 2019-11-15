@@ -31,7 +31,7 @@ public class JahresabschlussController {
     @GetMapping("getJahresabschluss")
     @ApiOperation("获取财务报表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = false,dataType = "String"),
             @ApiImplicitParam(name = "startTime1", value = "开始日期", paramType = "query", required = false, dataType="String"),
             @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
     })
