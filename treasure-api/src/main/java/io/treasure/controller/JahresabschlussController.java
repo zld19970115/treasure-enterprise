@@ -4,11 +4,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantOrderDTO;
-import io.treasure.dto.MerchantWithdrawDTO;
-import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.GoodCategoryEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,17 +30,20 @@ public class JahresabschlussController {
     @GetMapping("getJahresabschluss")
     @ApiOperation("获取财务报表")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = false,dataType = "String"),
             @ApiImplicitParam(name = "startTime1", value = "开始日期", paramType = "query", required = false, dataType="String"),
             @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
     })
-    public Result getJahresabschluss(@ApiIgnore @RequestParam Map<String, Object> params) {
+    public  Result<PageData<GoodCategoryDTO>> getJahresabschluss(@ApiIgnore @RequestParam Map<String, Object> params) {
         String startTime1 = (String) params.get("startTime1");//开始日期
         String endTime1 = (String) params.get("endTime1");//截止日期
         List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);//根据商户查询商户全部菜品类别
         List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);//根据商户查询商户所有订单
         List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);//根据商户查询商户所有提现
-
         List list = new ArrayList();
         for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
             List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());

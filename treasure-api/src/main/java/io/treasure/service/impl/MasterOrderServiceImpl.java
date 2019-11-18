@@ -178,6 +178,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+
+        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(dto.getOrderId());
+        stimmeDTO.setStatus(1);//改为已查看
+        stimmeService.update(stimmeDTO);
         return new Result().ok("接受订单成功！");
     }
 

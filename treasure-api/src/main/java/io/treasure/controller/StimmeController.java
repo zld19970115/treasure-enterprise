@@ -33,7 +33,7 @@ public class StimmeController {
      List<StimmeEntity> stimmeEntities = stimmeService.selectBymerchantId(params);
 
             return new Result().ok(stimmeEntities.size());//存在新订单
-    }
 
+    }
 
 }
