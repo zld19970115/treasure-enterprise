@@ -1379,7 +1379,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-5, "非只预订菜品,不可以订餐！");
         }
         //锁定包房/散台
-
+        MerchantDTO merchantDTO = merchantService.get(orderDTO.getMerchantId());
+        if(merchantDTO.getDepost()==0){
+            merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(),1);
+        }
         //是否使用赠送金
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());

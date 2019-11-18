@@ -256,8 +256,10 @@ public class PayServiceImpl implements PayService {
                 OrderDTO order = masterOrderService.getOrder(orderNo);
                 BigDecimal platformBrokerage = order.getPlatformBrokerage();
                 BigDecimal merchantProceeds = order.getMerchantProceeds();
+                BigDecimal mp = merchantProceeds.subtract(allGoods.getMerchantProceeds());
+                BigDecimal pb = platformBrokerage.subtract(allGoods.getPlatformBrokerage());
                 //退菜后将平台扣点金额和商户所得更新到主订单表中
-                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(allGoods.getMerchantProceeds()),platformBrokerage.subtract(allGoods.getPlatformBrokerage()),orderNo);
+                masterOrderService.updateSlaveOrderPointDeduction(mp,pb,orderNo);
                 BigDecimal a=new BigDecimal("0");
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
