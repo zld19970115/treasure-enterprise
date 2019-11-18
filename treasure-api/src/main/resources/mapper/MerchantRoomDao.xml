@@ -154,5 +154,17 @@
         </if>
 
     </select>
+    <select id="selectRoomByTime" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+        SELECT *  FROM  ct_merchant_room_params_set curps where 1=1
+        <if test="merchantId != null and merchantId>0 ">
+            and curps.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if> and curps.room_params_id = #{roomParmesId}  and curps.status=1
+
+        and curps.state = 0  and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+
+    </select>
 
 </mapper>

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -148,11 +149,174 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         }
         String Date=(String)params.get("date");
 
+        Date date= DateUtils.parse(Date,"yyyy-MM-dd");
+        params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
+        // 截取当前时间时分秒
+        int strDateH = Integer.parseInt(Date.substring(11, 13));
+        int strDateM = Integer.parseInt(Date.substring(14, 16));
+        int strDateS = Integer.parseInt(Date.substring(17, 19));
+        String  strDateBegin = "05:00:00";
+        String  strDateEnd = "09:59:00";
+        // 截取开始时间时分秒
+        int strDateBeginH = Integer.parseInt(strDateBegin.substring(0, 2));
+        int strDateBeginM = Integer.parseInt(strDateBegin.substring(3, 5));
+        int strDateBeginS = Integer.parseInt(strDateBegin.substring(6, 8));
+        // 截取结束时间时分秒
+        int strDateEndH = Integer.parseInt(strDateEnd.substring(0, 2));
+        int strDateEndM = Integer.parseInt(strDateEnd.substring(3, 5));
+        int strDateEndS = Integer.parseInt(strDateEnd.substring(6, 8));
 
+        long roomParmesId = 0;
+        // 当前时间小时数在开始时间和结束时间小时数之间
+        if (strDateH > strDateBeginH && strDateH < strDateEndH) {
+            roomParmesId = 1;
+            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+        } else if (strDateH == strDateBeginH && strDateM >= strDateBeginM
+                && strDateM <= strDateEndM) {
+            roomParmesId = 1;
+            // 当前时间小时数等于开始时间小时数，分钟数等于开始时间分钟数，秒数在开始和结束之间
+        } else if (strDateH == strDateBeginH && strDateM == strDateBeginM
+                && strDateS >= strDateBeginS && strDateS <= strDateEndS) {
+            roomParmesId = 1;
+        }
+        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+        else if (strDateH >= strDateBeginH && strDateH == strDateEndH
+                && strDateM <= strDateEndM) {
+            roomParmesId = 1;
+            // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数等于结束时间分钟数，秒数小等于结束时间秒数
+        } else if (strDateH >= strDateBeginH && strDateH == strDateEndH
+                && strDateM == strDateEndM && strDateS <= strDateEndS) {
+            roomParmesId = 1;
+        }
 
+        String  strDateBegin2 = "10:00:00";
+        String  strDateEnd2 = "15:59:00";
+        // 截取开始时间时分秒
+        int strDateBeginH2 = Integer.parseInt(strDateBegin2.substring(0, 2));
+        int strDateBeginM2 = Integer.parseInt(strDateBegin2.substring(3, 5));
+        int strDateBeginS2 = Integer.parseInt(strDateBegin2.substring(6, 8));
+        // 截取结束时间时分秒
+        int strDateEndH2 = Integer.parseInt(strDateEnd2.substring(0, 2));
+        int strDateEndM2 = Integer.parseInt(strDateEnd2.substring(3, 5));
+        int strDateEndS2 = Integer.parseInt(strDateEnd2.substring(6, 8));
+        // 当前时间小时数在开始时间和结束时间小时数之间
+        if (strDateH > strDateBeginH2 && strDateH < strDateEndH2) {
+            roomParmesId = 2;
+            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+        } else if (strDateH == strDateBeginH2 && strDateM >= strDateBeginM2
+                && strDateM <= strDateEndM2) {
+            roomParmesId = 2;
+            // 当前时间小时数等于开始时间小时数，分钟数等于开始时间分钟数，秒数在开始和结束之间
+        } else if (strDateH == strDateBeginH2 && strDateM == strDateBeginM2
+                && strDateS >= strDateBeginS2 && strDateS <= strDateEndS2) {
+            roomParmesId = 2;
+        }
+        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+        else if (strDateH >= strDateBeginH2 && strDateH == strDateEndH2
+                && strDateM <= strDateEndM2) {
+            roomParmesId = 2;
+            // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数等于结束时间分钟数，秒数小等于结束时间秒数
+        } else if (strDateH >= strDateBeginH2 && strDateH == strDateEndH2
+                && strDateM == strDateEndM2 && strDateS <= strDateEndS2) {
+            roomParmesId = 2;
+        }
 
-
-        return null;
+        String  strDateBegin3 = "15:00:00";
+        String  strDateEnd3 = "21:59:00";
+        // 截取开始时间时分秒
+        int strDateBeginH3 = Integer.parseInt(strDateBegin3.substring(0, 2));
+        int strDateBeginM3 = Integer.parseInt(strDateBegin3.substring(3, 5));
+        int strDateBeginS3 = Integer.parseInt(strDateBegin3.substring(6, 8));
+        // 截取结束时间时分秒
+        int strDateEndH3 = Integer.parseInt(strDateEnd3.substring(0, 2));
+        int strDateEndM3 = Integer.parseInt(strDateEnd3.substring(3, 5));
+        int strDateEndS3 = Integer.parseInt(strDateEnd3.substring(6, 8));
+        // 当前时间小时数在开始时间和结束时间小时数之间
+        if (strDateH > strDateBeginH3 && strDateH < strDateEndH3) {
+            roomParmesId = 3;
+            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+        } else if (strDateH == strDateBeginH3 && strDateM >= strDateBeginM3
+                && strDateM <= strDateEndM3) {
+            roomParmesId = 3;
+            // 当前时间小时数等于开始时间小时数，分钟数等于开始时间分钟数，秒数在开始和结束之间
+        } else if (strDateH == strDateBeginH3 && strDateM == strDateBeginM3
+                && strDateS >= strDateBeginS3 && strDateS <= strDateEndS3) {
+            roomParmesId = 3;
+        }
+        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+        else if (strDateH >= strDateBeginH3 && strDateH == strDateEndH3
+                && strDateM <= strDateEndM3) {
+            roomParmesId = 3;
+            // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数等于结束时间分钟数，秒数小等于结束时间秒数
+        } else if (strDateH >= strDateBeginH3 && strDateH == strDateEndH3
+                && strDateM == strDateEndM3 && strDateS <= strDateEndS3) {
+            roomParmesId = 3;
+        }
+        String  strDateBegin4 = "22:00:00";
+        String  strDateEnd4 = "23:59:00";
+        // 截取开始时间时分秒
+        int strDateBeginH4 = Integer.parseInt(strDateBegin4.substring(0, 2));
+        int strDateBeginM4 = Integer.parseInt(strDateBegin4.substring(3, 5));
+        int strDateBeginS4 = Integer.parseInt(strDateBegin4.substring(6, 8));
+        // 截取结束时间时分秒
+        int strDateEndH4 = Integer.parseInt(strDateEnd4.substring(0, 2));
+        int strDateEndM4 = Integer.parseInt(strDateEnd4.substring(3, 5));
+        int strDateEndS4 = Integer.parseInt(strDateEnd4.substring(6, 8));
+        // 当前时间小时数在开始时间和结束时间小时数之间
+        if (strDateH > strDateBeginH4 && strDateH < strDateEndH4) {
+            roomParmesId = 4;
+            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+        } else if (strDateH == strDateBeginH4 && strDateM >= strDateBeginM4
+                && strDateM <= strDateEndM4) {
+            roomParmesId = 4;
+            // 当前时间小时数等于开始时间小时数，分钟数等于开始时间分钟数，秒数在开始和结束之间
+        } else if (strDateH == strDateBeginH4 && strDateM == strDateBeginM4
+                && strDateS >= strDateBeginS4 && strDateS <= strDateEndS4) {
+            roomParmesId = 4;
+        }
+        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+        else if (strDateH >= strDateBeginH4 && strDateH == strDateEndH4
+                && strDateM <= strDateEndM4) {
+            roomParmesId = 4;
+            // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数等于结束时间分钟数，秒数小等于结束时间秒数
+        } else if (strDateH >= strDateBeginH4 && strDateH == strDateEndH4
+                && strDateM == strDateEndM4 && strDateS <= strDateEndS4) {
+            roomParmesId = 4;
+        }
+        String  strDateBegin4s = "00:00:00";
+        String  strDateEnd4s = "04:59:00";
+        // 截取开始时间时分秒
+        int strDateBeginH4s = Integer.parseInt(strDateBegin4s.substring(0, 2));
+        int strDateBeginM4s = Integer.parseInt(strDateBegin4s.substring(3, 5));
+        int strDateBeginS4s = Integer.parseInt(strDateBegin4s.substring(6, 8));
+        // 截取结束时间时分秒
+        int strDateEndH4s = Integer.parseInt(strDateEnd4s.substring(0, 2));
+        int strDateEndM4s = Integer.parseInt(strDateEnd4s.substring(3, 5));
+        int strDateEndS4s = Integer.parseInt(strDateEnd4s.substring(6, 8));
+        // 当前时间小时数在开始时间和结束时间小时数之间
+        if (strDateH > strDateBeginH4s && strDateH < strDateEndH4s) {
+            roomParmesId = 4;
+            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+        } else if (strDateH == strDateBeginH4s && strDateM >= strDateBeginM4s
+                && strDateM <= strDateEndM4) {
+            roomParmesId = 4;
+            // 当前时间小时数等于开始时间小时数，分钟数等于开始时间分钟数，秒数在开始和结束之间
+        } else if (strDateH == strDateBeginH4s && strDateM == strDateBeginM4s
+                && strDateS >= strDateBeginS4s && strDateS <= strDateEndS4s) {
+            roomParmesId = 4;
+        }
+        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+        else if (strDateH >= strDateBeginH4s && strDateH == strDateEndH4s
+                && strDateM <= strDateEndM4s) {
+            roomParmesId = 4;
+            // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数等于结束时间分钟数，秒数小等于结束时间秒数
+        } else if (strDateH >= strDateBeginH4s && strDateH == strDateEndH4s
+                && strDateM == strDateEndM4s && strDateS <= strDateEndS4s) {
+            roomParmesId = 4;
+        }
+         params.put("roomParmesId",roomParmesId);
+        List<MerchantRoomParamsSetDTO> list= baseDao.selectRoomByTime(params);
+        return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 
     @Override
