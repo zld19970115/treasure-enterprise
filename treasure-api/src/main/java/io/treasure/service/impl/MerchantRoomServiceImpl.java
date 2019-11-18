@@ -137,6 +137,25 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     }
 
     @Override
+    public PageData<MerchantRoomParamsSetDTO> selectRoomByTime(Map<String, Object> params) {
+        IPage<MerchantRoomEntity> pages=getPage(params,Constant.CREATE_DATE,false);
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        String Date=(String)params.get("date");
+
+
+
+
+
+        return null;
+    }
+
+    @Override
     public PageData<MerchantRoomParamsSetDTO> selectRoomDate(Map<String,Object> params) {
         IPage<MerchantRoomEntity> pages=getPage(params,Constant.CREATE_DATE,false);
         String merchantId=(String)params.get("merchantId");
