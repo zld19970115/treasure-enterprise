@@ -147,6 +147,7 @@ public class ApiAlipayController {
                 try {
                     Map<String, String> responseMap = null;
                     responseMap=payService.getAliNotify(new BigDecimal(total_amount), out_trade_no);
+                    System.out.println("responseMap:"+responseMap);
                     return responseMap.get("return_code");
                 } catch (Exception ex) {
                     return "FAIL";
