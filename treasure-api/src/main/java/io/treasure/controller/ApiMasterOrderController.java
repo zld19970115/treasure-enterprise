@@ -129,7 +129,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
