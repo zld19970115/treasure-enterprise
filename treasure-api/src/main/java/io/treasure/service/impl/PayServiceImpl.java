@@ -236,10 +236,12 @@ public class PayServiceImpl implements PayService {
         String refundNo=OrderUtil.getRefundOrderIdByTime(userId);
         model.setOutRequestNo(refundNo);
         alipayRequest.setBizModel(model);
-
+        System.out.println(alipayRequest);
         AlipayTradeRefundResponse alipayResponse = null;
         try {
             alipayResponse = alipayClient.execute(alipayRequest);
+            System.out.println("alipayResponse:"+alipayResponse);
+            System.out.println("alipayResponse.getCode():"+alipayResponse.getCode());
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
@@ -437,14 +439,16 @@ public class PayServiceImpl implements PayService {
         reqData.put("notify_url", wxPayConfig.getNotifyUrl());
         reqData.put("refund_fee_type", "CNY");
         reqData.put("op_user_id", wxPayConfig.getMchID());
-
+        System.out.println("reqData"+reqData);
         Map<String, String> resultMap = null;
         try {
             resultMap = wxPay.refund(reqData);
+            System.out.println("resultMap:"+resultMap);
         } catch (Exception e) {
             return result.error("退款失败！");
         }
         boolean rtn = resultMap.get("return_code").equals(WXPayConstants.SUCCESS) && resultMap.get("result_code").equals(WXPayConstants.SUCCESS);
+        System.out.println("rtn:"+rtn);
         if(rtn) {
 
             if (goodId != null) {
@@ -508,6 +512,7 @@ public class PayServiceImpl implements PayService {
         merchantRoomParamsSetService.updateStatus(order.getReservationId(),1);
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
+        System.out.println("masterOrderEntity:"+masterOrderEntity);
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             if(slaveOrderEntitys==null){
