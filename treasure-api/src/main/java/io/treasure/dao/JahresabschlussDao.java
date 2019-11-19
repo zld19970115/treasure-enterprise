@@ -13,7 +13,7 @@ import java.util.Map;
 @Mapper
 public interface JahresabschlussDao extends BaseDao<GoodEntity> {
 
-  List<GoodCategoryDTO>  selectCategory(Map<String, Object> params);
+  List<GoodCategoryEntity> selectCategory(Map<String, Object> params);
   List<SlaveOrderDTO>  selectBYgoodID(@Param("id") long id, @Param("startTime1")  String startTime1,@Param("endTime1") String endTime1 );
     List<GoodDTO> selectByCategoeyid(long categoeyId);
   List<MerchantOrderDTO>  selectBymerchantId(Map<String, Object> params);

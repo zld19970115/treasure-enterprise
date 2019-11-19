@@ -5,18 +5,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
-import io.treasure.dao.GoodCategoryDao;
 import io.treasure.dao.JahresabschlussDao;
 import io.treasure.dto.*;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
-import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.JahresabschlussService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +25,7 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
     }
 
     @Override
-    public List<GoodCategoryDTO> selectCategory(Map<String, Object> params) {
+    public List<GoodCategoryEntity> selectCategory(Map<String, Object> params) {
         String merchantId = (String) params.get("merchantId");
         if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
             String[] str = merchantId.split(",");
@@ -85,12 +82,12 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
         }else{
             params.put("merchantId",null);
         }
-        List<GoodCategoryDTO> goodCategoryEntities = baseDao.selectCategory(params);//根据商户查询商户全部菜品类别
+        List<GoodCategoryEntity> goodCategoryEntities = baseDao.selectCategory(params);//根据商户查询商户全部菜品类别
 //        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);//根据商户查询商户所有订单
 //        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);//根据商户查询商户所有提现
-
-        for (GoodCategoryDTO goodCategoryDTO : goodCategoryEntities) {
-            List<GoodDTO> goodDTOS = baseDao.selectByCategoeyid(goodCategoryDTO.getId());
+        GoodCategoryDTO goodCategoryDTO=new GoodCategoryDTO();
+        for (GoodCategoryEntity entity : goodCategoryEntities) {
+            List<GoodDTO> goodDTOS = baseDao.selectByCategoeyid(entity.getId());
             BigDecimal AllPayMoney = new BigDecimal("0");
             BigDecimal Alquantity = new BigDecimal("0");
             BigDecimal liyun = new BigDecimal("0.15");
@@ -105,7 +102,7 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
             }
             BigDecimal multiply = AllPayMoney.multiply(liyun);
             BigDecimal subtract = AllPayMoney.subtract(multiply);
-            goodCategoryDTO.setName(goodCategoryDTO.getName());//类别名称
+            goodCategoryDTO.setName(entity.getName());//类别名称
             goodCategoryDTO.setAlquantity(Alquantity);;//销量
             goodCategoryDTO.setAllPayMoney(AllPayMoney);//交易金额
             goodCategoryDTO.setSubtract(subtract);//可提现金额
