@@ -192,8 +192,8 @@ public class PayServiceImpl implements PayService {
         Result result=new Result();
 
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(orderNo);
-        // 订单总金额，单位为分，只能为整数
-        BigDecimal totalAmount = masterOrderEntity.getPayMoney();
+        // 实付金额，单位为分，只能为整数
+        BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
         BigDecimal refundAmount = new BigDecimal(refund_fee);
         SlaveOrderDTO slaveOrderDTO=null;
@@ -221,7 +221,7 @@ public class PayServiceImpl implements PayService {
             if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
-            if(totalAmount.compareTo(refundAmount)!=0){
+            if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
         }
@@ -251,8 +251,9 @@ public class PayServiceImpl implements PayService {
                 refundOrderService.updateRefundId(refundNo, orderNo, goodId);
                 //将退款ID更新到订单菜品表中
                 slaveOrderService.updateRefundId(refundNo, orderNo, goodId);
-                BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
+                BigDecimal bigDecimal=payMoney.subtract(refundAmount);
                 masterOrderEntity.setPayMoney(bigDecimal);
+//                masterOrderEntity.setRefundedAmount(refundAmount);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
                 OrderDTO order = masterOrderService.getOrder(orderNo);
@@ -494,8 +495,13 @@ public class PayServiceImpl implements PayService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {
+        System.out.println("ali"+out_trade_no);
         Map<String, String> mapRtn = new HashMap<>(2);
+
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+        System.out.println("ali"+masterOrderEntity);
+        System.out.println("ali"+masterOrderEntity.getPayMoney());
+        System.out.println("ali"+masterOrderEntity.getPayMoney().compareTo(total_amount));
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
@@ -506,14 +512,19 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
             return mapRtn;
         }
-
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.ALIPAY.getValue());
-        OrderDTO order = masterOrderService.getOrder(out_trade_no);
-        merchantRoomParamsSetService.updateStatus(order.getReservationId(),1);
+
+        System.out.println("ali"+masterOrderEntity.getReservationId());
+        if(masterOrderEntity.getReservationId()!=null){
+            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
+        }
+
+        System.out.println("masterOrderEntity:"+masterOrderEntity);
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         System.out.println("masterOrderEntity:"+masterOrderEntity);
+        System.out.println("ali"+masterOrderEntity.getReservationType());
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             if(slaveOrderEntitys==null){
