@@ -138,7 +138,7 @@
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </if>  and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1} and p_order_id="0"s
+    </if>  and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1} and p_order_id="0"
     </select>
     <select id="assignMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Double">
         select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  status in(2,4,7,10)   <if test="merchantId != null">
