@@ -199,6 +199,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
         if (null != dto) {
+            List<MasterOrderEntity> auxiliaryPayOrder = masterOrderService.getAuxiliaryPayOrder(dto.getOrderId(), Constants.OrderStatus.PAYORDER.getValue());
+            if(auxiliaryPayOrder!=null||auxiliaryPayOrder.size()!=0){
+                return new Result().error(250);
+            }
             if (dto.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() || dto.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()) {
                 if (null == dto.getReservationId()) {
                     MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(dto.getOrderId());
@@ -1676,6 +1680,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public MasterOrderEntity getOrderByReservationId(long reservationId) {
         return baseDao.getOrderByReservationId(reservationId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> getAuxiliaryPayOrder(String orderId, int status) {
+        return baseDao.getAuxiliaryPayOrder(orderId,status);
     }
 
     @Override
