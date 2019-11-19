@@ -458,7 +458,7 @@ public class PayServiceImpl implements PayService {
                 //将退款ID更新到订单菜品表中
                 slaveOrderService.updateRefundId(refundNo, orderNo, goodId);
                 BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
-                masterOrderEntity.setPayMoney(bigDecimal);
+                masterOrderEntity.setRefundedAmount(bigDecimal);
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
                 OrderDTO order = masterOrderService.getOrder(orderNo);
@@ -472,6 +472,7 @@ public class PayServiceImpl implements PayService {
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
+                masterOrderEntity.setRefundedAmount(masterOrderEntity.getPayMoney());
                 masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
                 List<SlaveOrderEntity> slaveOrderEntityList=slaveOrderService.selectByOrderId(orderNo);
                 BigDecimal a=new BigDecimal("0");
