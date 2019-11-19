@@ -1505,6 +1505,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return getPageData(allMainOrder,total, OrderDTO.class);
     }
 
+    @Override
+    public List<MasterOrderEntity> getStatus4Order(Map<String, Object> params) {
+        return baseDao.getStatus4Order(params);
+    }
+
 
     @Override
     public OrderDTO getMasterOrder(String orderId) {

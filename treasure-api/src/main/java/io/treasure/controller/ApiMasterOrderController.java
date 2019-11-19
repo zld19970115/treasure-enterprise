@@ -610,6 +610,15 @@ public class ApiMasterOrderController {
         PageData<OrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
-
+    @Login
+    @GetMapping("getStatus4Order")
+    @ApiOperation("语音推送接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "编号", paramType = "query", required = true, dataType="String")
+    })
+    public Result getStatus4Order(@ApiIgnore @RequestParam Map<String, Object> params){
+        List<MasterOrderEntity> list = masterOrderService.getStatus4Order(params);
+        return new Result().ok(list.size());
+    }
 
 }
