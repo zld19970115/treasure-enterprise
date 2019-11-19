@@ -162,12 +162,7 @@ public class GoodController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                int status=merchantDto.getStatus();//状态
-                if(status==Common.STATUS_CLOSE.getStatus()){
-                    goodService.remove(id,Common.STATUS_DELETE.getStatus());
-                }else{
-                    return new Result().error("请关闭店铺后，在进行删除操作！");
-                }
+                goodService.remove(id,Common.STATUS_DELETE.getStatus());
             }else {
                 return new Result().error("没有找到菜品的店铺!");
             }
@@ -231,12 +226,7 @@ public class GoodController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                int status=merchantDto.getStatus();//状态
-                if(status==Common.STATUS_CLOSE.getStatus()){
                     goodService.off(id,Common.STATUS_OFF.getStatus());
-                }else{
-                    return new Result().error("请关闭店铺后，在进行下架操作！");
-                }
             }else{
                 return new Result().error("没有获取到菜品的店铺!");
             }
