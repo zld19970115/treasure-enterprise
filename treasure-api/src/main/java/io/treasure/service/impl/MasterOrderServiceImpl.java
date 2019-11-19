@@ -178,6 +178,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+
+        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(dto.getOrderId());
+        stimmeDTO.setStatus(1);//改为已查看
+        stimmeService.update(stimmeDTO);
         return new Result().ok("接受订单成功！");
     }
 
@@ -484,6 +488,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             int isUse = merchantRoomParamsSetEntity.getState();
             if (isUse == 0) {
              merchantRoomParamsSetEntity.setState(1);
+             //更新状态值
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
+
 
             } else if (isUse == 1) {
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
@@ -514,7 +521,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
 
         }
-
+//        MerchantDTO merchantDTO = merchantService.get(orderDTO.getMerchantId());
+//        if(merchantDTO.getDepost()==0){
+//            merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(),1);
+//        }
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
@@ -1379,10 +1389,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return result.error(-5, "非只预订菜品,不可以订餐！");
         }
         //锁定包房/散台
-        MerchantDTO merchantDTO = merchantService.get(orderDTO.getMerchantId());
-        if(merchantDTO.getDepost()==0){
-            merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(),1);
-        }
         //是否使用赠送金
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
@@ -1497,6 +1503,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             total=total+1;
         }
         return getPageData(allMainOrder,total, OrderDTO.class);
+    }
+
+    @Override
+    public List<MasterOrderEntity> getStatus4Order(Map<String, Object> params) {
+        return baseDao.getStatus4Order(params);
     }
 
 

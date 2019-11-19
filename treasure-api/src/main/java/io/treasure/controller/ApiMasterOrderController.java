@@ -129,7 +129,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -215,7 +215,7 @@ public class ApiMasterOrderController {
     @ApiOperation("商户端订单详情")
     public Result<OrderDTO> getOrderInfo1(@PathVariable("orderId") String orderId){
 
-        OrderDTO data = masterOrderService.orderParticulars1(orderId);
+        OrderDTO data = masterOrderService.orderParticulars(orderId);
         return new Result<OrderDTO>().ok(data);
     }
 
@@ -610,6 +610,15 @@ public class ApiMasterOrderController {
         PageData<OrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
-
+    @Login
+    @GetMapping("getStatus4Order")
+    @ApiOperation("语音推送接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "编号", paramType = "query", required = true, dataType="String")
+    })
+    public Result getStatus4Order(@ApiIgnore @RequestParam Map<String, Object> params){
+        List<MasterOrderEntity> list = masterOrderService.getStatus4Order(params);
+        return new Result().ok(list.size());
+    }
 
 }

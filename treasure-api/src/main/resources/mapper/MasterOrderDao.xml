@@ -14,6 +14,7 @@
         <result property="discountId" column="discount_id"/>
         <result property="eatTime" column="eat_time"/>
         <result property="totalMoney" column="total_money"/>
+        <result property="refundedAmount" column="refunded_amount"/>
         <result property="payMoney" column="pay_money"/>
         <result property="status" column="status"/>
         <result property="payMode" column="pay_mode"/>
@@ -169,6 +170,11 @@
     
     <select id="getOrderByReservationId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where reservation_id=#{reservationId}
+    </select>
+    <select id="getStatus4Order" resultType="io.treasure.entity.MasterOrderEntity">
+        select  * from ct_master_order where merchant_id = #{merchantId}  and status = 4
+
+
     </select>
 
 </mapper>
