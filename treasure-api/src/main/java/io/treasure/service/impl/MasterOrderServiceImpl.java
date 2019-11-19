@@ -1530,6 +1530,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             order.setReservationId(roomOrderByPorderId.getReservationId());
             }
         }
+        order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
         return order;
 
     }
