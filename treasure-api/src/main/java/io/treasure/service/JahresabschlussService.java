@@ -1,5 +1,6 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.*;
 import io.treasure.entity.GoodCategoryEntity;
@@ -16,4 +17,5 @@ public interface JahresabschlussService extends CrudService<GoodEntity, GoodDTO>
     List<GoodDTO> selectByCategoeyid(long categoeyId);
     List<MerchantOrderDTO> selectBymerchantId(Map<String, Object> params);
     List<MerchantWithdrawDTO> selectBymerchantId2(Map<String, Object> params);
+    PageData<GoodCategoryDTO> selectByParams(Map<String, Object> params);
 }

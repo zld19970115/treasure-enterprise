@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -57,4 +58,13 @@ public class GoodCategoryDTO implements Serializable {
 	private Date createDate;
 	@ApiModelProperty(value="店铺名称")
 	private String merchantName;
+
+	@ApiModelProperty(value="销量")
+	private BigDecimal alquantity;
+	@ApiModelProperty(value="交易金额")
+	private BigDecimal allPayMoney;
+	@ApiModelProperty(value="可提现金额")
+	private BigDecimal subtract;
+	@ApiModelProperty(value="平台服务费")
+	private BigDecimal multiply;
 }

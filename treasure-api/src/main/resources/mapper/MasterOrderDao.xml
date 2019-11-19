@@ -171,5 +171,10 @@
     <select id="getOrderByReservationId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where reservation_id=#{reservationId}
     </select>
+    <select id="getStatus4Order" resultType="io.treasure.entity.MasterOrderEntity">
+        select  * from ct_master_order where merchant_id = #{merchantId}  and status = 4
+
+
+    </select>
 
 </mapper>
