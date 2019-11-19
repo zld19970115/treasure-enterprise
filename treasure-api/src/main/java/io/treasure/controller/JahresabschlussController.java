@@ -4,12 +4,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantOrderDTO;
-import io.treasure.dto.MerchantWithdrawDTO;
-import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.service.JahresabschlussService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,46 +29,18 @@ public class JahresabschlussController {
 
     @Login
     @GetMapping("getJahresabschluss")
-    @ApiOperation("获取财务报表")
+    @ApiOperation("获取分类财务报表")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = false,dataType = "String"),
             @ApiImplicitParam(name = "startTime1", value = "开始日期", paramType = "query", required = false, dataType="String"),
             @ApiImplicitParam(name = "endTime1", value = "截止日期", paramType = "query", required = false, dataType="String")
     })
-    public Result getJahresabschluss(@ApiIgnore @RequestParam Map<String, Object> params) {
-        String startTime1 = (String) params.get("startTime1");//开始日期
-        String endTime1 = (String) params.get("endTime1");//截止日期
-        List<GoodCategoryEntity> goodCategoryEntities = JahresabschlussService.selectCategory(params);//根据商户查询商户全部菜品类别
-        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);//根据商户查询商户所有订单
-        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);//根据商户查询商户所有提现
-
-        List list = new ArrayList();
-        for (GoodCategoryEntity goodCategoryEntity : goodCategoryEntities) {
-            List<GoodDTO> goodDTOS = JahresabschlussService.selectByCategoeyid(goodCategoryEntity.getId());
-            List a = new ArrayList();
-            BigDecimal AllPayMoney = new BigDecimal("0");
-            BigDecimal Alquantity = new BigDecimal("0");
-            BigDecimal liyun = new BigDecimal("0.15");
-            for (GoodDTO goodDTO : goodDTOS) {
-                List<SlaveOrderDTO> slaveOrderDTOS = JahresabschlussService.selectBYgoodID(goodDTO.getId(),startTime1,endTime1);
-                for (SlaveOrderDTO slaveOrderDTO : slaveOrderDTOS) {
-                    BigDecimal payMoney = slaveOrderDTO.getPayMoney();
-                    AllPayMoney=AllPayMoney.add(payMoney);
-                    BigDecimal quantity = slaveOrderDTO.getQuantity();
-                    Alquantity=Alquantity.add(quantity);
-                }
-            }
-            BigDecimal multiply = AllPayMoney.multiply(liyun);
-            BigDecimal subtract = AllPayMoney.subtract(multiply);
-            a.add(goodCategoryEntity.getName());//类别名称
-            a.add(Alquantity);//销量
-            a.add(AllPayMoney);//交易金额
-            a.add(subtract);//可提现金额
-            a.add(multiply);//平台服务费
-            list.add(a);
-        }
-        list.add(merchantOrderDTOS);//全部订单
-        list.add(merchantWithdrawDTO);//全部提现
+    public  Result<PageData<GoodCategoryDTO>> getJahresabschluss(@ApiIgnore @RequestParam Map<String, Object> params) {
+       PageData<GoodCategoryDTO> list = JahresabschlussService.selectByParams(params);
         return new Result().ok(list);
  }
 
