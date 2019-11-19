@@ -229,7 +229,10 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     public List<SlaveOrderEntity> getOrderGoods(String orderId) {
         return baseDao.getOrderGoods(orderId);
     }
-
+    @Override
+    public List<SlaveOrderEntity> getOrderGoods1(String orderId) {
+        return baseDao.getOrderGoods1(orderId);
+    }
     @Override
     public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId, Long goodId) {
         baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId,goodId);

@@ -222,7 +222,7 @@ public class MerchantWithdrawController {
             merchantEntity.setNotCash(c);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());//可提现总额
+            map.put("total_cash", bigDecimal.doubleValue());//提现总额
             map.put("alead_cash", aDouble);//已提现
             map.put("not_cash", c);//未体现
             return new Result().ok(map);

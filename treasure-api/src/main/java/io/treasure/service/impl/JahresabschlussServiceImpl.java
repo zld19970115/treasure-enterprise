@@ -105,10 +105,7 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
             entity.setAllPayMoney(AllPayMoney);//交易金额
             entity.setSubtract(subtract);//可提现金额
             entity.setMultiply(multiply);//平台服务费
-//            a.add(Alquantity);//销量
-//            a.add(AllPayMoney);//交易金额
-//            a.add(subtract);//可提现金额
-//            a.add(multiply);//平台服务费
+
         }
         return getPageData(goodCategoryEntities,pages.getTotal(), GoodCategoryDTO.class);
     }
