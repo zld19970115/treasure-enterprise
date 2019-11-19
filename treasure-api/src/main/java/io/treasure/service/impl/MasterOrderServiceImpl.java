@@ -1548,50 +1548,30 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public OrderDTO orderParticulars1(String orderId) {
-        BigDecimal a = new BigDecimal(0);
-        BigDecimal b = new BigDecimal(0);
-        MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
-        OrderDTO orderDTO = ConvertUtils.sourceToTarget(masterOrderEntity, OrderDTO.class);
-
-        //商家信息
-        MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
-        orderDTO.setMerchantInfo(merchantEntity);
-        //加菜信息
-        List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderId(orderId);
-        List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderId);
-        List list = new ArrayList();
-        for (MasterOrderEntity orderEntity : masterOrderEntities) {
-            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderIdAndStatus(orderEntity.getOrderId());
-            for (int j = 0; j < slaveOrderEntities.size(); j++) {
-                SlaveOrderEntity slaveOrderEntity = slaveOrderEntities.get(j);
-                GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
-                slaveOrderEntity.setGoodInfo(goodEntity);
+    public  List<OrderDTO> orderParticulars1(String orderId) {
+        List<OrderDTO> orders = baseDao.getOrder1(orderId);
+        List<MasterOrderEntity> list = baseDao.selectBYPOrderId(orderId);
+        orders.removeAll(list);
+        for (OrderDTO order : orders) {
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+            for (SlaveOrderEntity og:orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
             }
-            list.add(slaveOrderEntities);
-            orderDTO.setSlaveOrder(list);
-
-
+            order.setSlaveOrder(orderGoods);
+            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+            if(order.getRoomId()!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+            }else if(order.getPOrderId().equals("0")) {
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if(roomOrderByPorderId!=null){
+                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                    order.setRoomId(roomOrderByPorderId.getRoomId());
+                    order.setReservationId(roomOrderByPorderId.getReservationId());
+                }
+            }
         }
-        for (MasterOrderEntity orderEntity : masterOrderEntities1) {
-            a = a.add(orderEntity.getPayMoney());
-        }
-        b = a.add(orderDTO.getPayMoney())  ;
-        orderDTO.setPpaymoney(a);
-        orderDTO.setAllPaymoney(b);
-//        //菜单信息
-//        List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(orderId);
-//        int size=slaveOrderEntitys.size();
-//        for (int i = 0; i < size; i++) {
-//            SlaveOrderEntity slaveOrderEntity=slaveOrderEntitys.get(i);
-//            GoodEntity goodEntity = goodService.selectById(slaveOrderEntity.getGoodId());
-//            slaveOrderEntity.setGoodInfo(goodEntity);
-//        }
-        MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
-        orderDTO.setMerchantRoomEntity(merchantRoomEntity);
-        MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
-        orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
-        return orderDTO;
+
+        return orders;
     }
 
     @Override

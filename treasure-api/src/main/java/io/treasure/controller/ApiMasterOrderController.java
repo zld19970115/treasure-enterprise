@@ -217,10 +217,10 @@ public class ApiMasterOrderController {
     @Login
     @GetMapping("order1/{orderId}")
     @ApiOperation("商户端订单详情")
-    public Result<OrderDTO> getOrderInfo1(@PathVariable("orderId") String orderId){
+    public Result<List<OrderDTO>> getOrderInfo1(@PathVariable("orderId") String orderId){
 
-        OrderDTO data = masterOrderService.orderParticulars1(orderId);
-        return new Result<OrderDTO>().ok(data);
+      List<OrderDTO> data = masterOrderService.orderParticulars1(orderId);
+        return new Result<List<OrderDTO>>().ok(data);
     }
 
     @Login
