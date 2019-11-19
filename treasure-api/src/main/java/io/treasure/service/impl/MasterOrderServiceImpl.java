@@ -1492,6 +1492,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
         allMainOrder.add(order);
+        if(allMainOrder!=null){
         for (OrderDTO s:allMainOrder) {
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
             for (SlaveOrderEntity og:orderGoods) {
@@ -1502,6 +1503,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if(s.getRoomId()!=null){
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
             }
+        }
         }
         long total = pages.getTotal();
         if(total!=0){
