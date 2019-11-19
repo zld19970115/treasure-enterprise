@@ -11,10 +11,7 @@ import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,7 +23,7 @@ import java.util.Map;
 public class JahresabschlussController {
     @Autowired
     private io.treasure.service.JahresabschlussService JahresabschlussService;
-
+    @CrossOrigin
     @Login
     @GetMapping("getJahresabschluss")
     @ApiOperation("获取财务报表")
@@ -67,8 +64,8 @@ public class JahresabschlussController {
             a.add(multiply);//平台服务费
             list.add(a);
         }
-        list.add(merchantOrderDTOS);//全部订单
-        list.add(merchantWithdrawDTO);//全部提现
+        //list.add(merchantOrderDTOS);//全部订单
+        //    list.add(merchantWithdrawDTO);//全部提现
         return new Result().ok(list);
  }
 
