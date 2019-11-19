@@ -25,7 +25,7 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
     }
 
     @Override
-    public List<GoodCategoryEntity> selectCategory(Map<String, Object> params) {
+    public List<GoodCategoryDTO> selectCategory(Map<String, Object> params) {
         String merchantId = (String) params.get("merchantId");
         if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
             String[] str = merchantId.split(",");
@@ -82,11 +82,10 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
         }else{
             params.put("merchantId",null);
         }
-        List<GoodCategoryEntity> goodCategoryEntities = baseDao.selectCategory(params);//根据商户查询商户全部菜品类别
+        List<GoodCategoryDTO> goodCategoryEntities = baseDao.selectCategory(params);//根据商户查询商户全部菜品类别
 //        List<MerchantOrderDTO> merchantOrderDTOS = JahresabschlussService.selectBymerchantId(params);//根据商户查询商户所有订单
 //        List<MerchantWithdrawDTO> merchantWithdrawDTO = JahresabschlussService.selectBymerchantId2(params);//根据商户查询商户所有提现
-        GoodCategoryDTO goodCategoryDTO=new GoodCategoryDTO();
-        for (GoodCategoryEntity entity : goodCategoryEntities) {
+        for (GoodCategoryDTO entity : goodCategoryEntities) {
             List<GoodDTO> goodDTOS = baseDao.selectByCategoeyid(entity.getId());
             BigDecimal AllPayMoney = new BigDecimal("0");
             BigDecimal Alquantity = new BigDecimal("0");
@@ -102,11 +101,10 @@ public class JahresabschlussServiceImpl extends CrudServiceImpl<JahresabschlussD
             }
             BigDecimal multiply = AllPayMoney.multiply(liyun);
             BigDecimal subtract = AllPayMoney.subtract(multiply);
-            goodCategoryDTO.setName(entity.getName());//类别名称
-            goodCategoryDTO.setAlquantity(Alquantity);;//销量
-            goodCategoryDTO.setAllPayMoney(AllPayMoney);//交易金额
-            goodCategoryDTO.setSubtract(subtract);//可提现金额
-            goodCategoryDTO.setMultiply(multiply);//平台服务费
+            entity.setAlquantity(Alquantity);;//销量
+            entity.setAllPayMoney(AllPayMoney);//交易金额
+            entity.setSubtract(subtract);//可提现金额
+            entity.setMultiply(multiply);//平台服务费
 //            a.add(Alquantity);//销量
 //            a.add(AllPayMoney);//交易金额
 //            a.add(subtract);//可提现金额
