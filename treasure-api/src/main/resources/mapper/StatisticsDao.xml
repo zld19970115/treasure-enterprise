@@ -100,7 +100,7 @@
     </select>
     <select id="monthMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="double">
 
-       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  DATE_FORMAT(create_date,'%Y-%m') = #{month} and status status in(2,4,7,10) and check_status = 1   <if test="merchantId != null">
+       select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  DATE_FORMAT(create_date,'%Y-%m') = #{month} and status  in(2,4,7,10) and check_status = 1   <if test="merchantId != null">
         and merchant_id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
             #{item}
