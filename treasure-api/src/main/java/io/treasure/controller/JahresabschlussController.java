@@ -29,7 +29,7 @@ public class JahresabschlussController {
 
     @Login
     @GetMapping("getJahresabschluss")
-    @ApiOperation("获取财务报表")
+    @ApiOperation("获取分类财务报表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
