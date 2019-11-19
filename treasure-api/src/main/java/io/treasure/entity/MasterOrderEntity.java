@@ -64,6 +64,12 @@ public class MasterOrderEntity extends BaseEntity {
      * 实际支付金额
      */
 	private BigDecimal payMoney;
+	/**
+     *共计退款金额
+     */
+	private BigDecimal refundedAmount;
+
+
     /**
      * 订单状态：1-未支付订单，2-商家已接单，3-商户拒接单，4-支付完成订单，5-取消未支付订单，6-消费者申请退款订单，7-商户拒绝退款订单，8-商家同意退款订单，9-删除订单
      */
