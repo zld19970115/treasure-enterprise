@@ -179,9 +179,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().error("无法获取订单！");
         }
 
-        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(dto.getOrderId());
-        stimmeDTO.setStatus(1);//改为已查看
-        stimmeService.update(stimmeDTO);
+//        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(dto.getOrderId());
+//        stimmeDTO.setStatus(1);//改为已查看
+//        stimmeService.update(stimmeDTO);
         return new Result().ok("接受订单成功！");
     }
 
@@ -200,8 +200,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         if (null != dto) {
             List<MasterOrderEntity> auxiliaryPayOrder = masterOrderService.getAuxiliaryPayOrder(dto.getOrderId(), Constants.OrderStatus.PAYORDER.getValue());
-            if(auxiliaryPayOrder!=null||auxiliaryPayOrder.size()!=0){
-                return new Result().error(250);
+            if(auxiliaryPayOrder.size()!=0){
+                return new Result().ok(250);
             }
             if (dto.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() || dto.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()) {
                 if (null == dto.getReservationId()) {
@@ -210,7 +210,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         //同时将包房或者桌设置成未使用状态
                         merchantRoomParamsSetService.updateStatus(roomOrderByPorderId.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
-
+                }else {
+                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 }
                 MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
                 masterOrderEntity.setStatus(status);
