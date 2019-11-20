@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.text.ParseException;
 import java.util.Map;
 
 /**
@@ -65,7 +66,7 @@ ApiIndexController {
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
     })
-    public Result<PageData<MerchantDTO>> queryRecommendMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<MerchantDTO>> queryRecommendMerchant(@ApiIgnore @RequestParam Map<String, Object> params) throws ParseException {
         params.put("recommend","1");
         PageData<MerchantDTO> page = merchantService.queryPage(params);
 
@@ -82,7 +83,7 @@ ApiIndexController {
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
     })
-    public Result<PageData<MerchantDTO>> queryHotMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<MerchantDTO>> queryHotMerchant(@ApiIgnore @RequestParam Map<String, Object> params) throws ParseException {
         params.put("recommend","1");
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
 
@@ -99,7 +100,7 @@ ApiIndexController {
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
     })
-    public Result<PageData<MerchantDTO>> queryALLMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<MerchantDTO>> queryALLMerchant(@ApiIgnore @RequestParam Map<String, Object> params) throws ParseException {
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
@@ -115,7 +116,7 @@ ApiIndexController {
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "categoryId", value = "商户编号", paramType = "query",required=true, dataType="Long")
     })
-    public Result<PageData<MerchantDTO>> queryClassifyMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result<PageData<MerchantDTO>> queryClassifyMerchant(@ApiIgnore @RequestParam Map<String, Object> params) throws ParseException {
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
