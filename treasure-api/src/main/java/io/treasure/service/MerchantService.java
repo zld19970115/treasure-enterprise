@@ -5,6 +5,7 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +24,11 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     //闭店
     void closeShop(long id ,int status);
 
-    PageData<MerchantDTO> queryPage(Map<String, Object> params);
+    PageData<MerchantDTO> queryPage(Map<String, Object> params) throws ParseException;
 
     PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
 
-    PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);
+    PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) throws ParseException;
     List<MerchantDTO> getListByOn();
 
     MerchantEntity getMerchantById(Long id);

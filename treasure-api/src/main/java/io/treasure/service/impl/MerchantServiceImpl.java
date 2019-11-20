@@ -8,10 +8,16 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.MerchantService;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +29,9 @@ import java.util.Map;
  */
 @Service
 public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEntity, MerchantDTO> implements MerchantService {
+    @Autowired
+    private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
     /**
      * 删除
      * @param id
@@ -75,11 +84,25 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
-    public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) {
+    public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) throws ParseException {
         //分页
         IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
         //查询
-        List<MerchantEntity> list = baseDao.getMerchantList(params);
+        List<MerchantDTO> list = baseDao.getMerchantList(params);
+        String format = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(format);
+        long ts = date.getTime();
+        long c=1000;
+        double progress = ts/(double)c;
+        long bigTime = new Double(progress).longValue();
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomParamsSetService.getAvailableRoomsDesk(bigTime, s.getId());
+            int availableRooms = merchantRoomParamsSetService.getAvailableRooms(bigTime, s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
@@ -94,7 +117,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
-    public PageData<MerchantDTO> queryPage(Map<String, Object> params) {
+    public PageData<MerchantDTO> queryPage(Map<String, Object> params) throws ParseException {
 //        IPage<MerchantEntity> page = baseDao.selectPage(
 //                getPage(params, null, false),
 //                selectWrapper(params)
@@ -102,7 +125,20 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         //分页
         IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
         //查询
-        List<MerchantEntity> list = baseDao.getMerchantList(params);
+        List<MerchantDTO> list = baseDao.getMerchantList(params);
+        String format = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(format);
+        long ts = date.getTime();
+        long c=1000;
+        double progress = ts/(double)c;
+        long bigTime = new Double(progress).longValue();
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomParamsSetService.getAvailableRoomsDesk(bigTime, s.getId());
+            int availableRooms = merchantRoomParamsSetService.getAvailableRooms(bigTime, s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
