@@ -282,12 +282,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //同时将包房或者桌设置成未使用状态
                     merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 }
-//                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-//                for (SlaveOrderEntity s : slaveOrderEntities) {
-//                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-//                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
-//                    }
-//                }
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                for (SlaveOrderEntity s : slaveOrderEntities) {
+                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
+                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
+                    }
+                }
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
                 if (result1.success()) {
@@ -332,11 +332,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-                for (SlaveOrderEntity s : slaveOrderEntities) {
-                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
-                    }
-                }
+//                for (SlaveOrderEntity s : slaveOrderEntities) {
+//                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
+//                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
+//                    }
+//                }
                 if(StringUtils.isNoneBlank(clientId)){
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
