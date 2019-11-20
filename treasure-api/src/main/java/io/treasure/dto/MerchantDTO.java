@@ -154,4 +154,11 @@ public class MerchantDTO implements Serializable {
 	private List<CategoryEntity> categoryList;
 	@ApiModelProperty(value = "二级类别")
 	private List<CategoryEntity> categoryTwoList;
+
+	@ApiModelProperty(value = "可用包房")
+	private int roomNum;
+
+	@ApiModelProperty(value = "可用桌")
+	private int desk;
+
 }
