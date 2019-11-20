@@ -282,12 +282,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //同时将包房或者桌设置成未使用状态
                     merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                 }
-                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-                for (SlaveOrderEntity s : slaveOrderEntities) {
-                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
-                    }
-                }
+//                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+//                for (SlaveOrderEntity s : slaveOrderEntities) {
+//                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
+//                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
+//                    }
+//                }
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
                 if (result1.success()) {
@@ -492,8 +492,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             int isUse = merchantRoomParamsSetEntity.getState();
             if (isUse == 0) {
-             merchantRoomParamsSetEntity.setState(1);
-             //更新状态值
+                merchantRoomParamsSetEntity.setState(1);
+                //更新状态值
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
 
 
@@ -535,18 +535,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setCreateDate(d);
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         if(reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()&&merchantDTO.getDepost()==0){
-                if(dtoList == null){
-                    masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-                }
+            if(dtoList == null){
+                masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+            }
         }
         BigDecimal a=new BigDecimal("0");
         BigDecimal b=new BigDecimal("0");
         if(dtoList!=null){
-        for (SlaveOrderEntity s:dtoList) {
-            a=a.add(s.getPlatformBrokerage());
-            b=b.add(s.getMerchantProceeds());
+            for (SlaveOrderEntity s:dtoList) {
+                a=a.add(s.getPlatformBrokerage());
+                b=b.add(s.getMerchantProceeds());
+            }
         }
-        }
+        masterOrderEntity.setTotalMoney(masterOrderEntity.getPayMoney());
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
         int i = baseDao.insert(masterOrderEntity);
@@ -881,9 +882,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal ratio=new BigDecimal("0.15");
         BigDecimal payMoney = totalMoney1.subtract(discount);
         //商户所得金额
-        BigDecimal subtract2 = payMoney.multiply(base.subtract(ratio));
+        BigDecimal subtract2 = (payMoney.multiply(base.subtract(ratio))).setScale(2, BigDecimal.ROUND_UP);
         //平台扣点金额
-        BigDecimal subtract3 = payMoney.multiply(ratio);
+        BigDecimal subtract3 = payMoney.subtract(subtract2);
 
 
         /*优惠卷算法*/
@@ -921,13 +922,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //实际支付总金额（扣除掉优惠券平均到菜品的钱）
                 BigDecimal multiply1 = aGoodfreeGoldMoney.multiply(quantity);
                 slaveOrderEnti.setTotalMoney(multiply1);
-                BigDecimal subtract1 = base.subtract(ratio);
+                BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 //计算平台扣点金额
-                slaveOrderEnti.setPlatformBrokerage(multiply1.multiply(ratio));
-                subtract3=subtract3.subtract(multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_DOWN);
-                slaveOrderEnti.setMerchantProceeds(multiply1.multiply(subtract1));
+                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
+                subtract3=subtract3.subtract(platformBrokerage);
+                slaveOrderEnti.setMerchantProceeds(multiply1.subtract(platformBrokerage));
                 //计算商户实际可得金额
-                subtract2=subtract2.subtract(multiply1.multiply(multiply1.multiply(subtract1)).setScale(2, BigDecimal.ROUND_DOWN));
+                BigDecimal subtract4 = multiply1.subtract(platformBrokerage);
+                subtract2=subtract2.subtract(subtract4);
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
@@ -973,10 +975,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //扣点比例
         BigDecimal ratio=new BigDecimal("0.15");
         BigDecimal payMoney = totalMoney1.subtract(discount);
-        //商户所得金额
-        BigDecimal subtract2 = payMoney.multiply(base.subtract(ratio));
         //平台扣点金额
-        BigDecimal subtract3 = payMoney.multiply(ratio);
+        BigDecimal subtract3 = (payMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
+
+        //商户所得金额
+        BigDecimal subtract2 = (payMoney.subtract(subtract3));
 
 
         ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
@@ -1015,11 +1018,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal aGoodfreeGoldMoney = price.subtract((multiply)).setScale(2, BigDecimal.ROUND_DOWN);
                 BigDecimal multiply1 = price.multiply(quantity);
                 //平台所得金额
-                BigDecimal platformBrokerage = multiply1.multiply(ratio);
+                BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
                 subtract3=subtract3.subtract(platformBrokerage);
                 //商户所的金额
-                BigDecimal merchantProceeds = multiply1.multiply(base.subtract(ratio));
+                BigDecimal merchantProceeds = multiply1.subtract(platformBrokerage);
                 subtract2=subtract2.subtract(merchantProceeds);
 
                 slaveOrderEnti.setMerchantProceeds(merchantProceeds);
@@ -1152,10 +1155,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal base=new BigDecimal("1");
         //扣点比例
         BigDecimal ratio=new BigDecimal("0.15");
-        //商户所得金额
-        BigDecimal subtract2 = totalMoney1.multiply(base.subtract(ratio));
         //平台扣点金额
-        BigDecimal subtract3 = totalMoney1.multiply(ratio);
+        BigDecimal subtract3 = (totalMoney1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
+        //商户所得金额
+        BigDecimal subtract2 = totalMoney1.subtract(subtract3);
+
 
 
         ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
@@ -1180,11 +1184,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
             } else {
                 //平台所得金额
-                BigDecimal platformBrokerage = AGreensMoney.multiply(ratio);
+                BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
                 subtract3=subtract3.subtract(platformBrokerage);
                 //商户所的金额
-                BigDecimal merchantProceeds = AGreensMoney.multiply(base.subtract(ratio));
+                BigDecimal merchantProceeds = AGreensMoney.subtract(platformBrokerage);
                 subtract2=subtract2.subtract(merchantProceeds);
 
                 slaveOrderEnti.setMerchantProceeds(merchantProceeds);
@@ -1239,11 +1243,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+            BigDecimal gif=new BigDecimal("0");
             for (SlaveOrderEntity s : slaveOrderEntities) {
                 if (s.getRefundId() == null || s.getRefundId().length() == 0) {
                     slaveOrderService.updateSlaveOrderStatus(status_new, s.getOrderId(), s.getGoodId());
+                    gif=gif.add(s.getFreeGold());
                 }
             }
+            ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
+            BigDecimal gift = clientUserDTO.getGift();
+            BigDecimal addgif = gift.add(gif);
+            clientUserDTO.setGift(addgif);
+            clientUserService.update(clientUserDTO);
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                 //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
@@ -1326,9 +1337,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result reserveRoom(OrderDTO dto, ClientUserEntity user, String mainOrderId) {
         Result result = new Result();
         List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(mainOrderId);
-           if (masterOrderEntities.size()!=0){
-               return result.error("已预定包房，不可重复预定");
-           }
+        if (masterOrderEntities.size()!=0){
+            return result.error("已预定包房，不可重复预定");
+        }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -1458,7 +1469,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             Integer status = s.getStatus();
-                allpayMoney=allpayMoney.add(s.getPayMoney());
+            allpayMoney=allpayMoney.add(s.getPayMoney());
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
             for (SlaveOrderEntity order:orderGoods) {
@@ -1493,17 +1504,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
         allMainOrder.add(order);
         if(allMainOrder!=null){
-        for (OrderDTO s:allMainOrder) {
-            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-            for (SlaveOrderEntity og:orderGoods) {
-                og.setGoodInfo(goodService.getByid(og.getGoodId()));
+            for (OrderDTO s:allMainOrder) {
+                List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+                for (SlaveOrderEntity og:orderGoods) {
+                    og.setGoodInfo(goodService.getByid(og.getGoodId()));
+                }
+                s.setSlaveOrder(orderGoods);
+                s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+                if(s.getRoomId()!=null){
+                    s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+                }
             }
-            s.setSlaveOrder(orderGoods);
-            s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
-            if(s.getRoomId()!=null){
-                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
-            }
-        }
         }
         long total = pages.getTotal();
         if(total!=0){
@@ -1537,9 +1548,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }else if(order.getPOrderId().equals("0")) {
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
             if(roomOrderByPorderId!=null){
-            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
-            order.setRoomId(roomOrderByPorderId.getRoomId());
-            order.setReservationId(roomOrderByPorderId.getReservationId());
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                order.setRoomId(roomOrderByPorderId.getRoomId());
+                order.setReservationId(roomOrderByPorderId.getReservationId());
             }
         }
         order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
@@ -1548,30 +1559,28 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public  List<OrderDTO> orderParticulars1(String orderId) {
-        List<OrderDTO> orders = baseDao.getOrder1(orderId);
-        List<MasterOrderEntity> list = baseDao.selectBYPOrderId(orderId);
-        orders.removeAll(list);
-        for (OrderDTO order : orders) {
-            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-            for (SlaveOrderEntity og:orderGoods) {
-                og.setGoodInfo(goodService.getByid(og.getGoodId()));
-            }
-            order.setSlaveOrder(orderGoods);
-            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-            if(order.getRoomId()!=null){
-                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-            }else if(order.getPOrderId().equals("0")) {
-                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                if(roomOrderByPorderId!=null){
-                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
-                    order.setRoomId(roomOrderByPorderId.getRoomId());
-                    order.setReservationId(roomOrderByPorderId.getReservationId());
-                }
+    public OrderDTO orderParticulars1(String orderId) {
+        OrderDTO order = baseDao.getOrder(orderId);
+        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+        for (SlaveOrderEntity og:orderGoods) {
+            og.setGoodInfo(goodService.getByid(og.getGoodId()));
+        }
+        order.setSlaveOrder(orderGoods);
+        order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+        if(order.getRoomId()!=null){
+            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+        }else if(order.getPOrderId().equals("0")) {
+            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+            if(roomOrderByPorderId!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                order.setRoomId(roomOrderByPorderId.getRoomId());
+                order.setReservationId(roomOrderByPorderId.getReservationId());
             }
         }
-
-        return orders;
+        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(orderId);
+        stimmeDTO.setStatus(1);//改为已查看
+        stimmeService.update(stimmeDTO);
+        return order;
     }
 
     @Override
@@ -1625,14 +1634,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
-/***
- *用户端已退款列表
- * @Author: Zhangguanglin
- * @Description:
- * @Date: 2019/10/24
- * @param params:
- * @Return:
- */
+    /***
+     *用户端已退款列表
+     * @Author: Zhangguanglin
+     * @Description:
+     * @Date: 2019/10/24
+     * @param params:
+     * @Return:
+     */
     @Override
     public PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
@@ -1679,7 +1688,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
-         baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
+        baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
     }
 
     @Override
@@ -1747,3 +1756,4 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
 }
+
