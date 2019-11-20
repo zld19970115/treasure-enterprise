@@ -1559,28 +1559,31 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public OrderDTO orderParticulars1(String orderId) {
-        OrderDTO order = baseDao.getOrder(orderId);
-        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        for (SlaveOrderEntity og:orderGoods) {
-            og.setGoodInfo(goodService.getByid(og.getGoodId()));
-        }
-        order.setSlaveOrder(orderGoods);
-        order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-        if(order.getRoomId()!=null){
-            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-        }else if(order.getPOrderId().equals("0")) {
-            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-            if(roomOrderByPorderId!=null){
-                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
-                order.setRoomId(roomOrderByPorderId.getRoomId());
-                order.setReservationId(roomOrderByPorderId.getReservationId());
+    public  List<OrderDTO>  orderParticulars1(String orderId) {
+        List<OrderDTO> orders = baseDao.getOrder1(orderId);
+        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS1(orderId);
+        List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
+        orders.removeAll(list);
+        orders.removeAll(orderDTOByPorderId);
+        for (OrderDTO order : orders) {
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
+            for (SlaveOrderEntity og:orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
+            }
+            order.setSlaveOrder(orderGoods);
+            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+            if(order.getRoomId()!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+            }else if(order.getPOrderId().equals("0")) {
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if(roomOrderByPorderId!=null){
+                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                    order.setRoomId(roomOrderByPorderId.getRoomId());
+                    order.setReservationId(roomOrderByPorderId.getReservationId());
+                }
             }
         }
-        StimmeDTO stimmeDTO = stimmeService.selectByOrderId(orderId);
-        stimmeDTO.setStatus(1);//改为已查看
-        stimmeService.update(stimmeDTO);
-        return order;
+        return orders;
     }
 
     @Override
