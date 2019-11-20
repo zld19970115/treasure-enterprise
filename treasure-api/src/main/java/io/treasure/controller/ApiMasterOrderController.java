@@ -219,8 +219,8 @@ public class ApiMasterOrderController {
     @ApiOperation("商户端订单详情")
     public Result<List<OrderDTO>> getOrderInfo1(@PathVariable("orderId") String orderId){
 
-      List<OrderDTO> data = masterOrderService.orderParticulars1(orderId);
-        return new Result<List<OrderDTO>>().ok(data);
+        List<OrderDTO> orderDTOS = masterOrderService.orderParticulars1(orderId);
+        return new Result<List<OrderDTO>>().ok(orderDTOS);
     }
 
     @Login

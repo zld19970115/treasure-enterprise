@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -133,6 +134,13 @@ public class MerchantWithdrawController {
     public Result save(@RequestBody MerchantWithdrawDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
+        MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
+        Double alreadyCash = merchantEntity.getAlreadyCash();
+
+        Double money = dto.getMoney();
+        if (money>alreadyCash){
+            return new Result().error("提现金额不足");
+        }
         dto.setCreateDate(new Date());
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
@@ -205,11 +213,11 @@ public class MerchantWithdrawController {
             return new Result().ok(map);
         }
         if (merchantWithdrawEntities.size() != 0) {
-            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
             if (bigDecimal==null){
                 bigDecimal = new BigDecimal("0.00");
             }
-            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId); //查询已提现总额
             if (aDouble==null){
                 aDouble=0.00;
             }
