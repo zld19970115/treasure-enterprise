@@ -44,6 +44,9 @@
     <select id="selectByMartId" resultType="java.lang.Double">
          SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1,2)
     </select>
+    <select id="selectWaitByMartId" resultType="java.lang.Double">
+         SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1)
+    </select>
     <select id="selectPoByMartID" parameterType="io.treasure.entity.MerchantWithdrawEntity" resultType="io.treasure.entity.MerchantWithdrawEntity">
               SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
     </select>

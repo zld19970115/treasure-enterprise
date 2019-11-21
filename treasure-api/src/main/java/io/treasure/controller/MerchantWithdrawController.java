@@ -172,17 +172,21 @@ public class MerchantWithdrawController {
 
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         MerchantEntity merchantEntity = merchantService.selectById(martId);
+        Double wartCash = merchantWithdrawService.selectWaitByMartId(martId);
 
         if (masterOrderEntity==null){
             if(null!=merchantEntity){
+                BigDecimal wartcashZore = new BigDecimal("0.00");
                 merchantEntity.setTotalCash(0.00);
                 merchantEntity.setAlreadyCash(0.00);
                 merchantEntity.setNotCash(0.00);
                 merchantEntity.setPointMoney(0.00);
+                merchantEntity.setWartCash(wartcashZore);
+                merchantService.updateById(merchantEntity);
                 Map map = new HashMap();
-                map.put("total_cash", 0.00);
                 map.put("alead_cash", 0.00);
                 map.put("not_cash", 0.00);
+                map.put("wart_cash",wartcashZore);
                 return new Result().ok(map);
             }else{
                 return new Result().error("无法获取店铺信息!");
@@ -192,16 +196,23 @@ public class MerchantWithdrawController {
         if (merchantWithdrawEntities.size()==0){
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);
+
+            BigDecimal wartcashZore = new BigDecimal("0.00");
             if (null==bigDecimal ){
+
                 if(null!=merchantEntity){
+                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
                     merchantEntity.setTotalCash(0.00);
                     merchantEntity.setAlreadyCash(0.00);
                     merchantEntity.setNotCash(0.00);
                     merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+                    merchantEntity.setWartCash(wartcashZore);
+                    merchantService.updateById(merchantEntity);
                     Map map = new HashMap();
-                    map.put("total_cash", 0.00);
+
                     map.put("alead_cash", 0.00);
                     map.put("not_cash", 0.00);
+                    map.put("wart_cash",wartcashZore);
                     return new Result().ok(map);
                 }else{
                     return new Result().error("无法获取店铺信息!");
@@ -211,15 +222,17 @@ public class MerchantWithdrawController {
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcashZore);
+            merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());
             map.put("alead_cash", 0.00);
             map.put("not_cash", bigDecimal.doubleValue());
-
+            map.put("wart_cash",wartcashZore);
 
             return new Result().ok(map);
         }
         if (merchantWithdrawEntities.size() != 0) {
+            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
             if (bigDecimal==null){
@@ -237,11 +250,13 @@ public class MerchantWithdrawController {
             merchantEntity.setAlreadyCash(aDouble);
             merchantEntity.setNotCash(c);
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcash);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash",bigDecimal.doubleValue());//提现总额
+
             map.put("alead_cash", aDouble);//已提现
             map.put("not_cash", c);//未体现
+            map.put("wart_cash",wartcash);//审核中
             return new Result().ok(map);
     }
         return new Result();
