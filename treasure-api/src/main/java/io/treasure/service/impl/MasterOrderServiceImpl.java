@@ -526,14 +526,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
 
         }
-//        MerchantDTO merchantDTO = merchantService.get(orderDTO.getMerchantId());
-//        if(merchantDTO.getDepost()==0){
-//            merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(),1);
-//        }
+        MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+        if(merchantDTO.getDepost()==0){
+            merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
+        }
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
-        MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         if(reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()&&merchantDTO.getDepost()==0){
             if(dtoList == null){
                 masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
