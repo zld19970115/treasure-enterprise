@@ -72,5 +72,10 @@
     <select id="selectWithStatus" resultType="java.lang.String">
 select param_value from sys_params where id=1144988823431553026
     </select>
+    <select id="selectPointMoney" resultType="java.math.BigDecimal">
+          SELECT SUM(platform_brokerage)
+        FROM ct_master_order
+        WHERE merchant_id = #{martId} AND status IN (2,4,7,10) and check_status = 1
+    </select>
 
 </mapper>

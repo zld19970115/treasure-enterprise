@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -176,6 +177,11 @@ public class MerchantEntity implements Serializable {
 	 *商家未提现金额
 	 */
 	private Double notCash;
+	/**
+	 *商家扣点总额
+	 *
+	 */
+	private Double pointMoney;
 	/**
 	 *
 	 *审核失败原因
