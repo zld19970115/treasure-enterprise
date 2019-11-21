@@ -1260,6 +1260,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
             }
             //退款
+            BigDecimal money=new BigDecimal("0");
+            BigDecimal payMoney = dto.getPayMoney();
+            //退款
+            if(payMoney.compareTo(money)==1){
             Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
             if (result1.success()) {
                 boolean b = (boolean) result1.getData();
@@ -1268,6 +1272,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             } else {
                 return new Result().error(result1.getMsg());
+            }
             }
             ClientUserDTO userDto = clientUserService.get(dto.getCreator());
             if (null != userDto) {
