@@ -173,7 +173,9 @@ public class MerchantWithdrawController {
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         MerchantEntity merchantEntity = merchantService.selectById(martId);
         Double wartCash = merchantWithdrawService.selectWaitByMartId(martId);
-
+      if (wartCash==null){
+    wartCash=0.00;
+}
         if (masterOrderEntity==null){
             if(null!=merchantEntity){
                 BigDecimal wartcashZore = new BigDecimal("0.00");
@@ -235,6 +237,9 @@ public class MerchantWithdrawController {
             BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
+            if (bigDecimal1==null){
+                bigDecimal1 = new BigDecimal("0.00");
+            }
             if (bigDecimal==null){
                 bigDecimal = new BigDecimal("0.00");
             }
