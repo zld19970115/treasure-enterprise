@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -176,7 +177,14 @@ public class MerchantEntity implements Serializable {
 	 *
 	 *商家未提现金额
 	 */
+
 	private Double notCash;
+
+	/**
+	 *
+	 *审核中金额
+	 */
+	private BigDecimal wartCash;
 	/**
 	 *商家扣点总额
 	 *

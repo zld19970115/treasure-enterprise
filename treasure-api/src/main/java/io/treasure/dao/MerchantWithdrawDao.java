@@ -25,6 +25,7 @@ public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
     BigDecimal selectPointMoney(long  martId);
     Double selectAlreadyCash(long  martId);
     Double selectByMartId(long  martId);
+    Double  selectWaitByMartId(long  martId);
     List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);
     List<MasterOrderEntity>  selectOrderByMartID(Long  merchantId);
     List<MerchantWithdrawDTO> listPage(Map<String,Object> params);

@@ -70,6 +70,11 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     @Override
+    public Double selectWaitByMartId(long martId) {
+        return baseDao.selectWaitByMartId(martId);
+    }
+
+    @Override
     public  List<MerchantWithdrawEntity>  selectPoByMartID(long martId) {
         return baseDao.selectPoByMartID(martId);
     }
