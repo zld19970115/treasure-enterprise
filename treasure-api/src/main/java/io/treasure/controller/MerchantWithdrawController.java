@@ -135,10 +135,10 @@ public class MerchantWithdrawController {
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
-        Double alreadyCash = merchantEntity.getAlreadyCash();
+        Double notCash = merchantEntity.getNotCash();
 
         Double money = dto.getMoney();
-        if (money>alreadyCash){
+        if (money>notCash){
             return new Result().error("提现金额不足");
         }
         dto.setCreateDate(new Date());
@@ -172,11 +172,13 @@ public class MerchantWithdrawController {
 
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         MerchantEntity merchantEntity = merchantService.selectById(martId);
+
         if (masterOrderEntity==null){
             if(null!=merchantEntity){
                 merchantEntity.setTotalCash(0.00);
                 merchantEntity.setAlreadyCash(0.00);
                 merchantEntity.setNotCash(0.00);
+                merchantEntity.setPointMoney(0.00);
                 Map map = new HashMap();
                 map.put("total_cash", 0.00);
                 map.put("alead_cash", 0.00);
@@ -189,11 +191,13 @@ public class MerchantWithdrawController {
         List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(martId);
         if (merchantWithdrawEntities.size()==0){
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);
             if (null==bigDecimal ){
                 if(null!=merchantEntity){
                     merchantEntity.setTotalCash(0.00);
                     merchantEntity.setAlreadyCash(0.00);
                     merchantEntity.setNotCash(0.00);
+                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
                     Map map = new HashMap();
                     map.put("total_cash", 0.00);
                     map.put("alead_cash", 0.00);
@@ -206,14 +210,18 @@ public class MerchantWithdrawController {
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             Map map = new HashMap();
             map.put("total_cash", bigDecimal.doubleValue());
             map.put("alead_cash", 0.00);
             map.put("not_cash", bigDecimal.doubleValue());
+
+
             return new Result().ok(map);
         }
         if (merchantWithdrawEntities.size() != 0) {
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
             if (bigDecimal==null){
                 bigDecimal = new BigDecimal("0.00");
             }
@@ -228,9 +236,10 @@ public class MerchantWithdrawController {
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(aDouble);
             merchantEntity.setNotCash(c);
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());//提现总额
+            map.put("total_cash",bigDecimal.doubleValue());//提现总额
             map.put("alead_cash", aDouble);//已提现
             map.put("not_cash", c);//未体现
             return new Result().ok(map);

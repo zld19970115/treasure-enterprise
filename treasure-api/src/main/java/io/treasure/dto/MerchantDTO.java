@@ -145,6 +145,8 @@ public class MerchantDTO implements Serializable {
 	private Double alreadyCash;
 	@ApiModelProperty(value = "商家未提现金额")
 	private Double notCash;
+    @ApiModelProperty(value = "商家扣点总额")
+    private Double pointMoney;
 	@ApiModelProperty(value = "审核失败原因")
 	private String reason;
 

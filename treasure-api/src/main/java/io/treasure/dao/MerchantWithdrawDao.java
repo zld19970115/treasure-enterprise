@@ -22,6 +22,7 @@ import java.util.Map;
 public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
     void updateStatusById(long id,int status);
     BigDecimal selectTotalCath(long  martId);
+    BigDecimal selectPointMoney(long  martId);
     Double selectAlreadyCash(long  martId);
     Double selectByMartId(long  martId);
     List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);

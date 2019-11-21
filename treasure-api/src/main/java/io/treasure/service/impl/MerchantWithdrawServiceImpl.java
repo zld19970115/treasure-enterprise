@@ -60,6 +60,11 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     @Override
+    public BigDecimal selectPointMoney(long martId) {
+        return baseDao.selectPointMoney(martId);
+    }
+
+    @Override
     public Double selectByMartId(long martId) {
         return baseDao.selectByMartId(martId);
     }
