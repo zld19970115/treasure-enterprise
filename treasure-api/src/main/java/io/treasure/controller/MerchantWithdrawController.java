@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -133,6 +134,13 @@ public class MerchantWithdrawController {
     public Result save(@RequestBody MerchantWithdrawDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class);
+        MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
+        Double notCash = merchantEntity.getNotCash();
+
+        Double money = dto.getMoney();
+        if (money>notCash){
+            return new Result().error("提现金额不足");
+        }
         dto.setCreateDate(new Date());
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
@@ -164,15 +172,23 @@ public class MerchantWithdrawController {
 
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         MerchantEntity merchantEntity = merchantService.selectById(martId);
+        Double wartCash = merchantWithdrawService.selectWaitByMartId(martId);
+      if (wartCash==null){
+    wartCash=0.00;
+}
         if (masterOrderEntity==null){
             if(null!=merchantEntity){
+                BigDecimal wartcashZore = new BigDecimal("0.00");
                 merchantEntity.setTotalCash(0.00);
                 merchantEntity.setAlreadyCash(0.00);
                 merchantEntity.setNotCash(0.00);
+                merchantEntity.setPointMoney(0.00);
+                merchantEntity.setWartCash(wartcashZore);
+                merchantService.updateById(merchantEntity);
                 Map map = new HashMap();
-                map.put("total_cash", 0.00);
                 map.put("alead_cash", 0.00);
                 map.put("not_cash", 0.00);
+                map.put("wart_cash",wartcashZore);
                 return new Result().ok(map);
             }else{
                 return new Result().error("无法获取店铺信息!");
@@ -181,15 +197,24 @@ public class MerchantWithdrawController {
         List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(martId);
         if (merchantWithdrawEntities.size()==0){
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);
+
+            BigDecimal wartcashZore = new BigDecimal("0.00");
             if (null==bigDecimal ){
+
                 if(null!=merchantEntity){
+                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
                     merchantEntity.setTotalCash(0.00);
                     merchantEntity.setAlreadyCash(0.00);
                     merchantEntity.setNotCash(0.00);
+                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+                    merchantEntity.setWartCash(wartcashZore);
+                    merchantService.updateById(merchantEntity);
                     Map map = new HashMap();
-                    map.put("total_cash", 0.00);
+
                     map.put("alead_cash", 0.00);
                     map.put("not_cash", 0.00);
+                    map.put("wart_cash",wartcashZore);
                     return new Result().ok(map);
                 }else{
                     return new Result().error("无法获取店铺信息!");
@@ -198,18 +223,27 @@ public class MerchantWithdrawController {
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcashZore);
+            merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());
             map.put("alead_cash", 0.00);
             map.put("not_cash", bigDecimal.doubleValue());
+            map.put("wart_cash",wartcashZore);
+
             return new Result().ok(map);
         }
         if (merchantWithdrawEntities.size() != 0) {
-            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
+            if (bigDecimal1==null){
+                bigDecimal1 = new BigDecimal("0.00");
+            }
             if (bigDecimal==null){
                 bigDecimal = new BigDecimal("0.00");
             }
-            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId);
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId); //查询已提现总额
             if (aDouble==null){
                 aDouble=0.00;
             }
@@ -220,11 +254,14 @@ public class MerchantWithdrawController {
             merchantEntity.setTotalCash(bigDecimal.doubleValue());
             merchantEntity.setAlreadyCash(aDouble);
             merchantEntity.setNotCash(c);
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcash);
             merchantService.updateById(merchantEntity);
             Map map = new HashMap();
-            map.put("total_cash", bigDecimal.doubleValue());//提现总额
+
             map.put("alead_cash", aDouble);//已提现
             map.put("not_cash", c);//未体现
+            map.put("wart_cash",wartcash);//审核中
             return new Result().ok(map);
     }
         return new Result();

@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -145,6 +146,10 @@ public class MerchantDTO implements Serializable {
 	private Double alreadyCash;
 	@ApiModelProperty(value = "商家未提现金额")
 	private Double notCash;
+	@ApiModelProperty(value = "审核中金额")
+	private BigDecimal wartCash;
+    @ApiModelProperty(value = "商家扣点总额")
+    private Double pointMoney;
 	@ApiModelProperty(value = "审核失败原因")
 	private String reason;
 
@@ -154,4 +159,11 @@ public class MerchantDTO implements Serializable {
 	private List<CategoryEntity> categoryList;
 	@ApiModelProperty(value = "二级类别")
 	private List<CategoryEntity> categoryTwoList;
+
+	@ApiModelProperty(value = "可用包房")
+	private int roomNum;
+
+	@ApiModelProperty(value = "可用桌")
+	private int desk;
+
 }

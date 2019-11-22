@@ -45,4 +45,13 @@
 	      AND cs.status =1
 	      and cr.merchant_id=#{merchantId}
     </select>
+    <select id="getAvailableRooms" resultType="java.lang.Integer">
+        select COUNT(*) from ct_merchant_room_params_set where type=1 and `status`=1 and state=0 and merchant_id=#{merchantId}
+        and UNIX_TIMESTAMP(use_date)&gt;unix_timestamp() and UNIX_TIMESTAMP(use_date)&lt;#{bigTime}
+    </select>
+
+    <select id="getAvailableRoomsDesk" resultType="java.lang.Integer">
+        select COUNT(*) from ct_merchant_room_params_set where type=2 and `status`=1 and state=0 and merchant_id=#{merchantId}
+        and UNIX_TIMESTAMP(use_date)&gt;unix_timestamp() and UNIX_TIMESTAMP(use_date)&lt;#{bigTime}
+    </select>
 </mapper>

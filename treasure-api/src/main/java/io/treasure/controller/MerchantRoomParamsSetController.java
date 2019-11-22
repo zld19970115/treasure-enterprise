@@ -20,6 +20,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.service.MerchantRoomService;
 import io.treasure.service.MerchantService;
+import net.sf.jsqlparser.expression.DoubleValue;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -28,6 +30,7 @@ import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,5 +120,27 @@ public class MerchantRoomParamsSetController {
     })
     public Result<List<MerchantRoomParamsSetDTO>> getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId) throws ParseException {
         return new Result<List<MerchantRoomParamsSetDTO>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId,merchantId));
+    }
+
+    @Login
+    @GetMapping("getAvailableRooms")
+    @ApiOperation("查询当日可用包房桌数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户ID", paramType = "query", required = true, dataType="long")
+    })
+    public Map getAvailableRooms(long merchantId) throws ParseException {
+        String format = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(format);
+        long ts = date.getTime();
+        long c=1000;
+        double progress = ts/(double)c;
+        long bigTime = new Double(progress).longValue();
+        int availableRooms = merchantRoomParamsSetService.getAvailableRooms(bigTime, merchantId);
+        int getAvailableRoomsDesk = merchantRoomParamsSetService.getAvailableRoomsDesk(bigTime, merchantId);
+        Map<String,Integer> map=new HashMap<String,Integer>();
+        map.put("roomNum",availableRooms);
+        map.put("DeskNum",getAvailableRoomsDesk);
+        return map;
     }
 }

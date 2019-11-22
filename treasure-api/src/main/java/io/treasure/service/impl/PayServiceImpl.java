@@ -174,12 +174,6 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
-        if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getRoomId()!=null){
-            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
-        }
-        if(masterOrderEntity.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
-            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
-        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -516,9 +510,7 @@ public class PayServiceImpl implements PayService {
         masterOrderEntity.setPayMode(Constants.PayMode.ALIPAY.getValue());
 
         System.out.println("ali"+masterOrderEntity.getReservationId());
-        if(masterOrderEntity.getReservationId()!=null){
-            merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(),1);
-        }
+
 
         System.out.println("masterOrderEntity:"+masterOrderEntity);
         masterOrderEntity.setPayDate(new Date());

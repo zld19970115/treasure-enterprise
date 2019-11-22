@@ -134,4 +134,14 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
     public List getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId){
         return baseDao.getAvailableRoomsByData(useDate,roomParamsId,merchantId);
     }
+
+    @Override
+    public int getAvailableRooms(long bigTime, long merchantId) {
+        return baseDao.getAvailableRooms(bigTime,merchantId);
+    }
+
+    @Override
+    public int getAvailableRoomsDesk(long bigTime, long merchantId) {
+        return baseDao.getAvailableRoomsDesk(bigTime,merchantId);
+    }
 }

@@ -23,7 +23,9 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     void updateStatusById(long id,int status);
 
     BigDecimal selectTotalCath(long  martId);
+    BigDecimal selectPointMoney(long  martId);
     Double selectByMartId(long  martId);
+    Double  selectWaitByMartId(long  martId);
     List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);
     Double selectAlreadyCash(long  martId);
     PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);

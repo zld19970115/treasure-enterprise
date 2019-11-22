@@ -44,6 +44,9 @@
     <select id="selectByMartId" resultType="java.lang.Double">
          SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1,2)
     </select>
+    <select id="selectWaitByMartId" resultType="java.lang.Double">
+         SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1)
+    </select>
     <select id="selectPoByMartID" parameterType="io.treasure.entity.MerchantWithdrawEntity" resultType="io.treasure.entity.MerchantWithdrawEntity">
               SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
     </select>
@@ -71,6 +74,11 @@
     </select>
     <select id="selectWithStatus" resultType="java.lang.String">
 select param_value from sys_params where id=1144988823431553026
+    </select>
+    <select id="selectPointMoney" resultType="java.math.BigDecimal">
+          SELECT SUM(platform_brokerage)
+        FROM ct_master_order
+        WHERE merchant_id = #{martId} AND status IN (2,4,7,10) and check_status = 1
     </select>
 
 </mapper>

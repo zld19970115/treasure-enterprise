@@ -349,4 +349,14 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     public MerchantRoomEntity getmerchantroom(long merchantId) {
         return baseDao.getmerchantroom(merchantId);
     }
+
+    @Override
+    public Integer selectCountRoom(long merhcnatId) {
+        return baseDao.selectCountRoom(merhcnatId);
+    }
+
+    @Override
+    public Integer selectCountDesk(long merhcnatId) {
+        return baseDao.selectCountDesk(merhcnatId);
+    }
 }
