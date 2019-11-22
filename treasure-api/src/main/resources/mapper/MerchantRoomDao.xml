@@ -161,7 +161,11 @@
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
             </foreach>
-        </if> and curps.room_params_id = #{roomParmesId}  and curps.status=1
+        </if>
+        <if test="type != null">
+            and curps.type=#{type}
+        </if>
+        and curps.room_params_id = #{roomParmesId}  and curps.status=1
 
         and curps.state = 0  and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
 
