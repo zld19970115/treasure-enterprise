@@ -523,10 +523,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             useGift = useGift.setScale(2);
             if (gift.compareTo(useGift) == -1) {
                 return result.error(-7, "您的赠送金不足！");
-            } else {
-                clientUserEntity.setGift(gift.subtract(useGift));
             }
-            clientUserService.updateById(clientUserEntity);
         }
         Date d = new Date();
         //保存主订单
