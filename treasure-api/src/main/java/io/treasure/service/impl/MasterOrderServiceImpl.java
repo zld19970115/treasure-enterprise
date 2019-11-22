@@ -501,8 +501,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
-
-
         //是否使用赠送金
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
@@ -527,9 +525,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-        if(merchantDTO.getDepost()==0){
-            merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
-        }
+
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
