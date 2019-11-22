@@ -199,4 +199,8 @@ public class MerchantEntity implements Serializable {
 	 *创建者
 	 */
 	private Long creator;
+	/**
+	 *月销量
+	 */
+	private Integer monthySales;
 }

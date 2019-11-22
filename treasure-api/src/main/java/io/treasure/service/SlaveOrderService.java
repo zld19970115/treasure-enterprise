@@ -27,7 +27,7 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
     List<SlaveOrderEntity> selectByOrderId(String orderId);
     List<SlaveOrderEntity> selectByOrderIdAndStatus(String orderId);
     PageData<SlaveOrderDTO> getOandPoGood(Map<String, Object> params);
-
+    List<SlaveOrderEntity> selectslaveOrderByOrderId(String orderId);
     /**
      * 通过订单ID和商品ID查询此商品信息
      * @param orderId
