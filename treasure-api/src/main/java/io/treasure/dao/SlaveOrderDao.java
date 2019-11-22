@@ -24,7 +24,7 @@ import java.util.Map;
 public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
 
     void updateRefundId(@Param("refundId") String refundId,@Param("orderId")  String orderId,@Param("goodId") Long goodId);
-
+    List<SlaveOrderEntity> selectslaveOrderByOrderId(String orderId);
     SlaveOrderDTO getAllGoods(@Param("orderId") String orderId,@Param("goodId") long goodId);
 
     void updateSlaveOrderStatus(@Param("status") int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
