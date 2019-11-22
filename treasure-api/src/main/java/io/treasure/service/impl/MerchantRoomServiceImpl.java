@@ -39,6 +39,9 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     @Autowired
     private MasterOrderService masterOrderService;
 
+    @Autowired
+    private MerchantRoomService merchantRoomService;
+
     @Override
     public QueryWrapper<MerchantRoomEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
@@ -316,6 +319,13 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         }
          params.put("roomParmesId",roomParmesId);
         List<MerchantRoomParamsSetDTO> list= baseDao.selectRoomByTime(params);
+        for (MerchantRoomParamsSetDTO s:list) {
+            MerchantRoomDTO merchantRoomDTO = merchantRoomService.get(s.getRoomId());
+            s.setIcon(merchantRoomDTO.getIcon());
+            s.setName(merchantRoomDTO.getName());
+            s.setNumlow(merchantRoomDTO.getNumLow());
+            s.setNumhigh(merchantRoomDTO.getNumHigh());
+        }
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }
 
