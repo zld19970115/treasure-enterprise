@@ -55,4 +55,8 @@
     <select id="selectslaveOrderByOrderId" resultType="io.treasure.entity.SlaveOrderEntity">
          select * from ct_slave_order where order_id=#{orderId} and status  in (2,4,6,7)
     </select>
+
+    <update id="updateRefundReason" parameterType="io.treasure.dto.SlaveOrderDTO">
+        UPDATE ct_slave_order SET refund_reason=#{refundReason} where order_id=#{orderId} and good_id=#{goodId}
+    </update>
 </mapper>
