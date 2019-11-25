@@ -199,7 +199,8 @@ public class ApiMasterOrderController {
     public Result<PageData<MerchantOrderDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+","+
                 Constants.OrderStatus.PAYORDER.getValue()+","+Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()+","
-                +Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue());
+                +Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+","
+                +Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue());
         PageData page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -218,8 +219,8 @@ public class ApiMasterOrderController {
     @ApiOperation("商户端订单详情")
     public Result<List<OrderDTO>> getOrderInfo1(@PathVariable("orderId") String orderId){
 
-        List<OrderDTO> orderDTOS = masterOrderService.orderParticulars1(orderId);
-        return new Result<List<OrderDTO>>().ok(orderDTOS);
+      List<OrderDTO> data = masterOrderService.orderParticulars1(orderId);
+        return new Result<List<OrderDTO>>().ok(data);
     }
 
     @Login

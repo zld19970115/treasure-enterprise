@@ -1567,7 +1567,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return order;
 
     }
-
     @Override
     public  List<OrderDTO>  orderParticulars1(String orderId) {
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
@@ -1595,6 +1594,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return orders;
     }
+
 
     @Override
     public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {
