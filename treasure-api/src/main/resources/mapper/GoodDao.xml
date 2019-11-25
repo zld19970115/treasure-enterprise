@@ -70,6 +70,6 @@
     </select>
 
     <select id="getRefundGoods"  resultType="io.treasure.entity.SlaveOrderEntity">
-        SELECT *  from ct_slave_order where `status`=6 AND order_id=#{orderId}
+        SELECT *  from ct_slave_order where `status`=6 AND order_id=#{orderId} and good_id = #{goodId}
     </select>
 </mapper>

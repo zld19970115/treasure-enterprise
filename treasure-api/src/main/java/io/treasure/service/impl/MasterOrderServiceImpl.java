@@ -1597,14 +1597,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public List<OrderDTO> refundOrder(String orderId) {
+    public List<OrderDTO> refundOrder( Map<String, Object> params) {
+        String orderId = (String) params.get("orderId");
+        String goodIds = (String) params.get("goodId");
+        Long goodId = Long.valueOf(goodIds);
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
         List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS1(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
         for (OrderDTO order : orders) {
-            List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId());
+            List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId(),goodId);
             for (SlaveOrderEntity og:orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
             }
@@ -1623,7 +1626,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return orders;
     }
-
 
     @Override
     public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {

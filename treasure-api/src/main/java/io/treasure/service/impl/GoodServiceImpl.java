@@ -118,7 +118,7 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     }
 
     @Override
-    public List<SlaveOrderEntity> getRefundGoods(String orderId) {
-        return baseDao.getRefundGoods(orderId);
+    public List<SlaveOrderEntity> getRefundGoods(String orderId,long goodId) {
+        return baseDao.getRefundGoods(orderId,goodId);
     }
 }
