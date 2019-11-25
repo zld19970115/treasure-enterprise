@@ -23,6 +23,7 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -1712,6 +1713,40 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public List<MasterOrderEntity> getAuxiliaryPayOrder(String orderId, int status) {
         return baseDao.getAuxiliaryPayOrder(orderId,status);
+    }
+
+    /**
+     * 设置包房
+     * @param id
+     * @param roomSetId
+     */
+    @Transient
+    @Override
+    public Result setRoom(long id, long roomSetId) {
+        if(id>0){
+            if(roomSetId>0){
+               MasterOrderDTO dto= get(id);
+               Long roomId=dto.getRoomId();
+               if(null!=roomId && roomId>0){
+                   return new Result().error("订单已预定包房，不允许修改！");
+               }
+               //查询包房
+               MerchantRoomParamsSetDTO roomSetDto= merchantRoomParamsSetService.get(roomSetId);
+               if(null!=roomSetDto){
+                   roomSetDto.setState(MerchantRoomEnm.STATE_USE_YEA.getType());
+                   merchantRoomParamsSetService.update(roomSetDto);
+                   dto.setRoomId(roomSetDto.getRoomId());
+               }else{
+                   return new Result().error("无法获取包房信息！");
+               }
+                update(dto);
+            }else{
+                return new Result().error("无法获取预约包房编号！");
+            }
+        }else{
+            return new Result().error("无法获取订单编号！");
+        }
+        return new Result().ok("设置包房成功！");
     }
 
     @Override

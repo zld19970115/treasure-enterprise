@@ -95,5 +95,7 @@ public class MerchantRoomParamsSetDTO implements Serializable {
 	@ApiModelProperty(value = "包房目前所属用户")
 	private ClientUserDTO clientUserDTO ;
 
+	@ApiModelProperty(value = "商户名称")
+	private String merchantName;
 
 }

@@ -577,7 +577,17 @@ public class ApiMasterOrderController {
     public Result<DesignConditionsDTO> calculateGiftCoupon(@RequestBody DesignConditionsDTO dct){
         return new Result<DesignConditionsDTO>().ok(masterOrderService.calculateGiftCoupon(dct));
     }
-
+    @CrossOrigin
+    @Login
+    @PutMapping("setRoom")
+    @ApiOperation("商户端-设置包房")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "订单编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "roomSetId", value = "预约包房编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result setRoom(@RequestParam  long id, @RequestParam long roomSetId) throws Exception {
+        return masterOrderService.setRoom(id,roomSetId);
+    }
     @Login
     @PostMapping("reserveRoom")
     @ApiOperation("客户端-下单支付成功后，预定包房")
@@ -614,6 +624,7 @@ public class ApiMasterOrderController {
         PageData<OrderDTO> page = masterOrderService.pageGetAuxiliaryOrder(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
+    @CrossOrigin
     @Login
     @GetMapping("getStatus4Order")
     @ApiOperation("语音推送接口")

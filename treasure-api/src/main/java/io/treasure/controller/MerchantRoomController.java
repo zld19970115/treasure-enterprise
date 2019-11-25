@@ -123,7 +123,7 @@ public class MerchantRoomController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String"),
             @ApiImplicitParam(name="date",value="预定时间",paramType ="query",required = true,dataType = "String"),
-            @ApiImplicitParam(name="type",value="预定时间",paramType ="query",required = false,dataType = "int")
+            @ApiImplicitParam(name="type",value="包房类型",paramType ="query",required = false,dataType = "int")
     })
     public Result<PageData<MerchantRoomParamsSetDTO>> roomPageByTime(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantRoomParamsSetDTO> page = merchantRoomService.selectRoomByTime(params);

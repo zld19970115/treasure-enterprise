@@ -8,6 +8,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.DateUtils;
 import io.treasure.dao.MerchantRoomDao;
 import io.treasure.dto.ClientUserDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.entity.MasterOrderEntity;
@@ -15,6 +16,7 @@ import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomService;
+import io.treasure.service.MerchantService;
 import io.treasure.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
 
     @Autowired
     private MerchantRoomService merchantRoomService;
+    //商户
+    @Autowired
+    private MerchantService merchantService;
 
     @Override
     public QueryWrapper<MerchantRoomEntity> getWrapper(Map<String, Object> params){
@@ -321,10 +326,15 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         List<MerchantRoomParamsSetDTO> list= baseDao.selectRoomByTime(params);
         for (MerchantRoomParamsSetDTO s:list) {
             MerchantRoomDTO merchantRoomDTO = merchantRoomService.get(s.getRoomId());
+            MerchantDTO merchantDTO=merchantService.get(merchantRoomDTO.getMerchantId());
             s.setIcon(merchantRoomDTO.getIcon());
             s.setName(merchantRoomDTO.getName());
             s.setNumlow(merchantRoomDTO.getNumLow());
             s.setNumhigh(merchantRoomDTO.getNumHigh());
+            if(null!=merchantDTO){
+                s.setMerchantName(merchantDTO.getName());
+            }
+
         }
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
     }

@@ -162,7 +162,7 @@
                 #{item}
             </foreach>
         </if>
-        <if test="type != null">
+        <if test="type != null and type.trim() != '' ">
             and curps.type=#{type}
         </if>
         and curps.room_params_id = #{roomParmesId}  and curps.status=1
