@@ -43,6 +43,9 @@
 	       DATE_FORMAT(cs.use_date,'%Y-%m-%d')=DATE_FORMAT(#{useDate},'%Y-%m-%d')
 	      AND cs.room_params_id=#{roomParamsId}
 	      AND cs.status =1
+        <if test="type != null and type!=''">
+            AND cs.type =#{type}
+        </if>
 	      and cr.merchant_id=#{merchantId}
     </select>
     <select id="getAvailableRooms" resultType="java.lang.Integer">

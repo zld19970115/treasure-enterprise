@@ -152,9 +152,6 @@ public class MerchantDTO implements Serializable {
     private Double pointMoney;
 	@ApiModelProperty(value = "审核失败原因")
 	private String reason;
-
-
-
 	@ApiModelProperty(value = "一级类别")
 	private List<CategoryEntity> categoryList;
 	@ApiModelProperty(value = "二级类别")
@@ -165,5 +162,6 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "可用桌")
 	private int desk;
-
+	@ApiModelProperty(value = "月销量")
+	private Integer monthySales;
 }

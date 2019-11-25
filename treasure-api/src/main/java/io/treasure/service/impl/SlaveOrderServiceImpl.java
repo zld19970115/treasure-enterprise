@@ -73,6 +73,12 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         return getPageData(list,pages.getTotal(), SlaveOrderDTO.class);
 
     }
+
+    @Override
+    public List<SlaveOrderEntity> selectslaveOrderByOrderId(String orderId) {
+        return baseDao.selectslaveOrderByOrderId(orderId);
+    }
+
     @Override
     public List<SlaveOrderEntity> selectByOrderId(String orderId) {
         List<SlaveOrderEntity> slaveOrderEntityList = baseDao.selectList(queryWrapper(orderId));

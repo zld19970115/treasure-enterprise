@@ -245,6 +245,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectslaveOrderByOrderId(dto.getOrderId());
+        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+            GoodEntity byid = goodService.getByid(slaveOrderEntity.getGoodId());
+            Integer sales = byid.getSales();
+            Integer buyers = byid.getBuyers();
+            BigDecimal quantity = slaveOrderEntity.getQuantity();
+            int i = quantity.intValue();
+            byid.setSales(sales+i);
+            byid.setBuyers(buyers+1);
+            goodService.updateById(byid);
+        }
+
         return new Result().ok("订单翻台成功！");
     }
 
@@ -511,10 +523,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             useGift = useGift.setScale(2);
             if (gift.compareTo(useGift) == -1) {
                 return result.error(-7, "您的赠送金不足！");
-            } else {
-                clientUserEntity.setGift(gift.subtract(useGift));
             }
-            clientUserService.updateById(clientUserEntity);
         }
         Date d = new Date();
         //保存主订单
@@ -527,9 +536,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-        if(merchantDTO.getDepost()==0){
-            merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
-        }
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);

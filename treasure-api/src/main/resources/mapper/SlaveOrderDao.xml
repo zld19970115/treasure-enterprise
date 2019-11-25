@@ -52,4 +52,7 @@
     <select id="getOandPoGood" resultType="io.treasure.dto.SlaveOrderDTO">
          select cso.* ,cg.name as cgName,cg.icon  as cgeIcon from ct_slave_order cso left join ct_master_order cmo on cso.order_id=cmo.order_id left join ct_good cg on cg.id=cso.good_id where cmo.order_id =#{orderId} or cmo.p_order_id =#{orderId}
     </select>
+    <select id="selectslaveOrderByOrderId" resultType="io.treasure.entity.SlaveOrderEntity">
+         select * from ct_slave_order where order_id=#{orderId} and status  in (2,4,6,7)
+    </select>
 </mapper>

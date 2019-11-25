@@ -25,7 +25,7 @@ public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomPa
     void updateStatus(long id,int status);
     Result setRoom(long merchantId,long creater);
     //查询指定日期、时间段内可用包房
-    List getAvailableRoomsByData(Date useDate, long roomParamsId,long merchantId) throws ParseException;
+    List getAvailableRoomsByData(Date useDate, long roomParamsId,Integer type,long merchantId) throws ParseException;
 
     int getAvailableRooms(long bigTime,long merchantId);
 
