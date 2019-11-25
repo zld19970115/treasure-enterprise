@@ -36,11 +36,12 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
         String status=(String)params.get("status");
         //审核状态
         String verifyState=(String)params.get("verifyState");
-
+        String merchantId = (String)params.get("merchantId");
         QueryWrapper<MerchantWithdrawEntity> wrapper = new QueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.eq(StringUtils.isNotBlank(status),"status",status);
         wrapper.eq(StringUtils.isNotBlank(verifyState),"verify_state",verifyState);
+        wrapper.eq(StringUtils.isNotBlank(merchantId),"merchant_id",merchantId);
         return wrapper;
     }
 

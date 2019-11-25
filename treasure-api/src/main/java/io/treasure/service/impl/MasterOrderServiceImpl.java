@@ -1596,6 +1596,34 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return orders;
     }
 
+    @Override
+    public List<OrderDTO> refundOrder(String orderId) {
+        List<OrderDTO> orders = baseDao.getOrder1(orderId);
+        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS1(orderId);
+        List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
+        orders.removeAll(list);
+        orders.removeAll(orderDTOByPorderId);
+        for (OrderDTO order : orders) {
+            List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId());
+            for (SlaveOrderEntity og:orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
+            }
+            order.setSlaveOrder(orderGoods);
+            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+            if(order.getRoomId()!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+            }else if(order.getPOrderId().equals("0")) {
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if(roomOrderByPorderId!=null){
+                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                    order.setRoomId(roomOrderByPorderId.getRoomId());
+                    order.setReservationId(roomOrderByPorderId.getReservationId());
+                }
+            }
+        }
+        return orders;
+    }
+
 
     @Override
     public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {

@@ -83,7 +83,7 @@
     </select>
     <select id="selectByMerchantId" resultType="io.treasure.entity.EvaluateEntity">
 
-        select * from ct_evaluate where mart_id = #{merchantId} and status = 1
+        select * from ct_evaluate where mart_id = #{merchantId} and status = 1  order by create_date desc
     </select>
     <select id="selectEvaluateDTO" resultType="io.treasure.dto.EvaluateDTO">
 SELECT* FROM ct_evaluate

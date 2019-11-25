@@ -199,8 +199,7 @@ public class ApiMasterOrderController {
     public Result<PageData<MerchantOrderDTO>> allPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+","+
                 Constants.OrderStatus.PAYORDER.getValue()+","+Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()+","
-                +Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+","
-                +Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue());
+                +Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue());
         PageData page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -636,4 +635,14 @@ public class ApiMasterOrderController {
         return new Result().ok(list.size());
     }
 
+    @Login
+    @GetMapping("getRefundGoods")
+    @ApiOperation("商户端退款订单详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "主订单编号", paramType = "query", required = true, dataType="string")
+    })
+    public Result<List<OrderDTO>> getRefundGoods (@RequestParam String orderId){
+        List<OrderDTO> data = masterOrderService.refundOrder(orderId);
+        return new Result<List<OrderDTO>>().ok(data);
+    }
 }

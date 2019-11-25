@@ -54,6 +54,9 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     @Autowired
     private MerchantService merchantService;
 
+    @Autowired
+    private SlaveOrderService slaveOrderService;
+
     @Override
     public QueryWrapper<SlaveOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -224,6 +227,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
             MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
             String clientId = merchantUserDTO.getClientId();
+            slaveOrderService.updateRefundReason(slaveOrderDTO.getRefundReason(),slaveOrderDTO.getOrderId(),slaveOrderDTO.getGoodId());
             if (StringUtils.isNotBlank(clientId)) {
                 AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
             }
@@ -242,6 +246,11 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     @Override
     public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId, Long goodId) {
         baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId,goodId);
+    }
+
+    @Override
+    public int updateRefundReason(String refundReason, String orderId, Long goodId) {
+        return baseDao.updateRefundReason(refundReason,orderId,goodId);
     }
 
 

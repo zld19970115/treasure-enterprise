@@ -8,8 +8,10 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomParamsDTO;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantRoomParamsEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.GoodService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -113,5 +115,10 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     @Override
     public GoodEntity getByid(long id) {
         return baseDao.getByid(id);
+    }
+
+    @Override
+    public List<SlaveOrderEntity> getRefundGoods(String orderId) {
+        return baseDao.getRefundGoods(orderId);
     }
 }

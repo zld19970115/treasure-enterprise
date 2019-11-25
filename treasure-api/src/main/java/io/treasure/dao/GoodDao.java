@@ -4,7 +4,9 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.common.page.PageData;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomParamsDTO;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,4 +30,5 @@ public interface GoodDao extends BaseDao<GoodEntity> {
     GoodDTO getByInfo(long id);
 
     GoodEntity getByid(long id);
+    List<SlaveOrderEntity> getRefundGoods(String orderId);
 }

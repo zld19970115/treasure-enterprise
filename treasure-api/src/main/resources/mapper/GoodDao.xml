@@ -69,4 +69,7 @@
         select * from ct_good where id=#{id}
     </select>
 
+    <select id="getRefundGoods"  resultType="io.treasure.entity.SlaveOrderEntity">
+        SELECT *  from ct_slave_order where `status`=6 AND order_id=#{orderId}
+    </select>
 </mapper>

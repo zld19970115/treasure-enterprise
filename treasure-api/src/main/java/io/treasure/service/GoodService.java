@@ -4,7 +4,9 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantRoomParamsDTO;
+import io.treasure.dto.SlaveOrderDTO;
 import io.treasure.entity.GoodEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,5 +32,7 @@ public interface GoodService extends CrudService<GoodEntity, GoodDTO> {
     GoodDTO getByInfo(long id);
 
     GoodEntity getByid(long id);
+
+    List<SlaveOrderEntity> getRefundGoods(String orderId);
 
 }
