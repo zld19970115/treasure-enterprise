@@ -625,4 +625,14 @@ public class ApiMasterOrderController {
         return new Result().ok(list.size());
     }
 
+    @Login
+    @GetMapping("getRefundGoods")
+    @ApiOperation("商户端退款订单详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "主订单编号", paramType = "query", required = true, dataType="string")
+    })
+    public Result<List<OrderDTO>> getRefundGoods (@RequestParam String orderId){
+        List<OrderDTO> data = masterOrderService.refundOrder(orderId);
+        return new Result<List<OrderDTO>>().ok(data);
+    }
 }
