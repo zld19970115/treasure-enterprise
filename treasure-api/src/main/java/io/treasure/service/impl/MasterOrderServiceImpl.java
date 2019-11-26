@@ -1576,11 +1576,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
         for (OrderDTO order : orders) {
+            BigDecimal discountsMoney=new BigDecimal("0");
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
             for (SlaveOrderEntity og:orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
+                discountsMoney=discountsMoney.add(og.getDiscountsMoney());
             }
             order.setSlaveOrder(orderGoods);
+            order.setDiscountsMoney(discountsMoney);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
             if(order.getRoomId()!=null){
                 order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
