@@ -115,8 +115,16 @@ public class EvaluateController {
     }
     @GetMapping("/seeComment")
     @ApiOperation("查看评论表")
-    public Result seeComment(@RequestParam long merchantId){
-        List<EvaluateEntity> evaluateEntities = evaluateService.selectByMerchantId(merchantId);
-        return new Result().ok(evaluateEntities);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true, dataType="long")
+    })
+    public Result seeComment(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        PageData<EvaluateDTO> page = evaluateService.selectPage(params);
+        return new Result().ok(page);
     }
 }
