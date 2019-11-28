@@ -394,6 +394,7 @@ public class PayServiceImpl implements PayService {
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(orderNo);
         // 订单总金额，单位为分，只能为整数
         BigDecimal totalAmount = masterOrderEntity.getTotalMoney();
+        BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
         BigDecimal refundAmount = new BigDecimal(refund_fee);
         SlaveOrderDTO slaveOrderDTO=null;
@@ -421,7 +422,7 @@ public class PayServiceImpl implements PayService {
             if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
-            if(totalAmount.compareTo(refundAmount)!=0){
+            if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
         }
