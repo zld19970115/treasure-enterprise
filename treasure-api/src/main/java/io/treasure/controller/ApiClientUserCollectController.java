@@ -129,6 +129,4 @@ public class ApiClientUserCollectController {
         return new Result<PageData<ClientUserCollectDTO>>().ok(page);
     }
 
-
-
 }

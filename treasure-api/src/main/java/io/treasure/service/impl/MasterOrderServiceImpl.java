@@ -1571,7 +1571,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public  List<OrderDTO>  orderParticulars1(String orderId) {
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
-        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS1(orderId);
+        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
@@ -1609,7 +1609,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String goodIds = (String) params.get("goodId");
         Long goodId = Long.valueOf(goodIds);
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
-        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS1(orderId);
+        List<MasterOrderEntity> list = baseDao.selectPOrderIdAndS(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
