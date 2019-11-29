@@ -81,7 +81,8 @@ ApiIndexController {
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "经营类别", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantDTO>> queryHotMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("recommend","1");
