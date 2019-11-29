@@ -60,4 +60,5 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
     void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp,@Param("pb")BigDecimal pb,@Param("orderId") String orderId);
     MasterOrderEntity getOrderByReservationId(long reservationId);
+    List<OrderDTO> getAffiliateOrde(String orderId);
 }
