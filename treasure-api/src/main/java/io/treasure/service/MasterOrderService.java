@@ -145,4 +145,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     List<MasterOrderEntity>getAuxiliaryPayOrder(String orderId,int status);
     //设置包房
     Result setRoom(long id,long roomSetId);
+    List<OrderDTO> getAffiliateOrde(String orderId);
+
+    boolean judgeRockover(String orderId,Date date);
 }
