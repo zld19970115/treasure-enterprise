@@ -185,4 +185,8 @@
           select * from ct_master_order where p_order_id = #{orderId} and reservation_type = 2
     </select>
 
+    <select id="getAffiliateOrde" resultType="io.treasure.dto.OrderDTO">
+          select * from ct_master_order where p_order_id = #{orderId}
+    </select>
+
 </mapper>
