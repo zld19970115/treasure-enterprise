@@ -95,7 +95,7 @@
         update ct_master_order set pay_money=#{PayMoney} where order_id=#{orderId}
     </update>
     <select id="getRoomOrderByPorderId" resultType="io.treasure.entity.MasterOrderEntity">
-        select * from ct_master_order where p_order_id=#{orderId} and  reservation_type=2
+        select * from ct_master_order where p_order_id=#{orderId} and  reservation_type=2 and status = 2
     </select>
     <select id="getOrderByPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} and status  in (2,4,6)
@@ -188,8 +188,8 @@
     <select id="getAffiliateOrde" resultType="io.treasure.dto.OrderDTO">
           select * from ct_master_order where p_order_id = #{orderId}
     </select>
-    <select id="selectPOrderIdAndS" resultType="io.treasure.entity.MasterOrderEntity">
-          select * from ct_master_order where p_order_id = #{orderId} and status  not in (1,3,4,5,8,9)
+    <select id="selectPOrderIdAndS" resultType="io.treasure.dto.OrderDTO">
+          select * from ct_master_order where p_order_id = #{orderId} and status  in (1,3,4,5,8,9)
     </select>
 
 </mapper>
