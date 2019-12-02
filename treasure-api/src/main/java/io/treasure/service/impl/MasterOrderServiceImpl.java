@@ -1388,6 +1388,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setStatus(4);
         masterOrderEntity.setPOrderId(mainOrderId);
         masterOrderEntity.setRoomId(c.getRoomId());
+        OrderDTO order1 = baseDao.getOrder(mainOrderId);
+        masterOrderEntity.setEatTime(order1.getEatTime());
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
@@ -1438,6 +1440,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
         masterOrderEntity.setPOrderId(mainOrderId);
+        OrderDTO order = baseDao.getOrder(mainOrderId);
+        masterOrderEntity.setEatTime(order.getEatTime());
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
