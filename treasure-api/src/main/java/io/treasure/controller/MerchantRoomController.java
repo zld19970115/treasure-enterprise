@@ -281,15 +281,12 @@ public class MerchantRoomController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                int status=merchantDto.getStatus();//状态
-                if(status==Common.STATUS_CLOSE.getStatus()){
-                    merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
-                }else{
-                    return new Result().error("请关闭店铺后，在进行删除操作！");
-                }
+                merchantRoomService.remove(id, Common.STATUS_DELETE.getStatus());
+            }else{
+                return new Result().error("无法获取分类的商户!");
             }
         }else {
-            return new Result().error("没有菜品到分类的商户!");
+            return new Result().error("没有找到分类的商户!");
         }
         return new Result();
     }
