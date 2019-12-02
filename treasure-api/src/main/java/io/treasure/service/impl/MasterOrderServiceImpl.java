@@ -1575,12 +1575,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
+        OrderDTO mainOrder=new OrderDTO();
         BigDecimal AllPayMoney=new BigDecimal("0");
         for (OrderDTO order : orders) {
+            if(order.getPOrderId().equals("0")){
+                mainOrder=order;
+            }
             BigDecimal discountsMoney=new BigDecimal("0");
             BigDecimal payMoney = order.getPayMoney();
             AllPayMoney=AllPayMoney.add(payMoney);
-            order.setAllPaymoney(AllPayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
             for (SlaveOrderEntity og:orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
@@ -1600,6 +1603,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
          }
+        mainOrder.setAllPaymoney(AllPayMoney);
         return orders;
     }
 
