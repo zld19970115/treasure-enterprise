@@ -1474,8 +1474,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> getAllMainOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         List<OrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
-
         for (OrderDTO s:allMainOrder) {
+            if(s.getPOrderId().equals("0")){
+                boolean b = judgeEvaluate(s.getOrderId());
+                if(b){
+                    s.setCheckStatus(1);
+                }
+            }
             BigDecimal allpayMoney=new BigDecimal("0");
             List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
             if(auxiliaryOrderByOrderId!=null) {
@@ -1483,7 +1488,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
                 }
             }
-            Integer status = s.getStatus();
             allpayMoney=allpayMoney.add(s.getPayMoney());
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
@@ -1802,6 +1806,44 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public boolean judgeRockover(String orderId,Date date) {
         List<OrderDTO> allorders = baseDao.getOrder1(orderId);
+        boolean has = true;
+        boolean hass = true;
+        String[] orderStatus = {};
+        String[] goodStatus = {};
+        String[] orderStatusA = {"4","6"};
+        List<String> strings = new ArrayList<>( Arrays.asList(orderStatus));
+        List<String> stringss = new ArrayList<>(Arrays.asList(goodStatus));
+
+        for (OrderDTO o:allorders) {
+            String s = o.getStatus().toString();
+            strings.add(o.getStatus().toString());
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
+            for (SlaveOrderEntity g:orderGoods) {
+                stringss.add(g.getStatus().toString());
+            }
+
+        }
+        HashSet<String> set = new HashSet<>(strings);
+        HashSet<String> sets = new HashSet<>(stringss);
+        set.retainAll(Arrays.asList(orderStatusA));
+        sets.retainAll(Arrays.asList(orderStatusA));
+        if (set.size() > 0) {
+            has = false;
+        } if (sets.size() > 0) {
+            has = false;
+        }
+        if(!has||!hass){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean judgeEvaluate(String orderId) {
+        List<OrderDTO> allorders = baseDao.getOrder1(orderId);
+        if(allorders.size()==1){
+            return false;
+        }
         boolean has = true;
         boolean hass = true;
         String[] orderStatus = {};

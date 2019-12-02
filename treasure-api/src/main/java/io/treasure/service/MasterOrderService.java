@@ -148,4 +148,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     List<OrderDTO> getAffiliateOrde(String orderId);
 
     boolean judgeRockover(String orderId,Date date);
+
+    boolean judgeEvaluate(String orderId);
 }
