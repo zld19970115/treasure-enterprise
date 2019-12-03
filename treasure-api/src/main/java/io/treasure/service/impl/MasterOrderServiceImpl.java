@@ -50,7 +50,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
     @Autowired
     private ClientUserService clientUserService;
-
+    @Autowired
+    private EvaluateService evaluateService;
     @Autowired
     private GoodService goodService;
     @Autowired
@@ -1480,6 +1481,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
         for (OrderDTO s:allMainOrder) {
             if(s.getPOrderId().equals("0")){
+                EvaluateEntity evaluateEntity = evaluateService.selectByUserIdAndOid(s.getCreator(), s.getOrderId());
+                if (evaluateEntity==null){
+                    s.setEvaluateYesOrNo(0);//未评价
+                }else {
+                    s.setEvaluateYesOrNo(1);//已评价
+                }
                 boolean b = judgeEvaluate(s.getOrderId());
                 if(b){
                     s.setCheckStatus(1);

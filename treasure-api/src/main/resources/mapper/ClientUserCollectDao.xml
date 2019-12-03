@@ -34,6 +34,7 @@
         cc.`create_date`,
         cc.`creator` ,
         cc.`updater`,
+        cm.`id` as martId,
       cm.name,
       cm.address,
       cm.brief,
@@ -43,7 +44,8 @@
       cm.closeShopHours,
       cm.monetary,
       cm.tel,
-      cm.remark
+      cm.remark,
+      cm.monthy_sales as monthySales
         FROM
 	      ct_client_user_collect AS cc
 	      LEFT JOIN ct_merchant AS cm ON cc.collect_id = cm.id

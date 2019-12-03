@@ -7,11 +7,14 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.ClientUserCollectDao;
 import io.treasure.dto.ClientUserCollectDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.entity.ClientUserCollectEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.ClientUserCollectService;
+import io.treasure.service.MerchantRoomService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +28,8 @@ import java.util.Map;
  */
 @Service
 public class ClientUserCollectServiceImpl extends CrudServiceImpl<ClientUserCollectDao, ClientUserCollectEntity, ClientUserCollectDTO> implements ClientUserCollectService {
-
+    @Autowired
+    private MerchantRoomService merchantRoomService;
     @Override
     public QueryWrapper<ClientUserCollectEntity> getWrapper(Map<String, Object> params){
         String client_user_id = (String)params.get("client_user_id");
@@ -56,6 +60,13 @@ public class ClientUserCollectServiceImpl extends CrudServiceImpl<ClientUserColl
     public PageData<ClientUserCollectDTO> getCollectMerchantByUserId(Map<String, Object> params ){
         IPage<ClientUserCollectEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         List<ClientUserCollectDTO> list=baseDao.getCollectMerchantByUserId(params);
+        for (ClientUserCollectDTO clientUserCollectDTO : list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(clientUserCollectDTO.getMartId());
+            int availableRooms = merchantRoomService.selectCountRoom(clientUserCollectDTO.getMartId());
+            clientUserCollectDTO.setRoomNum(availableRooms);
+            clientUserCollectDTO.setDesk(availableRoomsDesk);
+    }
+
         return getPageData(list,pages.getTotal(), ClientUserCollectDTO.class);
     }
 

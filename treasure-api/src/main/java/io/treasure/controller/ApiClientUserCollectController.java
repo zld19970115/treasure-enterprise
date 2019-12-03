@@ -116,7 +116,7 @@ public class ApiClientUserCollectController {
     }
     @Login
     @GetMapping("getCollectMerchantByUserId")
-    @ApiOperation("客户端-用书收藏列表")
+    @ApiOperation("客户端-用户收藏列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
