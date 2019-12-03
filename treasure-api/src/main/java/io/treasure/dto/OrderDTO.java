@@ -135,5 +135,6 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "商户实际所得金额（扣除平台扣点不包含赠送金）")
 	private BigDecimal discountsMoney;
-
+	@ApiModelProperty(value = "是否评价 1--已经评价 0--- 未评价")
+	private Integer evaluateYesOrNo;
 }

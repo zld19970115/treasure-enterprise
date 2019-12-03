@@ -76,7 +76,8 @@ public class ClientUserCollectDTO implements Serializable {
 	@ApiModelProperty(value = "备注")
 	private String remark;
 
-
+	@ApiModelProperty(value = "商户ID")
+	private long martId;
 
 	@ApiModelProperty(value = "闭店时间")
 	private String closeshophours;
@@ -88,6 +89,12 @@ public class ClientUserCollectDTO implements Serializable {
 	@ApiModelProperty(value = "平均消费金额")
 	private Double monetary;
 
+	@ApiModelProperty(value = "可用包房")
+	private int roomNum;
 
+	@ApiModelProperty(value = "可用桌")
+	private int desk;
+	@ApiModelProperty(value = "月销量")
+	private Integer monthySales;
 
 }
