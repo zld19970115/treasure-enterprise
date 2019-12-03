@@ -1490,7 +1490,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
                 }
             }
-            allpayMoney=allpayMoney.add(s.getPayMoney());
+            if(s.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                allpayMoney=allpayMoney.add(s.getPayMoney());
+            }
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
             for (SlaveOrderEntity order:orderGoods) {
