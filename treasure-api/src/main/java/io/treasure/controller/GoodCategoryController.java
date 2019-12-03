@@ -158,12 +158,7 @@ public class GoodCategoryController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                int status=merchantDto.getStatus();//状态
-                if(status==Common.STATUS_CLOSE.getStatus()){
-                    goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
-                }else{
-                    return new Result().error("请关闭店铺后，在进行下架操作！");
-                }
+                goodCategoryService.remove(id,Common.STATUS_DELETE.getStatus());
             }else{
                 return new Result().error("删除失败！");
             }
@@ -191,12 +186,7 @@ public class GoodCategoryController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                int status=merchantDto.getStatus();//状态
-                if(status==Common.STATUS_CLOSE.getStatus()){
-                    goodCategoryService.on(id,Common.STATUS_ON.getStatus());
-                }else{
-                    return new Result().error("请关闭店铺后，在进行上架操作！");
-                }
+                goodCategoryService.on(id,Common.STATUS_ON.getStatus());
             }else{
                 return new Result().error("无法获取店铺信息！");
             }
@@ -218,18 +208,12 @@ public class GoodCategoryController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result off(@RequestParam  Long id){
-        //判断商户是否关闭店铺
         GoodCategoryDTO categortyDto=goodCategoryService.get(id);
         long merchantId=categortyDto.getMerchantId();
         if(merchantId>0){
            MerchantDTO merchantDto= merchantService.get(merchantId);
            if(merchantDto!=null){
-               int status=merchantDto.getStatus();//状态
-               if(status==Common.STATUS_CLOSE.getStatus()){
-                   goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
-               }else{
-                   return new Result().error("请关闭店铺后，在进行下架操作！");
-               }
+               goodCategoryService.off(id,Common.STATUS_OFF.getStatus());
            }else{
                return new Result().error("无法获取店铺信息！");
            }
