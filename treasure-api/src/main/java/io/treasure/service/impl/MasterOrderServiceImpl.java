@@ -1303,10 +1303,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //发送个推消息
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
+                MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+                SMSConfig smsConfig=new ISMSConfig();
+                SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
             }
-            MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-            SMSConfig smsConfig=new ISMSConfig();
-            SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
+
 
         } else {
             return new Result().error("不能取消订单！");
