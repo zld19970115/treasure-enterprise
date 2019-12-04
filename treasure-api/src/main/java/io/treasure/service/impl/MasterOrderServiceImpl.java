@@ -1514,6 +1514,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             BigDecimal allpayMoney=new BigDecimal("0");
             List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
+            if(s.getPOrderId().equals("0")&&auxiliaryOrderByOrderId.size()==0){
+                s.setAllpaymoneys(s.getPayMoney());
+                List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+                for (SlaveOrderEntity order:orderGoods) {
+                    GoodEntity byid = goodService.getByid(order.getGoodId());
+                    order.setGoodInfo(byid);
+                }
+                s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+                s.setSlaveOrder(orderGoods);
+                if(s.getRoomId()!=null){
+                    s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+                }
+            }else{
             if(auxiliaryOrderByOrderId!=null) {
                 for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
@@ -1533,6 +1546,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if(s.getRoomId()!=null){
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
             }
+        }
         }
         return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
     }
