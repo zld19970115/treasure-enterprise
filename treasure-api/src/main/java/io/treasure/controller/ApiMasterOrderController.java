@@ -502,6 +502,19 @@ public class ApiMasterOrderController {
 
     @CrossOrigin
     @Login
+    @PutMapping("refuseOrder")
+    @ApiOperation("商户端-拒绝订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
+    })
+    public Result refuseOrder(@RequestParam  long id,@RequestParam(value = "verify",defaultValue = "")  long verify, @RequestParam(value = "verify_reason",defaultValue = "")  String verify_reason) throws Exception {
+        return masterOrderService.refuseOrder(id,verify,new Date(),verify_reason);
+    }
+
+    @CrossOrigin
+    @Login
     @PutMapping("acceptUpdate")
     @ApiOperation("商户端-接受订单")
     @ApiImplicitParams({
