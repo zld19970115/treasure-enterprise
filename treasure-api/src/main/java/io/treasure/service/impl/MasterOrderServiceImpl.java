@@ -1253,7 +1253,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             return new Result().ok("成功取消订单");
         } else if (status == Constants.OrderStatus.PAYORDER.getValue()) {
-            int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
+            int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             BigDecimal gif=new BigDecimal("0");
@@ -1287,52 +1287,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return new Result().error(result1.getMsg());
             }
             }
-
-        } else {
-            return new Result().error("不能取消订单！");
-        }
-        return new Result();
-    }
-
-    @Override
-    public Result refuseOrder(long id, long verify, Date date, String verify_reason) {
-        MasterOrderDTO dto = get(id);
-        int status = dto.getStatus();
-        if (status == Constants.OrderStatus.PAYORDER.getValue()) {
-            int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
-            baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
-            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-            BigDecimal gif=new BigDecimal("0");
-            for (SlaveOrderEntity s : slaveOrderEntities) {
-                if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                    slaveOrderService.updateSlaveOrderStatus(status_new, s.getOrderId(), s.getGoodId());
-                    gif=gif.add(s.getFreeGold());
-                }
-            }
-            ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
-            BigDecimal gift = clientUserDTO.getGift();
-            BigDecimal addgif = gift.add(gif);
-            clientUserDTO.setGift(addgif);
-            clientUserService.update(clientUserDTO);
-            if (null != dto.getReservationId() && dto.getReservationId() > 0) {
-                //同时将包房或者桌设置成未使用状态
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-            }
-            //退款
-            BigDecimal money=new BigDecimal("0");
-            BigDecimal payMoney = dto.getPayMoney();
-            //退款
-            if(payMoney.compareTo(money)==1){
-                Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-                if (result1.success()) {
-                    boolean b = (boolean) result1.getData();
-                    if (!b) {
-                        return new Result().error("支付失败！");
-                    }
-                } else {
-                    return new Result().error(result1.getMsg());
-                }
-            }
             ClientUserDTO userDto = clientUserService.get(dto.getCreator());
             if (null != userDto) {
                 String clientId = userDto.getClientId();
@@ -1342,7 +1296,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
         } else {
-            return new Result().error("拒绝订单失败！");
+            return new Result().error("不能取消订单！");
         }
         return new Result();
     }
