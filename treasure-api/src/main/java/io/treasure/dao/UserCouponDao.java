@@ -16,4 +16,5 @@ public interface UserCouponDao  extends BaseDao<UserCouponEntity> {
     List  selectMyCouponByUserId(long userId);
     List<MerchantCouponEntity>   selectMartCoupon(@Param("userId") Long userId, @Param("martId") long martId);
    List<MerchantCouponEntity> selectBymartId(long martId);
+    void   updateStatus(long couponId);
 }
