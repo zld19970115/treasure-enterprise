@@ -60,5 +60,10 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
         return baseDao.selectBymartId(martId);
     }
 
+    @Override
+    public void updateStatus(long couponId) {
+        baseDao.updateStatus(couponId);
+    }
+
 
 }

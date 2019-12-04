@@ -16,6 +16,193 @@ import java.util.Map;
  * 短信工具类
  */
 public class SendSMSUtil {
+
+    /**
+     * 新订单通知
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static boolean sendNewOrder(String phoneNumber, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179295541", null);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家接单通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendMerchantReceipt(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179285535", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家拒单通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendMerchantRefusal(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179280542", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 申请退菜通知
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static boolean sendApplyRefusal(String phoneNumber, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179280544", null);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家同意退菜通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendMerchantAgreeRefusal(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179555005", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家拒绝退菜通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendMerchantRefusalFood(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179545007", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 用户申请退款通知
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static boolean sendApplyRefund(String phoneNumber, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179560006", null);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家同意退款通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendAgreeRefund(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179555007", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+    /**
+     * 商家拒绝退款通知
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendRefuseRefund(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_179545011", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
     /**
      * 获取验证码
      * @param phoneNumber

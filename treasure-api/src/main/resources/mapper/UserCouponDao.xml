@@ -42,6 +42,10 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
     </resultMap>
+    <update id="updateStatus">
+        update ct_user_coupon set status = 0 where coupon_id = #{couponId}
+
+    </update>
 
 
     <select id="selectGift" parameterType="io.treasure.entity.UserCouponEntity" resultType="Double">

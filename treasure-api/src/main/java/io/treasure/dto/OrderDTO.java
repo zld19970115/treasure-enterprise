@@ -137,4 +137,6 @@ public class OrderDTO implements Serializable {
 	private BigDecimal discountsMoney;
 	@ApiModelProperty(value = "是否评价 1--已经评价 0--- 未评价")
 	private Integer evaluateYesOrNo;
+	@ApiModelProperty(value = "优惠卷ID 不使用为null")
+	private Long couponId;
 }

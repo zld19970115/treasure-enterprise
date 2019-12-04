@@ -51,6 +51,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private ClientUserService clientUserService;
     @Autowired
+    private UserCouponService userCouponService;
+    @Autowired
     private EvaluateService evaluateService;
     @Autowired
     private GoodService goodService;
@@ -58,7 +60,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private StimmeService stimmeService;
     @Autowired
     private MasterOrderService masterOrderService;
-
     @Autowired
     private MerchantCouponService merchantCouponService;
 
@@ -515,7 +516,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
-
+        //是否使用优惠卷
+        if (dto.getCouponId()!=null){
+            userCouponService.updateStatus(dto.getCouponId());
+        }
 
         //是否使用赠送金
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
@@ -613,6 +617,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         masterOrderEntity.setReservationType(dto.getReservationType());
         masterOrderEntity.setInvoice("0");
+        MasterOrderEntity masterOrderEntity1 = baseDao.selectByOrderId(dto.getOrderId());
+        masterOrderEntity.setEatTime(masterOrderEntity1.getEatTime());
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
         BigDecimal a=new BigDecimal("0");
