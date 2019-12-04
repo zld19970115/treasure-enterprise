@@ -1605,7 +1605,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         OrderDTO mainOrder=new OrderDTO();
         BigDecimal AllPayMoney=new BigDecimal("0");
         for (OrderDTO order : orders) {
-                if(order.getPOrderId().equals("0")){
+                if(order.getPOrderId().equals("0")||orders.size()==1){
                     mainOrder=order;
                 }
             if(order.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&
@@ -1636,7 +1636,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
-            mainOrder.setAllPaymoney(AllPayMoney);
+            mainOrder.setAllpaymoneys(AllPayMoney);
             }
 
         return orders;
