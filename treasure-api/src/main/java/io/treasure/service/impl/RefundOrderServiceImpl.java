@@ -5,15 +5,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
+import io.treasure.config.ISMSConfig;
 import io.treasure.dao.RefundOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.RefundOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
+import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
 
     @Autowired
     private  PayServiceImpl payService;
+
+    @Autowired
+    private MerchantService merchantService;
 
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
@@ -168,6 +175,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         if(StringUtils.isNotBlank(clientId)){
             AppPushUtil.pushToSingleClient("商家不同意退菜", "您的退菜申请未通过", "", clientId);
         }
+        MerchantEntity merchantById = merchantService.getMerchantById(order.getMerchantId());
+        SMSConfig smsConfig=new ISMSConfig();
+        SendSMSUtil.sendMerchantRefusalFood(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
     }
 
 

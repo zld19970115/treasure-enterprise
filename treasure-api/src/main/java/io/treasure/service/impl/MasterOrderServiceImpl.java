@@ -8,8 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
+import io.treasure.config.ISMSConfig;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.MasterOrderDao;
@@ -21,6 +23,7 @@ import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
+import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
@@ -355,6 +358,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if(StringUtils.isNoneBlank(clientId)){
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
+                MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
+                SMSConfig smsConfig=new ISMSConfig();
+                SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
             } else {
                 return new Result().error("无法退款！");
             }
