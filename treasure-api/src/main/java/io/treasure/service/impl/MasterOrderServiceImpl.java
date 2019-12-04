@@ -177,6 +177,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         //发送个推消息
                         AppPushUtil.pushToSingleClient("订单管理", "商家已接单", "", clientId);
                     }
+                    MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+                    SMSConfig smsConfig=new ISMSConfig();
+                    SendSMSUtil.sendMerchantReceipt(userDto.getMobile(),merchantDTO.getName(),smsConfig);
                 }
             } else {
                 return new Result().error("无法接受订单！");
@@ -1301,6 +1304,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
             }
+            MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+            SMSConfig smsConfig=new ISMSConfig();
+            SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
+
         } else {
             return new Result().error("不能取消订单！");
         }
