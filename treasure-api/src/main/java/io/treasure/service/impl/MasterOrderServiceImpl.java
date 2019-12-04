@@ -1488,7 +1488,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     s.setEvaluateYesOrNo(1);//已评价
                 }
                 boolean b = judgeEvaluate(s.getOrderId());
-                if(b){
+                if(!b){
                     s.setCheckStatus(1);
                 }
             }
@@ -1869,7 +1869,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         boolean hass = true;
         String[] orderStatus = {};
         String[] goodStatus = {};
-        String[] orderStatusA = {"4","6"};
+        String[] orderStatusA = {"10"};
         List<String> strings = new ArrayList<>( Arrays.asList(orderStatus));
         List<String> stringss = new ArrayList<>(Arrays.asList(goodStatus));
 
