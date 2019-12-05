@@ -1663,7 +1663,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
-            mainOrder.setAllpaymoneys(AllPayMoney);
+            mainOrder.setAllPaymoney(AllPayMoney);
         }
 
         return orders;
