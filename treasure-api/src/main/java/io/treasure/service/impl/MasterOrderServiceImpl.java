@@ -76,9 +76,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private PayServiceImpl payService;
 
     @Autowired
-    private SMSConfig smsConfig;
-
-    @Autowired
     private MerchantUserService merchantUserService;
 
     @Override
@@ -182,7 +179,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         AppPushUtil.pushToSingleClient("订单管理", "商家已接单", "", clientId);
                     }
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                    SendSMSUtil.sendMerchantReceipt(userDto.getMobile(),merchantDTO.getName(),smsConfig);
+                    SendSMSUtil.sendMerchantReceipt(userDto.getMobile(), merchantDTO.getName(), smsConfig);
                 }
             } else {
                 return new Result().error("无法接受订单！");
@@ -212,13 +209,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         Date date = new Date();
         if (null != dto) {
-            boolean result1 = this.judgeRockover(dto.getOrderId(),date);
-            if(result1){
-                if(dto.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&dto.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&
-                        dto.getStatus()!=Constants.OrderStatus.CANCELNOPAYORDER.getValue()&&dto.getStatus()!=Constants.OrderStatus.DELETEORDER.getValue()&&
-                        dto.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+            boolean result1 = this.judgeRockover(dto.getOrderId(), date);
+            if (result1) {
+                if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
+                        dto.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() && dto.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
+                        dto.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
                     List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(dto.getOrderId());
-                    for (SlaveOrderEntity g:orderGoods) {
+                    for (SlaveOrderEntity g : orderGoods) {
                         g.setUpdateDate(date);
                         g.setStatus(Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue());
                         SlaveOrderDTO slaveOrderDTO = ConvertUtils.sourceToTarget(g, SlaveOrderDTO.class);
@@ -231,17 +228,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     dto.setUpdateDate(date);
                     MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
                     baseDao.updateById(masterOrderEntity);
-                    if(dto.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue()||dto.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
+                    if (dto.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || dto.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
                 }
                 List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
-                for (OrderDTO o :affiliateOrde) {
-                    if(o.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()||o.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()||
-                            o.getStatus()!=Constants.OrderStatus.CANCELNOPAYORDER.getValue()||o.getStatus()!=Constants.OrderStatus.DELETEORDER.getValue()||
-                            o.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+                for (OrderDTO o : affiliateOrde) {
+                    if (o.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() || o.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() ||
+                            o.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() || o.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() ||
+                            o.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
                         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
-                        for (SlaveOrderEntity g:orderGoods) {
+                        for (SlaveOrderEntity g : orderGoods) {
                             g.setUpdateDate(date);
                             g.setStatus(Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue());
                             SlaveOrderDTO slaveOrderDTO = ConvertUtils.sourceToTarget(g, SlaveOrderDTO.class);
@@ -254,24 +251,25 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         o.setUpdateDate(date);
                         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(o, MasterOrderEntity.class);
                         baseDao.updateById(masterOrderEntity);
-                        if(o.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue()||o.getReservationType()==Constants.ReservationType.NORMALRESERVATION.getValue()){
+                        if (o.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || o.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                             merchantRoomParamsSetService.updateStatus(o.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                         }
                     }
                 }
 
-            }else {
-                Result c=new Result();
+            } else {
+                Result c = new Result();
                 c.setCode(1);
                 c.setData("翻台失败，您有未处理的订单");
                 return c;
             }
 
-        }else {
+        } else {
             return new Result().error("无法获取订单！");
         }
         return new Result().ok("订单翻台成功！");
     }
+
     /**
      * 同意退单
      *
@@ -283,7 +281,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @return
      */
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     public Result refundYesUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
@@ -291,11 +289,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
-                if(order.getPOrderId().equals("0")&&order.getReservationType()==Constants.ReservationType.ONLYGOODRESERVATION.getValue()){
+                if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
                     List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
-                    for (MasterOrderEntity s:orderByPOrderId) {
-                        if(s.getPOrderId().equals(dto.getOrderId())&&s.getReservationType()==2){
-                            merchantRoomParamsSetService.updateStatus(s.getReservationId(),0);
+                    for (MasterOrderEntity s : orderByPOrderId) {
+                        if (s.getPOrderId().equals(dto.getOrderId()) && s.getReservationType() == 2) {
+                            merchantRoomParamsSetService.updateStatus(s.getReservationId(), 0);
                         }
                     }
                 }
@@ -318,7 +316,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     boolean b = (boolean) result1.getData();
                     if (!b) {
                         return new Result().error("退款失败！");
-                    }else {
+                    } else {
 
                     }
                 } else {
@@ -330,7 +328,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
-        if(StringUtils.isNoneBlank(clientId)){
+        if (StringUtils.isNoneBlank(clientId)) {
             AppPushUtil.pushToSingleClient("商家同意退单", "您的退单申请已通过审核！", "", clientId);
         }
         return new Result();
@@ -361,11 +359,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
 //                    }
 //                }
-                if(StringUtils.isNoneBlank(clientId)){
+                if (StringUtils.isNoneBlank(clientId)) {
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
                 MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
-                SMSConfig smsConfig=new ISMSConfig();
                 SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
             } else {
                 return new Result().error("无法退款！");
@@ -521,7 +518,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (isUse == 0) {
                 merchantRoomParamsSetEntity.setState(1);
                 //更新状态值
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(),1);
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), 1);
 
 
             } else if (isUse == 1) {
@@ -529,7 +526,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         }
         //是否使用优惠卷
-        if (dto.getCouponId()!=null){
+        if (dto.getCouponId() != null) {
             userCouponService.updateStatus(dto.getCouponId());
         }
 
@@ -549,7 +546,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
-        if (dto.getReservationType()==2&&dto.getPayMoney().compareTo(BigDecimal.ZERO)==0){
+        if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
 
         }
@@ -557,17 +554,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setInvoice("0");
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
-        if(reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()&&merchantDTO.getDepost()==0){
-            if(dtoList == null){
+        if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue() && merchantDTO.getDepost() == 0) {
+            if (dtoList == null) {
                 masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             }
         }
-        BigDecimal a=new BigDecimal("0");
-        BigDecimal b=new BigDecimal("0");
-        if(dtoList!=null){
-            for (SlaveOrderEntity s:dtoList) {
-                a=a.add(s.getPlatformBrokerage());
-                b=b.add(s.getMerchantProceeds());
+        BigDecimal a = new BigDecimal("0");
+        BigDecimal b = new BigDecimal("0");
+        if (dtoList != null) {
+            for (SlaveOrderEntity s : dtoList) {
+                a = a.add(s.getPlatformBrokerage());
+                b = b.add(s.getMerchantProceeds());
             }
         }
         masterOrderEntity.setTotalMoney(masterOrderEntity.getPayMoney());
@@ -633,12 +630,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setEatTime(masterOrderEntity1.getEatTime());
         masterOrderEntity.setCreator(user.getId());
         masterOrderEntity.setCreateDate(d);
-        BigDecimal a=new BigDecimal("0");
-        BigDecimal b=new BigDecimal("0");
-        if(dtoList!=null){
-            for (SlaveOrderEntity s:dtoList) {
-                a=a.add(s.getPlatformBrokerage());
-                b=b.add(s.getMerchantProceeds());
+        BigDecimal a = new BigDecimal("0");
+        BigDecimal b = new BigDecimal("0");
+        if (dtoList != null) {
+            for (SlaveOrderEntity s : dtoList) {
+                a = a.add(s.getPlatformBrokerage());
+                b = b.add(s.getMerchantProceeds());
             }
         }
         masterOrderEntity.setPlatformBrokerage(a);
@@ -902,9 +899,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal x = new BigDecimal(0);
 //---------------------------------------------------平台扣点算法-----------------------------------------------------
         //扣点基数
-        BigDecimal base=new BigDecimal("1");
+        BigDecimal base = new BigDecimal("1");
         //扣点比例
-        BigDecimal ratio=new BigDecimal("0.15");
+        BigDecimal ratio = new BigDecimal("0.15");
         BigDecimal payMoney = totalMoney1.subtract(discount);
         //商户所得金额
         BigDecimal subtract2 = (payMoney.multiply(base.subtract(ratio))).setScale(2, BigDecimal.ROUND_UP);
@@ -950,11 +947,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 //计算平台扣点金额
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3=subtract3.subtract(platformBrokerage);
+                subtract3 = subtract3.subtract(platformBrokerage);
                 slaveOrderEnti.setMerchantProceeds(multiply1.subtract(platformBrokerage));
                 //计算商户实际可得金额
                 BigDecimal subtract4 = multiply1.subtract(platformBrokerage);
-                subtract2=subtract2.subtract(subtract4);
+                subtract2 = subtract2.subtract(subtract4);
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
@@ -996,9 +993,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         //---------------------------------------------------平台扣点算法-----------------------------------------------------
         //扣点基数
-        BigDecimal base=new BigDecimal("1");
+        BigDecimal base = new BigDecimal("1");
         //扣点比例
-        BigDecimal ratio=new BigDecimal("0.15");
+        BigDecimal ratio = new BigDecimal("0.15");
         BigDecimal payMoney = totalMoney1.subtract(discount);
         //平台扣点金额
         BigDecimal subtract3 = (payMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
@@ -1045,10 +1042,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //平台所得金额
                 BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3=subtract3.subtract(platformBrokerage);
+                subtract3 = subtract3.subtract(platformBrokerage);
                 //商户所的金额
                 BigDecimal merchantProceeds = multiply1.subtract(platformBrokerage);
-                subtract2=subtract2.subtract(merchantProceeds);
+                subtract2 = subtract2.subtract(merchantProceeds);
 
                 slaveOrderEnti.setMerchantProceeds(merchantProceeds);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
@@ -1177,14 +1174,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         //---------------------------------------------------平台扣点算法-----------------------------------------------------
         //扣点基数
-        BigDecimal base=new BigDecimal("1");
+        BigDecimal base = new BigDecimal("1");
         //扣点比例
-        BigDecimal ratio=new BigDecimal("0.15");
+        BigDecimal ratio = new BigDecimal("0.15");
         //平台扣点金额
         BigDecimal subtract3 = (totalMoney1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
         //商户所得金额
         BigDecimal subtract2 = totalMoney1.subtract(subtract3);
-
 
 
         ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
@@ -1211,10 +1207,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //平台所得金额
                 BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3=subtract3.subtract(platformBrokerage);
+                subtract3 = subtract3.subtract(platformBrokerage);
                 //商户所的金额
                 BigDecimal merchantProceeds = AGreensMoney.subtract(platformBrokerage);
-                subtract2=subtract2.subtract(merchantProceeds);
+                subtract2 = subtract2.subtract(merchantProceeds);
 
                 slaveOrderEnti.setMerchantProceeds(merchantProceeds);
                 slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
@@ -1268,11 +1264,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-            BigDecimal gif=new BigDecimal("0");
+            BigDecimal gif = new BigDecimal("0");
             for (SlaveOrderEntity s : slaveOrderEntities) {
                 if (s.getRefundId() == null || s.getRefundId().length() == 0) {
                     slaveOrderService.updateSlaveOrderStatus(status_new, s.getOrderId(), s.getGoodId());
-                    gif=gif.add(s.getFreeGold());
+                    gif = gif.add(s.getFreeGold());
                 }
             }
             ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
@@ -1285,19 +1281,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
             }
             //退款
-            BigDecimal money=new BigDecimal("0");
+            BigDecimal money = new BigDecimal("0");
             BigDecimal payMoney = dto.getPayMoney();
             //退款
-            if(payMoney.compareTo(money)==1){
-            Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-            if (result1.success()) {
-                boolean b = (boolean) result1.getData();
-                if (!b) {
-                    return new Result().error("支付失败！");
+            if (payMoney.compareTo(money) == 1) {
+                Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
+                if (result1.success()) {
+                    boolean b = (boolean) result1.getData();
+                    if (!b) {
+                        return new Result().error("支付失败！");
+                    }
+                } else {
+                    return new Result().error(result1.getMsg());
                 }
-            } else {
-                return new Result().error(result1.getMsg());
-            }
             }
             ClientUserDTO userDto = clientUserService.get(dto.getCreator());
             if (null != userDto) {
@@ -1307,7 +1303,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
+                SendSMSUtil.sendMerchantRefusal(userDto.getMobile(), merchantDTO.getName(), smsConfig);
             }
 
 
@@ -1324,12 +1320,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (status == Constants.OrderStatus.NOPAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
             baseDao.updateStatusAndReason(id, status_new, dto.getCreator(), new Date(), null);
-            BigDecimal a=new BigDecimal("0");
+            BigDecimal a = new BigDecimal("0");
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             for (SlaveOrderEntity s : slaveOrderEntities) {
                 if (s.getRefundId() == null || s.getRefundId().length() == 0) {
                     slaveOrderService.updateSlaveOrderStatus(status_new, s.getOrderId(), s.getGoodId());
-                    slaveOrderService.updateSlaveOrderPointDeduction(a,a,s.getOrderId(),s.getGoodId());
+                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, s.getOrderId(), s.getGoodId());
                 }
             }
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
@@ -1337,7 +1333,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
 
             }
-            masterOrderService.updateSlaveOrderPointDeduction(a,a,dto.getOrderId());
+            masterOrderService.updateSlaveOrderPointDeduction(a, a, dto.getOrderId());
 
         } else {
             return new Result().error("无法取消订单！");
@@ -1371,7 +1367,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result reserveRoom(OrderDTO dto, ClientUserEntity user, String mainOrderId) {
         Result result = new Result();
         List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(mainOrderId);
-        if (masterOrderEntities.size()!=0){
+        if (masterOrderEntities.size() != 0) {
             return result.error("已预定包房，不可重复预定");
         }
 
@@ -1499,58 +1495,58 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public PageData<OrderDTO> getAllMainOrder(Map<String, Object> params) {
-        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         List<OrderDTO> allMainOrder = baseDao.getAllMainOrder(params);
-        for (OrderDTO s:allMainOrder) {
-            if(s.getPOrderId().equals("0")){
+        for (OrderDTO s : allMainOrder) {
+            if (s.getPOrderId().equals("0")) {
                 EvaluateEntity evaluateEntity = evaluateService.selectByUserIdAndOid(s.getCreator(), s.getOrderId());
-                if (evaluateEntity==null){
+                if (evaluateEntity == null) {
                     s.setEvaluateYesOrNo(0);//未评价
-                }else {
+                } else {
                     s.setEvaluateYesOrNo(1);//已评价
                 }
                 boolean b = judgeEvaluate(s.getOrderId());
-                if(!b){
+                if (!b) {
                     s.setCheckStatus(1);
                 }
             }
-            BigDecimal allpayMoney=new BigDecimal("0");
+            BigDecimal allpayMoney = new BigDecimal("0");
             List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
-            if(s.getPOrderId().equals("0")&&auxiliaryOrderByOrderId.size()==0){
+            if (s.getPOrderId().equals("0") && auxiliaryOrderByOrderId.size() == 0) {
                 s.setAllpaymoneys(s.getPayMoney());
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-                for (SlaveOrderEntity order:orderGoods) {
+                for (SlaveOrderEntity order : orderGoods) {
                     GoodEntity byid = goodService.getByid(order.getGoodId());
                     order.setGoodInfo(byid);
                 }
                 s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
                 s.setSlaveOrder(orderGoods);
-                if(s.getRoomId()!=null){
+                if (s.getRoomId() != null) {
                     s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
                 }
-            }else{
-            if(auxiliaryOrderByOrderId!=null) {
-                for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
-                    allpayMoney = allpayMoney.add(ss.getPayMoney());
+            } else {
+                if (auxiliaryOrderByOrderId != null) {
+                    for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
+                        allpayMoney = allpayMoney.add(ss.getPayMoney());
+                    }
+                }
+                if (s.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()) {
+                    allpayMoney = allpayMoney.add(s.getPayMoney());
+                }
+                s.setAllpaymoneys(allpayMoney);
+                List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
+                for (SlaveOrderEntity order : orderGoods) {
+                    GoodEntity byid = goodService.getByid(order.getGoodId());
+                    order.setGoodInfo(byid);
+                }
+                s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
+                s.setSlaveOrder(orderGoods);
+                if (s.getRoomId() != null) {
+                    s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
                 }
             }
-            if(s.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
-                allpayMoney=allpayMoney.add(s.getPayMoney());
-            }
-            s.setAllpaymoneys(allpayMoney);
-            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-            for (SlaveOrderEntity order:orderGoods) {
-                GoodEntity byid = goodService.getByid(order.getGoodId());
-                order.setGoodInfo(byid);
-            }
-            s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
-            s.setSlaveOrder(orderGoods);
-            if(s.getRoomId()!=null){
-                s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
-            }
         }
-        }
-        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
+        return getPageData(allMainOrder, pages.getTotal(), OrderDTO.class);
     }
 
     @Override
@@ -1565,30 +1561,30 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public PageData<OrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params) {
-        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         String orderId = params.get("orderId").toString();
         OrderDTO order = masterOrderService.getMasterOrder(orderId);
 
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
         allMainOrder.add(order);
-        if(allMainOrder!=null){
-            for (OrderDTO s:allMainOrder) {
+        if (allMainOrder != null) {
+            for (OrderDTO s : allMainOrder) {
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-                for (SlaveOrderEntity og:orderGoods) {
+                for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));
                 }
                 s.setSlaveOrder(orderGoods);
                 s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
-                if(s.getRoomId()!=null){
+                if (s.getRoomId() != null) {
                     s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
                 }
             }
         }
         long total = pages.getTotal();
-        if(total!=0){
-            total=total+1;
+        if (total != 0) {
+            total = total + 1;
         }
-        return getPageData(allMainOrder,total, OrderDTO.class);
+        return getPageData(allMainOrder, total, OrderDTO.class);
     }
 
     @Override
@@ -1606,16 +1602,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO orderParticulars(String orderId) {
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        for (SlaveOrderEntity og:orderGoods) {
+        for (SlaveOrderEntity og : orderGoods) {
             og.setGoodInfo(goodService.getByid(og.getGoodId()));
         }
         order.setSlaveOrder(orderGoods);
         order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-        if(order.getRoomId()!=null){
+        if (order.getRoomId() != null) {
             order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-        }else if(order.getPOrderId().equals("0")) {
+        } else if (order.getPOrderId().equals("0")) {
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-            if(roomOrderByPorderId!=null){
+            if (roomOrderByPorderId != null) {
                 order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
                 order.setRoomId(roomOrderByPorderId.getRoomId());
                 order.setReservationId(roomOrderByPorderId.getReservationId());
@@ -1625,41 +1621,42 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return order;
 
     }
+
     @Override
-    public  List<OrderDTO>  orderParticulars1(String orderId) {
+    public List<OrderDTO> orderParticulars1(String orderId) {
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
         List<OrderDTO> list = baseDao.selectPOrderIdAndS(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
-        OrderDTO mainOrder=new OrderDTO();
-        BigDecimal AllPayMoney=new BigDecimal("0");
+        OrderDTO mainOrder = new OrderDTO();
+        BigDecimal AllPayMoney = new BigDecimal("0");
         for (OrderDTO order : orders) {
-                if(order.getPOrderId().equals("0")||orders.size()==1){
-                    mainOrder=order;
-                }
-            if(order.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&
-                    order.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&
-                    order.getStatus()!=Constants.OrderStatus.CANCELNOPAYORDER.getValue()&&
-                    order.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&
-                    order.getStatus()!=Constants.OrderStatus.DELETEORDER.getValue()&&
-                    order.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-                BigDecimal discountsMoney=new BigDecimal("0");
+            if (order.getPOrderId().equals("0") || orders.size() == 1) {
+                mainOrder = order;
+            }
+            if (order.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
+                    order.getStatus() != Constants.OrderStatus.MERCHANTREFUSALORDER.getValue() &&
+                    order.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() &&
+                    order.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() &&
+                    order.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
+                    order.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
+                BigDecimal discountsMoney = new BigDecimal("0");
                 BigDecimal payMoney = order.getPayMoney();
-                AllPayMoney=AllPayMoney.add(payMoney);
+                AllPayMoney = AllPayMoney.add(payMoney);
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
-                for (SlaveOrderEntity og:orderGoods) {
+                for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));
-                    discountsMoney=discountsMoney.add(og.getDiscountsMoney());
+                    discountsMoney = discountsMoney.add(og.getDiscountsMoney());
                 }
                 order.setSlaveOrder(orderGoods);
                 order.setDiscountsMoney(discountsMoney);
                 order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-                if(order.getRoomId()!=null){
+                if (order.getRoomId() != null) {
                     order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-                }else if(order.getPOrderId().equals("0")) {
+                } else if (order.getPOrderId().equals("0")) {
                     MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                    if(roomOrderByPorderId!=null){
+                    if (roomOrderByPorderId != null) {
                         order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
                         order.setRoomId(roomOrderByPorderId.getRoomId());
                         order.setReservationId(roomOrderByPorderId.getReservationId());
@@ -1667,26 +1664,26 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             mainOrder.setAllpaymoneys(AllPayMoney);
-            }
+        }
 
         return orders;
     }
 
     @Override
     public List<OrderDTO> getMartOrderInfo(String orderId) {
-           List<OrderDTO> orders = baseDao.selectOrder(orderId);
+        List<OrderDTO> orders = baseDao.selectOrder(orderId);
         for (OrderDTO order : orders) {
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-            for (SlaveOrderEntity og:orderGoods) {
+            for (SlaveOrderEntity og : orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
             }
             order.setSlaveOrder(orderGoods);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-            if(order.getRoomId()!=null){
+            if (order.getRoomId() != null) {
                 order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-            }else if(order.getPOrderId().equals("0")) {
+            } else if (order.getPOrderId().equals("0")) {
                 MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                if(roomOrderByPorderId!=null){
+                if (roomOrderByPorderId != null) {
                     order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
                     order.setRoomId(roomOrderByPorderId.getRoomId());
                     order.setReservationId(roomOrderByPorderId.getReservationId());
@@ -1696,11 +1693,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             order.setAllPaymoney(order.getPayMoney());
         }
 
-      return orders;
+        return orders;
     }
 
     @Override
-    public List<OrderDTO> refundOrder( Map<String, Object> params) {
+    public List<OrderDTO> refundOrder(Map<String, Object> params) {
         String orderId = (String) params.get("orderId");
         String goodIds = (String) params.get("goodId");
         Long goodId = Long.valueOf(goodIds);
@@ -1710,17 +1707,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
         for (OrderDTO order : orders) {
-            List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId(),goodId);
-            for (SlaveOrderEntity og:orderGoods) {
+            List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId(), goodId);
+            for (SlaveOrderEntity og : orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
             }
             order.setSlaveOrder(orderGoods);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-            if(order.getRoomId()!=null){
+            if (order.getRoomId() != null) {
                 order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-            }else if(order.getPOrderId().equals("0")) {
+            } else if (order.getPOrderId().equals("0")) {
                 MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                if(roomOrderByPorderId!=null){
+                if (roomOrderByPorderId != null) {
                     order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
                     order.setRoomId(roomOrderByPorderId.getRoomId());
                     order.setReservationId(roomOrderByPorderId.getReservationId());
@@ -1750,37 +1747,38 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params) {
-        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
-        params.put("status",Constants.OrderStatus.PAYORDER.getValue());
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        params.put("status", Constants.OrderStatus.PAYORDER.getValue());
         List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
 
-        for (OrderDTO s:allMainOrder) {
+        for (OrderDTO s : allMainOrder) {
             int status1 = Integer.parseInt(params.get("status").toString());
-            BigDecimal allpayMoney=new BigDecimal("0");
-            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(),status1);
-            if(auxiliaryOrderByOrderId!=null) {
+            BigDecimal allpayMoney = new BigDecimal("0");
+            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(), status1);
+            if (auxiliaryOrderByOrderId != null) {
                 for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
                 }
             }
             Integer status = s.getStatus();
-            if(s.getStatus()==Constants.OrderStatus.PAYORDER.getValue()){
-                allpayMoney=allpayMoney.add(s.getPayMoney());
+            if (s.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
+                allpayMoney = allpayMoney.add(s.getPayMoney());
             }
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-            for (SlaveOrderEntity order:orderGoods) {
+            for (SlaveOrderEntity order : orderGoods) {
                 GoodEntity byid = goodService.getByid(order.getGoodId());
                 order.setGoodInfo(byid);
             }
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
             s.setSlaveOrder(orderGoods);
-            if(s.getRoomId()!=null){
+            if (s.getRoomId() != null) {
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
             }
         }
-        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
+        return getPageData(allMainOrder, pages.getTotal(), OrderDTO.class);
     }
+
     /***
      *用户端已退款列表
      * @Author: Zhangguanglin
@@ -1791,36 +1789,36 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params) {
-        IPage<MasterOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
-        params.put("status",Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        params.put("status", Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
         List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
 
-        for (OrderDTO s:allMainOrder) {
+        for (OrderDTO s : allMainOrder) {
             int status1 = Integer.parseInt(params.get("status").toString());
-            BigDecimal allpayMoney=new BigDecimal("0");
-            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(),status1);
-            if(auxiliaryOrderByOrderId!=null) {
+            BigDecimal allpayMoney = new BigDecimal("0");
+            List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryPayOrder(s.getOrderId(), status1);
+            if (auxiliaryOrderByOrderId != null) {
                 for (MasterOrderEntity ss : auxiliaryOrderByOrderId) {
                     allpayMoney = allpayMoney.add(ss.getPayMoney());
                 }
             }
             Integer status = s.getStatus();
-            if(s.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
-                allpayMoney=allpayMoney.add(s.getPayMoney());
+            if (s.getStatus() == Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()) {
+                allpayMoney = allpayMoney.add(s.getPayMoney());
             }
             s.setAllpaymoneys(allpayMoney);
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
-            for (SlaveOrderEntity order:orderGoods) {
+            for (SlaveOrderEntity order : orderGoods) {
                 GoodEntity byid = goodService.getByid(order.getGoodId());
                 order.setGoodInfo(byid);
             }
             s.setMerchantInfo(merchantService.getMerchantById(s.getMerchantId()));
             s.setSlaveOrder(orderGoods);
-            if(s.getRoomId()!=null){
+            if (s.getRoomId() != null) {
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
             }
         }
-        return getPageData(allMainOrder,pages.getTotal(), OrderDTO.class);
+        return getPageData(allMainOrder, pages.getTotal(), OrderDTO.class);
     }
 
     @Override
@@ -1835,7 +1833,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId) {
-        baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId);
+        baseDao.updateSlaveOrderPointDeduction(mp, pb, orderId);
     }
 
     @Override
@@ -1845,38 +1843,39 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public List<MasterOrderEntity> getAuxiliaryPayOrder(String orderId, int status) {
-        return baseDao.getAuxiliaryPayOrder(orderId,status);
+        return baseDao.getAuxiliaryPayOrder(orderId, status);
     }
 
     /**
      * 设置包房
+     *
      * @param id
      * @param roomSetId
      */
     @Transient
     @Override
     public Result setRoom(long id, long roomSetId) {
-        if(id>0){
-            if(roomSetId>0){
-               MasterOrderDTO dto= get(id);
-               Long roomId=dto.getRoomId();
-               if(null!=roomId && roomId>0){
-                   return new Result().error("订单已预定包房，不允许修改！");
-               }
-               //查询包房
-               MerchantRoomParamsSetDTO roomSetDto= merchantRoomParamsSetService.get(roomSetId);
-               if(null!=roomSetDto){
-                   roomSetDto.setState(MerchantRoomEnm.STATE_USE_YEA.getType());
-                   merchantRoomParamsSetService.update(roomSetDto);
-                   dto.setRoomId(roomSetDto.getRoomId());
-               }else{
-                   return new Result().error("无法获取包房信息！");
-               }
+        if (id > 0) {
+            if (roomSetId > 0) {
+                MasterOrderDTO dto = get(id);
+                Long roomId = dto.getRoomId();
+                if (null != roomId && roomId > 0) {
+                    return new Result().error("订单已预定包房，不允许修改！");
+                }
+                //查询包房
+                MerchantRoomParamsSetDTO roomSetDto = merchantRoomParamsSetService.get(roomSetId);
+                if (null != roomSetDto) {
+                    roomSetDto.setState(MerchantRoomEnm.STATE_USE_YEA.getType());
+                    merchantRoomParamsSetService.update(roomSetDto);
+                    dto.setRoomId(roomSetDto.getRoomId());
+                } else {
+                    return new Result().error("无法获取包房信息！");
+                }
                 update(dto);
-            }else{
+            } else {
                 return new Result().error("无法获取预约包房编号！");
             }
-        }else{
+        } else {
             return new Result().error("无法获取订单编号！");
         }
         return new Result().ok("设置包房成功！");
@@ -1888,21 +1887,21 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public boolean judgeRockover(String orderId,Date date) {
+    public boolean judgeRockover(String orderId, Date date) {
         List<OrderDTO> allorders = baseDao.getOrder1(orderId);
         boolean has = true;
         boolean hass = true;
         String[] orderStatus = {};
         String[] goodStatus = {};
-        String[] orderStatusA = {"4","6"};
-        List<String> strings = new ArrayList<>( Arrays.asList(orderStatus));
+        String[] orderStatusA = {"4", "6"};
+        List<String> strings = new ArrayList<>(Arrays.asList(orderStatus));
         List<String> stringss = new ArrayList<>(Arrays.asList(goodStatus));
 
-        for (OrderDTO o:allorders) {
+        for (OrderDTO o : allorders) {
             String s = o.getStatus().toString();
             strings.add(o.getStatus().toString());
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
-            for (SlaveOrderEntity g:orderGoods) {
+            for (SlaveOrderEntity g : orderGoods) {
                 stringss.add(g.getStatus().toString());
             }
 
@@ -1913,10 +1912,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         sets.retainAll(Arrays.asList(orderStatusA));
         if (set.size() > 0) {
             has = false;
-        } if (sets.size() > 0) {
+        }
+        if (sets.size() > 0) {
             has = false;
         }
-        if(!has||!hass){
+        if (!has || !hass) {
             return false;
         }
         return true;
@@ -1925,7 +1925,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public boolean judgeEvaluate(String orderId) {
         List<OrderDTO> allorders = baseDao.getOrder1(orderId);
-        if(allorders.size()==1){
+        if (allorders.size() == 1) {
             return false;
         }
         boolean has = true;
@@ -1933,14 +1933,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String[] orderStatus = {};
         String[] goodStatus = {};
         String[] orderStatusA = {"10"};
-        List<String> strings = new ArrayList<>( Arrays.asList(orderStatus));
+        List<String> strings = new ArrayList<>(Arrays.asList(orderStatus));
         List<String> stringss = new ArrayList<>(Arrays.asList(goodStatus));
 
-        for (OrderDTO o:allorders) {
+        for (OrderDTO o : allorders) {
             String s = o.getStatus().toString();
             strings.add(o.getStatus().toString());
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
-            for (SlaveOrderEntity g:orderGoods) {
+            for (SlaveOrderEntity g : orderGoods) {
                 stringss.add(g.getStatus().toString());
             }
 
@@ -1951,10 +1951,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         sets.retainAll(Arrays.asList(orderStatusA));
         if (set.size() > 0) {
             has = false;
-        } if (sets.size() > 0) {
+        }
+        if (sets.size() > 0) {
             has = false;
         }
-        if(!has||!hass){
+        if (!has || !hass) {
             return false;
         }
         return true;
@@ -1987,12 +1988,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
         for (MerchantOrderDTO orderDTO : list) {
             BigDecimal a = orderDTO.getPayMoney();
-            if (orderDTO.getStatus()==8){
+            if (orderDTO.getStatus() == 8) {
                 a = new BigDecimal("0");
             }
             List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
             for (MasterOrderEntity orderEntity : masterOrderEntities1) {
-                if(orderEntity.getStatus()==Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
+                if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
                     a = a.add(orderEntity.getPayMoney());
                 }
             }
