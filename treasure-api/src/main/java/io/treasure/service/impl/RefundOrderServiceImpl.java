@@ -48,6 +48,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
     @Autowired
     private MerchantService merchantService;
 
+    @Autowired
+    private SMSConfig smsConfig;
+
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
         String refundId = (String) params.get("refundId");
@@ -176,7 +179,6 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             AppPushUtil.pushToSingleClient("商家不同意退菜", "您的退菜申请未通过", "", clientId);
         }
         MerchantEntity merchantById = merchantService.getMerchantById(order.getMerchantId());
-        SMSConfig smsConfig=new ISMSConfig();
         SendSMSUtil.sendMerchantRefusalFood(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
     }
 

@@ -75,6 +75,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private PayServiceImpl payService;
 
     @Autowired
+    private SMSConfig smsConfig;
+
+    @Autowired
     private MerchantUserService merchantUserService;
 
     @Override
@@ -1304,7 +1307,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                SMSConfig smsConfig=new ISMSConfig();
                 SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
             }
 
