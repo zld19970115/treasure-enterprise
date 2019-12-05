@@ -526,10 +526,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         }
         //是否使用优惠卷
-        if (dto.getCouponId() != null) {
-            userCouponService.updateStatus(dto.getCouponId());
+        if (dto.getDiscountId()!= null) {
+            userCouponService.updateStatus(dto.getDiscountId());
         }
-
         //是否使用赠送金
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());

@@ -60,7 +60,7 @@
     <select id="selectByUserId" resultType="java.util.Map">
         select m.*,user.coupon_id from  ct_user_coupon user
         left join ct_merchant_coupon m on ( find_in_set(m.id,user.coupon_id))
-        where user.user_id = #{userId}  and user.mart_id = #{martId} and user.status = 1 and m.money   &lt;= #{money}
+        where user.user_id = #{userId}  and user.mart_id = #{martId} and user.status = 1 and m.money   &lt;= #{money}  and m.start_date  <![CDATA[ <= ]]>  now() and m.end_date <![CDATA[ >= ]]>  now()
     </select>
     <select id="selectMyCouponByUserId" parameterType="io.treasure.entity.UserCouponEntity" resultType="java.util.Map">
         select m.*,user.coupon_id from  ct_user_coupon user
