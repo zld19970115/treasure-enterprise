@@ -42,7 +42,8 @@ import java.util.*;
  */
 @Service
 public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, MasterOrderEntity, MasterOrderDTO> implements MasterOrderService {
-
+    @Autowired
+    private SMSConfig smsConfig;
     @Autowired
     private MerchantService merchantService;
     @Autowired
@@ -178,7 +179,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         AppPushUtil.pushToSingleClient("订单管理", "商家已接单", "", clientId);
                     }
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                    SMSConfig smsConfig=new ISMSConfig();
                     SendSMSUtil.sendMerchantReceipt(userDto.getMobile(),merchantDTO.getName(),smsConfig);
                 }
             } else {
@@ -1304,7 +1304,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
                 }
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                SMSConfig smsConfig=new ISMSConfig();
                 SendSMSUtil.sendMerchantRefusal(userDto.getMobile(),merchantDTO.getName(),smsConfig);
             }
 
