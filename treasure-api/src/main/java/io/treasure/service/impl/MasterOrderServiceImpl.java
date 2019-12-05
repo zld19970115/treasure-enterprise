@@ -42,7 +42,8 @@ import java.util.*;
  */
 @Service
 public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, MasterOrderEntity, MasterOrderDTO> implements MasterOrderService {
-
+    @Autowired
+    private SMSConfig smsConfig;
     @Autowired
     private MerchantService merchantService;
     @Autowired
@@ -181,7 +182,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         AppPushUtil.pushToSingleClient("订单管理", "商家已接单", "", clientId);
                     }
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-                    SMSConfig smsConfig=new ISMSConfig();
                     SendSMSUtil.sendMerchantReceipt(userDto.getMobile(),merchantDTO.getName(),smsConfig);
                 }
             } else {
@@ -1673,26 +1673,30 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public OrderDTO getMartOrderInfo(String orderId) {
-        OrderDTO order = baseDao.getOrder(orderId);
-        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        for (SlaveOrderEntity og:orderGoods) {
-            og.setGoodInfo(goodService.getByid(og.getGoodId()));
-        }
-        order.setSlaveOrder(orderGoods);
-        order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-        if(order.getRoomId()!=null){
-            order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-        }else if(order.getPOrderId().equals("0")) {
-            MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-            if(roomOrderByPorderId!=null){
-                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
-                order.setRoomId(roomOrderByPorderId.getRoomId());
-                order.setReservationId(roomOrderByPorderId.getReservationId());
+    public List<OrderDTO> getMartOrderInfo(String orderId) {
+           List<OrderDTO> orders = baseDao.selectOrder(orderId);
+        for (OrderDTO order : orders) {
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+            for (SlaveOrderEntity og:orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
             }
+            order.setSlaveOrder(orderGoods);
+            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+            if(order.getRoomId()!=null){
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+            }else if(order.getPOrderId().equals("0")) {
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if(roomOrderByPorderId!=null){
+                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                    order.setRoomId(roomOrderByPorderId.getRoomId());
+                    order.setReservationId(roomOrderByPorderId.getReservationId());
+                }
+            }
+            order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
+            order.setAllPaymoney(order.getPayMoney());
         }
-        order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
-        return order;
+
+      return orders;
     }
 
     @Override
