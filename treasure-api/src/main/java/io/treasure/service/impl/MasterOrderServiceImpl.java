@@ -287,6 +287,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
+            List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
+            for (OrderDTO orderDTO : affiliateOrde) {
+                if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
+                    merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                   orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+                }
+            }
+
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
                 if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
@@ -297,8 +306,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         }
                     }
                 }
-
-
                 baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
                 if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                     //同时将包房或者桌设置成未使用状态
