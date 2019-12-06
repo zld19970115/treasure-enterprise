@@ -6,11 +6,13 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.sms.SMSConfig;
+import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.ISMSConfig;
 import io.treasure.dao.RefundOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.RefundOrderEntity;
@@ -165,6 +167,14 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
           if(StringUtils.isNotBlank(clientId)){
              AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
            }
+        List<OrderDTO> affiliateOrde = masterOrderService.getAffiliateOrde(orderId);
+        for (OrderDTO orderDTO : affiliateOrde) {
+            if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
+                merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+            }
+        }
         return new Result();
     }
 
