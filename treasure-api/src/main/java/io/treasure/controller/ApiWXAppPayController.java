@@ -6,14 +6,18 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.WXPayConstants;
+import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
+import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
+import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.PayCommonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -49,7 +50,8 @@ public class ApiWXAppPayController {
 
     @Autowired
     private MasterOrderService masterOrderService;
-
+    @Autowired
+    private  SlaveOrderService slaveOrderService;
     /**
      * @param total_fee    支付金额
      * @param description    描述
@@ -67,6 +69,31 @@ public class ApiWXAppPayController {
     public Result wxpay(HttpServletRequest request,String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+// 防止微信支付失败重新支付失败
+        String tmpOrderId = orderDTO.getOrderId();
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(tmpOrderId);
+
+        String newValue = Integer.parseInt(tmpOrderId.substring(tmpOrderId.length()-4))+1+"";
+        orderDTO.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
+        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+            slaveOrderEntity.setOrderId(newValue);
+            slaveOrderService.updateById(slaveOrderEntity);
+        }
+
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(tmpOrderId);
+        masterOrderEntity.setOrderId(newValue);
+        masterOrderService.updateById(masterOrderEntity);
+
+
+
+
+
+
+
+
+
+
+
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
