@@ -69,19 +69,19 @@ public class ApiWXAppPayController {
     public Result wxpay(HttpServletRequest request,String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
-// 防止微信支付失败重新支付失败
+        // 防止微信支付失败重新支付失败
         String tmpOrderId = orderDTO.getOrderId();
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(tmpOrderId);
 
         String newValue = Integer.parseInt(tmpOrderId.substring(tmpOrderId.length()-4))+1+"";
         orderDTO.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
-            slaveOrderEntity.setOrderId(newValue);
+            slaveOrderEntity.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
             slaveOrderService.updateById(slaveOrderEntity);
         }
 
         MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(tmpOrderId);
-        masterOrderEntity.setOrderId(newValue);
+        masterOrderEntity.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
         masterOrderService.updateById(masterOrderEntity);
 
 
