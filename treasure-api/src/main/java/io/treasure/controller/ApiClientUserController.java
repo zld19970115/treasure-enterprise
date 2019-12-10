@@ -324,7 +324,7 @@ public class ApiClientUserController {
         return new Result().ok(result);
     }
 
-    @PutMapping("getMobileByUserId")
+    @GetMapping("getMobileByUserId")
     @ApiOperation("根据用户id查询手机号")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
