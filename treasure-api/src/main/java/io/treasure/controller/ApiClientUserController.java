@@ -324,7 +324,18 @@ public class ApiClientUserController {
         Result result = clientUserService.userGiftToUser(userId, mobile, giftMoney);
         return new Result().ok(result);
     }
-
+    @PutMapping("getMobileByUserId")
+    @ApiOperation("根据用户id查询手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value="用户ID",required=true,paramType="query",dataType="long")
+    })
+    public Result getMobileByUserId(@RequestParam long userId){
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+if (clientUserEntity==null){
+    return new Result().error("此用户不存在");
+}
+        return new Result().ok(clientUserEntity.getMobile());
+    }
 
 
 }
