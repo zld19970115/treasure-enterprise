@@ -294,4 +294,5 @@ public class GoodCategoryController {
         }
         return new Result();
     }
+
 }
