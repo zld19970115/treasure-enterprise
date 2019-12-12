@@ -7,10 +7,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.DateUtils;
 import io.treasure.dao.MerchantRoomDao;
-import io.treasure.dto.ClientUserDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantRoomDTO;
-import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.service.ClientUserService;
@@ -23,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 包房或者桌表
@@ -337,6 +332,46 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
 
         }
         return getPageData(list,pages.getTotal(), MerchantRoomParamsSetDTO.class);
+    }
+
+    @Override
+    public List selectRoomByTimeVis(Map<String, Object> params) {
+        String merchantId=(String)params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        String useDate=(String)params.get("date");
+        if(useDate!=null){
+            Date date= DateUtils.parse(useDate,"yyyy-MM-dd");
+            params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
+        }
+        //查询所有店铺信息
+        List<MerchantDTO> merchantList=baseDao.selectMerchantAll();
+        //包房参数
+        List<MerchantRoomParamsDTO> roomList=baseDao.selectRoomParam();
+        //预约包房
+        List<MerchantRoomParamsSetDTO> list= baseDao.selectRoomByTimeVis(params);
+        List result=new ArrayList();
+        for (MerchantDTO s:merchantList) {
+            long mId=s.getId();
+            List map=new ArrayList();
+            List data=new ArrayList();
+            for(MerchantRoomParamsSetDTO rooms:list){
+                long mIds=rooms.getMerchantId();
+                if(mId==mIds){
+                    data.add(rooms);
+                }
+            }
+            map.add(s.getName());
+            map.add(data);
+            map.add(roomList);
+            //data.put(s.getName(),data);
+            result.add(map);
+        }
+        return result;
     }
 
     @Override

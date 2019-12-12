@@ -73,7 +73,9 @@
     cm.name as Dname
    from  ct_merchant_room_params_set curps  left join
   ct_merchant_room  cmr
- on cmr.id=curps.room_id    left join   ct_merchant cm on cm.id = curps.merchant_id   left join ct_merchant_room_params curp on curp.id=curps.room_params_id
+ on cmr.id=curps.room_id
+ left join   ct_merchant cm on cm.id = curps.merchant_id
+  left join ct_merchant_room_params curp on curp.id=curps.room_params_id
  where 1=1
         <if test="merchantId != null and merchantId>0 ">
         and curps.merchant_id in
@@ -170,7 +172,56 @@
         and curps.state = 0  and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
 
     </select>
-
+    <select id="selectRoomByTimeVis" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
+        select
+        curps.id,
+        curps.room_params_id,
+        curp.content as roomContent,
+        curps.room_id,
+        curps.room_name,
+        curps.type,
+        curps.merchant_id,
+        curps.state,
+        curps.status,
+        curps.remark,
+        curps.use_date,
+        curps.update_date,
+        curps.create_date,
+        curps.creator,
+        curps.updater,
+        cmr.name,
+        cmr.icon,
+        cmr.status as crstatus,
+        cmr.num_low,
+        cmr.num_high,
+        cm.name as Dname
+        from  ct_merchant_room_params_set curps  left join
+        ct_merchant_room  cmr on cmr.id=curps.room_id
+        left join   ct_merchant cm on cm.id = curps.merchant_id
+        left join ct_merchant_room_params curp on curp.id=curps.room_params_id
+        where 1=1
+        <if test="merchantId != null and merchantId>0 ">
+            and curps.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+          and curps.status=#{status}
+        <if test="state != null and state.trim() != ''">
+            and curps.state = #{state}
+        </if>
+        <if test="date != null and date.trim() != ''">
+            and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
+        </if>
+    </select>
+    <select id="selectRoomDate" resultType="io.treasure.dto.MerchantRoomParamsSetDTO" parameterType="java.util.Map">
+        select DISTINCT DATE_FORMAT(use_date,'%Y-%m-%d') useDate from ct_merchant_room_params_set
+        where to_days(use_date) >= to_days(now())
+        <if test="merchantId != null and merchantId>0 ">
+            and merchant_id=#{merchantId}
+        </if>
+        order by use_date
+    </select>
     <select id="selectCountRoom" resultType="java.lang.Integer">
         select count(*) from ct_merchant_room where type=1 and `status`=1 and merchant_id=#{merchantId}
     </select>
@@ -178,5 +229,10 @@
     <select id="selectCountDesk" resultType="java.lang.Integer">
         select count(*) from ct_merchant_room where type=2 and `status`=1 and merchant_id=#{merchantId}
     </select>
-
+    <select id="selectMerchantAll" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.dto.MerchantDTO">
+        select * from ct_merchant where  status!=9 order by id desc
+    </select>
+    <select id="selectRoomParam" parameterType="io.treasure.entity.MerchantRoomParamsEntity" resultType="io.treasure.dto.MerchantRoomParamsDTO">
+        select * from  ct_merchant_room_params where  status=1
+    </select>
 </mapper>

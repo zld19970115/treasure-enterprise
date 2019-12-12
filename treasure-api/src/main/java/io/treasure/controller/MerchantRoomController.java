@@ -130,7 +130,24 @@ public class MerchantRoomController {
         return new Result<PageData<MerchantRoomParamsSetDTO>>().ok(page);
     }
 
-
+    @CrossOrigin
+    @Login
+    @GetMapping("roomPageByTimeVis")
+    @ApiOperation("指定时间内包房未预约可视化数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType ="query",required = true,dataType = "String"),
+            @ApiImplicitParam(name="date",value="预定时间",paramType ="query",required = true,dataType = "String")
+    })
+    public Result<List> roomPageByTimeVis(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Common.STATUS_ON.getStatus()+"");
+        params.put("type",MerchantRoomEnm.TYPE_ROOM.getType()+"");
+        List list=merchantRoomService.selectRoomByTimeVis(params);
+        return new Result().ok(list);
+    }
 
     @CrossOrigin
     @Login
