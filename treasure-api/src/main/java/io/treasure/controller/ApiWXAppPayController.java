@@ -52,6 +52,19 @@ public class ApiWXAppPayController {
     private MasterOrderService masterOrderService;
     @Autowired
     private  SlaveOrderService slaveOrderService;
+
+    /**
+     * （防止过多更改原程序
+     * @param originalOrderId
+     * @return 同位数参数尾数自增1的值
+     */
+    public String generalGrowUpOrderId(String originalOrderId){
+        String prefixOrder = originalOrderId.substring(0,originalOrderId.length()-3);                                   //截取前缀
+        String suffixOrder = "000"+(Integer.parseInt(originalOrderId.substring(originalOrderId.length()-3))+1)+"";      //截取后缀
+        suffixOrder = suffixOrder.substring((suffixOrder.length()-3));
+
+        return prefixOrder+suffixOrder;
+    }
     /**
      * @param total_fee    支付金额
      * @param description    描述
@@ -70,36 +83,24 @@ public class ApiWXAppPayController {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
         // 防止微信支付失败重新支付失败
-        String tmpOrderId = orderDTO.getOrderId();
-        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(tmpOrderId);
-
-        String newValue = Integer.parseInt(tmpOrderId.substring(tmpOrderId.length()-4))+1+"";
-        orderDTO.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
+        String tmpOrderId =generalGrowUpOrderId(orderNo);
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
+        orderDTO.setOrderId(tmpOrderId);
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
-            slaveOrderEntity.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
+            slaveOrderEntity.setOrderId(tmpOrderId);
             slaveOrderService.updateById(slaveOrderEntity);
         }
 
-        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(tmpOrderId);
-        masterOrderEntity.setOrderId(tmpOrderId.substring(0,tmpOrderId.length()-4)+newValue);
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
+        masterOrderEntity.setOrderId(tmpOrderId);
         masterOrderService.updateById(masterOrderEntity);
-
-
-
-
-
-
-
-
-
-
 
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
-        data.put("out_trade_no", orderNo);
+        data.put("out_trade_no",tmpOrderId); //更改为新订单号
 //        data.put("device_info", "");//调用接口提交的终端设备号
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换
@@ -126,7 +127,6 @@ public class ApiWXAppPayController {
             params.put("prepayid", orderInfo.get("prepay_id"));
             params.put("package", "Sign=WXPay");
             String sign = WXPayUtil.generateSignature(params, wxPayConfig.getKey());
-
             Map<String, String> reslutMap = new HashMap<>();
             reslutMap.put("appid",wxPayConfig.getAppID());
             reslutMap.put("partnerid",wxPayConfig.getMchID());
