@@ -315,7 +315,7 @@ public class ApiClientUserController {
     @ApiOperation("用户给用户转移赠送金")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long"),
-            @ApiImplicitParam(name = "mobile", value = "用户要充值得用户的电话", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name     = "mobile", value = "用户要充值得用户的电话", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "giftMoney", value = "用户要充值得用户的赠送金金额", required = true, paramType = "query", dataType = "BigDecimal")
     })
     public Result userGiftToUser(@RequestParam long userId, @RequestParam String mobile, @RequestParam BigDecimal giftMoney) {
