@@ -82,25 +82,25 @@ public class ApiWXAppPayController {
     public Result wxpay(HttpServletRequest request,String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
-        // 防止微信支付失败重新支付失败
-        String tmpOrderId =generalGrowUpOrderId(orderNo);
-        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
-        orderDTO.setOrderId(tmpOrderId);
-        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
-            slaveOrderEntity.setOrderId(tmpOrderId);
-            slaveOrderService.updateById(slaveOrderEntity);
-        }
-
-        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
-        masterOrderEntity.setOrderId(tmpOrderId);
-        masterOrderService.updateById(masterOrderEntity);
+//        // 防止微信支付失败重新支付失败
+//        String tmpOrderId =generalGrowUpOrderId(orderNo);
+//        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
+//        orderDTO.setOrderId(tmpOrderId);
+//        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+//            slaveOrderEntity.setOrderId(tmpOrderId);
+//            slaveOrderService.updateById(slaveOrderEntity);
+//        }
+//
+//        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
+//        masterOrderEntity.setOrderId(tmpOrderId);
+//        masterOrderService.updateById(masterOrderEntity);
 
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
         HashMap<String, String> data = new HashMap<>();
-        data.put("body", description);
-        data.put("out_trade_no",tmpOrderId); //更改为新订单号
+        data.put("body", "聚宝吃货支付");
+        data.put("out_trade_no",orderDTO.getOrderId()); //更改为新订单号
 //        data.put("device_info", "");//调用接口提交的终端设备号
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换

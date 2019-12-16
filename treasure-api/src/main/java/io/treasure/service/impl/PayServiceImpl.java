@@ -15,6 +15,7 @@ import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
@@ -91,10 +92,15 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
             return mapRtn;
         }
-        if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()){
+        if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
             return mapRtn;
+        }
+        if(masterOrderEntity.getStatus()==Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+            if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId().longValue()>0){
+                merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_YEA.getType());
+            }
         }
         if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
             mapRtn.put("return_code", "FAIL");
