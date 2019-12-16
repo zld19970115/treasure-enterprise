@@ -239,7 +239,7 @@ public class PayServiceImpl implements PayService {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-        if(alipayResponse.getCode()=="10000"){
+        if(alipayResponse.getCode().equals("10000")){
             if (goodId != null) {
                 //将退款ID更新到refundOrder表中refund_id
                 refundOrderService.updateRefundId(refundNo, orderNo, goodId);

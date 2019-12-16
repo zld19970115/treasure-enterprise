@@ -214,14 +214,7 @@
             and  DATE_FORMAT(use_date,'%Y-%m-%d') = #{date}
         </if>
     </select>
-    <select id="selectRoomDate" resultType="io.treasure.dto.MerchantRoomParamsSetDTO" parameterType="java.util.Map">
-        select DISTINCT DATE_FORMAT(use_date,'%Y-%m-%d') useDate from ct_merchant_room_params_set
-        where to_days(use_date) >= to_days(now())
-        <if test="merchantId != null and merchantId>0 ">
-            and merchant_id=#{merchantId}
-        </if>
-        order by use_date
-    </select>
+
     <select id="selectCountRoom" resultType="java.lang.Integer">
         select count(*) from ct_merchant_room where type=1 and `status`=1 and merchant_id=#{merchantId}
     </select>
