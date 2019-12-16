@@ -1030,7 +1030,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 freeGoldMoney = gift;
             }
             if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
-                BigDecimal newPrice = price.subtract((freeGoldMoney.subtract(x).divide(quantity)));
+                BigDecimal subtract = freeGoldMoney.subtract(x);
+                BigDecimal bigDecimal = (subtract.divide(quantity,2, BigDecimal.ROUND_DOWN));
+                BigDecimal newPrice = price.subtract(bigDecimal);
                 slaveOrderEnti.setNewPrice(newPrice);
                 slaveOrderEnti.setTotalMoney(newPrice.multiply(quantity));
                 slaveOrderEnti.setPlatformBrokerage(subtract3);
