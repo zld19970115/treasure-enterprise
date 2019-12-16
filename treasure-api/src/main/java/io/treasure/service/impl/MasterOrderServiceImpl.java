@@ -317,17 +317,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
-                //退款
-                Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-                if (result1.success()) {
-                    boolean b = (boolean) result1.getData();
-                    if (!b) {
-                        return new Result().error("退款失败！");
-                    } else {
+                BigDecimal nu=new BigDecimal("0");
+                if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
+                    //退款
+                    Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
+                    if (result1.success()) {
+                        boolean b = (boolean) result1.getData();
+                        if (!b) {
+                            return new Result().error("退款失败！");
+                        } else {
 
+                        }
+                    } else {
+                        return new Result().error(result1.getMsg());
                     }
-                } else {
-                    return new Result().error(result1.getMsg());
                 }
             } else {
                 return new Result().error("无法退款！");
@@ -1549,6 +1552,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 s.setSlaveOrder(orderGoods);
                 if (s.getRoomId() != null) {
                     s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+                    MerchantRoomParamsSetDTO merchantRoomParamsSetDTO = merchantRoomParamsSetService.get(s.getReservationId());
+                    s.setReservationInfo(ConvertUtils.sourceToTarget(merchantRoomParamsSetDTO, MerchantRoomParamsSetEntity.class));
                 }
             }
         }
