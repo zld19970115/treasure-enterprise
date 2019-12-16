@@ -136,6 +136,26 @@ public class MerchantUserController {
         merchantUserService.updateCID(cid,dto.getMobile());
        return new Result().ok(map);
     }
+
+
+    /**
+     * 登陆
+     * @param dto
+     * @return
+     */
+    @CrossOrigin
+    @PostMapping("pclogin")
+    @ApiOperation("pc端登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="cid",value="个推ID",required=true,paramType="query", dataType="String")
+    })
+    public Result<Map<String, Object>> pclogin(@RequestBody LoginDTO dto,String cid){
+        //表单校验
+        ValidatorUtils.validateEntity(dto);
+        //用户登录
+        Map<String, Object> map = merchantUserService.login(dto);
+        return new Result().ok(map);
+    }
     @Login
     @PostMapping("logout")
     @ApiOperation("退出")
