@@ -3,7 +3,6 @@ package io.treasure.config;
 
 import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.utils.WXPayUtil;
-import io.treasure.common.wx.WXConfig;
 import io.treasure.common.wx.WXPay;
 import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.PayCommonUtil;
@@ -32,7 +31,7 @@ import java.util.TreeMap;
  */
 @Slf4j
 @Service
-public class IWXPay extends WXPay {
+public class MiniWXPay extends WXPay {
 
     /** 密钥算法 */
     private static final String ALGORITHM = "AES";
@@ -47,9 +46,9 @@ public class IWXPay extends WXPay {
     /** 用户输入密码，尝试30秒内去查询支付结果 */
     private static Integer remainingTimeMs = 50000;
 
-    private IWXConfig config;
+    private MiniWXConfig config;
 
-    public IWXPay(IWXConfig config) throws Exception {
+    public MiniWXPay(MiniWXConfig config) throws Exception {
         super(config);
         this.config =config;
     }
