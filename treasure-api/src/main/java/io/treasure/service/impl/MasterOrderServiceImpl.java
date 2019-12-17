@@ -1215,6 +1215,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
                 //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
                 slaveOrderEnti.setFreeGold(freeGoldMoney.subtract(x));
+                slaveOrderEnti.setNewPrice(price);
             } else {
                 //原单价/原总价
                 BigDecimal divide = price.divide(s, 2, BigDecimal.ROUND_DOWN);

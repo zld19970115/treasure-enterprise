@@ -125,7 +125,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         //获取订单菜品表退菜信息
         SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         //退菜金额=退菜数量*退菜单价
-        BigDecimal  totalRefundMoney=(allGoods.getQuantity().multiply(allGoods.getPrice())).setScale(2,BigDecimal.ROUND_DOWN);
+        BigDecimal  totalRefundMoney=allGoods.getPayMoney();
         result=payService.refundByGood(orderId,totalRefundMoney.toString(),goodId);
         BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
         masterOrderService.updatePayMoney(newPayMoney,orderId);

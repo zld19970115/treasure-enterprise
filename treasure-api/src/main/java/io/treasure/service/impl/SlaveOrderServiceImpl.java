@@ -209,7 +209,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             ro.setRefundId(refundID.trim());
             ro.setGoodId(slaveOrderDTO.getGoodId());
             ro.setOrderId(slaveOrderDTO.getOrderId());
-            ro.setPrice(slaveOrderDTO.getPrice());
+            ro.setPrice(slaveOrderDTO.getPayMoney());
             ro.setRefundDate(date);
             ro.setRefundQuantity(quantity);
             ro.setRefundReason(slaveOrderDTO.getRefundReason());
