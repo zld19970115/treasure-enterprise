@@ -59,6 +59,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private EvaluateService evaluateService;
     @Autowired
+    private MerchantWithdrawService merchantWithdrawService;
+    @Autowired
     private GoodService goodService;
     @Autowired
     private StimmeService stimmeService;
@@ -266,6 +268,77 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         } else {
             return new Result().error("无法获取订单！");
+        }
+        List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
+        MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
+        Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
+        if (wartCash==null){
+            wartCash=0.00;
+        }
+        if (masterOrderEntity==null){
+            if(null!=merchantEntity){
+                BigDecimal wartcashZore = new BigDecimal("0.00");
+                merchantEntity.setTotalCash(0.00);
+                merchantEntity.setAlreadyCash(0.00);
+                merchantEntity.setNotCash(0.00);
+                merchantEntity.setPointMoney(0.00);
+                merchantEntity.setWartCash(wartcashZore);
+                merchantService.updateById(merchantEntity);
+            }else{
+                return new Result().error("无法获取店铺信息!");
+            }
+        }
+        List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(dto.getMerchantId());
+        if (merchantWithdrawEntities.size()==0){
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());
+
+            BigDecimal wartcashZore = new BigDecimal("0.00");
+            if (null==bigDecimal ){
+
+                if(null!=merchantEntity){
+                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
+                    merchantEntity.setTotalCash(0.00);
+                    merchantEntity.setAlreadyCash(0.00);
+                    merchantEntity.setNotCash(0.00);
+                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+                    merchantEntity.setWartCash(wartcashZore);
+                    merchantService.updateById(merchantEntity);
+                }else{
+                    return new Result().error("无法获取店铺信息!");
+                }
+            }
+            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            merchantEntity.setAlreadyCash(0.00);
+            merchantEntity.setNotCash(bigDecimal.doubleValue());
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcashZore);
+            merchantService.updateById(merchantEntity);
+        }
+        if (merchantWithdrawEntities.size() != 0) {
+            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());//查询总额
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());//查询扣点总额
+            if (bigDecimal1==null){
+                bigDecimal1 = new BigDecimal("0.00");
+            }
+            if (bigDecimal==null){
+                bigDecimal = new BigDecimal("0.00");
+            }
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(dto.getMerchantId()); //查询已提现总额
+            if (aDouble==null){
+                aDouble=0.00;
+            }
+            String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(dto.getMerchantId()));
+            BigDecimal v = new BigDecimal(allMoney);
+            BigDecimal a = bigDecimal.subtract(v);
+            double c = a.doubleValue();
+            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            merchantEntity.setAlreadyCash(aDouble);
+            merchantEntity.setNotCash(c);
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcash);
+            merchantService.updateById(merchantEntity);
         }
         return new Result().ok("订单翻台成功！");
     }
