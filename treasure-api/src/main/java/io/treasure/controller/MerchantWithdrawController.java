@@ -179,12 +179,12 @@ public class MerchantWithdrawController {
         if (masterOrderEntity==null){
             if(null!=merchantEntity){
                 BigDecimal wartcashZore = new BigDecimal("0.00");
-                merchantEntity.setTotalCash(0.00);
-                merchantEntity.setAlreadyCash(0.00);
-                merchantEntity.setNotCash(0.00);
-                merchantEntity.setPointMoney(0.00);
-                merchantEntity.setWartCash(wartcashZore);
-                merchantService.updateById(merchantEntity);
+//                merchantEntity.setTotalCash(0.00);
+//                merchantEntity.setAlreadyCash(0.00);
+//                merchantEntity.setNotCash(0.00);
+//                merchantEntity.setPointMoney(0.00);
+//                merchantEntity.setWartCash(wartcashZore);
+//                merchantService.updateById(merchantEntity);
                 Map map = new HashMap();
                 map.put("alead_cash", 0.00);
                 map.put("not_cash", 0.00);
@@ -204,12 +204,12 @@ public class MerchantWithdrawController {
 
                 if(null!=merchantEntity){
                     if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
-                    merchantEntity.setTotalCash(0.00);
-                    merchantEntity.setAlreadyCash(0.00);
-                    merchantEntity.setNotCash(0.00);
-                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-                    merchantEntity.setWartCash(wartcashZore);
-                    merchantService.updateById(merchantEntity);
+//                    merchantEntity.setTotalCash(0.00);
+//                    merchantEntity.setAlreadyCash(0.00);
+//                    merchantEntity.setNotCash(0.00);
+//                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+//                    merchantEntity.setWartCash(wartcashZore);
+//                    merchantService.updateById(merchantEntity);
                     Map map = new HashMap();
 
                     map.put("alead_cash", 0.00);
@@ -220,12 +220,12 @@ public class MerchantWithdrawController {
                     return new Result().error("无法获取店铺信息!");
                 }
             }
-            merchantEntity.setTotalCash(bigDecimal.doubleValue());
-            merchantEntity.setAlreadyCash(0.00);
-            merchantEntity.setNotCash(bigDecimal.doubleValue());
-            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-            merchantEntity.setWartCash(wartcashZore);
-            merchantService.updateById(merchantEntity);
+//            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+//            merchantEntity.setAlreadyCash(0.00);
+//            merchantEntity.setNotCash(bigDecimal.doubleValue());
+//            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+//            merchantEntity.setWartCash(wartcashZore);
+//            merchantService.updateById(merchantEntity);
             Map map = new HashMap();
             map.put("alead_cash", 0.00);
             map.put("not_cash", bigDecimal.doubleValue());
@@ -251,12 +251,12 @@ public class MerchantWithdrawController {
             BigDecimal v = new BigDecimal(allMoney);
             BigDecimal a = bigDecimal.subtract(v);
             double c = a.doubleValue();
-            merchantEntity.setTotalCash(bigDecimal.doubleValue());
-            merchantEntity.setAlreadyCash(aDouble);
-            merchantEntity.setNotCash(c);
-            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-            merchantEntity.setWartCash(wartcash);
-            merchantService.updateById(merchantEntity);
+//            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+//            merchantEntity.setAlreadyCash(aDouble);
+//            merchantEntity.setNotCash(c);
+//            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+//            merchantEntity.setWartCash(wartcash);
+//            merchantService.updateById(merchantEntity);
             Map map = new HashMap();
 
             map.put("alead_cash", aDouble);//已提现
