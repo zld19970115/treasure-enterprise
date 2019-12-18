@@ -333,7 +333,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             BigDecimal v = new BigDecimal(allMoney);
             BigDecimal a = bigDecimal.subtract(v);
             double c = a.doubleValue();
-            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
             merchantEntity.setAlreadyCash(aDouble);
             merchantEntity.setNotCash(c);
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
