@@ -236,8 +236,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
                 for (OrderDTO o : affiliateOrde) {
-                    if (o.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() || o.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() ||
-                            o.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() || o.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() ||
+                    if (o.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && o.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
+                            o.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() && o.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
                             o.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
                         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
                         for (SlaveOrderEntity g : orderGoods) {
