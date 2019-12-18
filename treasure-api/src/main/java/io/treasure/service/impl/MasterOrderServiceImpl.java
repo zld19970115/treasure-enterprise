@@ -1768,8 +1768,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> orders = baseDao.selectOrder(orderId);
         for (OrderDTO order : orders) {
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+            BigDecimal d=new BigDecimal("0");
             for (SlaveOrderEntity og : orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
+                d=d.add(og.getDiscountsMoney());
             }
             order.setSlaveOrder(orderGoods);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
@@ -1785,6 +1787,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
             order.setAllPaymoney(order.getPayMoney());
+            order.setDiscountsMoney(d);
         }
 
         return orders;
