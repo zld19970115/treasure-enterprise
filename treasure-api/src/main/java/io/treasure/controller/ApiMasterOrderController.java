@@ -612,6 +612,15 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "mainOrderId", value = "预订包房订单号", paramType = "query", required = true, dataType="String")
     })
     public Result orderFoodByRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId){
+        List<SlaveOrderEntity> slaveOrder = dto.getSlaveOrder();
+        BigDecimal platformBrokerage=new BigDecimal("0");
+        BigDecimal merchantProceeds=new BigDecimal("0");
+        for (SlaveOrderEntity s:slaveOrder ){
+            platformBrokerage=platformBrokerage.add(s.getPlatformBrokerage());
+            merchantProceeds=merchantProceeds.add(s.getMerchantProceeds());
+        }
+        dto.setPlatformBrokerage(platformBrokerage);
+        dto.setMerchantProceeds(merchantProceeds);
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderFoodByRoom(dto,dtoList,user,mainOrderId);
