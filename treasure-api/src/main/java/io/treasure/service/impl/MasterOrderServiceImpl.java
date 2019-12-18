@@ -1714,6 +1714,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
         List<OrderDTO> list = baseDao.selectPOrderIdAndS(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
+        BigDecimal g=new BigDecimal("0");
+        BigDecimal d=new BigDecimal("0");
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
         OrderDTO mainOrder = new OrderDTO();
@@ -1739,6 +1741,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 order.setSlaveOrder(orderGoods);
                 order.setDiscountsMoney(discountsMoney);
                 order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+                g=g.add(order.getGiftMoney());
+                d=d.add(order.getDiscountsMoney());
                 if (order.getRoomId() != null) {
                     order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
                 } else if (order.getPOrderId().equals("0")) {
@@ -1751,6 +1755,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             mainOrder.setAllPaymoney(AllPayMoney);
+            mainOrder.setGiftMoney(g);
+            mainOrder.setDiscountsMoney(d);
         }
 
         return orders;
