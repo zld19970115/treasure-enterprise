@@ -38,6 +38,10 @@ public class UserCouponController {
     @PostMapping("/addCoupon")
     @ApiOperation("用户领取商家优惠卷")
     public  Result addCoupon(@RequestBody UserCouponDTO dto){
+        if(dto.getUserId()==0){
+            //领取付此类型优惠卷
+            return new Result().error("请先登录");
+        }
          //查询用户是否领取过本优惠劵
         UserCouponEntity userCouponEntity = userCouponService.selectByCouponId(dto.getCouponId(),dto.getUserId());
         if (userCouponEntity==null){

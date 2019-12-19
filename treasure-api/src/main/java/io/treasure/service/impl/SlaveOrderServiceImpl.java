@@ -73,6 +73,9 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         IPage<SlaveOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
 
         List<SlaveOrderDTO> list=baseDao.getOandPoGood(params);
+
+
+
         return getPageData(list,pages.getTotal(), SlaveOrderDTO.class);
 
     }
