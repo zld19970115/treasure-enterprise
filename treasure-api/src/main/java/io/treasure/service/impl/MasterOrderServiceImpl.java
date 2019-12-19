@@ -308,7 +308,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     return new Result().error("无法获取店铺信息!");
                 }
             }
-            merchantEntity.setTotalCash(bigDecimal.doubleValue());
+            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());

@@ -169,114 +169,104 @@ public class MerchantWithdrawController {
             @ApiImplicitParam(name = "martId", value = "编号", paramType = "query", required = true, dataType="Long")
     })
     public Result selectCath(@RequestParam Long martId) {
+
+        List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
         MerchantEntity merchantEntity = merchantService.selectById(martId);
-        if (merchantEntity!=null){
-            Map map = new HashMap();
-            map.put("alead_cash", merchantEntity.getAlreadyCash());//已提现
-            map.put("not_cash", merchantEntity.getNotCash());//未体现
-            map.put("wart_cash",merchantEntity.getWartCash());//审核中
-            return new Result().ok(map);
-        }else {
-            return new Result().error("无法获取店铺信息!");
+        Double wartCash = merchantWithdrawService.selectWaitByMartId(martId);
+      if (wartCash==null){
+    wartCash=0.00;
+}
+        if (masterOrderEntity==null){
+            if(null!=merchantEntity){
+                BigDecimal wartcashZore = new BigDecimal("0.00");
+                merchantEntity.setTotalCash(0.00);
+                merchantEntity.setAlreadyCash(0.00);
+                merchantEntity.setNotCash(0.00);
+                merchantEntity.setPointMoney(0.00);
+                merchantEntity.setWartCash(wartcashZore);
+                merchantService.updateById(merchantEntity);
+                Map map = new HashMap();
+                map.put("alead_cash", 0.00);
+                map.put("not_cash", 0.00);
+                map.put("wart_cash",wartcashZore);
+                return new Result().ok(map);
+            }else{
+                return new Result().error("无法获取店铺信息!");
+            }
         }
+        List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(martId);
+        if (merchantWithdrawEntities.size()==0){
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);
 
+            BigDecimal wartcashZore = new BigDecimal("0.00");
+            if (null==bigDecimal ){
 
+                if(null!=merchantEntity){
+                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
+                    merchantEntity.setTotalCash(0.00);
+                    merchantEntity.setAlreadyCash(0.00);
+                    merchantEntity.setNotCash(0.00);
+                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+                    merchantEntity.setWartCash(wartcashZore);
+                    merchantService.updateById(merchantEntity);
+                    Map map = new HashMap();
 
-//        List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(martId);
-//        MerchantEntity merchantEntity = merchantService.selectById(martId);
-//        Double wartCash = merchantWithdrawService.selectWaitByMartId(martId);
-//      if (wartCash==null){
-//    wartCash=0.00;
-//}
-//        if (masterOrderEntity==null){
-//            if(null!=merchantEntity){
-//                BigDecimal wartcashZore = new BigDecimal("0.00");
-//                merchantEntity.setTotalCash(0.00);
-//                merchantEntity.setAlreadyCash(0.00);
-//                merchantEntity.setNotCash(0.00);
-//                merchantEntity.setPointMoney(0.00);
-//                merchantEntity.setWartCash(wartcashZore);
-//                merchantService.updateById(merchantEntity);
-//                Map map = new HashMap();
-//                map.put("alead_cash", 0.00);
-//                map.put("not_cash", 0.00);
-//                map.put("wart_cash",wartcashZore);
-//                return new Result().ok(map);
-//            }else{
-//                return new Result().error("无法获取店铺信息!");
-//            }
-//        }
-//        List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(martId);
-//        if (merchantWithdrawEntities.size()==0){
-//            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);
-//            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);
-//
-//            BigDecimal wartcashZore = new BigDecimal("0.00");
-//            if (null==bigDecimal ){
-//
-//                if(null!=merchantEntity){
-//                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
-//                    merchantEntity.setTotalCash(0.00);
-//                    merchantEntity.setAlreadyCash(0.00);
-//                    merchantEntity.setNotCash(0.00);
-//                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-//                    merchantEntity.setWartCash(wartcashZore);
-//                    merchantService.updateById(merchantEntity);
-//                    Map map = new HashMap();
-//
-//                    map.put("alead_cash", 0.00);
-//                    map.put("not_cash", 0.00);
-//                    map.put("wart_cash",wartcashZore);
-//                    return new Result().ok(map);
-//                }else{
-//                    return new Result().error("无法获取店铺信息!");
-//                }
-//            }
-//            merchantEntity.setTotalCash(bigDecimal.doubleValue());
-//            merchantEntity.setAlreadyCash(0.00);
-//            merchantEntity.setNotCash(bigDecimal.doubleValue());
-//            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-//            merchantEntity.setWartCash(wartcashZore);
-//            merchantService.updateById(merchantEntity);
-//            Map map = new HashMap();
-//            map.put("alead_cash", 0.00);
-//            map.put("not_cash", bigDecimal.doubleValue());
-//            map.put("wart_cash",wartcashZore);
-//
-//            return new Result().ok(map);
-//        }
-//        if (merchantWithdrawEntities.size() != 0) {
-//            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
-//            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
-//            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
-//            if (bigDecimal1==null){
-//                bigDecimal1 = new BigDecimal("0.00");
-//            }
-//            if (bigDecimal==null){
-//                bigDecimal = new BigDecimal("0.00");
-//            }
-//            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId); //查询已提现总额
-//            if (aDouble==null){
-//                aDouble=0.00;
-//            }
-//            String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(martId));
-//            BigDecimal v = new BigDecimal(allMoney);
-//            BigDecimal a = bigDecimal.subtract(v);
-//            double c = a.doubleValue();
-//            merchantEntity.setTotalCash(bigDecimal.doubleValue());
-//            merchantEntity.setAlreadyCash(aDouble);
-//            merchantEntity.setNotCash(c);
-//            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
-//            merchantEntity.setWartCash(wartcash);
-//            merchantService.updateById(merchantEntity);
-//            Map map = new HashMap();
-//
-//            map.put("alead_cash", aDouble);//已提现
-//            map.put("not_cash", c);//未体现
-//            map.put("wart_cash",wartcash);//审核中
-//            return new Result().ok(map);
-//    }
-//        return new Result();
+                    map.put("alead_cash", 0.00);
+                    map.put("not_cash", 0.00);
+                    map.put("wart_cash",wartcashZore);
+                    return new Result().ok(map);
+                }else{
+                    return new Result().error("无法获取店铺信息!");
+                }
+            }
+            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
+            merchantEntity.setAlreadyCash(0.00);
+            merchantEntity.setNotCash(bigDecimal.doubleValue());
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcashZore);
+            merchantService.updateById(merchantEntity);
+            Map map = new HashMap();
+            map.put("alead_cash", 0.00);
+            map.put("not_cash", bigDecimal.doubleValue());
+            map.put("wart_cash",wartcashZore);
+
+            return new Result().ok(map);
+        }
+        if (merchantWithdrawEntities.size() != 0) {
+            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(martId);//查询总额
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(martId);//查询扣点总额
+            if (bigDecimal1==null){
+                bigDecimal1 = new BigDecimal("0.00");
+            }
+            if (bigDecimal==null){
+                bigDecimal = new BigDecimal("0.00");
+            }
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(martId); //查询已提现总额
+            if (aDouble==null){
+                aDouble=0.00;
+            }
+            String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(martId));
+            BigDecimal v = new BigDecimal(allMoney);
+            BigDecimal a = bigDecimal.subtract(v);
+            double c = a.doubleValue();
+            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
+            merchantEntity.setAlreadyCash(aDouble);
+            merchantEntity.setNotCash(c);
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcash);
+            merchantService.updateById(merchantEntity);
+            Map map = new HashMap();
+
+            map.put("alead_cash", aDouble);//已提现
+            map.put("not_cash", c);//未体现
+            map.put("wart_cash",wartcash);//审核中
+            return new Result().ok(map);
+    }
+        return new Result();
 }
     @CrossOrigin
     @Login
