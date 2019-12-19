@@ -901,6 +901,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result updateByApplyRefund(Map<String, Object> params) {
         Result result = new Result();
         MasterOrderEntity masterOrderEntity = baseDao.selectById(Convert.toLong(params.get("id")));
+        List<SlaveOrderEntity> sod = slaveOrderService.getOrderGoods(params.get("id").toString());
+        for (SlaveOrderEntity s:sod) {
+            if(s.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+                return result.error(-1, "您有退菜申请未审核！");
+            }
+        }
+        if(masterOrderEntity.getPOrderId().equals("0")){
+            List<OrderDTO> o = baseDao.selectPOrderIdAndS(params.get("id").toString());
+            for (OrderDTO oo:o) {
+                if(oo.getStatus()==4){
+                    return result.error(-1, "您有订单商户未接收！");
+                }
+            }
+        }
         MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
         MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
         String clientId = merchantUserDTO.getClientId();
