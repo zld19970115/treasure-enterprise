@@ -162,6 +162,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 }
             }
         }
+        BigDecimal n=new BigDecimal("0");
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         BigDecimal gift = clientUserDTO.getGift();
@@ -171,8 +172,20 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         BigDecimal giftMoney = order1.getGiftMoney();
         BigDecimal subtract = giftMoney.subtract(freeGold);
         order1.setGiftMoney(subtract);
+        //退菜更新此订单中平台所得和用户所得金额
+        BigDecimal platformBrokerage = allGoods.getPlatformBrokerage();
+        BigDecimal merchantProceeds = allGoods.getMerchantProceeds();
+        BigDecimal platformBrokerage1 = order1.getPlatformBrokerage();
+        BigDecimal merchantProceeds1 = order1.getMerchantProceeds();
+        if(merchantProceeds1.compareTo(n)>1 && platformBrokerage1.compareTo(n)>1){
+            order1.setPlatformBrokerage(platformBrokerage1.subtract(platformBrokerage));
+            order1.setMerchantProceeds(merchantProceeds1.subtract(merchantProceeds));
+        }
         masterOrderService.update(ConvertUtils.sourceToTarget(order1, MasterOrderDTO.class));
         clientUserService.update(clientUserDTO);
+        allGoods.setMerchantProceeds(n);
+        allGoods.setPlatformBrokerage(n);
+        slaveOrderService.update(allGoods);
         String clientId = clientUserDTO.getClientId();
           if(StringUtils.isNotBlank(clientId)){
              AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
