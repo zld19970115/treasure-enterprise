@@ -146,9 +146,6 @@ public class MerchantUserController {
     @CrossOrigin
     @PostMapping("pclogin")
     @ApiOperation("pc端登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="cid",value="个推ID",required=true,paramType="query", dataType="String")
-    })
     public Result<Map<String, Object>> pclogin(@RequestBody LoginDTO dto,String cid){
         //表单校验
         ValidatorUtils.validateEntity(dto);

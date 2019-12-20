@@ -223,7 +223,14 @@
         select count(*) from ct_merchant_room where type=2 and `status`=1 and merchant_id=#{merchantId}
     </select>
     <select id="selectMerchantAll" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.dto.MerchantDTO">
-        select * from ct_merchant where  status!=9 order by id desc
+        select * from ct_merchant where  status!=9
+        <if test="merchantId != null and merchantId>0 ">
+            and id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by id desc
     </select>
     <select id="selectRoomParam" parameterType="io.treasure.entity.MerchantRoomParamsEntity" resultType="io.treasure.dto.MerchantRoomParamsDTO">
         select * from  ct_merchant_room_params where  status=1

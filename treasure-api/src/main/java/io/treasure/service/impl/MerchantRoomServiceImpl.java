@@ -350,7 +350,7 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
             params.put("date",DateUtils.format(date,"yyyy-MM-dd"));
         }
         //查询所有店铺信息
-        List<MerchantDTO> merchantList=baseDao.selectMerchantAll();
+        List<MerchantDTO> merchantList=baseDao.selectMerchantAll(params);
         //包房参数
         List<MerchantRoomParamsDTO> roomList=baseDao.selectRoomParam();
         //预约包房

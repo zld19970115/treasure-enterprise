@@ -37,6 +37,6 @@ public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     Integer selectCountRoom(@Param("merchantId") long merchantId);
     Integer selectCountDesk(@Param("merchantId") long merchantId);
     //查询所有店铺信息
-    List<MerchantDTO> selectMerchantAll();
+    List<MerchantDTO> selectMerchantAll(Map<String, Object> params);
     List<MerchantRoomParamsDTO> selectRoomParam();
 }
