@@ -1272,7 +1272,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public DesignConditionsDTO notDiscounts(DesignConditionsDTO dct) {
         //获取此订餐所有菜品信息
         List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
-
+        BigDecimal a = new BigDecimal(0);
         //订单原总价
         BigDecimal totalMoney1 = dct.getTotalMoney();
 
@@ -1307,6 +1307,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
+                slaveOrderEnti.setFreeGold(a);
+                slaveOrderEnti.setDiscountsMoney(a);
             } else {
                 //平台所得金额
                 BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
@@ -1323,6 +1325,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
                 slaveOrderEnti.setName(goodDTO.getName());
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
+                slaveOrderEnti.setFreeGold(a);
+                slaveOrderEnti.setDiscountsMoney(a);
             }
             slaveOrderEntityArrayList.add(slaveOrderEnti);
 
