@@ -166,6 +166,12 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         BigDecimal gift = clientUserDTO.getGift();
         clientUserDTO.setGift(gift.add(allGoods.getFreeGold()));
+        BigDecimal freeGold = allGoods.getFreeGold();
+        OrderDTO order1 = masterOrderService.getOrder(orderId);
+        BigDecimal giftMoney = order1.getGiftMoney();
+        BigDecimal subtract = giftMoney.subtract(freeGold);
+        order1.setGiftMoney(subtract);
+        masterOrderService.update(ConvertUtils.sourceToTarget(order1, MasterOrderDTO.class));
         clientUserService.update(clientUserDTO);
         String clientId = clientUserDTO.getClientId();
           if(StringUtils.isNotBlank(clientId)){
@@ -179,6 +185,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
             }
         }
+
         return new Result();
     }
 
