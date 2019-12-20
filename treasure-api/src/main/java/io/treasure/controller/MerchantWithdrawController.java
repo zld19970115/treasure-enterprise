@@ -249,7 +249,11 @@ public class MerchantWithdrawController {
                 aDouble=0.00;
             }
             String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(martId));
-            BigDecimal v = new BigDecimal(allMoney);
+            BigDecimal v = new BigDecimal(0);
+            if(allMoney!="null"){
+                v = new BigDecimal(allMoney);
+            }
+
             BigDecimal a = bigDecimal.subtract(v);
             double c = a.doubleValue();
             BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
