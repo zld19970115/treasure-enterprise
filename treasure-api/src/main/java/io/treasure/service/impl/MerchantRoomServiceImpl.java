@@ -133,7 +133,6 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
         for (MerchantRoomParamsSetDTO s:list) {
             MasterOrderEntity orderByReservationId = masterOrderService.getOrderByReservationId(s.getId());
             if(orderByReservationId!=null){
-
                 ClientUserDTO clientUserDTO = clientUserService.get(orderByReservationId.getCreator());
                 s.setClientUserDTO(clientUserDTO);
             }
