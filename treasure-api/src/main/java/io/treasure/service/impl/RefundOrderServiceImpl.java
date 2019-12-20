@@ -93,12 +93,16 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         for (RefundOrderDTO s:list) {
             String orderId = s.getOrderId();
             MasterOrderEntity order = masterOrderService.selectByOrderId(orderId);
+            SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(s.getOrderId(), s.getGoodId());
             //s.setPayMode(order.getPayMode());
             if(order!=null){
             if(order.getReservationId()!=null){
                 MerchantRoomParamsSetDTO merchantRoomParamsSetDTO = this.merchantRoomParamsSetService.get(order.getReservationId());
                 s.setRoomName(merchantRoomParamsSetDTO.getRoomName());
                  }
+                BigDecimal freeGold = allGoods.getFreeGold();
+                BigDecimal totalMoney = s.getTotalMoney();
+                s.setTotalMoney(totalMoney.add(freeGold));
             }
         }
         return getPageData(list, pages.getTotal(), RefundOrderDTO.class);

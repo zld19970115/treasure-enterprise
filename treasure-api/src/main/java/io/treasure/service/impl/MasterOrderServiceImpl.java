@@ -806,6 +806,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             params.put("merchantId", null);
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
+        for (MerchantOrderDTO s:list) {
+            BigDecimal payMoney = s.getPayMoney();
+            BigDecimal giftMoney = s.getGiftMoney();
+            s.setPayMoney(payMoney.add(giftMoney));
+        }
 //        for (MerchantOrderDTO orderDTO : list) {
 //
 //                BigDecimal a = orderDTO.getPayMoney();
@@ -842,14 +847,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             params.put("merchantId", null);
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant2(params);
-//        for (MerchantOrderDTO orderDTO : list) {
-//            BigDecimal a = orderDTO.getPayMoney();
-//            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
-//            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
-//                a = a.add(orderEntity.getPayMoney());
-//            }
-//            orderDTO.setPayMoney(a);
-//        }
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal a = orderDTO.getPayMoney();
+            BigDecimal giftMoney = orderDTO.getGiftMoney();
+            orderDTO.setPayMoney(a.add(giftMoney));
+        }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
 
@@ -1758,7 +1760,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     order.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
                 BigDecimal discountsMoney = new BigDecimal("0");
                 BigDecimal payMoney = order.getPayMoney();
-                AllPayMoney = AllPayMoney.add(payMoney);
+                BigDecimal giftMoney = order.getGiftMoney();
+                AllPayMoney = AllPayMoney.add(payMoney.add(giftMoney));
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
                 for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));
@@ -1811,7 +1814,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
-            order.setAllPaymoney(order.getPayMoney());
+            BigDecimal payMoney = order.getPayMoney();
+            BigDecimal giftMoney = order.getGiftMoney();
+            order.setAllPaymoney(payMoney.add(giftMoney));
             order.setDiscountsMoney(d);
         }
 
@@ -1832,6 +1837,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             List<SlaveOrderEntity> orderGoods = goodService.getRefundGoods(order.getOrderId(), goodId);
             for (SlaveOrderEntity og : orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
+                BigDecimal giftMoney = og.getFreeGold();
+                BigDecimal payMoney = og.getPayMoney();
+                og.setPayMoney(giftMoney.add(payMoney));
             }
             order.setSlaveOrder(orderGoods);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
@@ -2109,16 +2117,21 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
         for (MerchantOrderDTO orderDTO : list) {
-            BigDecimal a = orderDTO.getPayMoney();
+            BigDecimal payMoney = orderDTO.getPayMoney();
+            BigDecimal giftMoney = orderDTO.getGiftMoney();
+            BigDecimal a = payMoney.add(giftMoney);
             if (orderDTO.getStatus() == 8) {
                 a = new BigDecimal("0");
             }
             List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
             for (MasterOrderEntity orderEntity : masterOrderEntities1) {
                 if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()||orderEntity.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()||orderEntity.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
-                    a = a.add(orderEntity.getPayMoney());
+                    BigDecimal giftMoneys = orderEntity.getGiftMoney();
+                    BigDecimal payMoneys = orderEntity.getPayMoney();
+                    a = a.add(payMoneys.add(giftMoneys));
                 }
             }
+
 //            if (a.compareTo(BigDecimal.ZERO)==0){
 //                List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(orderDTO.getOrderId());
 //                if(masterOrderEntities.size()!=0){
