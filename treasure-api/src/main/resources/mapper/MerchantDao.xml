@@ -68,4 +68,14 @@
             resultType="io.treasure.entity.MerchantEntity">
         select * from ct_merchant where id=#{id}
     </select>
+    
+    <select id="getMerchantByCategoryId" resultType="io.treasure.dto.MerchantDTO">
+        select * from ct_merchant
+        where
+        1=1
+        and status=1
+        <if test="categoryId != null and categoryId!='' ">
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
+        </if>
+    </select>
 </mapper>
