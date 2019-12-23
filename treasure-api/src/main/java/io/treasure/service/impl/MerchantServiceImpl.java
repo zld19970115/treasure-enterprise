@@ -104,6 +104,22 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public PageData<MerchantDTO> getMerchantByCategoryId(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<MerchantDTO> list = baseDao.getMerchantByCategoryId(params);
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
     public List<MerchantDTO> getListByOn() {
         return baseDao.getListByOn();
     }
