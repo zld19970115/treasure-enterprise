@@ -349,4 +349,18 @@ public class MerchantController {
     }
 
 
+    @GetMapping("getMerchantByCategoryId")
+    @ApiOperation("查询某分类下店铺")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query",required=true, dataType="String")
+    })
+    public Result<PageData<MerchantDTO>> queryClassifyMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.getMerchantByCategoryId(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+
 }
