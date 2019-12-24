@@ -11,14 +11,10 @@ import io.treasure.entity.MerchantEntity;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.MerchantRoomService;
 import io.treasure.service.MerchantService;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -109,6 +105,22 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
         //查询
         List<MerchantDTO> list = baseDao.getMerchantByCategoryId(params);
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
+    public PageData<MerchantDTO> getLikeMerchant(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<MerchantDTO> list = baseDao.getLikeMerchant(params);
         for (MerchantDTO s:list) {
             int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
             int availableRooms = merchantRoomService.selectCountRoom(s.getId());
