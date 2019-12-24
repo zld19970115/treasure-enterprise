@@ -48,10 +48,12 @@ ApiIndexController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String")
+            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MerchantDTO> page = merchantService.queryAllPage(params);
+        PageData<MerchantDTO> page = merchantService.getLikeMerchant(params);
 
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
