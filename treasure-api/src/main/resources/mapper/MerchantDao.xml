@@ -70,12 +70,20 @@
     </select>
     
     <select id="getMerchantByCategoryId" resultType="io.treasure.dto.MerchantDTO">
-        select * from ct_merchant
-        where
-        1=1
-        and status=1
+        select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        FROM ct_merchant having status=1
         <if test="categoryId != null and categoryId!='' ">
             and categoryId  like  CONCAT('%',#{categoryId},'%')
+        </if>
+    </select>
+
+    <select id="getLikeMerchant" resultType="io.treasure.dto.MerchantDTO">
+        select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        FROM ct_merchant having status=1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
         </if>
     </select>
 </mapper>
