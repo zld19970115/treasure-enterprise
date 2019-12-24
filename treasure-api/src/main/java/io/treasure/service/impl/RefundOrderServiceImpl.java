@@ -207,7 +207,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         slaveOrderService.updateSlaveOrderStatus(7,orderId,goodId);
         baseDao.updateDispose(2,orderId,goodId);
         OrderDTO order = masterOrderService.getOrder(orderId);
-        ClientUserDTO clientUserDTO = clientUserService.get(order.getMerchantId());
+        ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
         String clientId = clientUserDTO.getClientId();
         if(StringUtils.isNotBlank(clientId)){
             AppPushUtil.pushToSingleClient("商家不同意退菜", "您的退菜申请未通过", "", clientId);
