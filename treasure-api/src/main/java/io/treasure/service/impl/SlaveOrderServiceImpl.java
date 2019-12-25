@@ -144,31 +144,13 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             BigDecimal quantity1 = allGoods.getQuantity();
             if (quantity1.compareTo(quantity) >= 0) {
                 if (allGoods.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
-                    this.updateSlaveOrderStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue(), orderId, goodId);
-                } else if (allGoods.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
-                    this.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(), orderId, goodId);
-                    MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
                     if (allGoods.getCreator() == null) {
                         result.error("此菜品无法退菜！无创建用户信息！");
                     }
                     if (allGoods.getPayMoney().compareTo(new BigDecimal(0)) == 0) {
                         result.error("此菜品价格为0元，无法退菜！");
                     }
-                    MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
-                    MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-                    String clientId = merchantUserDTO.getClientId();
-                    Result result1 = payService.refundByGood(masterOrderEntity.getPayMode(), orderId, allGoods.getPayMoney().toString(), goodId);
-                    if (result1.success()) {
-                        boolean b = (boolean) result1.getData();
-                        if (!b) {
-                            return result.error("退款失败！请重新退菜！");
-                        }else {
-                            if(StringUtils.isNotBlank(clientId)){
-                                AppPushUtil.pushToSingleMerchant("订单管理","您有新的退菜信息，请及时处理！","",clientId);
-                            }
-                        }
-                    } else {
-                        return result.error(result1.getMsg());
+                    this.updateSlaveOrderStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue(), orderId, goodId);
                     }
                 } else {
                     result.error("此菜品无法退菜！【菜品状态错误】");
@@ -234,7 +216,6 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             if (StringUtils.isNotBlank(clientId)) {
                 AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
             }
-        }
         return result;
     }
 
