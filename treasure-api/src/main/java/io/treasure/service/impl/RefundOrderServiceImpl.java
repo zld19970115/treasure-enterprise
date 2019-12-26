@@ -146,7 +146,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         //获取订单菜品表退菜信息
         SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
             baseDao.updateDispose(2,orderId,goodId);
-            this.updateMasterOrderPayMoney(orderId,goodId);
+//            this.updateMasterOrderPayMoney(orderId,goodId);
             //获取主订单信息
             OrderDTO order = masterOrderService.getOrder(orderId);
             // 获取主订单实付金额
@@ -167,6 +167,8 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 }
             }
             if(num==orderGoods.size()){
+                System.out.println("zhangguanglin"+num);
+                System.out.println("zhangguanglin"+orderGoods.size());
                 masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
                 if(order.getReservationId()!=null){
                     merchantRoomParamsSetService.updateStatus(order.getReservationId(),0);
