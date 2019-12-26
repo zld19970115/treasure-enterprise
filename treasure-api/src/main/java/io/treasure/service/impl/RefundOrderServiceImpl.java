@@ -155,6 +155,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             BigDecimal  totalRefundMoney=allGoods.getPayMoney();
             Result result = payService.refundByGood(orderId, totalRefundMoney.toString(), goodId);
             Boolean data = (Boolean) result.getData();
+        System.out.println("zhangguanglin"+data);
             if(data){
                 BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
                 masterOrderService.updatePayMoney(newPayMoney,orderId);
