@@ -144,13 +144,14 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             BigDecimal quantity1 = allGoods.getQuantity();
             if (quantity1.compareTo(quantity) >= 0) {
                 if (allGoods.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
+                    this.updateSlaveOrderStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue(), orderId, goodId);
+                } else if (allGoods.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
+                    this.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(), orderId, goodId);
                     if (allGoods.getCreator() == null) {
                         result.error("此菜品无法退菜！无创建用户信息！");
                     }
                     if (allGoods.getPayMoney().compareTo(new BigDecimal(0)) == 0) {
                         result.error("此菜品价格为0元，无法退菜！");
-                    }
-                    this.updateSlaveOrderStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue(), orderId, goodId);
                     }
                 } else {
                     result.error("此菜品无法退菜！【菜品状态错误】");
@@ -216,6 +217,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             if (StringUtils.isNotBlank(clientId)) {
                 AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
             }
+        }
         return result;
     }
 

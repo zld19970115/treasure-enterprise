@@ -139,8 +139,6 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result agreeToARefund(String orderId, Long goodId) {
-        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
-        if(allGoods.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
         slaveOrderService.updateSlaveOrderStatus(8,orderId,goodId);
         baseDao.updateDispose(2,orderId,goodId);
         this.updateMasterOrderPayMoney(orderId,goodId);
@@ -166,6 +164,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         }
         BigDecimal n=new BigDecimal("0");
         ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
+        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
         BigDecimal gift = clientUserDTO.getGift();
         clientUserDTO.setGift(gift.add(allGoods.getFreeGold()));
         BigDecimal freeGold = allGoods.getFreeGold();
@@ -199,7 +198,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
             }
         }
-        }
+
         return new Result();
     }
 

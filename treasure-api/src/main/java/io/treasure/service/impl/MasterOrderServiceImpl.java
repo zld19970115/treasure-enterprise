@@ -80,6 +80,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private MerchantUserService merchantUserService;
 
+    @Autowired
+    private StatsDayDetailService statsDayDetailService;
+
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -658,6 +661,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
         int i = baseDao.insert(masterOrderEntity);
+        statsDayDetailService.creatreStatsDayDetail(masterOrderEntity);
+
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
         }
