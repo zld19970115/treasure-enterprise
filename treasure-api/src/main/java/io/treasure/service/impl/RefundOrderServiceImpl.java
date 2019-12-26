@@ -131,8 +131,11 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         //退菜金额=退菜数量*退菜单价
         BigDecimal  totalRefundMoney=allGoods.getPayMoney();
         result=payService.refundByGood(orderId,totalRefundMoney.toString(),goodId);
-        BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
-        masterOrderService.updatePayMoney(newPayMoney,orderId);
+        Boolean data = (Boolean) result.getData();
+        if(data){
+            BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
+            masterOrderService.updatePayMoney(newPayMoney,orderId);
+        }
         return result;
     }
 
@@ -140,65 +143,76 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
     @Transactional(rollbackFor = Exception.class)
     public Result agreeToARefund(String orderId, Long goodId) {
         slaveOrderService.updateSlaveOrderStatus(8,orderId,goodId);
-        baseDao.updateDispose(2,orderId,goodId);
-        this.updateMasterOrderPayMoney(orderId,goodId);
-        OrderDTO order = masterOrderService.getOrder(orderId);
-        List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        int num=0;
-        for (SlaveOrderEntity soe:orderGoods) {
-            if(soe.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
-                num=num+1;
+        //获取订单菜品表退菜信息
+        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
+            baseDao.updateDispose(2,orderId,goodId);
+            this.updateMasterOrderPayMoney(orderId,goodId);
+            //获取主订单信息
+            OrderDTO order = masterOrderService.getOrder(orderId);
+            // 获取主订单实付金额
+            BigDecimal payMoney = order.getPayMoney();
+            //退菜金额=退菜数量*退菜单价
+            BigDecimal  totalRefundMoney=allGoods.getPayMoney();
+            Result result = payService.refundByGood(orderId, totalRefundMoney.toString(), goodId);
+            Boolean data = (Boolean) result.getData();
+            if(data){
+                BigDecimal newPayMoney = payMoney.subtract(totalRefundMoney);
+                masterOrderService.updatePayMoney(newPayMoney,orderId);
             }
-        }
-        if(num==orderGoods.size()){
-            masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
-            if(order.getReservationId()!=null){
-                merchantRoomParamsSetService.updateStatus(order.getReservationId(),0);
-            }else{
-                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                if(roomOrderByPorderId!=null){
-                    merchantRoomParamsSetService.updateStatus(roomOrderByPorderId.getReservationId(),0);
-                    masterOrderService.updateOrderStatus(8,roomOrderByPorderId.getOrderId());
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
+            int num=0;
+            for (SlaveOrderEntity soe:orderGoods) {
+                if(soe.getStatus()==Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                    num=num+1;
                 }
             }
-        }
-        BigDecimal n=new BigDecimal("0");
-        ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
-        SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderId, goodId);
-        BigDecimal gift = clientUserDTO.getGift();
-        clientUserDTO.setGift(gift.add(allGoods.getFreeGold()));
-        BigDecimal freeGold = allGoods.getFreeGold();
-        OrderDTO order1 = masterOrderService.getOrder(orderId);
-        BigDecimal giftMoney = order1.getGiftMoney();
-        BigDecimal subtract = giftMoney.subtract(freeGold);
-        order1.setGiftMoney(subtract);
-        //退菜更新此订单中平台所得和用户所得金额
-        BigDecimal platformBrokerage = allGoods.getPlatformBrokerage();
-        BigDecimal merchantProceeds = allGoods.getMerchantProceeds();
-        BigDecimal platformBrokerage1 = order1.getPlatformBrokerage();
-        BigDecimal merchantProceeds1 = order1.getMerchantProceeds();
-        if(merchantProceeds1.compareTo(n)>1 && platformBrokerage1.compareTo(n)>1){
-            order1.setPlatformBrokerage(platformBrokerage1.subtract(platformBrokerage));
-            order1.setMerchantProceeds(merchantProceeds1.subtract(merchantProceeds));
-        }
-        masterOrderService.update(ConvertUtils.sourceToTarget(order1, MasterOrderDTO.class));
-        clientUserService.update(clientUserDTO);
-        allGoods.setMerchantProceeds(n);
-        allGoods.setPlatformBrokerage(n);
-        slaveOrderService.update(allGoods);
-        String clientId = clientUserDTO.getClientId();
-          if(StringUtils.isNotBlank(clientId)){
-             AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
-           }
-        List<OrderDTO> affiliateOrde = masterOrderService.getAffiliateOrde(orderId);
-        for (OrderDTO orderDTO : affiliateOrde) {
-            if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
-                merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-                orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
-                masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+            if(num==orderGoods.size()){
+                masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
+                if(order.getReservationId()!=null){
+                    merchantRoomParamsSetService.updateStatus(order.getReservationId(),0);
+                }else{
+                    MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                    if(roomOrderByPorderId!=null){
+                        merchantRoomParamsSetService.updateStatus(roomOrderByPorderId.getReservationId(),0);
+                        masterOrderService.updateOrderStatus(8,roomOrderByPorderId.getOrderId());
+                    }
+                }
             }
-        }
-
+            BigDecimal n=new BigDecimal("0");
+            ClientUserDTO clientUserDTO = clientUserService.get(order.getCreator());
+            BigDecimal gift = clientUserDTO.getGift();
+            clientUserDTO.setGift(gift.add(allGoods.getFreeGold()));
+            BigDecimal freeGold = allGoods.getFreeGold();
+            OrderDTO order1 = masterOrderService.getOrder(orderId);
+            BigDecimal giftMoney = order1.getGiftMoney();
+            BigDecimal subtract = giftMoney.subtract(freeGold);
+            order1.setGiftMoney(subtract);
+            //退菜更新此订单中平台所得和用户所得金额
+            BigDecimal platformBrokerage = allGoods.getPlatformBrokerage();
+            BigDecimal merchantProceeds = allGoods.getMerchantProceeds();
+            BigDecimal platformBrokerage1 = order1.getPlatformBrokerage();
+            BigDecimal merchantProceeds1 = order1.getMerchantProceeds();
+            if(merchantProceeds1.compareTo(n)>1 && platformBrokerage1.compareTo(n)>1){
+                order1.setPlatformBrokerage(platformBrokerage1.subtract(platformBrokerage));
+                order1.setMerchantProceeds(merchantProceeds1.subtract(merchantProceeds));
+            }
+            masterOrderService.update(ConvertUtils.sourceToTarget(order1, MasterOrderDTO.class));
+            clientUserService.update(clientUserDTO);
+            allGoods.setMerchantProceeds(n);
+            allGoods.setPlatformBrokerage(n);
+            slaveOrderService.update(allGoods);
+            String clientId = clientUserDTO.getClientId();
+            if(StringUtils.isNotBlank(clientId)){
+                AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
+            }
+            List<OrderDTO> affiliateOrde = masterOrderService.getAffiliateOrde(orderId);
+            for (OrderDTO orderDTO : affiliateOrde) {
+                if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
+                    merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                    orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+                }
+            }
         return new Result();
     }
 
