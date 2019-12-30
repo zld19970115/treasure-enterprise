@@ -32,7 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/merchantroomparams")
 @Api(tags="商户端包房参数管理")
-public class MerchantRoomParamsController {
+public class  MerchantRoomParamsController {
     @Autowired
     private MerchantRoomParamsService merchantRoomParamsService;
     @CrossOrigin

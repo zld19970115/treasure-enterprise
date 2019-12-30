@@ -16,6 +16,7 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantUserService;
 
 import io.treasure.service.TokenService;
@@ -50,7 +51,8 @@ public class MerchantUserController {
     private TokenService tokenService;
     @Autowired
     private SMSConfig smsConfig;
-
+    @Autowired
+    private MasterOrderService masterOrderService;
     @CrossOrigin
     @Login
     @GetMapping("page")
@@ -457,5 +459,28 @@ public class MerchantUserController {
             map.put("token",byUserId.getToken());
         }
         return new Result<Map>().ok(map);
+    }
+
+    @GetMapping("masterCancel")
+    @ApiOperation("商户端注销")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "masterUserId", value = "商户用户ID", required = true, paramType = "query", dataType = "long")})
+    public Result masterCancel(long masterUserId){
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectById(masterUserId);
+        Map params = new HashMap();
+        String merchantId = merchantUserEntity.getMerchantid();
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("merchantId",null);
+        }
+        List list = masterOrderService.selectByMasterId(params);
+        if (list.size()!=0){
+            return new Result().error("您有订单未处理");
+        }
+        merchantUserEntity.setStatus(3);
+        merchantUserService.updateById(merchantUserEntity);
+        return new Result().ok("注销成功");
     }
 }
