@@ -54,4 +54,24 @@ public class ApiMiniAppController {
         }
         return  new Result().ok(result);
     }
+
+    @GetMapping("/merchant/login")
+    @ApiOperation(value="小程序商户登录凭证校验")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="code",value="登录时获取的 code",required=true,paramType="query"),
+    })
+    public Result merchantLogin(String code) {
+        WxMaService wxMaService=new WxMaServiceImpl();
+        wxMaConfig.setAppid("wx37dffd395a91d089");
+        wxMaConfig.setSecret("0b8e57ffef72294720a43fda4dd1afde");
+        wxMaService.setWxMaConfig(wxMaConfig);
+        WxMaJscode2SessionResult result= null;
+        try {
+            result = wxMaService.getUserService().getSessionInfo(code);
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+            return  new Result().error(e.getMessage());
+        }
+        return  new Result().ok(result);
+    }
 }
