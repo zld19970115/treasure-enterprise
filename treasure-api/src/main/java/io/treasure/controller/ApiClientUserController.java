@@ -336,6 +336,19 @@ public class ApiClientUserController {
         }
         return new Result().ok(clientUserEntity.getMobile());
     }
-
+    @GetMapping("userCancel")
+    @ApiOperation("用户注销")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result userCancel(@RequestParam long userId) {
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity == null) {
+            return new Result().error("此用户不存在");
+        }
+        clientUserEntity.setStatus(9);
+        clientUserService.updateById(clientUserEntity);
+        return new Result().ok("用户已注销");
+    }
 
 }
