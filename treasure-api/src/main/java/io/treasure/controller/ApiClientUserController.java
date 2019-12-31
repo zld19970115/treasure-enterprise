@@ -266,9 +266,10 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "openId", value = "微信用户唯一标识", required = true, paramType = "query", dataType = "String")})
     public Result<Map> estimateOpenId(String openId) {
         ClientUserEntity userByOpenId = clientUserService.getUserByOpenId(openId);
+
         Map map = new HashMap();
         boolean c = false;
-        if (userByOpenId == null) {
+        if (userByOpenId == null || userByOpenId.getStatus()==9 ) {
             c = c;
             map.put("boolean", c);
         } else {
@@ -291,7 +292,7 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String")})
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
-        if(userByPhone.getStatus()==3){
+        if(userByPhone.getStatus()==9){
             return new Result().error("该手机号已注销");
         }
         ClientUserEntity user = new ClientUserEntity();

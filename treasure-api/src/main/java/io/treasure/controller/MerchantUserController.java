@@ -415,6 +415,9 @@ public class MerchantUserController {
             @ApiImplicitParam(name="clientId",value="个推ID",required=true,paramType="query",dataType="String")})
     public Result<Map<String,Object>> estimateOpenId(String openId,String mobile,String password,String clientId){
         MerchantUserEntity userByPhone = merchantUserService.getUserByPhone(mobile);
+        if(userByPhone.getStatus()==3){
+            return new Result().error("该手机号已注销");
+        }
         MerchantUserEntity user = new MerchantUserEntity();
         Map<String, Object> map = new HashMap<>();
         if(userByPhone!=null){
@@ -448,7 +451,7 @@ public class MerchantUserController {
         MerchantUserEntity userByOpenId = merchantUserService.getUserByOpenId(openId);
         Map map=new HashMap();
         boolean c=false;
-        if(userByOpenId==null){
+        if(userByOpenId==null || userByOpenId.getStatus()==3 ){
             c=c;
             map.put("boolean",c);
         }else {
