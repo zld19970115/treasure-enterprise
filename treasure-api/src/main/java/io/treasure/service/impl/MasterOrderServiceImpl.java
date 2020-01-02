@@ -376,11 +376,25 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                    orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+                    BigDecimal giftMoney = orderDTO.getGiftMoney();
+                    BigDecimal num=new BigDecimal("0");
+                    if(giftMoney.compareTo(num)==1){
+                        BigDecimal gift = clientUserDTO.getGift();
+                        clientUserDTO.setGift(giftMoney.add(gift));
+                        clientUserService.update(clientUserDTO);
+                    }
                 }
             }
 
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                BigDecimal giftMoney = order.getGiftMoney();
+                BigDecimal num=new BigDecimal("0");
+                if(giftMoney.compareTo(num)==1){
+                    BigDecimal gift = clientUserDTO.getGift();
+                    clientUserDTO.setGift(giftMoney.add(gift));
+                    clientUserService.update(clientUserDTO);
+                }
                 if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
                     List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
                     for (MasterOrderEntity s : orderByPOrderId) {
