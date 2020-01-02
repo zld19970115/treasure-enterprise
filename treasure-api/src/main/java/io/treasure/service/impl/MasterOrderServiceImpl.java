@@ -270,6 +270,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+
+
+
+
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
         Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
@@ -1324,6 +1328,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
                 slaveOrderEnti.setFreeGold(a);
                 slaveOrderEnti.setDiscountsMoney(a);
+                slaveOrderEnti.setNewPrice(price);
             } else {
                 //平台所得金额
                 BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);

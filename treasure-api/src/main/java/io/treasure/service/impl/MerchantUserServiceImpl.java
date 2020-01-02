@@ -56,6 +56,9 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         if(!user.getPassword().equals(DigestUtils.sha256Hex(loginDTO.getPassword()))){
             throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
         }
+        if(user.getStatus()==3){
+            throw new RenException("账号已注销");
+        }
         //获取登录token
         TokenEntity tokenEntity = tokenService.createToken(user.getId());
         Map<String, Object> map = new HashMap<>(2);
