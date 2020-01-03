@@ -120,6 +120,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
             if (clientUserEntity != null) {
                 ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
                 if (clientUserEntity1 != null) {
+                    if (clientUserEntity1.getId()==clientUserEntity.getId() || clientUserEntity1.getId().equals(clientUserEntity.getId()) ){
+                        return new Result().error("请输入正确用户");
+                    }
                     BigDecimal mobileGift = clientUserEntity1.getGift();
                     BigDecimal info = new BigDecimal(10000);
                     if(mobileGift!=null){

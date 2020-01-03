@@ -251,7 +251,7 @@ public class MerchantUserController {
         //根据用户名判断是否已经注册过了
         MerchantUserEntity user = merchantUserService.getByMobiles(dto.getMobile());
         if(null!=user){
-            return new Result().error("改注册账号已存在，请换个账号重新注册!");
+            return new Result().error("此注册账号已存在，请换个账号重新注册!");
         }
         merchantUserService.insert(entity);
         return new Result().ok(entity.getId());
