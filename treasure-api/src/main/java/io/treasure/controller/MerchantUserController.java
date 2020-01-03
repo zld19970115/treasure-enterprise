@@ -249,7 +249,7 @@ public class MerchantUserController {
         //效验数据
         ValidatorUtils.validateEntity(dto);
         //根据用户名判断是否已经注册过了
-        MerchantUserEntity user = merchantUserService.getByMobile(dto.getMobile());
+        MerchantUserEntity user = merchantUserService.getByMobiles(dto.getMobile());
         if(null!=user){
             return new Result().error("改注册账号已存在，请换个账号重新注册!");
         }

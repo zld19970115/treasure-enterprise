@@ -233,4 +233,9 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         return baseDao.getByMobile(mobile);
     }
 
+   @Override
+    public MerchantUserEntity getByMobiles(String mobile) {
+        return baseDao.getByMobile(mobile);
+    }
+
 }
