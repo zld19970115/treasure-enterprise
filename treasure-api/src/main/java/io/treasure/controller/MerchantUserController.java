@@ -17,6 +17,7 @@ import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 
 import io.treasure.service.TokenService;
@@ -51,6 +52,8 @@ public class MerchantUserController {
     private TokenService tokenService;
     @Autowired
     private SMSConfig smsConfig;
+    @Autowired
+    private MerchantService merchantService;
     @Autowired
     private MasterOrderService masterOrderService;
     @CrossOrigin
@@ -477,6 +480,10 @@ public class MerchantUserController {
             params.put("merchantIdStr", str);
         }else{
             params.put("merchantId",null);
+        }
+        List list1 = merchantService.selectByMartId(params);
+        if (list1.size()!=0){
+            return new Result().error("您有商户未闭店，不可以注销");
         }
         List list = masterOrderService.selectByMasterId(params);
         if (list.size()!=0){
