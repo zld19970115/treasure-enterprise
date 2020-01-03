@@ -69,9 +69,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if(!user.getPassword().equals(DigestUtils.sha256Hex(dto.getPassword()))){
             throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
         }
-        if(user.getStatus()==9){
-            throw new RenException(14000,"用户已注销");
-        }
+//        if(user.getStatus()==9){
+//            throw new RenException(14000,"用户已注销");
+//        }
         //获取登录token
         TokenEntity tokenEntity = tokenService.createToken(user.getId());
 
