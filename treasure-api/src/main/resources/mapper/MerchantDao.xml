@@ -86,7 +86,7 @@
             and name  like  CONCAT('%',#{name},'%')
         </if>
     </select>
-    <select id="selectByMartId" resultType="io.treasure.entity.MerchantEntity">
+    <select id="selectByMartId" resultType="io.treasure.dto.MerchantDTO">
         select * from ct_merchant where status != 2
         and id in
         <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">

@@ -74,7 +74,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
-    public List<MerchantEntity> selectByMartId(Map<String, Object> params) {
+    public List<MerchantDTO> selectByMartId(Map<String, Object> params) {
         return baseDao.selectByMartId(params);
     }
 

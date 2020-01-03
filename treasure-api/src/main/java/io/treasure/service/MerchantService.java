@@ -23,7 +23,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     MerchantEntity  getByName(String name,int status);
     //闭店
     void closeShop(long id ,int status);
-    List<MerchantEntity>  selectByMartId(Map<String, Object> params);
+    List<MerchantDTO>  selectByMartId(Map<String, Object> params);
     PageData<MerchantDTO> queryPage(Map<String, Object> params);
 
     PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
