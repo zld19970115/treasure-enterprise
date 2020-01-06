@@ -69,7 +69,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if(!user.getPassword().equals(DigestUtils.sha256Hex(dto.getPassword()))){
             throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
         }
-
+//        if(user.getStatus()==9){
+//            throw new RenException(14000,"用户已注销");
+//        }
         //获取登录token
         TokenEntity tokenEntity = tokenService.createToken(user.getId());
 
@@ -118,6 +120,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
             if (clientUserEntity != null) {
                 ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
                 if (clientUserEntity1 != null) {
+                    if (clientUserEntity1.getId()==clientUserEntity.getId() || clientUserEntity1.getId().equals(clientUserEntity.getId()) ){
+                        return new Result().error("请输入正确用户");
+                    }
                     BigDecimal mobileGift = clientUserEntity1.getGift();
                     BigDecimal info = new BigDecimal(10000);
                     if(mobileGift!=null){

@@ -99,7 +99,7 @@ public class ApiWXAppPayController {
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
         HashMap<String, String> data = new HashMap<>();
-        data.put("body", "聚宝吃货支付");
+        data.put("body", description);
         data.put("out_trade_no",orderDTO.getOrderId()); //更改为新订单号
 //        data.put("device_info", "");//调用接口提交的终端设备号
         data.put("fee_type", "CNY");

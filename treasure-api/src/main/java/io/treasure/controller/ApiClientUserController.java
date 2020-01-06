@@ -21,9 +21,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.LoginDTO;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -51,6 +54,8 @@ import java.util.Map;
 public class ApiClientUserController {
     @Autowired
     private ClientUserService clientUserService;
+    @Autowired
+    private MasterOrderService masterOrderService;
     @Autowired
     private SMSConfig smsConfig;
     @Autowired
@@ -261,9 +266,10 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "openId", value = "微信用户唯一标识", required = true, paramType = "query", dataType = "String")})
     public Result<Map> estimateOpenId(String openId) {
         ClientUserEntity userByOpenId = clientUserService.getUserByOpenId(openId);
+
         Map map = new HashMap();
         boolean c = false;
-        if (userByOpenId == null) {
+        if (userByOpenId == null || userByOpenId.getStatus()==9 ) {
             c = c;
             map.put("boolean", c);
         } else {
@@ -286,6 +292,9 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String")})
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
+        if(userByPhone.getStatus()==9){
+            return new Result().error("该手机号已注销");
+        }
         ClientUserEntity user = new ClientUserEntity();
         Map<String, Object> map = new HashMap<>();
         if (userByPhone != null) {
@@ -346,6 +355,11 @@ public class ApiClientUserController {
         if (clientUserEntity == null) {
             return new Result().error("此用户不存在");
         }
+        List<MasterOrderEntity> list = masterOrderService.selectByUserId(userId);
+        if (list.size()!=0){
+            return new Result().error("您有订单未完成");
+        }
+
         clientUserEntity.setStatus(9);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("用户已注销");

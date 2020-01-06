@@ -123,6 +123,8 @@ public class MasterOrderEntity extends BaseEntity {
 	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Long updater;
 
+	private Long creator;
+
 	@TableField(exist=false)
 	private MerchantEntity merchantInfo;
 

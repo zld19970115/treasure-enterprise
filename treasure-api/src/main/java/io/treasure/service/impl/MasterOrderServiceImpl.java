@@ -80,8 +80,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private MerchantUserService merchantUserService;
 
-    @Autowired
-    private StatsDayDetailService statsDayDetailService;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -272,6 +270,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+
+
+
+
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
         Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
@@ -374,11 +376,25 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                    orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
+                    BigDecimal giftMoney = orderDTO.getGiftMoney();
+                    BigDecimal num=new BigDecimal("0");
+                    if(giftMoney.compareTo(num)==1){
+                        BigDecimal gift = clientUserDTO.getGift();
+                        clientUserDTO.setGift(giftMoney.add(gift));
+                        clientUserService.update(clientUserDTO);
+                    }
                 }
             }
 
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                BigDecimal giftMoney = order.getGiftMoney();
+                BigDecimal num=new BigDecimal("0");
+                if(giftMoney.compareTo(num)==1){
+                    BigDecimal gift = clientUserDTO.getGift();
+                    clientUserDTO.setGift(giftMoney.add(gift));
+                    clientUserService.update(clientUserDTO);
+                }
                 if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
                     List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
                     for (MasterOrderEntity s : orderByPOrderId) {
@@ -661,7 +677,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
         int i = baseDao.insert(masterOrderEntity);
-        statsDayDetailService.creatreStatsDayDetail(masterOrderEntity);
+
 
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
@@ -858,6 +874,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             orderDTO.setPayMoney(a.add(giftMoney));
         }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
+
+    @Override
+    public  List<MasterOrderEntity> selectByUserId(long userId) {
+        return baseDao.selectByUserId(userId);
+    }
+
+    @Override
+    public List<MasterOrderEntity> selectByMasterId(Map<String, Object> params) {
+        return baseDao.selectByMasterId(params);
     }
 
     @Override
@@ -1316,6 +1342,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEnti.setIcon(goodDTO.getIcon());
                 slaveOrderEnti.setFreeGold(a);
                 slaveOrderEnti.setDiscountsMoney(a);
+                slaveOrderEnti.setNewPrice(price);
             } else {
                 //平台所得金额
                 BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);

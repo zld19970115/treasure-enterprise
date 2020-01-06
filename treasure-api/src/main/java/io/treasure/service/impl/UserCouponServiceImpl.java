@@ -10,6 +10,7 @@ import io.treasure.service.UserCouponService;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 @Service
@@ -36,7 +37,7 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
     }
 
     @Override
-    public double selectGift(Long userId) {
+    public BigDecimal selectGift(Long userId) {
         return baseDao.selectGift(userId);
     }
 

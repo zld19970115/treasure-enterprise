@@ -22,6 +22,7 @@ import java.util.List;
 public interface MerchantUserService extends CrudService<MerchantUserEntity, MerchantUserDTO> {
     //根据 手机号码/注册账号查询
     MerchantUserEntity getByMobile(String mobile);
+    MerchantUserEntity getByMobiles(String mobile);
 
     //用户登陆
     Map<String, Object> login(LoginDTO loginDTO);
