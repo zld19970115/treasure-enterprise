@@ -48,7 +48,7 @@
     </update>
 
 
-    <select id="selectGift" parameterType="io.treasure.entity.UserCouponEntity" resultType="Double">
+    <select id="selectGift" parameterType="io.treasure.entity.UserCouponEntity" resultType="java.math.BigDecimal">
     select gift from ct_client_user where id = #{userId}
 
 </select>

@@ -6,12 +6,13 @@ import io.treasure.entity.UserCouponEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface UserCouponDao  extends BaseDao<UserCouponEntity> {
     List selectByUserId(@Param("userId") Long userId, @Param("martId") long martId, @Param("money") double money);
-    double  selectGift(Long userId);
+    BigDecimal selectGift(Long userId);
     UserCouponEntity   selectByCouponId(@Param("couponId") long couponId,@Param("userId") long userId);
     List  selectMyCouponByUserId(long userId);
     List<MerchantCouponEntity>   selectMartCoupon(@Param("userId") Long userId, @Param("martId") long martId);

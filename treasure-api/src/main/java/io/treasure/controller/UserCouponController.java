@@ -9,6 +9,8 @@ import io.treasure.entity.UserCouponEntity;
 import io.treasure.service.impl.UserCouponServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -77,7 +79,7 @@ public class UserCouponController {
     @GetMapping("/selectGift")
     @ApiOperation("查询用户赠送金")
     public Result selectGift(@RequestParam Long userId){
-        double gift = userCouponService.selectGift(userId);
+        BigDecimal gift = userCouponService.selectGift(userId);
         return  new  Result().ok(gift);
     }
     @GetMapping("/myCoupon")
