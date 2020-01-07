@@ -108,7 +108,7 @@ public class MerchantController {
             return new Result().error("该商户您已经注册过了！");
         }
 
-        dto.setStatus(Common.STATUS_ON.getStatus());
+        dto.setStatus(Common.STATUS_CLOSE.getStatus());
         dto.setCreateDate(new Date());
         dto.setAuditstatus(Audit.STATUS_NO.getStatus());
         merchantService.save(dto);
