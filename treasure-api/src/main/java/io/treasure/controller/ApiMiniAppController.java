@@ -72,6 +72,6 @@ public class ApiMiniAppController {
             e.printStackTrace();
             return  new Result().error(e.getMessage());
         }
-        return  new Result().ok(result);
+        return   new Result().ok(result);
     }
 }
