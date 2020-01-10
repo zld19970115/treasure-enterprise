@@ -7,6 +7,7 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.WXPayConstants;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
@@ -23,6 +24,7 @@ import io.treasure.entity.StimmeEntity;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
+import io.treasure.utils.SendSMSUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,9 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
+    @Autowired
+    private SMSConfig smsConfig;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -180,6 +185,9 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
+        if(null != merchantDto.getMobile()){
+            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
+        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
