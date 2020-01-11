@@ -654,7 +654,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-
+            MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+            SendSMSUtil.sendNewOrder(merchantDTO.getMobile(),smsConfig);
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
