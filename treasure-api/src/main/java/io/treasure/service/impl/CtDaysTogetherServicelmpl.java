@@ -49,17 +49,27 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             BigDecimal merchantProceeds = cdt.getMerchantProceeds();
             BigDecimal platformBrokerage = cdt.getPlatformBrokerage();
             BigDecimal serviceChanrge = cdt.getServiceChanrge();
+            BigDecimal realityMoney = cdt.getRealityMoney();
+            BigDecimal merchantDiscountAmount = cdt.getMerchantDiscountAmount();
+            BigDecimal giftMoney = cdt.getGiftMoney();
 
 
             BigDecimal neworderTotal = orderTotal.add(sdde.getOrderTotal());
             BigDecimal newmerchantProceeds = merchantProceeds.add(sdde.getMerchantProceeds());
             BigDecimal newplatformBrokerage = platformBrokerage.add(sdde.getPlatformBrokerage());
             BigDecimal newserviceChanrge = serviceChanrge.add(sdde.getServiceCharge());
+            BigDecimal newrealityMoney = realityMoney.add(sdde.getRealityMoney());
+            BigDecimal newmerchantDiscountAmount = merchantDiscountAmount.add(sdde.getMerchantDiscountAmount());
+            BigDecimal newgiftMoney = giftMoney.add(sdde.getGiftMoney());
+
 
             cdt.setOrderTotal(neworderTotal);
             cdt.setMerchantProceeds(newmerchantProceeds);
             cdt.setPlatformBrokerage(newplatformBrokerage);
             cdt.setServiceChanrge(newserviceChanrge);
+            cdt.setRealityMoney(newrealityMoney);
+            cdt.setMerchantDiscountAmount(newmerchantDiscountAmount);
+            cdt.setGiftMoney(newgiftMoney);
 
             int i = baseDao.updateById(cdt);
             c=i;
@@ -77,6 +87,9 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             cdte.setServiceChanrge(sdde.getServiceCharge());
             cdte.setMerchantProceeds(sdde.getMerchantProceeds());
             cdte.setPlatformBrokerage(sdde.getPlatformBrokerage());
+            cdt.setRealityMoney(sdde.getRealityMoney());
+            cdt.setMerchantDiscountAmount(sdde.getMerchantDiscountAmount());
+            cdt.setGiftMoney(sdde.getGiftMoney());
             int insert = baseDao.insert(cdte);
             c=insert;
         }
