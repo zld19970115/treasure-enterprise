@@ -71,10 +71,9 @@ public class ApiAppVersionController {
     @ApiOperation("获取更新信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name="appId",value="appId",required=true,paramType="query"),
-            @ApiImplicitParam(name="version",value="版本号",required=true,paramType="query")
     })
-    public Result<AppVersionDTO> getUpdateInfo(String appId,String version){
-        AppVersionDTO data = appVersionService.getUpdateInfo(appId,version);
+    public Result<AppVersionDTO> getUpdateInfo(String appId){
+        AppVersionDTO data = appVersionService.getUpdateInfo(appId);
 
         return new Result<AppVersionDTO>().ok(data);
     }

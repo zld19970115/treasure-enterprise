@@ -35,7 +35,8 @@ public class AppVersionServiceImpl extends CrudServiceImpl<AppVersionDao, AppVer
 
 
     @Override
-    public AppVersionDTO getUpdateInfo(String appId, String version) {
+    public AppVersionDTO getUpdateInfo(String appId) {
+        String version=baseDao.getMaxVersion(appId);
         AppVersionEntity appVersionEntity=baseDao.selectOne(getUpdateInfoWrapper(appId,version));
         AppVersionDTO appVersionDTO=ConvertUtils.sourceToTarget(appVersionEntity, AppVersionDTO.class);
         return appVersionDTO;

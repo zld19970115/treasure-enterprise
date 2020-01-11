@@ -14,5 +14,5 @@ import io.treasure.common.service.CrudService;
  */
 public interface AppVersionService extends CrudService<AppVersionEntity, AppVersionDTO> {
 
-    AppVersionDTO getUpdateInfo(String appId, String version);
+    AppVersionDTO getUpdateInfo(String appId);
 }

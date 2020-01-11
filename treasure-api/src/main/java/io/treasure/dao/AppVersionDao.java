@@ -4,6 +4,7 @@ import io.treasure.entity.AppVersionEntity;
 import io.treasure.common.dao.BaseDao;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * APP版本号表
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AppVersionDao extends BaseDao<AppVersionEntity> {
-	
+
+    String getMaxVersion(@Param("appId")String appId);
 }
