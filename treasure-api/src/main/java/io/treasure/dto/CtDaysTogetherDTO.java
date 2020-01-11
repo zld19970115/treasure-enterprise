@@ -60,4 +60,21 @@ public class CtDaysTogetherDTO {
      */
     @ApiModelProperty(value = "平台扣点金额总额")
     private BigDecimal platformBrokerage;
+
+    /**
+     * 实付金额（总价-优惠券-代付金）
+     */
+    @ApiModelProperty(value = "实付金额（总价-优惠券-代付金）")
+    private BigDecimal realityMoney;
+    /**
+     * 商家优惠金额
+     */
+    @ApiModelProperty(value = "商家优惠金额")
+    private BigDecimal merchantDiscountAmount;
+    /**
+     * 代付金
+     */
+    @ApiModelProperty(value = "代付金")
+    private BigDecimal giftMoney;
+
 }
