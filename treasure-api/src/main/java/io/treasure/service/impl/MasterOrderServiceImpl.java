@@ -297,6 +297,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantEntity.setPointMoney(0.00);
                 merchantEntity.setWartCash(wartcashZore);
                 merchantService.updateById(merchantEntity);
+                return new Result().ok("订单翻台成功！");
             }else{
                 return new Result().error("无法获取店铺信息!");
             }
@@ -307,8 +308,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());
 
             BigDecimal wartcashZore = new BigDecimal("0.00");
-            if (null==bigDecimal ){
-
+            if (null==bigDecimal){
+                bigDecimal = new BigDecimal("0.00");
                 if(null!=merchantEntity){
                     if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
                     merchantEntity.setTotalCash(0.00);
@@ -317,6 +318,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     merchantEntity.setPointMoney(bigDecimal1.doubleValue());
                     merchantEntity.setWartCash(wartcashZore);
                     merchantService.updateById(merchantEntity);
+                    return new Result().ok("订单翻台成功！");
                 }else{
                     return new Result().error("无法获取店铺信息!");
                 }
@@ -328,6 +330,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             merchantEntity.setWartCash(wartcashZore);
             merchantService.updateById(merchantEntity);
+            return new Result().ok("订单翻台成功！");
         }
         if (merchantWithdrawEntities.size() != 0) {
             BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
@@ -357,6 +360,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             merchantEntity.setWartCash(wartcash);
             merchantService.updateById(merchantEntity);
+            return new Result().ok("订单翻台成功！");
         }
         return new Result().ok("订单翻台成功！");
     }
