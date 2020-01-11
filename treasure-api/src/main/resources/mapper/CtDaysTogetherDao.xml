@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.CtDaysTogetherDao">
+
+    <resultMap type="io.treasure.entity.CtDaysTogetherEntity" id="CtDaysTogetherMap">
+        <result property="id" column="id"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="payType" column="pay_type"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="orderTotal" column="order_total"/>
+        <result property="serviceChanrge" column="service_chanrge"/>
+        <result property="platformBrokerage" column="platform_brokerage"/>
+        <result property="merchantProceeds" column="merchant_proceeds"/>
+    </resultMap>
+
+    <select id="getDateAndMerid" resultType="io.treasure.entity.CtDaysTogetherEntity">
+        SELECT
+	        id,
+	        merchant_id,
+	        merchant_proceeds,
+	        order_total,
+	        pay_date,
+	        pay_type,
+	        platform_brokerage,
+	        service_chanrge
+        FROM
+	        ct_days_together
+        WHERE
+            DATE_FORMAT( pay_date, '%Y-%m-%d' ) = DATE_FORMAT(#{date},'%Y-%m-%d') and merchant_id=#{merchantId} and pay_type=#{type}
+    </select>
+
+</mapper>

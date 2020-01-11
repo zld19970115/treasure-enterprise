@@ -56,4 +56,6 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
 
     int updateRefundReason(String refundReason,String orderId, Long goodId);
 
+    BigDecimal getDiscountsMoneyByOrderId(String orderId);
+
 }

@@ -38,5 +38,6 @@ public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
 
     int updateRefundReason(@Param("refundReason") String refundReason,@Param("orderId")  String orderId,@Param("goodId") Long goodId);
 
+    BigDecimal getDiscountsMoneyByOrderId(String orderId);
 
 }

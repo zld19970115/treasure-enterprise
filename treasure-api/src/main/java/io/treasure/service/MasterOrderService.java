@@ -153,4 +153,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     boolean judgeRockover(String orderId,Date date);
 
     boolean judgeEvaluate(String orderId);
+
+    BigDecimal getPlatformBalance();
 }

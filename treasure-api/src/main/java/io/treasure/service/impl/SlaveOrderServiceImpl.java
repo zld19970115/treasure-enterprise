@@ -255,4 +255,9 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         wrapper.ne("status", 8);
         return wrapper;
     }
+
+    @Override
+    public BigDecimal getDiscountsMoneyByOrderId(String orderId) {
+        return baseDao.getDiscountsMoneyByOrderId(orderId);
+    }
 }

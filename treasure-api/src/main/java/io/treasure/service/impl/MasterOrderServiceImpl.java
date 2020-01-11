@@ -80,6 +80,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private MerchantUserService merchantUserService;
 
+    @Autowired
+    private StatsDayDetailService statsDayDetailService;
+
+    @Autowired
+    private CtDaysTogetherService ctDaysTogetherService;
+
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -234,6 +240,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if (dto.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || dto.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
+                    statsDayDetailService.insertFinishUpdate(dto);
                 }
                 List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
                 for (OrderDTO o : affiliateOrde) {
@@ -258,8 +265,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                             merchantRoomParamsSetService.updateStatus(o.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                         }
                     }
+                    MasterOrderDTO masterOrderDTO = ConvertUtils.sourceToTarget(o, MasterOrderDTO.class);
+                    statsDayDetailService.insertFinishUpdate(masterOrderDTO);
                 }
-
             } else {
                 Result c = new Result();
                 c.setCode(1);
@@ -374,7 +382,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             for (OrderDTO orderDTO : affiliateOrde) {
                 if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-                   orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                     BigDecimal giftMoney = orderDTO.getGiftMoney();
                     BigDecimal num=new BigDecimal("0");
@@ -654,8 +662,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-            MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantDTO.getMobile(),smsConfig);
+
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -2182,6 +2189,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             orderDTO.setPayMoney(a);
         }
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
+
+    @Override
+    public BigDecimal getPlatformBalance() {
+        return baseDao.getPlatformBalance();
     }
 }
 

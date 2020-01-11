@@ -204,4 +204,8 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="getPlatformBalance" resultType="java.math.BigDecimal">
+        select sum(pay_money) from ct_master_order where `status` =10
+    </select>
 </mapper>
