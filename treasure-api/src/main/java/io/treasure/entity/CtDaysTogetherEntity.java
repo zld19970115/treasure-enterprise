@@ -52,6 +52,19 @@ public class CtDaysTogetherEntity {
      */
     private BigDecimal platformBrokerage;
 
+    /**
+     * 实付金额（总价-优惠券-代付金）
+     */
+    private BigDecimal realityMoney;
+    /**
+     * 商家优惠金额
+     */
+    private BigDecimal merchantDiscountAmount;
+    /**
+     * 代付金
+     */
+    private BigDecimal giftMoney;
+
 
 
 
