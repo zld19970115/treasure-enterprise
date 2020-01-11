@@ -12,6 +12,10 @@
         <result property="serviceChanrge" column="service_chanrge"/>
         <result property="platformBrokerage" column="platform_brokerage"/>
         <result property="merchantProceeds" column="merchant_proceeds"/>
+        <result property="realityMoney" column="reality_money"/>
+        <result property="merchantDiscountAmount" column="merchant_discount_amount"/>
+        <result property="giftMoney" column="gift_money"/>
+
     </resultMap>
 
     <select id="getDateAndMerid" resultType="io.treasure.entity.CtDaysTogetherEntity">
