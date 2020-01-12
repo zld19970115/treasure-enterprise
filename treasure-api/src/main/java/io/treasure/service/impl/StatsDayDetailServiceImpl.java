@@ -190,37 +190,47 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
      * @param dto:
      * @Return: 同意退款后维护平台日明细表
      */
-//    @Override
-//    public int insertReturnOrder(MasterOrderDTO dto) {
-//        OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
-//        StatsDayDetailDTO sddd = new StatsDayDetailDTO();
-//        sddd.setCreateDate(dto.getRefundDate());
-//        sddd.setIncidentType(8);
-//        sddd.setPayMobile(dto.getContactNumber());
-//        MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-//        sddd.setPayMerchantName(merchantDTO.getName());
-////        BigDecimal merchant_discount_amount = slaveOrderService.getDiscountsMoneyByOrderId(dto.getOrderId());
-//        String payMode = dto.getPayMode();
-//        BigDecimal payMoney = dto.getPayMoney();
-//        BigDecimal giftMoney = dto.getGiftMoney();
-//        BigDecimal transaction_amount = payMoney.add(giftMoney);
-//        BigDecimal orderTotl = transaction_amount.add(merchant_discount_amount);
-//        sddd.setOrderTotal(orderTotl.negate());
-//        sddd.setTransactionAmount(transaction_amount.negate());
-//        sddd.setMerchantDiscountAmount(merchant_discount_amount.negate());
-//        sddd.setRealityMoney(payMoney.negate());
-//        sddd.setPlatformBrokerage(order.getPlatformBrokerage().negate());
-//        sddd.setMerchantProceeds((order.getMerchantProceeds()).negate());
-//        sddd.setPlatformBalance(masterOrderService.getPlatformBalance());
-//        if (payMode.equals(2)) {
-//            sddd.setAliPaymoney(order.getPayMoney());
-//        } else if (payMode.equals(3)) {
-//            sddd.setWxPaymoney(order.getPayMoney());
-//        }
-//
-//        int insert = baseDao.insert(ConvertUtils.sourceToTarget(sddd, StatsDayDetailEntity.class));
-//        return insert;
-//    }
+    @Override
+    public int insertReturnOrder(MasterOrderDTO dto) {
+        OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+        MerchantEntity merchantById = merchantService.getMerchantById(order.getMerchantId());
+        StatsDayDetailEntity sddd = new StatsDayDetailEntity();
+        sddd.setCreateDate(dto.getPayDate());
+        if(dto.getRefundId()!=null){
+            sddd.setOrderId(dto.getRefundId());
+        }
+        sddd.setIncidentType(8);
+        sddd.setPayMobile(dto.getContactNumber());
+        MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+        sddd.setPayMerchantName(merchantDTO.getName());
+        BigDecimal merchant_discount_amount = slaveOrderService.getDiscountsMoneyByOrderId(dto.getOrderId());
+        String payMode = dto.getPayMode();
+        BigDecimal payMoney = dto.getPayMoney();
+        BigDecimal giftMoney = dto.getGiftMoney();
+        BigDecimal transaction_amount = payMoney.add(giftMoney);
+        BigDecimal orderTotl = transaction_amount.add(merchant_discount_amount);
+        sddd.setOrderTotal(orderTotl.negate());
+        sddd.setTransactionAmount(transaction_amount.negate());
+        sddd.setMerchantDiscountAmount(merchant_discount_amount.negate());
+        sddd.setRealityMoney(payMoney.negate());
+        sddd.setPlatformBrokerage(order.getPlatformBrokerage().negate());
+        sddd.setMerchantProceeds((order.getMerchantProceeds()).negate());
+        sddd.setPlatformBalance(masterOrderService.getPlatformBalance().negate());
+        sddd.setPayType(payMode);
+        sddd.setGiftMoney((order.getGiftMoney()).negate());
+        sddd.setPayMerchantId(order.getMerchantId());
+        if (payMode.equals("2")) {
+            sddd.setAliPaymoney((order.getPayMoney()).negate());
+        } else if (payMode.equals("3")) {
+            sddd.setWxPaymoney((order.getPayMoney()).negate());
+        }
+        BigDecimal num1=new BigDecimal("0.006");
+        BigDecimal servicechanrge = payMoney.multiply(num1).setScale(2, BigDecimal.ROUND_HALF_UP);
+        sddd.setServiceCharge(servicechanrge.negate());
+        int insert = baseDao.insert(sddd);
+        ctDaysTogetherService.decideInsertOrUpdate(sddd.getCreateDate(),merchantById.getId(),order.getPayMode(),sddd);
+        return insert;
+    }
 
     /***
      * @Author: Zhangguanglin

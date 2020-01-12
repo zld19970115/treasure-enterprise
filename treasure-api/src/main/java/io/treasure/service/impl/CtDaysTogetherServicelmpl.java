@@ -54,6 +54,7 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             BigDecimal giftMoney = cdt.getGiftMoney();
 
 
+
             BigDecimal neworderTotal = orderTotal.add(sdde.getOrderTotal());
             BigDecimal newmerchantProceeds = merchantProceeds.add(sdde.getMerchantProceeds());
             BigDecimal newplatformBrokerage = platformBrokerage.add(sdde.getPlatformBrokerage());
@@ -87,9 +88,9 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             cdte.setServiceChanrge(sdde.getServiceCharge());
             cdte.setMerchantProceeds(sdde.getMerchantProceeds());
             cdte.setPlatformBrokerage(sdde.getPlatformBrokerage());
-            cdt.setRealityMoney(sdde.getRealityMoney());
-            cdt.setMerchantDiscountAmount(sdde.getMerchantDiscountAmount());
-            cdt.setGiftMoney(sdde.getGiftMoney());
+            cdte.setRealityMoney(sdde.getRealityMoney());
+            cdte.setMerchantDiscountAmount(sdde.getMerchantDiscountAmount());
+            cdte.setGiftMoney(sdde.getGiftMoney());
             int insert = baseDao.insert(cdte);
             c=insert;
         }

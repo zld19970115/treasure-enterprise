@@ -66,13 +66,6 @@ public interface StatsDayDetailService extends CrudService<StatsDayDetailEntity,
 
       int insertFinishUpdate(MasterOrderDTO dto);
 
-      /***
-       * @Author: Zhangguanglin
-       * @Description:
-       * @Date: 2020/1/10
-       * @param null:
-       * @Return: 查询是否存在等于 年月日 and 商户id 的数据
-       *            如果不存在则创建，如果存在则更新：总金额  日销量
-       */
+    int insertReturnOrder(MasterOrderDTO dto);
 
 }
