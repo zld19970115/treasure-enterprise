@@ -61,6 +61,6 @@
     </update>
 
     <select id="getDiscountsMoneyByOrderId" resultType="java.math.BigDecimal">
-        select sum(discounts_money) from ct_slave_order where  order_id=#{orderId} and status =10
+        select sum(discounts_money) from ct_slave_order where  order_id=#{orderId}
     </select>
 </mapper>
