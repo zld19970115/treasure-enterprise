@@ -66,4 +66,5 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderEntity getOrderByReservationId(long reservationId);
     List<OrderDTO> getAffiliateOrde(String orderId);
     BigDecimal getPlatformBalance();
+    List<MasterOrderDTO> getOrderByFinance(String orderId);
 }
