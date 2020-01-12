@@ -150,6 +150,6 @@ public class StatsDayDetailDTO  implements Serializable {
     /**
      * 支付平台手续费
      */
-    @ApiModelProperty(value = "最后更新时间")
-    private Date serviceCharge;
+    @ApiModelProperty(value = "支付平台手续费")
+    private BigDecimal serviceCharge;
 }
