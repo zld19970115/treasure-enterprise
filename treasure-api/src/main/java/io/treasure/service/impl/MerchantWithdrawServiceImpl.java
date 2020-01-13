@@ -12,7 +12,9 @@ import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
+import io.treasure.service.StatsDayDetailService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,6 +31,9 @@ import java.util.Map;
 @Service
 public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdrawDao, MerchantWithdrawEntity, MerchantWithdrawDTO> implements MerchantWithdrawService {
 
+
+    @Autowired
+    private StatsDayDetailService statsDayDetailService;
     @Override
     public QueryWrapper<MerchantWithdrawEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
@@ -111,6 +116,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
 
     @Override
     public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
+        statsDayDetailService.insertMerchantWithdraw(id);
         baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);
     }
 

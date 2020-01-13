@@ -68,4 +68,6 @@ public interface StatsDayDetailService extends CrudService<StatsDayDetailEntity,
 
     int insertReturnOrder(MasterOrderDTO dto);
 
+    int insertMerchantWithdraw(long id);
+
 }

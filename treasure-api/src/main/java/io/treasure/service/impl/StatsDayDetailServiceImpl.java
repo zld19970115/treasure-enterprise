@@ -271,31 +271,31 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
 //        return insert;
 //    }
 
-//    @Override
-//    public int insertMerchantWithdraw(long id) {
-//        //通过提现id获取提现记录
-//        MerchantWithdrawDTO merchantWithdrawDTO = merchantWithdrawService.get(id);
-//        //通过提现记录中商户id获取商户信息
-//        MerchantDTO merchantDTO = merchantService.get(merchantWithdrawDTO.getMerchantId());
-//        StatsDayDetailEntity sdde=new StatsDayDetailEntity();
-//        sdde.setCreateDate(merchantWithdrawDTO.getVerifyDate());
-//        sdde.setOrderId(String.valueOf(id));
-//        sdde.setIncidentType(12);
-//        sdde.setPayMerchantName(merchantDTO.getName());
-//        //提现表中金额是double转换成bigdecimal
-//        BigDecimal money=new BigDecimal(merchantWithdrawDTO.getMoney());
-//        sdde.setWithdrawMoney(money);
-////        BigDecimal platformBalance = masterOrderService.getPlatformBalance();
-////        sdde.setPlatformBalance( platformBalance.subtract(money));
-////        Integer type = merchantWithdrawDTO.getType();
-////        if(type==1){
-////            //微信提现
-////            sdde.setWxPaymoney(money);
-////        }else if(type==2){
-////            //支付宝提现
-//            sdde.setAliPaymoney(money);
-//        }
-//        return baseDao.insert(sdde);
-//    }
+    @Override
+    public int insertMerchantWithdraw(long id) {
+        //通过提现id获取提现记录
+        MerchantWithdrawDTO merchantWithdrawDTO = merchantWithdrawService.get(id);
+        //通过提现记录中商户id获取商户信息
+        MerchantDTO merchantDTO = merchantService.get(merchantWithdrawDTO.getMerchantId());
+        StatsDayDetailEntity sdde=new StatsDayDetailEntity();
+        sdde.setCreateDate(merchantWithdrawDTO.getVerifyDate());
+        sdde.setOrderId(String.valueOf(id));
+        sdde.setIncidentType(12);
+        sdde.setPayMerchantName(merchantDTO.getName());
+        //提现表中金额是double转换成bigdecimal
+        BigDecimal money=new BigDecimal(merchantWithdrawDTO.getMoney());
+        sdde.setWithdrawMoney(money);
+          BigDecimal platformBalance = masterOrderService.getPlatformBalance();
+          sdde.setPlatformBalance( platformBalance.subtract(money));
+          Integer type = merchantWithdrawDTO.getType();
+          if(type==1){
+              //微信提现
+              sdde.setWxPaymoney(money);
+          }else if(type==2){
+              //支付宝提现
+            sdde.setAliPaymoney(money);
+        }
+        return baseDao.insert(sdde);
+    }
 
 }
