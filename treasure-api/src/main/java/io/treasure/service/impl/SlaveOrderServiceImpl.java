@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
@@ -15,6 +16,7 @@ import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 
+import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import java.util.Random;
  */
 @Service
 public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveOrderEntity, SlaveOrderDTO> implements SlaveOrderService {
+    @Autowired
+    private SMSConfig smsConfig;
 
     @Autowired
     private RefundOrderService refundOrderService;
@@ -217,6 +221,9 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             if (StringUtils.isNotBlank(clientId)) {
                 AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
             }
+            SendSMSUtil.sendApplyRefusal(merchantDTO.getMobile(), smsConfig);
+
+
         }
         return result;
     }

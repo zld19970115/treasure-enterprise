@@ -34,10 +34,10 @@ import java.util.Map;
 public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, RefundOrderEntity, RefundOrderDTO> implements RefundOrderService {
     @Autowired
     private MasterOrderService masterOrderService;
-
+    @Autowired
+    private SMSConfig smsConfig;
     @Autowired
     private SlaveOrderService slaveOrderService;
-
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
 
@@ -50,8 +50,6 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
     @Autowired
     private MerchantService merchantService;
 
-    @Autowired
-    private SMSConfig smsConfig;
 
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
@@ -208,6 +206,8 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             if(StringUtils.isNotBlank(clientId)){
                 AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
             }
+            MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
+            SendSMSUtil.sendMerchantAgreeRefusal(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
             List<OrderDTO> affiliateOrde = masterOrderService.getAffiliateOrde(orderId);
             for (OrderDTO orderDTO : affiliateOrde) {
                 if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
