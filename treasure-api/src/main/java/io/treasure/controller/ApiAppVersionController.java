@@ -66,7 +66,7 @@ public class ApiAppVersionController {
         return new Result<AppVersionDTO>().ok(data);
     }
 
-    @Login
+    @CrossOrigin
     @GetMapping("/updateInfo")
     @ApiOperation("获取更新信息")
     @ApiImplicitParams({
