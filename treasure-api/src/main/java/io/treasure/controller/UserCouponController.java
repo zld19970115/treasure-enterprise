@@ -3,6 +3,7 @@ package io.treasure.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.MerchantCouponDTO;
 import io.treasure.dto.UserCouponDTO;
 import io.treasure.entity.MerchantCouponEntity;
 import io.treasure.entity.UserCouponEntity;
@@ -71,7 +72,7 @@ public class UserCouponController {
     @GetMapping("/selectCoupon")
     @ApiOperation("查询用户可使用的优惠表")
     public Result selectCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId,@RequestParam(value = "money")double money){
-        List list = userCouponService.selectByUserId(userId, martId, money);
+       List<MerchantCouponDTO>  list = userCouponService.selectByUserId(userId, martId, money);
 
         return  new  Result().ok(list);
 
@@ -86,7 +87,7 @@ public class UserCouponController {
     @ApiOperation("查询我的优惠卷")
 
     public Result myCoupon(@RequestParam(value = "userId") Long userId){
-        List list = userCouponService.selectMyCouponByUserId(userId);
+        List<MerchantCouponDTO> list = userCouponService.selectMyCouponByUserId(userId);
 
         return  new  Result().ok(list);
 

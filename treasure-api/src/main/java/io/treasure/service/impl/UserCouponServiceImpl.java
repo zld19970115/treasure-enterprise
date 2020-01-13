@@ -3,6 +3,7 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.UserCouponDao;
+import io.treasure.dto.MerchantCouponDTO;
 import io.treasure.dto.UserCouponDTO;
 import io.treasure.entity.MerchantCouponEntity;
 import io.treasure.entity.UserCouponEntity;
@@ -32,7 +33,7 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
 
 
     @Override
-    public List selectByUserId(Long userId, long martId, double money) {
+    public List<MerchantCouponDTO> selectByUserId(Long userId, long martId, double money) {
         return baseDao.selectByUserId(userId,martId,money);
     }
 
@@ -47,7 +48,7 @@ public class UserCouponServiceImpl  extends CrudServiceImpl<UserCouponDao, UserC
     }
 
     @Override
-    public List selectMyCouponByUserId(long userId) {
+    public List<MerchantCouponDTO> selectMyCouponByUserId(long userId) {
         return baseDao.selectMyCouponByUserId(userId);
     }
 

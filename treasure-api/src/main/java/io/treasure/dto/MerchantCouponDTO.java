@@ -54,7 +54,7 @@ public class MerchantCouponDTO implements Serializable {
 	@ApiModelProperty(value = "结束时间")
 	@NotNull(message ="结束时间不能为空",groups= AddGroup.class)
 	@NotNull(message = "结束不能为空",groups= UpdateGroup.class)
-	private String endDate;
+	private Date endDate;
 
 	@ApiModelProperty(value = "商户")
 	@NotNull(message ="商户不能为空",groups= AddGroup.class)
