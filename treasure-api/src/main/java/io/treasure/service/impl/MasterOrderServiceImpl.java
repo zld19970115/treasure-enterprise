@@ -219,18 +219,21 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         statsDayDetailService.insertRefundGood(dto);
         Date date = new Date();
         if (null != dto) {
-            List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
-            for (MasterOrderDTO mod:orderByFinance) {
-                if(mod.getStatus()==8){
-                    if(null!=mod.getRefundId()){
-                        statsDayDetailService.insertReturnOrder(mod);
-                    }else{
-                        statsDayDetailService.insertRefundGood(dto);
-                    }
+            if(dto.getReservationType()!=2){
+                List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
+                for (MasterOrderDTO mod:orderByFinance) {
+                    if(mod.getStatus()==8){
+                        if(null!=mod.getRefundId()){
+                            statsDayDetailService.insertReturnOrder(mod);
+                        }else{
+                            statsDayDetailService.insertRefundGood(dto);
+                        }
 
+                    }
+                    statsDayDetailService.insertFinishUpdate(mod);
                 }
-                statsDayDetailService.insertFinishUpdate(mod);
             }
+
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
             if (result1) {
                 if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&

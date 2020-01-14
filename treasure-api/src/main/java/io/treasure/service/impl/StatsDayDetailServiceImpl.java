@@ -302,7 +302,7 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
     public int insertRefundGood(MasterOrderDTO dto) {
         MasterOrderDTO dtos=dto;
         int num=0;
-        if(dto.getStatus()!=8){
+        if(dto.getStatus()!=8 && dto.getReservationType()!=2){
             num = this.insertReturnOrder(dto);
 
         }else{
