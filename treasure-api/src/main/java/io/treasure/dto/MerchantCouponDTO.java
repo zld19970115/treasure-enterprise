@@ -1,5 +1,6 @@
 package io.treasure.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.validator.group.AddGroup;
@@ -54,7 +55,7 @@ public class MerchantCouponDTO implements Serializable {
 	@ApiModelProperty(value = "结束时间")
 	@NotNull(message ="结束时间不能为空",groups= AddGroup.class)
 	@NotNull(message = "结束不能为空",groups= UpdateGroup.class)
-	private Date endDate;
+	private String endDate;
 
 	@ApiModelProperty(value = "商户")
 	@NotNull(message ="商户不能为空",groups= AddGroup.class)
