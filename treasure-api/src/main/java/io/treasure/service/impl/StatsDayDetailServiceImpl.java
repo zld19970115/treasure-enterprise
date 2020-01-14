@@ -318,7 +318,8 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                     sdde.setPayMerchantName(merchantDTO.getName());
                     sdde.setGiftMoney(giftMoney.negate());
-                    sdde.setOrderTotal(payMoney.negate());
+                    BigDecimal paymoneyall = payMoney.add(giftMoney);
+                    sdde.setOrderTotal(paymoneyall.negate());
                     sdde.setRealityMoney(payMoney.negate());
                     sdde.setMerchantDiscountAmount(discountsMoney.negate());
                     sdde.setTransactionAmount(payMoney.negate());
