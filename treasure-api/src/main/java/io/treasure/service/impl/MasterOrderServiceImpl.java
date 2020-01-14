@@ -216,12 +216,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+        statsDayDetailService.insertRefundGood(dto);
         Date date = new Date();
         if (null != dto) {
             List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
             for (MasterOrderDTO mod:orderByFinance) {
                 if(mod.getStatus()==8){
-                    statsDayDetailService.insertReturnOrder(mod);
+                    if(null!=mod.getRefundId()){
+                        statsDayDetailService.insertReturnOrder(mod);
+                    }else{
+                        statsDayDetailService.insertRefundGood(dto);
+                    }
+
                 }
                 statsDayDetailService.insertFinishUpdate(mod);
             }
@@ -247,7 +253,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if (dto.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || dto.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
-                    statsDayDetailService.insertFinishUpdate(dto);
                 }
                 List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
                 for (OrderDTO o : affiliateOrde) {

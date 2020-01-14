@@ -42,8 +42,10 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
     public int decideInsertOrUpdate(Date date,long merchantId,String type,StatsDayDetailEntity sdde) {
         CtDaysTogetherEntity cdt = this.getDateAndMerid(date, merchantId,type);
         BigDecimal wxPaymoney = sdde.getWxPaymoney();
+        BigDecimal realityMoney1 = sdde.getRealityMoney();
         BigDecimal num=new BigDecimal("0");
         int c=0;
+        if(realityMoney1.compareTo(num)==-1){
         if(null !=cdt){
             BigDecimal orderTotal = cdt.getOrderTotal();
             BigDecimal merchantProceeds = cdt.getMerchantProceeds();
@@ -94,7 +96,7 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             int insert = baseDao.insert(cdte);
             c=insert;
         }
-
+        }
         return c;
     }
 }

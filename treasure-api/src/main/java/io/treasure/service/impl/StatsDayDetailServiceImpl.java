@@ -298,4 +298,52 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         return baseDao.insert(sdde);
     }
 
+    @Override
+    public int insertRefundGood(MasterOrderDTO dto) {
+        MasterOrderDTO dtos=dto;
+        int num=0;
+        if(dto.getStatus()!=8){
+            num = this.insertReturnOrder(dto);
+
+        }else{
+            if(null==dto.getRefundId()){
+                List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(dto.getOrderId());
+                for (SlaveOrderEntity soe:orderGoods) {
+                    BigDecimal payMoney = soe.getPayMoney();
+                    BigDecimal giftMoney = soe.getFreeGold();
+                    BigDecimal totalMoney = soe.getTotalMoney();
+                    BigDecimal discountsMoney = soe.getDiscountsMoney();
+                    StatsDayDetailEntity sdde=new StatsDayDetailEntity();
+                    sdde.setPayMerchantId(dto.getMerchantId());
+                    MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
+                    sdde.setPayMerchantName(merchantDTO.getName());
+                    sdde.setGiftMoney(giftMoney.negate());
+                    sdde.setOrderTotal(payMoney.negate());
+                    sdde.setRealityMoney(payMoney.negate());
+                    sdde.setMerchantDiscountAmount(discountsMoney.negate());
+                    sdde.setTransactionAmount(payMoney.negate());
+                    if(null!=soe.getRefundId()){
+                        sdde.setOrderId(soe.getRefundId());
+                    }
+                    sdde.setPayMobile(dto.getContactNumber());
+                    sdde.setCreateDate(dto.getRefundDate());
+                    sdde.setIncidentType(8);
+                    String payMode = dto.getPayMode();
+                    if(payMode.equals("2")){
+                        sdde.setPayType("2");
+                        sdde.setAliPaymoney(totalMoney.negate());
+                    }else{
+                        sdde.setPayType("3");
+                        sdde.setWxPaymoney(totalMoney.negate());
+                    }
+                    num = baseDao.insert(sdde);
+                }
+            }else{
+                num = this.insertReturnOrder(dto);
+            }
+
+        }
+        return num;
+    }
+
 }
