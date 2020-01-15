@@ -55,13 +55,93 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
 
     @Override
     public int insertFinishUpdate(MasterOrderDTO dto) {
+        Integer reservationType = dto.getReservationType();
+        Integer status = dto.getStatus();
+        String refundId = dto.getRefundId();
+        MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
+        //如果主订单为房单
+        if(reservationType==2){
+            StatsDayDetailEntity sdde=new StatsDayDetailEntity();
+            sdde.setOrderId(dto.getOrderId());
+            sdde.setPayMerchantName(merchantById.getName());
+            sdde.setPayMobile(dto.getContactNumber());
+            sdde.setPayMerchantId(merchantById.getId());
+            sdde.setIncidentType(dto.getStatus());
+            return baseDao.insert(sdde);
+        }
+        //如果是把菜品全退了改变的所属定单状态
+        if(null == refundId && status==8){
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(dto.getOrderId());
+            for (SlaveOrderEntity soe:orderGoods) {
+                if(null!=soe.getRefundId()){
+                    StatsDayDetailEntity sdde=new StatsDayDetailEntity();
+                    sdde.setCreateDate(dto.getPayDate());
+                    sdde.setOrderId(soe.getRefundId());
+                    sdde.setPayMerchantId(dto.getMerchantId());
+                    sdde.setPayMerchantName(merchantById.getName());
+                    sdde.setPayMobile(dto.getContactNumber());
+                    sdde.setPayType(soe.getStatus().toString());
+                    BigDecimal payMoney = soe.getPayMoney();
+                    BigDecimal freeGold = soe.getFreeGold();
+                    sdde.setOrderTotal((payMoney.add(freeGold)).negate());
+                    sdde.setTransactionAmount((payMoney.add(freeGold)).negate());
+                    sdde.setRealityMoney(payMoney.negate());
+                    sdde.setGiftMoney(freeGold.negate());
+                    sdde.setMerchantDiscountAmount((soe.getDiscountsMoney()).negate());
+                    BigDecimal num1=new BigDecimal("0.006");
+                    BigDecimal servicechanrge = payMoney.multiply(num1).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    sdde.setServiceCharge(servicechanrge.negate());
+                    if(null != dto.getPayMode()){
+                        if (dto.getPayMode().equals("2")) {
+                            sdde.setAliPaymoney((dto.getPayMoney()).negate());
+                            sdde.setPayType("2");
+                        } else if (dto.getPayMode().equals("3")) {
+                            sdde.setWxPaymoney((dto.getPayMoney()).negate());
+                            sdde.setPayType("3");
+                        }
+                    }
+                    return baseDao.insert(sdde);
+                }
+
+            }
+        }
+        //如果主单是直接退单改变的状态
+        if(null!=refundId && status==8){
+            BigDecimal totalMoney = dto.getTotalMoney();
+            BigDecimal giftMoney = dto.getGiftMoney();
+            BigDecimal payMoney = dto.getPayMoney();
+            StatsDayDetailEntity sdde=new StatsDayDetailEntity();
+            sdde.setCreateDate(dto.getPayDate());
+            sdde.setOrderId(refundId);
+            sdde.setPayMerchantId(dto.getMerchantId());
+            sdde.setPayMerchantName(merchantById.getName());
+            sdde.setOrderTotal((totalMoney.add(giftMoney)).negate());
+            sdde.setRealityMoney((dto.getPayMoney()).negate());
+            sdde.setGiftMoney(giftMoney.negate());
+            BigDecimal discountsMoneyByOrderId = slaveOrderService.getDiscountsMoneyByOrderId(dto.getOrderId());
+            sdde.setMerchantDiscountAmount(discountsMoneyByOrderId.negate());
+            sdde.setTransactionAmount((totalMoney.add(giftMoney)).negate());
+            BigDecimal num1=new BigDecimal("0.006");
+            BigDecimal servicechanrge = payMoney.multiply(num1).setScale(2, BigDecimal.ROUND_HALF_UP);
+            sdde.setServiceCharge(servicechanrge.negate());
+            sdde.setIncidentType(dto.getStatus());
+            if(null != dto.getPayMode()){
+                if (dto.getPayMode().equals("2")) {
+                    sdde.setAliPaymoney(dto.getPayMoney());
+                    sdde.setPayType("2");
+                } else if (dto.getPayMode().equals("3")) {
+                    sdde.setWxPaymoney(dto.getPayMoney());
+                    sdde.setPayType("3");
+                }
+            }
+            return  baseDao.insert(sdde);
+        }
         MasterOrderEntity statsDayDetailEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         StatsDayDetailEntity sdde=new StatsDayDetailEntity();
         sdde.setOrderId(statsDayDetailEntity.getOrderId());
         sdde.setCreateDate(statsDayDetailEntity.getPayDate());
         sdde.setIncidentType(statsDayDetailEntity.getStatus());
         sdde.setPayMobile(statsDayDetailEntity.getContactNumber());
-        MerchantEntity merchantById = merchantService.getMerchantById(statsDayDetailEntity.getMerchantId());
         sdde.setPayMerchantName(merchantById.getName());
 
         BigDecimal num = new BigDecimal("0");
@@ -201,6 +281,8 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         sddd.setCreateDate(dto.getPayDate());
         if(dto.getRefundId()!=null){
             sddd.setOrderId(dto.getRefundId());
+        }else{
+            sddd.setOrderId(dto.getOrderId());
         }
         sddd.setIncidentType(8);
         sddd.setPayMobile(dto.getContactNumber());
@@ -306,7 +388,7 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         MasterOrderDTO dtos=dto;
         int num=0;
         if(dto.getStatus()!=8 && dto.getReservationType()!=2){
-            num = this.insertReturnOrder(dto);
+            num = this.insertFinishUpdate(dto);
 
         }else{
             if(null==dto.getRefundId()){

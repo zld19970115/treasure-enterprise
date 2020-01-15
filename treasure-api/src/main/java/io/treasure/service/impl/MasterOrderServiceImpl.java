@@ -216,24 +216,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
-        statsDayDetailService.insertRefundGood(dto);
+        statsDayDetailService.insertFinishUpdate(dto);
         Date date = new Date();
         if (null != dto) {
-            if(dto.getReservationType()!=2){
-                List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
-                for (MasterOrderDTO mod:orderByFinance) {
-                    if(mod.getStatus()==8){
-                        if(null!=mod.getRefundId()){
-                            statsDayDetailService.insertReturnOrder(mod);
-                        }else{
-                            statsDayDetailService.insertRefundGood(dto);
-                        }
-
-                    }
-                    statsDayDetailService.insertFinishUpdate(mod);
-                }
-            }
-
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
             if (result1) {
                 if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
