@@ -217,6 +217,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
         statsDayDetailService.insertFinishUpdate(dto);
+        List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
+        for (MasterOrderDTO mod:orderByFinance) {
+            statsDayDetailService.insertFinishUpdate(mod);
+        }
         Date date = new Date();
         if (null != dto) {
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
