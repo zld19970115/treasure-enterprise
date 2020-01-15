@@ -83,7 +83,10 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                     sdde.setPayType(soe.getStatus().toString());
                     BigDecimal payMoney = soe.getPayMoney();
                     BigDecimal freeGold = soe.getFreeGold();
-                    sdde.setOrderTotal((payMoney.add(freeGold)).negate());
+                    BigDecimal discountsMoney = soe.getDiscountsMoney();
+                    BigDecimal add = payMoney.add(freeGold);
+                    sdde.setOrderTotal((add.add(discountsMoney)).negate());
+
                     sdde.setTransactionAmount((payMoney.add(freeGold)).negate());
                     sdde.setRealityMoney(payMoney.negate());
                     sdde.setGiftMoney(freeGold.negate());
@@ -115,10 +118,11 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
             sdde.setOrderId(refundId);
             sdde.setPayMerchantId(dto.getMerchantId());
             sdde.setPayMerchantName(merchantById.getName());
-            sdde.setOrderTotal((totalMoney.add(giftMoney)).negate());
             sdde.setRealityMoney((dto.getPayMoney()).negate());
             sdde.setGiftMoney(giftMoney.negate());
             BigDecimal discountsMoneyByOrderId = slaveOrderService.getDiscountsMoneyByOrderId(dto.getOrderId());
+            BigDecimal add = totalMoney.add(giftMoney);
+            sdde.setOrderTotal((add.add(discountsMoneyByOrderId)).negate());
             sdde.setMerchantDiscountAmount(discountsMoneyByOrderId.negate());
             sdde.setTransactionAmount((totalMoney.add(giftMoney)).negate());
             BigDecimal num1=new BigDecimal("0.006");
