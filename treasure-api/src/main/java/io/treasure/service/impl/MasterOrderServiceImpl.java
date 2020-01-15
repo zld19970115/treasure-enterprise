@@ -294,7 +294,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
 
 
-
+        String orderId = dto.getOrderId();
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderId);
+        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+            GoodEntity byid = goodService.getByid(slaveOrderEntity.getGoodId());
+            Integer sales = byid.getSales();
+            BigDecimal quantity = slaveOrderEntity.getQuantity();
+            int i = quantity.intValue();
+            int j = sales + i;
+            byid.setSales(j);
+            goodService.updateById(byid);
+        }
         List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
         Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
