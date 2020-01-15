@@ -82,11 +82,14 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         sdde.setMerchantProceeds(statsDayDetailEntity.getMerchantProceeds());
         sdde.setPayType(statsDayDetailEntity.getPayMode());
         sdde.setPayMerchantId(statsDayDetailEntity.getMerchantId());
-        if (statsDayDetailEntity.getPayMode().equals("2")) {
-            sdde.setAliPaymoney(statsDayDetailEntity.getPayMoney());
-        } else if (statsDayDetailEntity.getPayMode().equals("3")) {
-            sdde.setWxPaymoney(statsDayDetailEntity.getPayMoney());
+        if(null != statsDayDetailEntity.getPayMode()){
+            if (statsDayDetailEntity.getPayMode().equals("2")) {
+                sdde.setAliPaymoney(statsDayDetailEntity.getPayMoney());
+            } else if (statsDayDetailEntity.getPayMode().equals("3")) {
+                sdde.setWxPaymoney(statsDayDetailEntity.getPayMoney());
+            }
         }
+
         sdde.setPlatformBalance(masterOrderService.getPlatformBalance());
         BigDecimal num1=new BigDecimal("0.006");
         BigDecimal servicechanrge = payMoney.multiply(num1).setScale(2, BigDecimal.ROUND_HALF_UP);
