@@ -493,4 +493,5 @@ public class MerchantUserController {
         merchantUserService.updateById(merchantUserEntity);
         return new Result().ok("注销成功");
     }
+
 }

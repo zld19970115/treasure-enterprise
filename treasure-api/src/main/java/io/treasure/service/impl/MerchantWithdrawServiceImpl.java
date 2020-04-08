@@ -115,6 +115,11 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     @Override
+    public List<MerchantWithdrawDTO> selectByMartIdAndStasus(Long martId) {
+        return baseDao.selectByMartIdAndStasus(martId);
+    }
+
+    @Override
     public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
         statsDayDetailService.insertMerchantWithdraw(id);
         baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);

@@ -30,7 +30,8 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     Double selectAlreadyCash(long  martId);
     PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);
     List<MasterOrderEntity> selectOrderByMartID(Long  martId);
-    //提现操作
+    List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long  martId);
+     //提现操作
     void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate);
     String selectWithStatus();
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantCouponDao">
+
+    <resultMap type="io.treasure.entity.MerchantCouponEntity" id="merchantCouponMap">
+
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="money" column="money"/>
+        <result property="disType" column="dis_type"/>
+        <result property="discount" column="discount"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+        <result property="isRepeat" column="is_repeat"/>
+        <result property="grants" column="grants"/>
+    </resultMap>
+    <update id="updateStatusById"   parameterType="io.treasure.entity.MerchantCouponEntity">
+        update ct_merchant_coupon set status=#{status} where id=#{id}
+    </update>
+    <select id="getAllById" parameterType="io.treasure.entity.MerchantCouponEntity" resultType="io.treasure.entity.MerchantCouponEntity">
+        SELECT * from ct_merchant_coupon where id=#{id} and `status`=1
+    </select>
+    
+    <select id="getMoneyOffByMerchantId" parameterType="io.treasure.dto.MerchantCouponDTO" resultType="io.treasure.dto.MerchantCouponDTO">
+       select money ,discount from ct_merchant_coupon as cmc left join
+ ct_user_coupon cuc on cuc.coupon_id=cmc.id
+ where cmc.merchant_id=#{arg0}  and cmc.type=1 and cuc.user_id=#{arg1}
+    </select>
+    <select id="listPage" resultType="io.treasure.dto.MerchantCouponDTO">
+        select cmc.*,merchant.name merchantName
+        from ct_merchant_coupon cmc
+        left join ct_merchant merchant on merchant.id=cmc.merchant_id
+        where 1=1
+        <if test="status != null">
+            and cmc.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and cmc.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

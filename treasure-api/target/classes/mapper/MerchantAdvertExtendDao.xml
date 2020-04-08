@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantAdvertExtendDao">
+
+    <resultMap type="io.treasure.entity.MerchantAdvertExtendEntity" id="merchantAdvertExtendMap">
+
+        <result property="id" column="id"/>
+        <result property="url" column="url"/>
+        <result property="link" column="link"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+    <select id="listPage" resultType="io.treasure.dto.MerchantAdvertExtendDTO">
+        select advert.*,merchant.name merchantName
+        from ct_merchant_advert_extend advert
+        left join ct_merchant merchant on merchant.id=advert.merchant_id
+        where 1=1
+        <if test="status != null">
+            and advert.status = #{status}
+        </if>
+        <if test="merchantId != null">
+            and advert.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

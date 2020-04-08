@@ -59,7 +59,6 @@ public class UserIntegralController {
             return  new Result().error("请输入100的倍数");
         }
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
-
         BigDecimal integral1 = clientUserEntity.getIntegral();
         BigDecimal gift = clientUserEntity.getGift();
 

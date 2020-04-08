@@ -136,7 +136,10 @@ public class MerchantWithdrawController {
         ValidatorUtils.validateEntity(dto, AddGroup.class);
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
         Double notCash = merchantEntity.getNotCash();
-
+        List<MerchantWithdrawDTO> merchantWithdrawDTOS = merchantWithdrawService.selectByMartIdAndStasus(dto.getMerchantId());
+      if (merchantWithdrawDTOS.size()!=0) {
+          return new Result().error("提现处理中，请稍后再试");
+      }
         Double money = dto.getMoney();
         if (money>notCash){
             return new Result().error("提现金额不足");

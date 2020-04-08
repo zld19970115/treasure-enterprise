@@ -92,6 +92,10 @@ public class PayServiceImpl implements PayService {
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+//        if(masterOrderEntity.getStatus()!=1){
+////            mapRtn.put("return_code", "SUCCESS");
+////            return mapRtn;
+////        }
         if(masterOrderEntity==null||"".equals(masterOrderEntity)){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
@@ -117,8 +121,8 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
             return mapRtn;
         }
-
-        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+        if(masterOrderEntity.getStatus()!=1){
+        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());}
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
