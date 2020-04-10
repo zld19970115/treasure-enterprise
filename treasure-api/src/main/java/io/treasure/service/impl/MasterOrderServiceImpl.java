@@ -737,6 +737,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
+        Integer[] arr = new Integer[] { 2,7 };
+        List<Integer> list = Arrays.asList(arr);
+        if (!list.contains(dto.getStatus())){
+
+            return result.error(-11, "待商家接单后重试！");
+
+        }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金

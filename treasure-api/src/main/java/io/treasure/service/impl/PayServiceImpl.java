@@ -122,7 +122,11 @@ public class PayServiceImpl implements PayService {
             return mapRtn;
         }
         if(masterOrderEntity.getStatus()!=1){
-        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());}
+            mapRtn.put("return_code", "SUCCESS");
+            mapRtn.put("return_msg", "OK");
+            return mapRtn;
+        }
+        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
@@ -516,6 +520,7 @@ public class PayServiceImpl implements PayService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {
+
         System.out.println("ali"+out_trade_no);
         Map<String, String> mapRtn = new HashMap<>(2);
 
@@ -531,6 +536,11 @@ public class PayServiceImpl implements PayService {
         if(masterOrderEntity==null){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
+            return mapRtn;
+        }
+        if(masterOrderEntity.getStatus()!=1){
+            mapRtn.put("return_code", "SUCCESS");
+            mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());

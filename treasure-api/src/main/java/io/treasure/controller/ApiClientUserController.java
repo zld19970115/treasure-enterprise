@@ -292,6 +292,9 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String")})
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
+        if(userByPhone.getOpenid()!=null){
+            return new Result().error("该手机号已被绑定");
+        }
         if(userByPhone.getStatus()==9){
             return new Result().error("该手机号已注销");
         }

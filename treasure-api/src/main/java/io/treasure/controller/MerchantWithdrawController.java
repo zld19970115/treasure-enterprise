@@ -140,10 +140,19 @@ public class MerchantWithdrawController {
       if (merchantWithdrawDTOS.size()!=0) {
           return new Result().error("提现处理中，请稍后再试");
       }
-        Double money = dto.getMoney();
+        double money = dto.getMoney();
         if (money>notCash){
             return new Result().error("提现金额不足");
         }
+        if(money<1 || money >5000){
+            return new Result().error("提现范围在1~5000元");
+        }
+
+
+        if((int)money != money){
+            return new Result().error("请输入整数");
+        }
+
         dto.setCreateDate(new Date());
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
