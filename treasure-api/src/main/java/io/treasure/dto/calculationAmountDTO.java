@@ -2,15 +2,18 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-
+import lombok.experimental.Accessors;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
+
 
 /**
  * 计算赠送金和优惠卷菜品信息返回参数
  */
 @Data
+@Accessors(chain = true)
 @ApiModel(value = "计算赠送金和优惠卷菜品信息返回参数")
-public class calculationAmountDTO {
+public class calculationAmountDTO extends ComparableCondition implements Comparable<calculationAmountDTO>{
 
     /**
      * 数量
@@ -34,7 +37,6 @@ public class calculationAmountDTO {
      */
     private BigDecimal freeGold;
 
-
     /**
      * 优惠卷金额（此菜品已经使用的优惠卷抵扣的金额）
      */
@@ -51,7 +53,7 @@ public class calculationAmountDTO {
     private Long goodId;
 
     /**
-     * 优惠后价格
+     * 优惠后价格(单价)
      */
     private BigDecimal newPrice;
 
@@ -66,5 +68,42 @@ public class calculationAmountDTO {
      */
     private BigDecimal merchantProceeds;
 
+    @Override
+    public BigDecimal getFractionPart() {
+        return super.fractionPart;
+    }
+
+    public calculationAmountDTO setFranctionPart(BigDecimal franctionPart){
+        super.setFractionPart(fractionPart);
+        return this;
+    }
+    public int compareField(calculationAmountDTO t){
+        int res = 0;
+        try{
+            String methodName = this.getFieldName();
+            Method cMethod = this.getClass().getDeclaredMethod(methodName);
+            Method tMethod = t.getClass().getDeclaredMethod(methodName);
+
+            String tmpC = (cMethod.invoke(this)+"").trim().length()==0?"0":cMethod.invoke(this)+"";
+            String tmpT = (tMethod.invoke(t)+"").trim().length()==0?"0":tMethod.invoke(t)+"";
+
+            BigDecimal cValue = new BigDecimal(tmpC);
+            BigDecimal tValue = new BigDecimal(tmpT);
+            System.out.println("o1,o2"+cValue+","+tValue);
+            if(cValue.compareTo(tValue)<0){
+                return 1;
+            }else{
+                return -1;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return res;
+        }
+    }
+
+    @Override
+    public int compareTo(calculationAmountDTO t) {
+        return compareField(t);
+    }
 
 }

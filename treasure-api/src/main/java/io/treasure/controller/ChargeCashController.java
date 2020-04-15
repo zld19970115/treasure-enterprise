@@ -10,6 +10,7 @@ import io.treasure.entity.ChargeCashSetEntity;
 import io.treasure.service.BannerService;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
+import io.treasure.utils.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,5 +44,13 @@ public class ChargeCashController {
         chargeCashEntity.setUserId(userId);
         chargeCashService.insert(chargeCashEntity);
         return new Result().ok("现金充值成功");
+    }
+    @PostMapping("/getCashId")
+    @ApiOperation("获取充值订单Id")
+    public Result getCashId(@RequestParam Long userId ){
+
+        //获取充值订单Id
+        String orderId = OrderUtil.getOrderIdByTime(userId);
+        return new Result().ok(orderId);
     }
 }

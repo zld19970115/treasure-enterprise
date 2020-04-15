@@ -12,6 +12,7 @@ import io.treasure.dto.MerchantRoomParamsSetDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.MerchantRoomParamsEntity;
+import io.treasure.entity.MerchantRoomParamsSetEntity;
 import io.treasure.service.MerchantRoomParamsService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.swagger.annotations.Api;
@@ -143,5 +144,29 @@ public class MerchantRoomParamsSetController {
         map.put("roomNum",availableRooms);
         map.put("DeskNum",getAvailableRoomsDesk);
         return map;
+    }
+    @Login
+    @GetMapping("lockRoom")
+    @ApiOperation("锁定当前时间段包房")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "包房设置表ID", paramType = "query", required = true, dataType="long")
+    })
+    public Result lockRoom(long id) {
+        MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(id);
+        merchantRoomParamsSetEntity.setState(1);
+        merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
+        return new Result().ok("锁定成功");
+    }
+    @Login
+    @GetMapping("deblockingRoom")
+    @ApiOperation("解锁当前时间段包房")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "包房设置表ID", paramType = "query", required = true, dataType="long")
+    })
+    public Result deblockingRoom(long id) {
+        MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(id);
+        merchantRoomParamsSetEntity.setState(0);
+        merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
+        return new Result().ok("解锁成功");
     }
 }

@@ -70,7 +70,6 @@ public class ApiWXPayController {
         Map<String, String> data = new HashMap<>();
         data.put("out_trade_no", orderNo);
         Map<String, String> result = wxPay.orderQuery(data);
-
         return result;
     }
 

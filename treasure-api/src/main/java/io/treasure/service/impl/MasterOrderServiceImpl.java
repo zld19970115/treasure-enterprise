@@ -11,11 +11,9 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
-import io.treasure.config.ISMSConfig;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.MasterOrderDao;
-import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
@@ -32,6 +30,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.SQLOutput;
 import java.util.*;
 
 /**
@@ -737,13 +736,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-        Integer[] arr = new Integer[] { 2,7 };
-        List<Integer> list = Arrays.asList(arr);
-        if (!list.contains(dto.getStatus())){
-
-            return result.error(-11, "待商家接单后重试！");
-
-        }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金
@@ -1034,375 +1026,327 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         wrapper.eq(StringUtils.isNotBlank(pOrderId), "p_order_id", pOrderId);
         return wrapper;
     }
+    //==================================================================================
+    //==================================================================================
 
+    //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
+    public List<calculationAmountDTO> patchDifferences(int patchValue,List<calculationAmountDTO> slaveOrders){
+
+        Collections.sort(slaveOrders);                                  //降序排列
+        BigDecimal platformRatio    = new BigDecimal(0.15);         //商家扣点标准(总金额-赠送金，后的15%)
+        BigDecimal patchStep = new BigDecimal(0.01);                //补偿值
+
+        //使用临时对象
+        String tmp = slaveOrders.get(0).getFieldName();
+        if(tmp.equals(ComparableCondition.SortRule.getDiscountsMoney.name())){
+            //优惠券补差
+            for(int i=0;i<patchValue;i++){
+                calculationAmountDTO item = slaveOrders.get(i);
+
+                item.setTotalMoney(item.getTotalMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN))       //优惠后的项总价
+                        .setDiscountsMoney(item.getDiscountsMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //优惠金额=(原项总价-优惠后的项总价)
+
+                if(item.getQuantity().compareTo(new BigDecimal("1"))==0){
+                    item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));           //优惠后的项单价
+                }
+            }
+
+        }else if(tmp.equals(ComparableCondition.SortRule.getFreeGold.name())){
+            //赠送金补差
+            for(int i=0;i<patchValue;i++){
+
+                calculationAmountDTO item = slaveOrders.get(i);
+                if(item.getQuantity().compareTo(new BigDecimal("1"))== 0){
+                    item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));//使用赠送金后的价格
+                }
+
+                item.setTotalMoney(item.getTotalMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN))
+                        .setFreeGold(item.getFreeGold().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));    //项赠送金使用量//赠送金是项单价还是项总价，目前按项总价取差值
+            }
+
+        }else if(tmp.equals(ComparableCondition.SortRule.getPlatformBrokerage.name())){
+            //平对扣点补差
+            for(int i=0;i<patchValue;i++) {
+
+                calculationAmountDTO item = slaveOrders.get(i);
+                BigDecimal totalItemDiscountPatch = item.getTotalItemDiscount().add(patchStep);
+                BigDecimal itemIncomePlatformPatch       = totalItemDiscountPatch.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
+                BigDecimal itemIncomeMerchantPatch       = totalItemDiscountPatch.subtract(itemIncomePlatformPatch).setScale(2,BigDecimal.ROUND_DOWN);
+
+                item.setMerchantProceeds(itemIncomePlatformPatch.setScale(2,BigDecimal.ROUND_DOWN))    //商家收入
+                        .setPlatformBrokerage(itemIncomeMerchantPatch.setScale(2,BigDecimal.ROUND_DOWN));      //平台收入
+            }
+        }
+        return slaveOrders;
+    }
+
+    //chiguoqiang:获取减免金额类型("扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用")
+    private enum DiscountType{
+        DISCOUNT_AND_GIFT,  //赠送金和优惠券
+        DISCOUNT_ONLY,      //优惠卷方式
+        GIFT_ONLY,          //赠送金方式
+        ORIGIN_PRICE;       //默认不扣减
+    }
+
+    //chiguoqiang:生成主体部分与小数标记部分
+    public String generateDecimalPart(String target){
+        String tmp = target;
+        if(target.contains(".")){
+            tmp = target.substring(target.indexOf(".")+3);
+        }else{
+            tmp = 0+"";
+        }
+        if(tmp.equals("00")){
+            tmp = 0+"";
+        }
+        return tmp;
+    }
+
+    //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
+    public DesignConditionsDTO itemsClculate(DesignConditionsDTO target,DiscountType discountType){
+        if(target == null)      return null;
+        List<calculationAmountDTO> slaveOrders = target.getSlaveOrder();
+
+        //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
+        BigDecimal priceTotal = target.getTotalMoney();        //原始总价
+        BigDecimal priceAfterDiscount       = priceTotal;               //优惠后的价格
+        BigDecimal diferencedDiscountPatch  = priceTotal;               //优惠券比例均摊后的差值（项累计后的差值）
+        //赠送金:假设一单为总价25元，5元的优惠券：优惠后的价格为20元，可用赠送金为20元的10%即2元
+        BigDecimal giftRatio        = new BigDecimal("0.1");         //赠送金可用比例
+        //一次初始化基本参数
+        for(int i = 0; i < slaveOrders.size(); i++) {
+            //检查商品是否存在，存在则取回
+            GoodDTO goodDTO = goodService.get(slaveOrders.get(i).getGoodId());
+            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+
+            //当商品信息不存在时，保留商品基本信息（其它信息不做处理，留给其它业务2020-04-13）
+            if (goodDTO != null)
+                slaveOrderItem.setName(goodDTO.getName()).setIcon(goodDTO.getIcon());//更新基本信息
+
+            slaveOrderItem
+                    .setNewPrice(slaveOrderItem.getPrice())//新项单价
+                    .setTotalMoney(slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity()).setScale(2, BigDecimal.ROUND_DOWN));//新项总价
+            slaveOrderItem.setTotalItemDiscount(slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity()).setScale(4, BigDecimal.ROUND_DOWN));
+
+            slaveOrderItem.setFreeGold(new BigDecimal("0"));
+            slaveOrderItem.setDiscountsMoney(new BigDecimal("0"));
+        }
+
+        //分类处理业务
+        switch (discountType.ordinal())
+        {
+            /************************************************************************/
+            case 0://优惠券方式和赠送金方式【留位】
+            case 1://仅优惠券方式
+                /************************************************************************/
+                //查询商户优惠券信息（优惠类型：1-金额；2-折扣）
+                MerchantCouponDTO merchantCouponDTO = merchantCouponService.get(target.getId());//检查昌否使用了优惠券
+                if(merchantCouponDTO != null){
+                    Double discountCardNum = merchantCouponDTO.getDiscount();
+                    BigDecimal discountCardNumBd = new BigDecimal(merchantCouponDTO.getDiscount()).setScale(2,BigDecimal.ROUND_DOWN);
+                    BigDecimal moneyBd = new BigDecimal(merchantCouponDTO.getMoney()).setScale(2,BigDecimal.ROUND_DOWN);
+                    BigDecimal discountValue  = discountCardNumBd;
+                    //金额：满减类型并且达到满减条件
+                    if(merchantCouponDTO.getDisType() == 1){
+                        if(priceTotal.compareTo(moneyBd) >=0){
+                            /**更新优惠券面值：1-金额类型*/
+                            if(discountCardNumBd.compareTo(priceTotal)>0)
+                                discountValue = priceTotal;
+                        }
+                    }else{
+                        //折扣：且达到折扣条件
+                        /**更新优惠券面值：2-折扣类型：折扣量(总价X（折扣比例x面值）)*/
+                        if(discountCardNum<1 && discountCardNum>0)
+                            discountValue = priceTotal.multiply(discountCardNumBd).setScale(2, BigDecimal.ROUND_DOWN);
+                    }
+
+                    //更新优惠后的总金额
+                    priceAfterDiscount = priceTotal.subtract(discountValue).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+
+                    //优惠后的价格差值初始值
+                    diferencedDiscountPatch = discountValue;
+                }
+                //更新项参数
+                for(int i = 0; i < slaveOrders.size(); i++){
+                    calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+
+                    //newPrice(优惠后单项总价) = (priceAfterDiscount/priceTotal)*itemPrice*quantity
+                    BigDecimal totalItemDiscount = priceAfterDiscount.multiply(slaveOrderItem.getPrice()).multiply(slaveOrderItem.getQuantity()).setScale(2,BigDecimal.ROUND_DOWN);
+                    totalItemDiscount = totalItemDiscount.divide(priceTotal,4,BigDecimal.ROUND_DOWN);
+
+                    //优惠后的项单价
+                    BigDecimal newPrice = totalItemDiscount.divide(slaveOrderItem.getQuantity()).setScale(2, BigDecimal.ROUND_DOWN);
+                    slaveOrderItem.setTotalItemDiscount(totalItemDiscount);
+
+                    //优惠金额
+                    BigDecimal originTotalItemDiscount = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity()).setScale(2,BigDecimal.ROUND_DOWN);
+                    BigDecimal discountsMoney = originTotalItemDiscount.subtract(totalItemDiscount).setScale(2,BigDecimal.ROUND_DOWN);
+
+                    slaveOrderItem
+                            .setNewPrice(newPrice.setScale(2,BigDecimal.ROUND_DOWN))//优惠后的项单价
+                            .setTotalMoney(totalItemDiscount.setScale(2,BigDecimal.ROUND_DOWN))                                   //优惠后的项总价
+                            .setDiscountsMoney(discountsMoney.setScale(2,BigDecimal.ROUND_DOWN))                                  //优惠金额=(原项总价-优惠后的项总价)
+
+                            .setFranctionPart(new BigDecimal(generateDecimalPart(totalItemDiscount+"")))
+                            .setFieldName(ComparableCondition.SortRule.getDiscountsMoney);//使用优惠券进行排序
+
+                    diferencedDiscountPatch = diferencedDiscountPatch.subtract(discountsMoney);
+                    slaveOrders.set(i,slaveOrderItem);
+
+                }
+                //补差处理
+                String differenceDiscountStr = diferencedDiscountPatch.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString();
+                int patchValue = Integer.parseInt(differenceDiscountStr);
+                //补偿并更新
+                if(patchValue>0)
+                    slaveOrders = patchDifferences(patchValue,slaveOrders);
+
+                if (discountType.ordinal()==1)
+                {
+                    slaveOrders = calculateIncome(slaveOrders,priceAfterDiscount);
+                    break;
+                }
+
+                /************************************************************************/
+            case 2://仅赠送金方式
+                /************************************************************************/
+                //获取用户信息
+                ClientUserDTO clientUserDTO = clientUserService.get(target.getUserId());
+                if(clientUserDTO != null){
+                    BigDecimal userOwnerGiftValue = clientUserDTO.getGift();
+
+                    //更新赠送金量======
+                    BigDecimal giftValue = priceAfterDiscount.multiply(giftRatio).setScale(2,BigDecimal.ROUND_DOWN);
+                    //用户赠送金不足
+                    if (giftValue.compareTo(userOwnerGiftValue) >=0) {
+                        giftValue = userOwnerGiftValue;
+                    }
+
+                    //初始化差值
+                    BigDecimal differenceGift = giftValue;
+
+                    //更新项参数
+                    for(int i = 0; i < slaveOrders.size(); i++) {
+
+                        calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+
+                        //优惠后的项总价
+                        BigDecimal originTotalItemDiscount = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity()).setScale(2,BigDecimal.ROUND_DOWN);
+                        //优惠后项总价
+                        BigDecimal itemPriceTotalAfterDiscount = originTotalItemDiscount.subtract(slaveOrderItem.getDiscountsMoney()).setScale(2,BigDecimal.ROUND_DOWN);
+
+                        //===(giftValue/priceAfterDiscount)*itemPriceTotalAfterDiscount
+                        //本项赠送金的项总值
+                        BigDecimal  freeGold = giftValue.multiply(itemPriceTotalAfterDiscount).setScale(4,BigDecimal.ROUND_DOWN);
+                        freeGold  = freeGold .divide(priceAfterDiscount,4,BigDecimal.ROUND_DOWN);
+
+                        //赠送金项总价小计(优惠后的项总价-优惠和赠送金的项总价)
+                        BigDecimal totalMoney = itemPriceTotalAfterDiscount.subtract(freeGold).setScale(2,BigDecimal.ROUND_DOWN);
+
+                        //优惠后项单价itemPriceAfterGifttotalMoney
+                        BigDecimal itemPriceAfterGift = totalMoney.divide(slaveOrderItem.getQuantity(),2,BigDecimal.ROUND_DOWN);
+
+                        slaveOrderItem
+                                .setNewPrice(itemPriceAfterGift.setScale(2,BigDecimal.ROUND_DOWN))//使用赠送金后的价格
+                                .setTotalMoney(totalMoney.setScale(2,BigDecimal.ROUND_DOWN))
+                                .setFreeGold(freeGold.setScale(2,BigDecimal.ROUND_DOWN))    //项赠送金使用量
+
+                                .setFranctionPart(new BigDecimal(generateDecimalPart(freeGold+"")))
+                                .setFieldName(ComparableCondition.SortRule.getFreeGold);           //排序方式设置
+
+                        //差值累计---待复核 ??
+                        differenceGift = differenceGift.subtract(freeGold).setScale(2,BigDecimal.ROUND_DOWN);
+
+                        slaveOrders.set(i,slaveOrderItem);
+                    }
+
+                    //补差处理
+                    String differenceGiftStr = differenceGift.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString();
+                    patchValue = Integer.parseInt(differenceGiftStr);
+                    //补偿并更新
+                    if(patchValue>0)
+                        slaveOrders = patchDifferences(patchValue,slaveOrders);
+                }
+
+                /************************************************************************/
+            case 3://默认不扣减方式
+                /************************************************************************/
+                slaveOrders = calculateIncome(slaveOrders,priceAfterDiscount);
+                /************************************************************************/
+                break;
+        }
+
+//        for(int i=0;i<slaveOrders.size();i++){
+//            System.out.println("obj"+i+":"+slaveOrders.get(i).toString());
+//        }
+        target.setSlaveOrder(slaveOrders);
+        return target;
+    }
 
     /**
-     * 计算优惠卷
      *
-     * @param dct
+     * @param slaveOrders
+     * @param priceAfterDiscount 优惠后的金额
      * @return
      */
+    public List<calculationAmountDTO> calculateIncome(List<calculationAmountDTO> slaveOrders,BigDecimal priceAfterDiscount){
+        BigDecimal platformRatio    = new BigDecimal("0.15");         //商家扣点标准(总金额-赠送金，后的15%)
+        for(int i = 0; i < slaveOrders.size(); i++) {
+            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
+            //单项优惠后的项总价
+            BigDecimal itemDiscountTmp = slaveOrderItem.getTotalItemDiscount();
+            BigDecimal itemIncomePlatform       = itemDiscountTmp.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
+            BigDecimal itemIncomeMerchant       = itemDiscountTmp.subtract(itemIncomePlatform).setScale(2,BigDecimal.ROUND_DOWN);
+            slaveOrderItem
+                    .setMerchantProceeds(itemIncomeMerchant)        //商家收入
+                    .setPlatformBrokerage(itemIncomePlatform)      //平台收入
+                    .setFranctionPart(new BigDecimal(generateDecimalPart(slaveOrderItem.getTotalItemDiscount()+"")))
+                    .setFieldName(ComparableCondition.SortRule.getPlatformBrokerage);
+
+            slaveOrders.set(i,slaveOrderItem);
+
+            priceAfterDiscount = priceAfterDiscount.subtract(slaveOrderItem.getTotalItemDiscount());
+
+        }
+        //补差处理(补平台，暂不补商家)
+        String differencePlatformStr = priceAfterDiscount.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString();
+        int patchValue = Integer.parseInt(differencePlatformStr);
+        //补偿并更新
+        if(patchValue>0)
+            return patchDifferences(patchValue,slaveOrders);
+        return slaveOrders;
+    }
+
+    //==================================================================================
+    //==================================================================================
+    /**
+     * 计算优惠卷
+     */
     public DesignConditionsDTO calculateCoupon(DesignConditionsDTO dct) {
-        //获取此订餐所有菜品信息
-        List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
-        //优惠券辅助运算
-        BigDecimal discount = new BigDecimal("0");
-        BigDecimal disc = new BigDecimal(0.1).setScale(2, BigDecimal.ROUND_DOWN);
-        //订单原总价
-        BigDecimal totalMoney1 = dct.getTotalMoney();
-
-        MerchantCouponDTO merchantCouponDTO = merchantCouponService.get(dct.getId());
-        if (merchantCouponDTO.getDisType() != 2) {
-            Double money = merchantCouponDTO.getDiscount();
-            //获取优惠卷金额
-            discount = new BigDecimal(money).setScale(2, BigDecimal.ROUND_DOWN);
-        } else if (merchantCouponDTO.getDisType() == 2) {
-            Double money = merchantCouponDTO.getDiscount();
-            BigDecimal discounts = new BigDecimal(money);
-            //折扣后价格
-            BigDecimal bigDecimaMoney = totalMoney1.multiply(discounts.multiply(disc)).setScale(2, BigDecimal.ROUND_DOWN);
-            discount = totalMoney1.subtract(bigDecimaMoney);
-        }
-
-        //优惠卷辅助运算
-        BigDecimal x = new BigDecimal(0);
-//---------------------------------------------------平台扣点算法-----------------------------------------------------
-        //扣点基数
-        BigDecimal base = new BigDecimal("1");
-        //扣点比例
-        BigDecimal ratio = new BigDecimal("0.15");
-        BigDecimal payMoney = totalMoney1.subtract(discount);
-        //商户所得金额
-        BigDecimal subtract2 = (payMoney.multiply(base.subtract(ratio))).setScale(2, BigDecimal.ROUND_UP);
-        //平台扣点金额
-        BigDecimal subtract3 = payMoney.subtract(subtract2);
-
-
-        /*优惠卷算法*/
-
-
-        ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
-        for (int i = 0; i < slaveOrder.size(); i++) {
-            //一条对象
-            calculationAmountDTO slaveOrderEnti = slaveOrder.get(i);
-            //获取菜品单价
-            BigDecimal price = slaveOrder.get(i).getPrice();
-            //单个菜品数量
-            BigDecimal quantity = slaveOrder.get(i).getQuantity();
-            if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
-                BigDecimal newPrive = price.subtract((discount.subtract(x).divide(quantity))).multiply(quantity);
-                slaveOrderEnti.setNewPrice(newPrive);
-                //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
-                slaveOrderEnti.setDiscountsMoney(discount.subtract(x));
-                slaveOrderEnti.setTotalMoney(newPrive.multiply(quantity));
-                slaveOrderEnti.setMerchantProceeds(subtract2);
-                slaveOrderEnti.setPlatformBrokerage(subtract3);
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-            } else {
-                //原单价/原总价
-                BigDecimal divide = price.divide(totalMoney1, 2, BigDecimal.ROUND_DOWN);
-                //（原单价/原总价）*优惠卷总额=一个菜品优惠金额
-                BigDecimal multiply = divide.multiply(discount).setScale(2, BigDecimal.ROUND_DOWN);
-                //优惠卷平均到单个菜品金额=菜品单价-（菜品单价/订单总金额）*赠送金总金额
-                BigDecimal aGoodfreeGoldMoney = price.subtract((multiply)).setScale(2, BigDecimal.ROUND_DOWN);
-                slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
-                BigDecimal subtract = multiply.multiply(quantity);
-                slaveOrderEnti.setDiscountsMoney(subtract);
-                //实际支付总金额（扣除掉优惠券平均到菜品的钱）
-                BigDecimal multiply1 = aGoodfreeGoldMoney.multiply(quantity);
-                slaveOrderEnti.setTotalMoney(multiply1);
-                BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
-                //计算平台扣点金额
-                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3 = subtract3.subtract(platformBrokerage);
-                slaveOrderEnti.setMerchantProceeds(multiply1.subtract(platformBrokerage));
-                //计算商户实际可得金额
-                BigDecimal subtract4 = multiply1.subtract(platformBrokerage);
-                subtract2 = subtract2.subtract(subtract4);
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                x = x.add(price.subtract(price.subtract(subtract)));
-
-            }
-            slaveOrderEntityArrayList.add(slaveOrderEnti);
-
-        }
-        dct.setSlaveOrder(slaveOrderEntityArrayList);
-
-        return dct;
+        return itemsClculate(dct,DiscountType.DISCOUNT_ONLY);
     }
 
     /**
      * 计算赠送金
-     *
-     * @param dct
-     * @return
      */
-
     public DesignConditionsDTO calculateGift(DesignConditionsDTO dct) {
-        //获取此订餐所有菜品信息
-        List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
-        //获取减免金额类型("扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用")
-        Integer preferentialType = dct.getPreferentialType();
-        Double money = 0.0;
-
-        //获取优惠卷金额
-        BigDecimal discount = new BigDecimal(money);
-        //赠送金比例
-        BigDecimal freeGoldProportion = new BigDecimal(0.1);
-        BigDecimal a = new BigDecimal(0);
-        BigDecimal x = new BigDecimal(0);
-        /*赠送金算法*/
-
-        //订单原总价
-        BigDecimal totalMoney1 = dct.getTotalMoney();
-
-        //---------------------------------------------------平台扣点算法-----------------------------------------------------
-        //扣点基数
-        BigDecimal base = new BigDecimal("1");
-        //扣点比例
-        BigDecimal ratio = new BigDecimal("0.15");
-        BigDecimal payMoney = totalMoney1.subtract(discount);
-        //平台扣点金额
-        BigDecimal subtract3 = (payMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
-
-        //商户所得金额
-        BigDecimal subtract2 = (payMoney.subtract(subtract3));
-
-
-        ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
-        for (int i = 0; i < slaveOrder.size(); i++) {
-            //一条对象
-            calculationAmountDTO slaveOrderEnti = slaveOrder.get(i);
-            //获取菜品单价
-            BigDecimal price = slaveOrder.get(i).getPrice();
-            //单个菜品数量
-            BigDecimal quantity = slaveOrder.get(i).getQuantity();
-            //赠送金总金额
-            BigDecimal freeGoldMoney = totalMoney1.multiply(freeGoldProportion).setScale(2, BigDecimal.ROUND_DOWN);
-            //获取用户信息
-            ClientUserDTO clientUserDTO = clientUserService.get(dct.getUserId());
-            BigDecimal gift = clientUserDTO.getGift();
-            if (gift.compareTo(freeGoldMoney) == -1) {
-                freeGoldMoney = gift;
-            }
-            if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
-                BigDecimal subtract = freeGoldMoney.subtract(x);
-                BigDecimal bigDecimal = (subtract.divide(quantity,2, BigDecimal.ROUND_DOWN));
-                BigDecimal newPrice = price.subtract(bigDecimal);
-                slaveOrderEnti.setNewPrice(newPrice);
-                slaveOrderEnti.setTotalMoney(newPrice.multiply(quantity));
-                slaveOrderEnti.setPlatformBrokerage(subtract3);
-                slaveOrderEnti.setMerchantProceeds(subtract2);
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
-                slaveOrderEnti.setFreeGold(freeGoldMoney.subtract(x));
-            } else {
-                //原单价/原总价
-                BigDecimal divide = price.divide(totalMoney1, 2, BigDecimal.ROUND_DOWN);
-                //（原单价/原总价）*赠送金总额=一个菜品优惠金额
-                BigDecimal multiply = divide.multiply(freeGoldMoney).setScale(2, BigDecimal.ROUND_DOWN);
-                //赠送金平均到单个菜品金额=菜品单价-（菜品单价/订单总金额）*赠送金总金额
-                BigDecimal aGoodfreeGoldMoney = price.subtract((multiply)).setScale(2, BigDecimal.ROUND_DOWN);
-                BigDecimal multiply1 = price.multiply(quantity);
-                //平台所得金额
-                BigDecimal platformBrokerage = (multiply1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
-                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3 = subtract3.subtract(platformBrokerage);
-                //商户所的金额
-                BigDecimal merchantProceeds = multiply1.subtract(platformBrokerage);
-                subtract2 = subtract2.subtract(merchantProceeds);
-
-                slaveOrderEnti.setMerchantProceeds(merchantProceeds);
-                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
-                BigDecimal subtract = multiply.multiply(quantity);
-                slaveOrderEnti.setFreeGold(subtract);
-                slaveOrderEnti.setTotalMoney(aGoodfreeGoldMoney.multiply(quantity));
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                x = x.add(price.subtract(price.subtract(subtract)));
-
-            }
-            slaveOrderEntityArrayList.add(slaveOrderEnti);
-
-        }
-        dct.setSlaveOrder(slaveOrderEntityArrayList);
-
-        return dct;
+        return itemsClculate(dct,DiscountType.GIFT_ONLY);
     }
 
     /**
      * 计算赠送金与优惠卷
-     *
-     * @param dct
-     * @return
      */
-
     public DesignConditionsDTO calculateGiftCoupon(DesignConditionsDTO dct) {
-        DesignConditionsDTO designConditionsDTO = this.calculateCoupon(dct);
-        List<calculationAmountDTO> slaveOrder = designConditionsDTO.getSlaveOrder();
-        BigDecimal totalMoney = dct.getTotalMoney();
-        BigDecimal s = new BigDecimal(0);
-        BigDecimal c = new BigDecimal(0);
-
-        for (int i = 0; i < slaveOrder.size(); i++) {
-            BigDecimal price = slaveOrder.get(i).getNewPrice();
-            BigDecimal quantity = slaveOrder.get(i).getQuantity();
-            BigDecimal multiply = price.multiply(quantity);
-            s = s.add(multiply);
-            c = c.add(price);
-            slaveOrder.get(i).setNewPrice(price);
-            slaveOrder.get(i).setTotalMoney(multiply);
-        }
-        dct.setTotalMoney(totalMoney);
-        //获取减免金额类型("扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用")
-        Integer preferentialType = dct.getPreferentialType();
-        Double money = 0.0;
-
-        //获取优惠卷金额
-        BigDecimal discount = new BigDecimal(money);
-        //赠送金比例
-        BigDecimal freeGoldProportion = new BigDecimal(0.1);
-        BigDecimal a = new BigDecimal(0);
-        BigDecimal x = new BigDecimal(0);
-        /*赠送金算法*/
-
-
-        ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
-        for (int i = 0; i < slaveOrder.size(); i++) {
-            //一条对象
-            calculationAmountDTO slaveOrderEnti = slaveOrder.get(i);
-            //获取菜品单价
-            BigDecimal price = slaveOrder.get(i).getNewPrice();
-            //单个菜品数量
-            BigDecimal quantity = slaveOrder.get(i).getQuantity();
-            //赠送金总金额
-            BigDecimal freeGoldMoney = s.multiply(freeGoldProportion).setScale(2, BigDecimal.ROUND_DOWN);
-            //获取用户信息
-            ClientUserDTO clientUserDTO = clientUserService.get(dct.getUserId());
-            BigDecimal gift = clientUserDTO.getGift();
-            if (gift.compareTo(freeGoldMoney) == -1) {
-                freeGoldMoney = gift;
-            }
-            if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
-                BigDecimal newPrice = price.subtract((freeGoldMoney.subtract(x).divide(quantity)));
-                slaveOrderEnti.setNewPrice(newPrice);
-                slaveOrderEnti.setTotalMoney(newPrice.multiply(quantity));
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setMerchantProceeds(slaveOrder.get(i).getMerchantProceeds());
-                slaveOrderEnti.setPlatformBrokerage(slaveOrder.get(i).getPlatformBrokerage());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
-                slaveOrderEnti.setFreeGold(freeGoldMoney.subtract(x));
-                slaveOrderEnti.setNewPrice(price);
-            } else {
-                //原单价/原总价
-                BigDecimal divide = price.divide(s, 2, BigDecimal.ROUND_DOWN);
-                //（原单价/原总价）*赠送金总额=一个菜品优惠金额
-                BigDecimal multiply = divide.multiply(freeGoldMoney).setScale(2, BigDecimal.ROUND_DOWN);
-                //赠送金平均到单个菜品金额=菜品单价-（菜品单价/订单总金额）*赠送金总金额
-                BigDecimal aGoodfreeGoldMoney = price.subtract((multiply)).setScale(2, BigDecimal.ROUND_DOWN);
-                slaveOrderEnti.setNewPrice(aGoodfreeGoldMoney);
-                BigDecimal subtract = multiply.multiply(quantity);
-                slaveOrderEnti.setFreeGold(subtract);
-                slaveOrderEnti.setMerchantProceeds(slaveOrder.get(i).getMerchantProceeds());
-                slaveOrderEnti.setPlatformBrokerage(slaveOrder.get(i).getPlatformBrokerage());
-                slaveOrderEnti.setTotalMoney(aGoodfreeGoldMoney.multiply(quantity));
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                x = x.add(price.subtract(price.subtract(subtract)));
-
-            }
-            slaveOrderEntityArrayList.add(slaveOrderEnti);
-
-        }
-        dct.setSlaveOrder(slaveOrderEntityArrayList);
-
-        return dct;
+        return itemsClculate(dct,DiscountType.DISCOUNT_AND_GIFT);
     }
 
     /**
      * 无任何优惠（只计算扣点）
-     *
-     * @param dct
-     * @return
      */
     @Override
     public DesignConditionsDTO notDiscounts(DesignConditionsDTO dct) {
-        //获取此订餐所有菜品信息
-        List<calculationAmountDTO> slaveOrder = dct.getSlaveOrder();
-        BigDecimal a = new BigDecimal(0);
-        //订单原总价
-        BigDecimal totalMoney1 = dct.getTotalMoney();
-
-        //---------------------------------------------------平台扣点算法-----------------------------------------------------
-        //扣点基数
-        BigDecimal base = new BigDecimal("1");
-        //扣点比例
-        BigDecimal ratio = new BigDecimal("0.15");
-        //平台扣点金额
-        BigDecimal subtract3 = (totalMoney1.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
-        //商户所得金额
-        BigDecimal subtract2 = totalMoney1.subtract(subtract3);
-
-
-        ArrayList<calculationAmountDTO> slaveOrderEntityArrayList = new ArrayList<>();
-        for (int i = 0; i < slaveOrder.size(); i++) {
-            //一条对象
-            calculationAmountDTO slaveOrderEnti = slaveOrder.get(i);
-            //获取菜品单价
-            BigDecimal price = slaveOrder.get(i).getPrice();
-            //单个菜品数量
-            BigDecimal quantity = slaveOrder.get(i).getQuantity();
-            //此菜品总价
-            BigDecimal AGreensMoney = price.multiply(quantity);
-            //获取用户信息
-            ClientUserDTO clientUserDTO = clientUserService.get(dct.getUserId());
-
-            if (slaveOrder.size() - i == 1 || slaveOrder.size() == 1) {
-                slaveOrderEnti.setTotalMoney(AGreensMoney);
-                slaveOrderEnti.setPlatformBrokerage(subtract3);
-                slaveOrderEnti.setMerchantProceeds(subtract2);
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                slaveOrderEnti.setFreeGold(a);
-                slaveOrderEnti.setDiscountsMoney(a);
-                slaveOrderEnti.setNewPrice(price);
-            } else {
-                //平台所得金额
-                BigDecimal platformBrokerage = (AGreensMoney.multiply(ratio)).setScale(2, BigDecimal.ROUND_UP);
-                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                subtract3 = subtract3.subtract(platformBrokerage);
-                //商户所的金额
-                BigDecimal merchantProceeds = AGreensMoney.subtract(platformBrokerage);
-                subtract2 = subtract2.subtract(merchantProceeds);
-
-                slaveOrderEnti.setMerchantProceeds(merchantProceeds);
-                slaveOrderEnti.setPlatformBrokerage(platformBrokerage);
-                slaveOrderEnti.setNewPrice(price);
-                slaveOrderEnti.setTotalMoney(AGreensMoney);
-                GoodDTO goodDTO = goodService.get(slaveOrder.get(i).getGoodId());
-                slaveOrderEnti.setName(goodDTO.getName());
-                slaveOrderEnti.setIcon(goodDTO.getIcon());
-                slaveOrderEnti.setFreeGold(a);
-                slaveOrderEnti.setDiscountsMoney(a);
-            }
-            slaveOrderEntityArrayList.add(slaveOrderEnti);
-
-        }
-        dct.setSlaveOrder(slaveOrderEntityArrayList);
-        return dct;
+        return itemsClculate(dct,DiscountType.ORIGIN_PRICE);
     }
 
     @Override

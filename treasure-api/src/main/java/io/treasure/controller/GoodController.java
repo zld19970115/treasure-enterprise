@@ -7,13 +7,11 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.ExportGoodDTO;
-import io.treasure.dto.GoodCategoryDTO;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantDTO;
+import io.treasure.dto.*;
 import io.treasure.enm.CategoryEnm;
 import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.GoodService;
@@ -288,5 +286,27 @@ public class GoodController {
         goodService.save(goodDTO);
         return new Result();
     }
+    @GetMapping("goodSorting")
+    @ApiOperation("菜品排序")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
+    })
+    public Result<PageData<GoodDTO>> sorting(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<GoodDTO> page = goodService.page(params);
 
+        return new Result<PageData<GoodDTO>>().ok(page);
+    }
+
+    @GetMapping("goodDetails")
+    @ApiOperation("菜品详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "菜品ID", paramType = "query", required = true, dataType = "long")
+    })
+    public Result goodDetails(@ApiIgnore @RequestParam long id){
+        GoodEntity goodEntity = goodService.selectById(id);
+        return new Result().ok(goodEntity);
+    }
 }
