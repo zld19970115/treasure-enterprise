@@ -93,4 +93,7 @@
             #{item}
         </foreach>
     </select>
+    <select id="merchantSortingPage" resultType="io.treasure.dto.MerchantDTO">
+          select * from ct_merchant where status = 1
+    </select>
 </mapper>

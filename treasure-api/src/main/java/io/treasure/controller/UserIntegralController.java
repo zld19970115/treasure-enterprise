@@ -26,26 +26,6 @@ public class UserIntegralController {
 
     @Autowired
     private ClientUserService clientUserService;
-    @Autowired
-    private MasterOrderService masterOrderService;
-    @GetMapping("/getIntegral")
-    @ApiOperation("用户获得积分")
-    public Result getIntegral(@RequestParam Long userId, @RequestParam BigDecimal payMoney,@RequestParam  String orderId){
-
-
-        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
-        if (masterOrderEntity.getCheckStatus() != 1){
-            return  new Result().error("未结账");
-        }
-        //用户支付获得积分，比例暂时为1:1
-        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
-
-        BigDecimal integral = clientUserEntity.getIntegral();
-        integral = integral.add(payMoney);
-        clientUserEntity.setIntegral(integral);
-        clientUserService.updateById(clientUserEntity);
-        return  new Result().ok("领取成功");
-    }
     @GetMapping("/IntegralGift")
     @ApiOperation("用户积分兑换赠送金")
     public Result integralGift(@RequestParam Long userId, @RequestParam BigDecimal integral){

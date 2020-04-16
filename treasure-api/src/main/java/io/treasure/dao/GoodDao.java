@@ -31,4 +31,5 @@ public interface GoodDao extends BaseDao<GoodEntity> {
 
     GoodEntity getByid(long id);
     List<SlaveOrderEntity> getRefundGoods(@Param("orderId") String orderId,@Param("goodId")long goodId);
+    List<GoodDTO>  sortingPage (Map<String, Object> params);
 }

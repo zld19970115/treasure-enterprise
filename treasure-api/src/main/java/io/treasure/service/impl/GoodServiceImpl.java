@@ -121,4 +121,11 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     public List<SlaveOrderEntity> getRefundGoods(String orderId,long goodId) {
         return baseDao.getRefundGoods(orderId,goodId);
     }
+
+    @Override
+    public PageData<GoodDTO> sortingPage(Map<String, Object> params) {
+        IPage<GoodEntity> pages=getPage(params, (String) params.get("ORDER_FIELD"),false);
+        List<GoodDTO> list=baseDao.sortingPage(params);
+        return getPageData(list,pages.getTotal(), GoodDTO.class);
+    }
 }

@@ -34,5 +34,5 @@ public interface GoodService extends CrudService<GoodEntity, GoodDTO> {
     GoodEntity getByid(long id);
 
     List<SlaveOrderEntity> getRefundGoods(String orderId,long goodId);
-
+    PageData<GoodDTO>  sortingPage (Map<String, Object> params);
 }

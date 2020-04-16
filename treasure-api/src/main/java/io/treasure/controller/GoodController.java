@@ -295,8 +295,7 @@ public class GoodController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String")
     })
     public Result<PageData<GoodDTO>> sorting(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<GoodDTO> page = goodService.page(params);
-
+        PageData<GoodDTO> page = goodService.sortingPage(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
 

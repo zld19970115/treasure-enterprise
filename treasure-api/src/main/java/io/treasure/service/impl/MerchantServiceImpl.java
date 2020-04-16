@@ -142,6 +142,15 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public PageData<MerchantDTO> merchantSortingPage(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
+        //查询
+        List<MerchantDTO> list = baseDao.merchantSortingPage(params);
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
     public MerchantEntity getMerchantById(Long id) {
         return baseDao.getMerchantById(id);
     }

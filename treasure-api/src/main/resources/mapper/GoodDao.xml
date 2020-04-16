@@ -72,4 +72,9 @@
     <select id="getRefundGoods"  resultType="io.treasure.entity.SlaveOrderEntity">
         SELECT *  from ct_slave_order where `status`=6 AND order_id=#{orderId} and good_id = #{goodId}
     </select>
+    <select id="sortingPage" resultType="io.treasure.dto.GoodDTO">
+     select goods.* from ct_good  goods
+     left join ct_merchant merchant on merchant.id=goods.mart_id
+     where goods.status=1 and merchant.status = 1
+    </select>
 </mapper>

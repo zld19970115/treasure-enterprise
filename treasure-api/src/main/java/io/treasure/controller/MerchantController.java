@@ -373,7 +373,7 @@ public class MerchantController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
     })
     public Result<PageData<MerchantDTO>> sorting(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MerchantDTO> page = merchantService.page(params);
+        PageData<MerchantDTO> page = merchantService.merchantSortingPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
 }
