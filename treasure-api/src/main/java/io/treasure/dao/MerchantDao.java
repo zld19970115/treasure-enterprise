@@ -31,4 +31,5 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     List<MerchantDTO> getMerchantByCategoryId(Map<String, Object> params);
     List<MerchantDTO> getLikeMerchant(Map<String, Object> params);
     List<MerchantDTO> merchantSortingPage(Map<String, Object> params);
+    List<MerchantDTO>   martLike(Map<String, Object> params);
 }

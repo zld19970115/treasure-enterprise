@@ -115,6 +115,9 @@ public class GoodController {
             dto.setOffShelveTime(new Date());
         }
         dto.setCreateDate(new Date());
+       if(dto.getRank()!=null){
+           dto.setRank(dto.getRank());
+       }
         goodService.save(dto);
         return new Result();
     }
@@ -141,6 +144,9 @@ public class GoodController {
                 dto.setOffShelveBy(dto.getCreator());
                 dto.setOffShelveTime(new Date());
             }
+        }
+        if(dto.getRank()!=null){
+            dto.setRank(dto.getRank());
         }
         dto.setUpdateDate(new Date());
         goodService.update(dto);

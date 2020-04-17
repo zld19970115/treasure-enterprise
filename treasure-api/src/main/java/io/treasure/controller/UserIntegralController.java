@@ -29,9 +29,9 @@ public class UserIntegralController {
     @GetMapping("/IntegralGift")
     @ApiOperation("用户积分兑换赠送金")
     public Result integralGift(@RequestParam Long userId, @RequestParam BigDecimal integral){
-        //用户使用积分兑换赠送金，比例暂时为2:1
+        //用户使用积分兑换赠送金，比例暂时为10:1
         BigDecimal a = new BigDecimal("100");
-        BigDecimal b = new BigDecimal("2");
+        BigDecimal b = new BigDecimal("10");
         if (integral.compareTo(a)==-1){
             return  new Result().error("积分必须大于等于100");
         }

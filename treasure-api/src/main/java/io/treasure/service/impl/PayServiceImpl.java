@@ -101,13 +101,14 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
             return mapRtn;
         }
-        if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-            mapRtn.put("return_code", "SUCCESS");
-            mapRtn.put("return_msg", "OK");
-            return mapRtn;
-        }
+//        if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//            System.out.println("66666666阿斯顿撒多撒奥奥奥奥奥奥奥奥奥奥6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666");
+//            mapRtn.put("return_code", "SUCCESS");
+//            mapRtn.put("return_msg", "OK");
+//            return mapRtn;
+//        }
         if(masterOrderEntity.getStatus()==Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-            if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId().longValue()>0){
+            if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId()>0){
                 merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_YEA.getType());
             }
         }
@@ -130,8 +131,12 @@ public class PayServiceImpl implements PayService {
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
+        System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
+
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
+            System.out.println("position 2 : "+slaveOrderEntitys);
+
             if(slaveOrderEntitys==null){
                 mapRtn.put("return_code", "FAIL");
                 mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单菜品】");
@@ -150,6 +155,8 @@ public class PayServiceImpl implements PayService {
         }
 
         MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
+        System.out.println("position 3 : "+merchantDto.toString());
+
         if(null!=merchantDto){
             MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
             if(null!=userDto){
@@ -179,17 +186,24 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
+        System.out.println("position 4 : "+masterOrderEntity.toString());
+
         Long creator = masterOrderEntity.getCreator();
 
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+        System.out.println("position 5 : "+slaveOrderEntities.toString());
+
         BigDecimal a = new BigDecimal(0);
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
             a = a.add(slaveOrderEntity.getFreeGold());
         }
         ClientUserEntity clientUserEntity = clientUserService.selectById(creator);
+        System.out.println("position 6 : "+clientUserEntity.toString());
         BigDecimal gift = clientUserEntity.getGift();
+        System.out.println(gift+"666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666");
         gift=gift.subtract(a);
         clientUserEntity.setGift(gift);
+        System.out.println(gift+"4444444444444444444444444444444444444444444444444444444444555555555555555555555555555555555555555");
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);

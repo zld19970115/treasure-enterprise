@@ -96,4 +96,11 @@
     <select id="merchantSortingPage" resultType="io.treasure.dto.MerchantDTO">
           select * from ct_merchant where status = 1
     </select>
+    <select id="martLike" resultType="io.treasure.dto.MerchantDTO">
+        select *
+        FROM ct_merchant where  status=1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+    </select>
 </mapper>

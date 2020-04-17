@@ -149,11 +149,13 @@ public class MerchantRoomParamsSetController {
     @GetMapping("lockRoom")
     @ApiOperation("锁定当前时间段包房")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "包房设置表ID", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = "id", value = "包房设置表ID", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "martId", value = "商户ID", paramType = "query", required = true, dataType="long")
     })
-    public Result lockRoom(long id) {
+    public Result lockRoom(@RequestParam long id,@RequestParam long martId) {
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(id);
         merchantRoomParamsSetEntity.setState(1);
+        merchantRoomParamsSetEntity.setCreator(martId);
         merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
         return new Result().ok("锁定成功");
     }
@@ -166,6 +168,7 @@ public class MerchantRoomParamsSetController {
     public Result deblockingRoom(long id) {
         MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(id);
         merchantRoomParamsSetEntity.setState(0);
+        merchantRoomParamsSetEntity.setCreator(13911223366L);
         merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
         return new Result().ok("解锁成功");
     }
