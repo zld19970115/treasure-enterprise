@@ -1,6 +1,7 @@
 package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -115,4 +116,8 @@ public class GoodEntity extends BaseEntity {
 	 * 数量
 	 */
 	private Integer number;
+	/**
+	 * 排序
+	 */
+	private Integer rank;
 }
