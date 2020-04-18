@@ -225,7 +225,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (result1) {
                 if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
                         dto.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() && dto.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
-                        dto.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
+                        dto.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue() && dto.getStatus() != Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()) {
                     List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(dto.getOrderId());
                     for (SlaveOrderEntity g : orderGoods) {
                         g.setUpdateDate(date);
@@ -248,7 +248,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 for (OrderDTO o : affiliateOrde) {
                     if (o.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && o.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
                             o.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() && o.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
-                            o.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
+                            o.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue() && o.getStatus() != Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()) {
                         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(o.getOrderId());
                         for (SlaveOrderEntity g : orderGoods) {
                             g.setUpdateDate(date);
@@ -753,10 +753,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             useGift = useGift.setScale(2);
             if (gift.compareTo(useGift) == -1) {
                 return result.error(-7, "您的赠送金不足！");
-            } else {
-                clientUserEntity.setGift(gift.subtract(useGift));
             }
-            clientUserService.updateById(clientUserEntity);
         }
         Date d = new Date();
         //保存主订单
