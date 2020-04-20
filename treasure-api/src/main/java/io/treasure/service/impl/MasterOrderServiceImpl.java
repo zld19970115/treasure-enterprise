@@ -281,7 +281,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
+        List<MasterOrderEntity> auxiliaryPayOrders = masterOrderService.getAuxiliaryPayOrders(dto.getOrderId());
         integral = integral.add(dto.getPayMoney());
+        for (MasterOrderEntity auxiliaryPayOrder : auxiliaryPayOrders) {
+            integral = integral.add(auxiliaryPayOrder.getPayMoney());
+        }
         clientUserEntity.setIntegral(integral);
         clientUserService.updateById(clientUserEntity);
         String orderId = dto.getOrderId();

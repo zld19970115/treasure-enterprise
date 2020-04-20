@@ -54,7 +54,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
             return new Result().error("请登录");
         }
         if( clientUserEntity.getGift().compareTo(a)==1){
-            return new Result().error("赠送金余额大于50不可充值");
+            return new Result().error("代付金余额大于50不可充值");
         }
         BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getGift());
         clientUserEntity.setGift(money);
@@ -68,6 +68,6 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
 
         recordGiftService.insertRecordGift(userId,date,clientUserEntity.getGift(),cardInfoEntity.getMoney());
 
-        return new Result().ok("充值成功");
+        return new Result().error("充值成功");
     }
 }
