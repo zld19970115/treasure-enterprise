@@ -4,13 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.StatisticsDao;
+import io.treasure.dto.ConsumptionRankingDto;
 import io.treasure.dto.MasterOrderDTO;
+import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.EvaluateEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.StatisticsService;
+import io.treasure.vo.ConsumptionRankingVo;
+import io.treasure.vo.TopSellersRankingVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.List;
 import java.util.Map;
 @Service
 public class StatisticsServiceImpl
@@ -183,5 +190,25 @@ public class StatisticsServiceImpl
             params.put("merchantId",null);
         }
         return baseDao.assignMoney(params);
+    }
+
+    @Override
+    public List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto) {
+        List<TopSellersRankingVo> list = baseDao.getTopSellersRanking(dto);
+        BigDecimal totalMoney = BigDecimal.ZERO;
+        for(TopSellersRankingVo vo : list) {
+            totalMoney = totalMoney.add(vo.getTotal());
+        }
+        for(TopSellersRankingVo vo : list) {
+            if(vo.getTotal().doubleValue() != 0) {
+                vo.setProportion(vo.getTotal().divide(totalMoney,4,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ConsumptionRankingVo> getConsumptionRanking(ConsumptionRankingDto dto) {
+        return baseDao.getConsumptionRanking(dto);
     }
 }

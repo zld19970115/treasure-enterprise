@@ -1,15 +1,19 @@
 package io.treasure.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
+import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.ConsumptionRankingDto;
 import io.treasure.dto.EvaluateDTO;
+import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.service.impl.StatisticsServiceImpl;
 import io.treasure.utils.DateUtil;
+import io.treasure.utils.RegularUtil;
+import io.treasure.vo.ConsumptionRankingVo;
+import io.treasure.vo.TopSellersRankingVo;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,9 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 商家统计表
@@ -107,4 +109,49 @@ public class StatisticsController {
         map.put("monthMoney",monthMoney);   //查询本月实际收入
         return new Result().ok(map);
     }
+
+    @Login
+    @PostMapping("getTopSellersRanking")
+    @ApiOperation("查询商户热销产品排行统计")
+    public Result<List<TopSellersRankingVo>> getTopSellersRanking(@RequestBody TopSellersRankingDto dto) {
+        if(dto == null || dto.getMerchantId() == null) {
+            return new Result().error("商户ID不能为空!");
+        }
+        if(Strings.isNotBlank(dto.getStartDate()) && !RegularUtil.dateSlashRegular(dto.getStartDate())) {
+            return new Result().error("开始日期错误(格式:yyyy-mm-dd)!");
+        }
+        if(Strings.isNotBlank(dto.getEndDate()) && !RegularUtil.dateSlashRegular(dto.getEndDate())) {
+            return new Result().error("结束日期错误(格式:yyyy-mm-dd)!");
+        }
+        if(dto.getSortField() != null && !Arrays.asList(new Integer[] {0,1}).contains(dto.getSortField())) {
+            return new Result().error("排序字段参数不正确!");
+        }
+        if(dto.getSort() != null && dto.getSort() != 0 && dto.getSort() != 1) {
+            return new Result().error("排序参数不正确!");
+        }
+        return new Result().ok(statisticsService.getTopSellersRanking(dto));
+    }
+
+    @Login
+    @PostMapping("getConsumptionRanking")
+    @ApiOperation("查询商户热销产品排行统计")
+    public Result<List<ConsumptionRankingVo>> getConsumptionRanking(@RequestBody ConsumptionRankingDto dto) {
+        if(dto == null || dto.getMerchantId() == null) {
+            return new Result().error("商户ID不能为空!");
+        }
+        if(Strings.isNotBlank(dto.getStartDate()) && !RegularUtil.dateSlashRegular(dto.getStartDate())) {
+            return new Result().error("开始日期错误(格式:yyyy-mm-dd)!");
+        }
+        if(Strings.isNotBlank(dto.getEndDate()) && !RegularUtil.dateSlashRegular(dto.getEndDate())) {
+            return new Result().error("结束日期错误(格式:yyyy-mm-dd)!");
+        }
+        if(dto.getSortField() != null && !Arrays.asList(new Integer[] {0,1,2,3,4}).contains(dto.getSortField())) {
+            return new Result().error("排序字段参数不正确!");
+        }
+        if(dto.getSort() != null && dto.getSort() != 0 && dto.getSort() != 1) {
+            return new Result().error("排序参数不正确!");
+        }
+        return new Result().ok(statisticsService.getConsumptionRanking(dto));
+    }
+
 }
