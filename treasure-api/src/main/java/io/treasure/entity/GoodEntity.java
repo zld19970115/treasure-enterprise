@@ -116,8 +116,8 @@ public class GoodEntity extends BaseEntity {
 	 * 数量
 	 */
 	private Integer number;
-	/**
-	 * 排序
-	 */
-	private Integer rank;
+//	/**
+//	 * 排序
+//	 */
+//	private Integer rank;
 }

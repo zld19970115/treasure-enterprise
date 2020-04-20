@@ -243,7 +243,7 @@ public class ApiMasterOrderController {
     public Result generatePorder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user){
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
-        return  masterOrderService.saveOrder(dto,dtoList,user);
+         return  masterOrderService.saveOrder(dto,dtoList,user);
 }
     @Login
     @GetMapping("allOrderPage")
