@@ -235,8 +235,8 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "password", value = "重置密码", required = true, paramType = "query")
     })
     public Result forgetPassword(HttpServletRequest request, String tel, String code, String password) {
-        Result bool = SendSMSUtil.verifyCode(tel, request, code);
-        if (bool.getCode() == 0) {
+//        Result bool = SendSMSUtil.verifyCode(tel, request, code);
+
             ClientUserEntity clientUserEntity = clientUserService.getByMobile(tel);
             if (clientUserEntity == null) {
                 throw new RenException(ErrorCode.ACCOUNT_NOT_EXIST);
@@ -245,7 +245,7 @@ public class ApiClientUserController {
 
                 clientUserService.updateById(clientUserEntity);
             }
-        }
+
 
         return new Result();
     }
@@ -292,7 +292,7 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String")})
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
-        if(userByPhone.getOpenid()!=null){
+        if(userByPhone.getOpenid()!=openId){
             return new Result().error("该手机号已被绑定");
         }
         if(userByPhone.getStatus()==9){

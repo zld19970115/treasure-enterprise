@@ -49,11 +49,12 @@
                 #{item}
             </foreach>
         </if> and `status`=1
+         order by rank
     </select>
     <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
-       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1
+       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1  order by rank
     </select>
     <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
-        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1
+        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1  order by rank
     </select>
 </mapper>

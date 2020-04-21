@@ -91,6 +91,10 @@ public class MerchantEntity implements Serializable {
      */@TableField(fill= FieldFill.INSERT_UPDATE)
 
 	private Date updateDate;
+	/**
+	 * 修改时间
+	 */
+	private Date createDate;
     /**
      * 修改者
      */
