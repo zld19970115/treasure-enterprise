@@ -85,7 +85,8 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
      */
     @Override
     public PageData<GoodCategoryDTO> selectPage(Map<String, Object> params) {
-        IPage<GoodCategoryEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<GoodCategoryEntity> pages=getPage(params,(String) params.get("ORDER_FIELD"),false);
+        System.out.println(params.get("ORDER_FIELD")+"4564665446546654465");
         List<GoodCategoryDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), GoodCategoryDTO.class);
     }

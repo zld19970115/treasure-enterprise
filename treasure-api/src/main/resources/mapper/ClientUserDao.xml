@@ -56,4 +56,12 @@
         select * from ct_client_user where mobile=#{mobile}
     </select>
 
+
+    <update id="subtractGiftByMasterOrderCreate">
+        update ct_client_user set gift=gift- ${gift}
+        where id = #{creator}
+    </update>
+
+
+
 </mapper>

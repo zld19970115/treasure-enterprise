@@ -67,4 +67,9 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<OrderDTO> getAffiliateOrde(String orderId);
     BigDecimal getPlatformBalance();
     List<MasterOrderDTO> getOrderByFinance(String orderId);
+    MasterOrderEntity selectUnPayOrderByOrderId(String orderId);
+    //String orderid,int支付方式，date支付日期,支付状态由1变为4
+    void updatePayStatus(@Param("orderId")  String orderId,@Param("payMode")int payMode,
+                         @Param("payDate")Date payDate,@Param("status") int status);
+
 }

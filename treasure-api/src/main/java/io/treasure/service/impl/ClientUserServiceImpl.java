@@ -34,6 +34,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Autowired
     private TokenService tokenService;
 
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
+
 
     @Override
     public QueryWrapper<ClientUserEntity> getWrapper(Map<String, Object> params){
@@ -152,6 +155,13 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
             return new Result().error("赠送金额不能包含小数且必须大于0");
         }
         return new Result().error("请重新登录");
+    }
+
+
+
+    @Override
+    public void subtractGiftByMasterOrderCreate(Long creator, String gift) {
+        clientUserDao.subtractGiftByMasterOrderCreate(creator,gift);
     }
 
 }

@@ -31,4 +31,6 @@ public interface PayService {
     Result refundByOrder(String orderId, String refund_fee);
 
     Result refundByGood(String orderId, String refund_fee,Long goodId);
+
+    Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no);
 }

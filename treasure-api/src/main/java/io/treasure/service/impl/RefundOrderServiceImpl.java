@@ -216,6 +216,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                     masterOrderService.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                 }
             }
+            //维护赠送金记录表
         return new Result();
     }
 

@@ -21,4 +21,10 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
     ClientUserEntity getClientUser(Long id);
     ClientUserEntity  selectByMobile(String mobile);
+
+    //添加一项
+    void subtractGiftByMasterOrderCreate(@Param("creator") Long creator,
+                                         @Param("gift") String gift);
+
+
 }

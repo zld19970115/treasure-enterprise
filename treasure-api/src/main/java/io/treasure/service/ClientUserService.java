@@ -35,4 +35,5 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     ClientUserEntity getClientUser(Long id);
    Result userGiftToUser(long userId, String mobile,BigDecimal giftMoney) ;
+    void subtractGiftByMasterOrderCreate(@Param("creator") Long creator, String gift);
 }

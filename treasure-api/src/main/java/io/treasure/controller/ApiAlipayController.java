@@ -21,6 +21,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.config.AlipayProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
@@ -79,6 +80,8 @@ public class ApiAlipayController {
 
     @Autowired
     private PayService payService;
+    @Autowired(required = false)
+    private MasterOrderDao masterOrderDao;
 
 
     /**
@@ -144,13 +147,17 @@ public class ApiAlipayController {
 
             // 调用业务
             if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
-                try {
-                    Map<String, String> responseMap = null;
-                    responseMap=payService.getAliNotify(new BigDecimal(total_amount), out_trade_no);
-                    System.out.println("responseMap:"+responseMap);
-                    return responseMap.get("return_code");
-                } catch (Exception ex) {
-                    return "FAIL";
+                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
+                    try {
+                        Map<String, String> responseMap = null;
+                        //151业务调用内
+                        responseMap = payService.execAliCallBack(new BigDecimal(total_amount), out_trade_no);
+                        System.out.println("responseMap:"+responseMap);
+
+                        return responseMap.get("return_code");
+                    } catch (Exception ex) {
+                        return "FAIL";
+                    }
                 }
             }
 

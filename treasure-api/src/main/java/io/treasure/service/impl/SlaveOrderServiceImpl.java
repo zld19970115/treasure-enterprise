@@ -61,6 +61,9 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     @Autowired
     private SlaveOrderService slaveOrderService;
 
+    @Autowired(required = false)
+    private SlaveOrderDao slaveOrderDao;
+
     @Override
     public QueryWrapper<SlaveOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -267,4 +270,22 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     public BigDecimal getDiscountsMoneyByOrderId(String orderId) {
         return baseDao.getDiscountsMoneyByOrderId(orderId);
     }
+
+
+    @Override
+    public BigDecimal getTotalFreeGoldByMasterOrderId(String orderId) {
+        return slaveOrderDao.selectTotalFreeGoldByMasterOrderId(orderId);
+    }
+
+    @Override
+    public void updateStatusByOrderId(String orderId, int conditionStatus,int newStatus) {
+        slaveOrderDao.updateStatusByOrderId(orderId,conditionStatus,newStatus);
+
+    }
+
+    @Override
+    public int selectCountOfNoPayOrderByOrderId(String orderId){
+        return slaveOrderDao.selectCountOfNoPayOrderByOrderId(orderId);
+    }
+
 }

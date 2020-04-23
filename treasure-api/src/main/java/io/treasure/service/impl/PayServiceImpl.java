@@ -150,11 +150,11 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
-        System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
-
+        //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
+        //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
-            System.out.println("position 2 : "+slaveOrderEntitys);
+            //System.out.println("position 2 : "+slaveOrderEntitys);
 
             if(slaveOrderEntitys==null){
                 mapRtn.put("return_code", "FAIL");
@@ -532,6 +532,124 @@ public class PayServiceImpl implements PayService {
         return result.ok(false);
     }
 
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no){
+
+        Map<String, String> mapRtn = new HashMap<>(2);
+
+        //0、检查单号是否存在
+        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+        if(masterOrderEntity == null){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "主单不存在，无法完成后续处理");
+            return mapRtn;
+        }
+        Long clientId = masterOrderEntity.getCreator();     //获取clientId，留给后面调用
+
+        //1、更新主单（支付方式及消费日期）
+        if(masterOrderEntity.getStatus()==Constants.OrderStatus.NOPAYORDER.getValue()){
+
+            //String orderid,int支付方式，date支付日期,支付状态由1变为4
+            masterOrderDao.updatePayStatus(out_trade_no,2,new Date(),Constants.OrderStatus.PAYORDER.getValue());
+
+        }else{
+            mapRtn.put("return_code", "SUCCESS");               //代表此单已经支付完成了，不需要进行二次支付
+            mapRtn.put("return_msg", "OK");
+            return mapRtn;
+        }
+
+        //2、更新从单状态，将从单对应的状态由1改为4
+        if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+            //List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(orderId);//应该包含从单
+            try{
+                //没有从单
+                if(slaveOrderService.selectCountOfNoPayOrderByOrderId(out_trade_no)==0)
+                    throw new Exception("无法获取从单需更新的支付信息，支付失败");
+            }catch(Exception e){
+
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "无法获取从单需更新的支付信息，支付失败");
+                return mapRtn;
+            }
+
+            //有从单--更新从单状态为已支付status 1-->4
+            slaveOrderService.updateStatusByOrderId(masterOrderEntity.getOrderId(),Constants.OrderStatus.NOPAYORDER.getValue(),Constants.OrderStatus.PAYORDER.getValue());
+
+            //3、扣除花费的赠送金
+            BigDecimal totalFreeGold= slaveOrderService.getTotalFreeGoldByMasterOrderId(masterOrderEntity.getOrderId());
+            if(totalFreeGold.compareTo(new BigDecimal("0"))>0){
+                System.out.println("exec002");
+                //注意此处是否会报错，特别注意
+                clientUserService.subtractGiftByMasterOrderCreate(clientId,totalFreeGold.toString());
+                //更新赠送金消费记录(clientUserId,当前时间，赠送金余额【有点麻烦】，花费的数量)
+                recordGiftService.insertRecordGift2( masterOrderEntity.getCreator(),new Date(), clientUserService.selectById(clientId).getGift(),totalFreeGold);
+            }
+        }
+
+        //4-1、检查商户信息
+        MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
+        try{
+            if(merchantDto == null) throw new Exception("支付失败！请联系管理员！【无法获取商户信息】");
+        }catch(Exception e){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
+            System.out.println("exec004");
+            return mapRtn;
+        }
+
+        //4-2、检查商户会员信息
+        MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
+        if(userDto == null){
+            try{
+                throw new Exception("支付失败！请联系管理员！【无法获取商户会员信息】");
+            }catch(Exception e){
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+
+                return mapRtn;
+            }
+
+        }else{
+
+            //4-3、发消息给商户会员
+            if(StringUtils.isNotBlank(userDto.getClientId())){
+                AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
+
+                StimmeEntity stimmeEntity = new StimmeEntity();
+                stimmeEntity.setCreateDate(new Date());                     //创建时间
+                stimmeEntity.setOrderId(masterOrderEntity.getOrderId());    //订单号
+                stimmeEntity.setType(1);                                    //新订单
+                stimmeEntity.setMerchantId(masterOrderEntity.getMerchantId());//商家id
+                stimmeEntity.setCreator(masterOrderEntity.getCreator());    //创建者
+
+                stimmeService.insert(stimmeEntity);
+
+            }else{
+
+                try{
+                    throw new Exception("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                }catch(Exception e){
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                    return mapRtn;
+
+                }
+
+            }
+        }
+/*
+        //4-4、发消息 新订单
+        if(null != merchantDto.getMobile()){
+            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
+        }
+
+ */
+        mapRtn.put("return_code", "SUCCESS");
+        mapRtn.put("return_msg", "OK");
+        return mapRtn;
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {

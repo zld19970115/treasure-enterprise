@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="972101ba-640f-461e-9365-26b4741ffcc2" name="Default Changelist" comment="调整">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/treasure-api/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/treasure-api/treasure-api.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAlipayController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAlipayController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/GoodController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/GoodController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/ClientUserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/ClientUserDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MasterOrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MasterOrderDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/SlaveOrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/SlaveOrderDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/ClientUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/ClientUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/SlaveOrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/SlaveOrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ClientUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ClientUserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/GoodCategoryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/GoodCategoryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/GoodServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/GoodServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/RefundOrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/RefundOrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/SlaveOrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/SlaveOrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/ApiGoodDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/ApiGoodDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/ClientUserDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/ClientUserDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/GoodCategoryDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/GoodCategoryDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MasterOrderDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MasterOrderDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/SlaveOrderDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/SlaveOrderDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/StatisticsDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/StatisticsDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/AgreementsDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/ApiGoodDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/AppVersionDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/Banner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/CategoryDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/ChargeCashDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/ChargeCashSetDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/ClientUserCollectDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/ClientUserDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/CtDaysTogetherDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/Evaluate.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/GoodCategoryDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/GoodDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/JahresabschlussDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MasterOrderDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantActivityDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantAdvertExtendDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantCouponDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantRoomDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantRoomParamsDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantRoomParamsSetDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantUserDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MerchantWithdrawDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/MessageDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/OpinionDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/RecordGiftDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/RefundOrderDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/SlaveOrderDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/StatisticsDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/StatsDayDetailDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/StimmeDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/SysOssDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/SysParamsDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/TokenDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/UserCardDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/UserCouponDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/target/classes/mapper/UserDao.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-enterprise.iml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-enterprise.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\Administrator\IdeaProjects\treasure\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1WPeSRa7pQEkjOUnAWLt6Hq2rJ3" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1578991648710" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\dao" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\service\impl" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\service" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\resources\mapper" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\dto" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\dto" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\resources\mapper" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\service\impl" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\service" />
+      <recent name="C:\Users\Administrator\IdeaProjects\treasure\treasure-api\src\main\java\io\treasure\dao" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
+      <module name="treasure-api" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
+      <module name="treasure-api" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="treasure-api" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.treasure.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="io.treasure.ApiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.ApiApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="972101ba-640f-461e-9365-26b4741ffcc2" name="Default Changelist" comment="调整" />
+      <created>1576717707007</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1576717707007</updated>
+      <workItem from="1576717711049" duration="706000" />
+      <workItem from="1576718936085" duration="215000" />
+      <workItem from="1576719226634" duration="10556000" />
+      <workItem from="1576801136236" duration="9507000" />
+      <workItem from="1577061660244" duration="1982000" />
+      <workItem from="1577073444271" duration="7153000" />
+      <workItem from="1577148070787" duration="4878000" />
+      <workItem from="1577167720426" duration="898000" />
+      <workItem from="1577170873215" duration="1777000" />
+      <workItem from="1577175182531" duration="2219000" />
+      <workItem from="1577235155107" duration="76000" />
+      <workItem from="1577244374896" duration="2069000" />
+      <workItem from="1577263633421" duration="883000" />
+      <workItem from="1577667889425" duration="16276000" />
+      <workItem from="1577753663957" duration="7448000" />
+      <workItem from="1577776793299" duration="2363000" />
+      <workItem from="1577781035785" duration="1537000" />
+      <workItem from="1577924563798" duration="1698000" />
+      <workItem from="1577933242705" duration="4944000" />
+      <workItem from="1577954064369" duration="1089000" />
+      <workItem from="1578011388922" duration="11177000" />
+      <workItem from="1578028228722" duration="9295000" />
+      <workItem from="1578272785747" duration="3342000" />
+      <workItem from="1578296378295" duration="5208000" />
+      <workItem from="1578447384254" duration="2713000" />
+      <workItem from="1578552296763" duration="2168000" />
+      <workItem from="1578618611099" duration="1000" />
+      <workItem from="1578619365693" duration="67000" />
+      <workItem from="1578623845515" duration="9221000" />
+      <workItem from="1578703028742" duration="9490000" />
+      <workItem from="1578874174966" duration="4126000" />
+      <workItem from="1578878604190" duration="45000" />
+      <workItem from="1578878910154" duration="10103000" />
+      <workItem from="1578969791369" duration="4240000" />
+      <workItem from="1579055694473" duration="811000" />
+      <workItem from="1579067751482" duration="49000" />
+      <workItem from="1579067880027" duration="878000" />
+      <workItem from="1584855063643" duration="62000" />
+      <workItem from="1584932009539" duration="1117000" />
+      <workItem from="1584934503968" duration="488000" />
+      <workItem from="1584959865580" duration="2843000" />
+      <workItem from="1584962818464" duration="1797000" />
+      <workItem from="1585016723112" duration="3398000" />
+      <workItem from="1585100348440" duration="3767000" />
+      <workItem from="1585357531973" duration="101000" />
+      <workItem from="1585376666807" duration="998000" />
+      <workItem from="1585612196955" duration="15294000" />
+      <workItem from="1585698814391" duration="7044000" />
+      <workItem from="1585723554046" duration="2806000" />
+      <workItem from="1585786605839" duration="10072000" />
+      <workItem from="1585872490791" duration="12938000" />
+      <workItem from="1586218512075" duration="1318000" />
+      <workItem from="1586219912497" duration="12194000" />
+      <workItem from="1586313398508" duration="14289000" />
+      <workItem from="1586333401273" duration="1510000" />
+      <workItem from="1586390661967" duration="1159000" />
+      <workItem from="1586398694701" duration="13174000" />
+      <workItem from="1586477080861" duration="17371000" />
+      <workItem from="1586821816422" duration="21275000" />
+      <workItem from="1586908672576" duration="22217000" />
+      <workItem from="1586994653706" duration="18161000" />
+      <workItem from="1587081024782" duration="22033000" />
+      <workItem from="1587340669271" duration="27367000" />
+      <workItem from="1587428403165" duration="11122000" />
+      <workItem from="1587449829700" duration="356000" />
+      <workItem from="1587450308354" duration="2950000" />
+      <workItem from="1587515168318" duration="24023000" />
+      <workItem from="1587599577554" duration="664000" />
+      <workItem from="1587600349238" duration="258000" />
+      <workItem from="1587605300257" duration="914000" />
+    </task>
+    <task id="LOCAL-00001" summary="获取退菜菜品调整">
+      <created>1576724918574</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1576724918574</updated>
+    </task>
+    <task id="LOCAL-00002" summary="提现接口调整">
+      <created>1576736545034</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1576736545034</updated>
+    </task>
+    <task id="LOCAL-00003" summary="提现接口调整">
+      <created>1576809109052</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1576809109052</updated>
+    </task>
+    <task id="LOCAL-00004" summary="接口调整">
+      <created>1576820636555</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1576820636555</updated>
+    </task>
+    <task id="LOCAL-00005" summary="拒绝退菜推送接口调整">
+      <created>1577171877538</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1577171877538</updated>
+    </task>
+    <task id="LOCAL-00006" summary="用户注销">
+      <created>1577670259897</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1577670259897</updated>
+    </task>
+    <task id="LOCAL-00007" summary="用户注销，商户注销">
+      <created>1577689126360</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1577689126360</updated>
+    </task>
+    <task id="LOCAL-00008" summary="注销用户不能绑定微信">
+      <created>1577753833318</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1577753833318</updated>
+    </task>
+    <task id="LOCAL-00009" summary="注销用户不能绑定微信">
+      <created>1577778847535</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1577778847536</updated>
+    </task>
+    <task id="LOCAL-00010" summary="调整">
+      <created>1577949462560</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1577949462560</updated>
+    </task>
+    <task id="LOCAL-00011" summary="调整">
+      <created>1577955443449</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1577955443449</updated>
+    </task>
+    <task id="LOCAL-00012" summary="调整">
+      <created>1578020544616</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1578020544616</updated>
+    </task>
+    <task id="LOCAL-00013" summary="调整">
+      <created>1578026723138</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1578026723138</updated>
+    </task>
+    <task id="LOCAL-00014" summary="调整">
+      <created>1578028781149</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1578028781149</updated>
+    </task>
+    <task id="LOCAL-00015" summary="调整">
+      <created>1578033167255</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1578033167255</updated>
+    </task>
+    <task id="LOCAL-00016" summary="调整">
+      <created>1578038708104</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1578038708104</updated>
+    </task>
+    <task id="LOCAL-00017" summary="调整">
+      <created>1578273758778</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1578273758778</updated>
+    </task>
+    <task id="LOCAL-00018" summary="调整">
+      <created>1578275546674</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1578275546674</updated>
+    </task>
+    <task id="LOCAL-00019" summary="调整">
+      <created>1578297065651</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1578297065651</updated>
+    </task>
+    <task id="LOCAL-00020" summary="调整">
+      <created>1578703926972</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1578703926972</updated>
+    </task>
+    <task id="LOCAL-00021" summary="调整">
+      <created>1578720340888</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1578720340888</updated>
+    </task>
+    <task id="LOCAL-00022" summary="调整">
+      <created>1578878078523</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1578878078523</updated>
+    </task>
+    <task id="LOCAL-00023" summary="优惠卷调整">
+      <created>1578904234942</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1578904234942</updated>
+    </task>
+    <task id="LOCAL-00024" summary="调整">
+      <created>1578971245265</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1578971245265</updated>
+    </task>
+    <task id="LOCAL-00025" summary="调整">
+      <created>1579056478281</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1579056478281</updated>
+    </task>
+    <task id="LOCAL-00026" summary="调整2020.4.8">
+      <created>1586332065833</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1586332065833</updated>
+    </task>
+    <task id="LOCAL-00027" summary="调整">
+      <created>1586391141954</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1586391141954</updated>
+    </task>
+    <task id="LOCAL-00028" summary="调整">
+      <created>1586481022208</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1586481022208</updated>
+    </task>
+    <task id="LOCAL-00029" summary="调整">
+      <created>1586913421412</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1586913421413</updated>
+    </task>
+    <task id="LOCAL-00030" summary="菜品排序，商家排序">
+      <created>1586998591866</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1586998591866</updated>
+    </task>
+    <task id="LOCAL-00031" summary="调整">
+      <created>1587109505607</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1587109505607</updated>
+    </task>
+    <task id="LOCAL-00032" summary="调整">
+      <created>1587109631701</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1587109631701</updated>
+    </task>
+    <task id="LOCAL-00033" summary="调整">
+      <created>1587345175704</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1587345175704</updated>
+    </task>
+    <task id="LOCAL-00034" summary="调整">
+      <created>1587436379180</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1587436379181</updated>
+    </task>
+    <task id="LOCAL-00035" summary="调整">
+      <created>1587449527027</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1587449527027</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="获取退菜菜品调整" />
+    <MESSAGE value="提现接口调整" />
+    <MESSAGE value="接口调整" />
+    <MESSAGE value="拒绝退菜推送接口调整" />
+    <MESSAGE value="用户注销" />
+    <MESSAGE value="用户注销，商户注销" />
+    <MESSAGE value="注销用户不能绑定微信" />
+    <MESSAGE value="优惠卷调整" />
+    <MESSAGE value="调整2020.4.8" />
+    <MESSAGE value="菜品排序，商家排序" />
+    <MESSAGE value="调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="调整" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="552" y="180" key="#Live_Templates" timestamp="1587094538404">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="180" key="#Live_Templates/0.0.1920.1040@0.0.1920.1040" timestamp="1587094538404" />
+    <state x="552" y="180" key="#Project_Structure" timestamp="1587447655284">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="180" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1587447655284" />
+    <state x="700" y="166" key="#com.intellij.ide.util.MemberChooser" timestamp="1587088762942">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="525" y="137" key="#com.intellij.ide.util.MemberChooser/0.0.1440.860@0.0.1440.860" timestamp="1585019562481" />
+    <state x="700" y="166" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1587088762942" />
+    <state x="342" y="110" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1584961942793">
+      <screen x="0" y="0" width="1440" height="860" />
+    </state>
+    <state x="342" y="110" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.1440.860@0.0.1440.860" timestamp="1584961942793" />
+    <state x="744" y="408" width="431" height="229" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1587516125676">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="744" y="408" width="431" height="229" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.1040@0.0.1920.1040" timestamp="1587516125676" />
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1587348210302">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587348210302" />
+    <state x="715" y="227" key="#xdebugger.evaluate" timestamp="1587352395019">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="715" y="227" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1587352395019" />
+    <state x="522" y="116" key="CommitChangelistDialog2" timestamp="1587605188949">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="522" y="116" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1587605188949" />
+    <state x="184" y="85" width="1536" height="832" key="DiffContextDialog" timestamp="1587436690489">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="184" y="85" width="1536" height="832" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587436690489" />
+    <state x="329" y="161" key="FileChooserDialogImpl" timestamp="1584962212962">
+      <screen x="0" y="0" width="1440" height="860" />
+    </state>
+    <state x="329" y="161" key="FileChooserDialogImpl/0.0.1440.860@0.0.1440.860" timestamp="1584962212962" />
+    <state width="1876" height="263" key="GridCell.Tab.0.bottom" timestamp="1587606204161">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.0.bottom/0.0.1440.860@0.0.1440.860" timestamp="1585377078319" />
+    <state width="1876" height="263" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204161" />
+    <state width="1876" height="263" key="GridCell.Tab.0.center" timestamp="1587606204160">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.0.center/0.0.1440.860@0.0.1440.860" timestamp="1585377078319" />
+    <state width="1876" height="263" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204160" />
+    <state width="1876" height="263" key="GridCell.Tab.0.left" timestamp="1587606204160">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.0.left/0.0.1440.860@0.0.1440.860" timestamp="1585377078318" />
+    <state width="1876" height="263" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204160" />
+    <state width="1876" height="263" key="GridCell.Tab.0.right" timestamp="1587606204160">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.0.right/0.0.1440.860@0.0.1440.860" timestamp="1585377078319" />
+    <state width="1876" height="263" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204160" />
+    <state width="1876" height="263" key="GridCell.Tab.1.bottom" timestamp="1587606204162">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.1.bottom/0.0.1440.860@0.0.1440.860" timestamp="1585377078321" />
+    <state width="1876" height="263" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204162" />
+    <state width="1876" height="263" key="GridCell.Tab.1.center" timestamp="1587606204161">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.1.center/0.0.1440.860@0.0.1440.860" timestamp="1585377078320" />
+    <state width="1876" height="263" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204161" />
+    <state width="1876" height="263" key="GridCell.Tab.1.left" timestamp="1587606204161">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.1.left/0.0.1440.860@0.0.1440.860" timestamp="1585377078319" />
+    <state width="1876" height="263" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204161" />
+    <state width="1876" height="263" key="GridCell.Tab.1.right" timestamp="1587606204162">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1379" height="398" key="GridCell.Tab.1.right/0.0.1440.860@0.0.1440.860" timestamp="1585377078320" />
+    <state width="1876" height="263" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587606204162" />
+    <state width="1876" height="285" key="GridCell.Tab.2.bottom" timestamp="1587546188383">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="285" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587546188383" />
+    <state width="1876" height="285" key="GridCell.Tab.2.center" timestamp="1587546188383">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="285" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587546188383" />
+    <state width="1876" height="285" key="GridCell.Tab.2.left" timestamp="1587546188383">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="285" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587546188383" />
+    <state width="1876" height="285" key="GridCell.Tab.2.right" timestamp="1587546188383">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="285" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587546188383" />
+    <state x="490" y="177" key="Maven.ArtifactSearchDialog" timestamp="1586219992324">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="490" y="177" key="Maven.ArtifactSearchDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586219992324" />
+    <state x="463" y="151" key="SettingsEditor" timestamp="1587605344759">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="312" y="55" key="SettingsEditor/0.0.1440.860@0.0.1440.860" timestamp="1584962730761" />
+    <state x="463" y="151" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1587605344759" />
+    <state x="552" y="255" key="Vcs.Push.Dialog.v2" timestamp="1587605058654">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="255" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1587605058654" />
+    <state x="503" y="258" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586492896940">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="503" y="258" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1586492896940" />
+    <state x="244" y="38" width="759" height="822" key="find.popup" timestamp="1584961962097">
+      <screen x="0" y="0" width="1440" height="860" />
+    </state>
+    <state x="244" y="38" width="759" height="822" key="find.popup/0.0.1440.860@0.0.1440.860" timestamp="1584961962097" />
+    <state x="654" y="321" key="git4idea.merge.GitPullDialog" timestamp="1587603620791">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="491" y="265" key="git4idea.merge.GitPullDialog/0.0.1440.860@0.0.1440.860" timestamp="1584932416729" />
+    <state x="654" y="321" key="git4idea.merge.GitPullDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587603620791" />
+    <state x="623" y="225" key="search.everywhere.popup" timestamp="1585878557111">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1585878557111" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="orderNo" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+</project>

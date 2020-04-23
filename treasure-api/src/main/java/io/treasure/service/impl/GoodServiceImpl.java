@@ -59,7 +59,7 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
 
     @Override
     public PageData<GoodDTO> listPage(Map<String, Object> params) {
-        IPage<GoodEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<GoodEntity> pages=getPage(params,(String) params.get("ORDER_FIELD"),false);
         String merchantId=(String)params.get("merchantId");
         params.put("mart_id",merchantId);
         if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {

@@ -63,4 +63,22 @@
     <select id="getDiscountsMoneyByOrderId" resultType="java.math.BigDecimal">
         select sum(discounts_money) from ct_slave_order where  order_id=#{orderId}
     </select>
+
+
+
+    <select id="selectTotalFreeGoldByMasterOrderId" resultType="java.math.BigDecimal" parameterType="string">
+        select sum(free_gold) from ct_slave_order
+        where order_id=#{orderId}
+    </select>
+
+    <select id="selectCountOfNoPayOrderByOrderId" resultType="int" parameterType="string">
+        select count(0) from ct_slave_order
+        where order_id=#{orderId} and status=1
+    </select>
+    <update id="updateStatusByOrderId" parameterType="int" >
+        update ct_slave_order set status = ${newStatus}
+        where status = ${conditionStatus}
+        and order_id = '${orderId}'
+    </update>
+
 </mapper>
