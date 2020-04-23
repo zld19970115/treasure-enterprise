@@ -86,7 +86,8 @@ public class StatisticsController {
         MerchantEntity merchantEntity = merchantService.selectById(merchantId);
         if (merchantEntity!=null){
             //查询商家可提现总额
-            map.put("total_cash",merchantEntity.getTotalCash());
+            //map.put("total_cash",merchantEntity.getTotalCash());
+            map.put("total_cash",statisticsService.getTotalCash(params).doubleValue());
             //查询商家已提现金额
             map.put("already_cash",merchantEntity.getAlreadyCash());
             //查询商家未提现金额

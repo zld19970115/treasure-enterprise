@@ -211,4 +211,13 @@ public class StatisticsServiceImpl
     public List<ConsumptionRankingVo> getConsumptionRanking(ConsumptionRankingDto dto) {
         return baseDao.getConsumptionRanking(dto);
     }
+
+    @Override
+    public BigDecimal getTotalCash(Map<String, Object> params) {
+        BigDecimal money = baseDao.getTotalCash(params);
+        if(money == null) {
+            return BigDecimal.ZERO;
+        }
+        return money;
+    }
 }

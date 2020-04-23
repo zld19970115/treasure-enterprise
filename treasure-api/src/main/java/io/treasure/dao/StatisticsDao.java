@@ -9,6 +9,7 @@ import io.treasure.vo.TopSellersRankingVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     double assignMoney( Map<String, Object> params);
     List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto);
     List<ConsumptionRankingVo> getConsumptionRanking(ConsumptionRankingDto dto);
+    BigDecimal getTotalCash(Map<String, Object> params);
 }

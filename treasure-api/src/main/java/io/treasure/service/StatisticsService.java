@@ -9,6 +9,7 @@ import io.treasure.vo.ConsumptionRankingVo;
 import io.treasure.vo.TopSellersRankingVo;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     double assignMoney(Map<String, Object> params);
     List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto);
     List<ConsumptionRankingVo> getConsumptionRanking(@RequestBody ConsumptionRankingDto dto);
+    BigDecimal getTotalCash(Map<String, Object> params);
 }
