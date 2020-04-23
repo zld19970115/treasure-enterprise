@@ -30,6 +30,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -639,10 +641,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public MasterOrderEntity selectByOrderId(String orderId) {
         return baseDao.selectByOrderId(orderId);
     }
-
+    public int paseIntViaTime(Date target){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String res[] = sdf.format(target).split(":");
+        return Integer.parseInt(res[0].trim())*60*60+Integer.parseInt(res[1].trim())*60+Integer.parseInt(res[2].trim());
+    }
+    public boolean timeInRange(Date target,Date start,Date stop){
+        if(paseIntViaTime(target)>=paseIntViaTime(start) && paseIntViaTime(target)<=paseIntViaTime(stop))
+            return true;
+        return false;
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) {
+    public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException {
         Result result = new Result();
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -650,16 +661,52 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
-            if (merchantRoomParamsSetEntity == null) {
+            Long merchantId = merchantRoomParamsSetEntity.getMerchantId();
+            Long roomId = merchantRoomParamsSetEntity.getRoomId();
+            long roomSetId = 0 ;
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date a1 = sdf.parse("05:00:00");
+            Date b1 = sdf.parse("09:59:00");
+            Date a2 = sdf.parse("10:00:00");
+            Date b2 = sdf.parse("14:59:00");
+            Date a3 = sdf.parse("15:00:00");
+            Date b3 =sdf.parse("21:59:00");
+            Date a4 = sdf.parse(" 22:00:00");
+            Date b4 =sdf.parse(" 23:59:00");
+            Date a5 = sdf.parse("00:00:00");
+            Date b5 =sdf.parse(" 4:59:00");
+            boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
+            boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
+            boolean s3 = timeInRange(dto.getEatTime(), a3, b3);
+            boolean s4 = timeInRange(dto.getEatTime(), a4, b4);
+            boolean s5 = timeInRange(dto.getEatTime(), a5, b5);
+
+
+            if (s1==true){
+              roomSetId=1;
+          }
+            if (s2==true){
+                roomSetId=2;
+            }
+            if (s3==true){
+                roomSetId=3;
+            }
+            if (s4==true){
+                roomSetId=4;
+            }
+            if (s5==true){
+                roomSetId=1;
+            }
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity1 = merchantRoomParamsSetService.selectByMartIdAndRoomIdAndRoomId(merchantId, roomId, roomSetId, simpleDateFormat.format(dto.getEatTime()));
+            if (merchantRoomParamsSetEntity1 == null) {
                 return result.error(-5, "没有此包房/散台");
             }
-            int isUse = merchantRoomParamsSetEntity.getState();
+            int isUse = merchantRoomParamsSetEntity1.getState();
             if (isUse == 0) {
-                merchantRoomParamsSetEntity.setState(1);
+                merchantRoomParamsSetEntity1.setState(1);
                 //更新状态值
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), 1);
-
-
+                merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity1);
             } else if (isUse == 1) {
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
@@ -1489,7 +1536,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @Return:
      */
     @Override
-    public Result reserveRoom(OrderDTO dto, ClientUserEntity user, String mainOrderId) {
+    public Result reserveRoom(OrderDTO dto, ClientUserEntity user, String mainOrderId) throws ParseException {
         Result result = new Result();
         List<MasterOrderEntity> masterOrderEntities = baseDao.selectPOrderIdByMainOrderID(mainOrderId);
         if (masterOrderEntities.size() != 0) {
@@ -1500,17 +1547,55 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
         MerchantRoomParamsSetEntity c = new MerchantRoomParamsSetEntity();
-        if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+        if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
-            if (merchantRoomParamsSetEntity == null) {
+            Long merchantId = merchantRoomParamsSetEntity.getMerchantId();
+            Long roomId = merchantRoomParamsSetEntity.getRoomId();
+            long roomSetId = 0 ;
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date a1 = sdf.parse("05:00:00");
+            Date b1 = sdf.parse("09:59:00");
+            Date a2 = sdf.parse("10:00:00");
+            Date b2 = sdf.parse("14:59:00");
+            Date a3 = sdf.parse("15:00:00");
+            Date b3 =sdf.parse("21:59:00");
+            Date a4 = sdf.parse(" 22:00:00");
+            Date b4 =sdf.parse(" 23:59:00");
+            Date a5 = sdf.parse("00:00:00");
+            Date b5 =sdf.parse(" 4:59:00");
+            boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
+            boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
+            boolean s3 = timeInRange(dto.getEatTime(), a3, b3);
+            boolean s4 = timeInRange(dto.getEatTime(), a4, b4);
+            boolean s5 = timeInRange(dto.getEatTime(), a5, b5);
+
+
+            if (s1==true){
+                roomSetId=1;
+            }
+            if (s2==true){
+                roomSetId=2;
+            }
+            if (s3==true){
+                roomSetId=3;
+            }
+            if (s4==true){
+                roomSetId=4;
+            }
+            if (s5==true){
+                roomSetId=1;
+            }
+            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity1 = merchantRoomParamsSetService.selectByMartIdAndRoomIdAndRoomId(merchantId, roomId, roomSetId, simpleDateFormat.format(dto.getEatTime()));
+            if (merchantRoomParamsSetEntity1 == null) {
                 return result.error(-5, "没有此包房/散台");
             }
-            int isUse = merchantRoomParamsSetEntity.getState();
-            c = merchantRoomParamsSetEntity;
-            if (isUse != 1) {
-                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), 1);
-
-            } else {
+            int isUse = merchantRoomParamsSetEntity1.getState();
+            if (isUse == 0) {
+                merchantRoomParamsSetEntity1.setState(1);
+                //更新状态值
+                merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity1);
+            } else if (isUse == 1) {
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
@@ -1572,10 +1657,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             useGift = useGift.setScale(2);
             if (gift.compareTo(useGift) == -1) {
                 return result.error(-7, "您的赠送金不足！");
-            } else {
-                clientUserEntity.setGift(gift.subtract(useGift));
             }
-            clientUserService.updateById(clientUserEntity);
         }
         Date d = new Date();
         //保存主订单

@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +233,7 @@ public class ApiMasterOrderController {
     @Login
     @PostMapping("generateOrder")
     @ApiOperation("生成订单")
-    public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user){
+    public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderSave(dto,dtoList,user);
@@ -600,7 +601,7 @@ public class ApiMasterOrderController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mainOrderId", value = "编号", paramType = "query", required = true, dataType="String")
     })
-    public Result reserveRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId){
+    public Result reserveRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         return  masterOrderService.reserveRoom(dto,user,mainOrderId);
     }
