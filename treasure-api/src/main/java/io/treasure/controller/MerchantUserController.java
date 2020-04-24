@@ -6,11 +6,8 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.dto.LoginDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantUserDTO;
+import io.treasure.dto.*;
 
-import io.treasure.dto.MerchantUserRegisterDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
@@ -184,24 +181,24 @@ public class MerchantUserController {
             @ApiImplicitParam(name="confirmPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
     })
-    public Result updatePassword(
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword,
-            @RequestParam String confirmPassword,
-            @RequestParam Long id) {
-        if(id == null || oldPassword == null || newPassword == null || confirmPassword == null) {
+    public Result updatePassword(@RequestBody UpdatePasswordDto dto) {
+        if(dto.getId() == null || dto.getOldPassword() == null || dto.getNewPassword() == null || dto.getConfirmPassword() == null) {
             return new Result().error("参数异常！");
         }
-        String oldPasswordHex= DigestUtils.sha256Hex(oldPassword+"");
-        String newPasswordHex = DigestUtils.sha256Hex(newPassword+"");
-        String confirmPasswordHex = DigestUtils.sha256Hex(confirmPassword+"");
-        if(!merchantUserService.get(Long.parseLong(id+"")).getPassword().equals(oldPasswordHex)) {
+        String oldPasswordHex= DigestUtils.sha256Hex(dto.getOldPassword());
+        String newPasswordHex = DigestUtils.sha256Hex(dto.getNewPassword());
+        String confirmPasswordHex = DigestUtils.sha256Hex(dto.getConfirmPassword());
+        MerchantUserDTO user = merchantUserService.get(dto.getId());
+        if(user == null) {
+            return new Result().error("非法访问！");
+        }
+        if(!user.getPassword().equals(oldPasswordHex)) {
             return new Result().error("原密码输入错误！");
         }
         if(!newPasswordHex.equals(confirmPasswordHex)){
             return new Result().error("两次输入密码不一致，请重新输入！");
         }
-        merchantUserService.updatePassword(newPasswordHex,id);
+        merchantUserService.updatePassword(newPasswordHex,dto.getId());
         return new Result();
     }
 
