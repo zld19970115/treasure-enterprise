@@ -30,4 +30,6 @@ public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomPa
     int getAvailableRooms(long bigTime,long merchantId);
 
     int getAvailableRoomsDesk(long bigTime,long merchantId);
+
+    MerchantRoomParamsSetEntity selectByMartIdAndRoomIdAndRoomId(Long merchantId, Long roomId, long roomSetId, String format);
 }

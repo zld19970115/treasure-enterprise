@@ -172,4 +172,9 @@ public class MerchantRoomParamsSetController {
         merchantRoomParamsSetService.updateById(merchantRoomParamsSetEntity);
         return new Result().ok("解锁成功");
     }
+
+    public void timeInRange(){
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+    }
+
 }

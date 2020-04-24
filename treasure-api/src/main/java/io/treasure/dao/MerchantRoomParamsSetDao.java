@@ -28,4 +28,5 @@ public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetE
     //查询当前时间此商户可用包房和桌
     Integer getAvailableRooms(@Param("bigTime") long bigTime,@Param("merchantId") long merchantId);
     Integer getAvailableRoomsDesk(@Param("bigTime") long bigTime,@Param("merchantId") long merchantId);
+    MerchantRoomParamsSetEntity selectByMartIdAndRoomIdAndRoomId(@Param("merchantId") long merchantId,@Param("roomId")  long roomId, @Param("roomSetId") long roomSetId,@Param("format")String format);
 }

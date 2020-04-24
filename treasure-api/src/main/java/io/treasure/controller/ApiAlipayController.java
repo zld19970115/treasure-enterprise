@@ -147,8 +147,10 @@ public class ApiAlipayController {
 
             // 调用业务
             if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
-                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
+
+//                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
                     try {
+                        System.out.println("status:"+masterOrderDao.selectByOrderId(out_trade_no).getStatus());
                         Map<String, String> responseMap = null;
                         //151业务调用内
                         responseMap = payService.execAliCallBack(new BigDecimal(total_amount), out_trade_no);
@@ -158,7 +160,7 @@ public class ApiAlipayController {
                     } catch (Exception ex) {
                         return "FAIL";
                     }
-                }
+//                }
             }
 
 

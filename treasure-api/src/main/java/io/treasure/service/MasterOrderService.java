@@ -12,6 +12,7 @@ import io.treasure.entity.SlaveOrderEntity;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     OrderDTO getOrder(String orderId);
     MasterOrderEntity selectByOrderId(String orderId);
-    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
+    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException;
     Result saveOrder(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
     PageData<OrderDTO> listPage(Map<String, Object> params);
     //商户端订单列表
@@ -100,7 +101,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
      * @param user: 用户信息
      * @Return:
      */
-    Result reserveRoom(OrderDTO dto, ClientUserEntity user,String orderId);
+    Result reserveRoom(OrderDTO dto, ClientUserEntity user,String orderId) throws ParseException;
 
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
 

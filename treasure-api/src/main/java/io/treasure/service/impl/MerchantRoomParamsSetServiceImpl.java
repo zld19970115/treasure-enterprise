@@ -144,4 +144,11 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
     public int getAvailableRoomsDesk(long bigTime, long merchantId) {
         return baseDao.getAvailableRoomsDesk(bigTime,merchantId);
     }
+
+    @Override
+    public MerchantRoomParamsSetEntity selectByMartIdAndRoomIdAndRoomId(Long merchantId, Long roomId, long roomSetId, String format) {
+        return baseDao.selectByMartIdAndRoomIdAndRoomId(merchantId,roomId,roomSetId,format);
+    }
+
+
 }
