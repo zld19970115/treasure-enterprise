@@ -24,7 +24,7 @@ import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringExclude;
-import org.junit.Test;
+//import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
@@ -792,9 +792,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-        if(dto.getCheckStatus()==1){
-            return result.error(-11, "已翻台订单不可以加菜！");
-        }
+//        if(dto.getCheckStatus()==1){
+//            return result.error(-11, "已翻台订单不可以加菜！");
+//        }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -1085,11 +1085,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
     //==================================================================================
     //==================================================================================
-
-    @Test
-    public void test(){
-
-    }
+//
+//    @Test
+//    public void test(){
+//
+//    }
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
     public List<calculationAmountDTO> patchDifferences(int patchValue,List<calculationAmountDTO> slaveOrders){
 
