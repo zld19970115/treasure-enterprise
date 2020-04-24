@@ -23,6 +23,8 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringExclude;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
@@ -1084,6 +1086,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //==================================================================================
     //==================================================================================
 
+    @Test
+    public void test(){
+
+    }
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
     public List<calculationAmountDTO> patchDifferences(int patchValue,List<calculationAmountDTO> slaveOrders){
 
@@ -1099,7 +1105,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 calculationAmountDTO item = slaveOrders.get(i);
 
                 item.setTotalMoney(item.getTotalMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN))       //优惠后的项总价
-                        .setDiscountsMoney(item.getDiscountsMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //优惠金额=(原项总价-优惠后的项总价)
+                        .setDiscountsMoney(item.getDiscountsMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //优惠金额=(原项总价-优惠后的项总价)
 
                 if(item.getQuantity().compareTo(new BigDecimal("1"))==0){
                     item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));           //优惠后的项单价
@@ -1157,7 +1163,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return tmp;
     }
 
-    //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
     //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
     public DesignConditionsDTO itemsClculate(DesignConditionsDTO target,DiscountType discountType){
         if(target == null)      return null;
@@ -1220,7 +1225,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
                     //更新优惠后的总金额
                     priceAfterDiscount = priceTotal.subtract(discountValue).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-
+                    System.out.println("debug001-----------优惠后的金额："+priceAfterDiscount);
                     //优惠后的价格差值初始值
                     diferencedDiscountPatch = discountValue;
                 }

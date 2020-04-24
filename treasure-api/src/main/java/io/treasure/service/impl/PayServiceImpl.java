@@ -63,6 +63,7 @@ public class PayServiceImpl implements PayService {
     SlaveOrderService slaveOrderService;
     @Autowired
     private RecordGiftServiceImpl recordGiftService;
+
     @Autowired
     private AlipayClient alipayClient;
 
@@ -295,12 +296,17 @@ public class PayServiceImpl implements PayService {
                 //退菜后将平台扣点金额和商户所得更新到主订单表中
                 masterOrderService.updateSlaveOrderPointDeduction(mp,pb,orderNo);
                 BigDecimal a=new BigDecimal("0");
+
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
-                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
-                ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
-                BigDecimal gift = clientUser.getGift();
-                clientUser.setGift(gift.add(allGoods.getFreeGold()));
-                clientUserService.updateById(clientUser);
+
+
+//                    //返还赠送金
+//                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
+//                    ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
+//                    BigDecimal gift = clientUser.getGift();
+//                    clientUser.setGift(gift.add(allGoods.getFreeGold()));
+//                    clientUserService.updateById(clientUser);
+
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);
@@ -313,12 +319,15 @@ public class PayServiceImpl implements PayService {
                         slaveOrderEntity.setRefundId(refundNo);
                     }
                 }
-                ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
-                BigDecimal gift = clientUser.getGift();
-                clientUser.setGift(gift.add(masterOrderEntity.getGiftMoney()));
-                clientUserService.updateById(clientUser);
-                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
-                masterOrderService.updateSlaveOrderPointDeduction(a,a,orderNo);
+
+//                    //返还赠送金
+//                    ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
+//                    BigDecimal gift = clientUser.getGift();
+//                    clientUser.setGift(gift.add(masterOrderEntity.getGiftMoney()));
+//                    clientUserService.updateById(clientUser);
+//                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
+//                    masterOrderService.updateSlaveOrderPointDeduction(a, a, orderNo);
+
                 return result.ok(true);
             }
         }
