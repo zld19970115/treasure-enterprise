@@ -175,12 +175,6 @@ public class MerchantUserController {
     @Login
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="oldPassword",value="原密码",required=true,paramType="query", dataType="String"),
-            @ApiImplicitParam(name="newPassword",value="第一次输入的密码",required=true,paramType="query", dataType="String"),
-            @ApiImplicitParam(name="confirmPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
-            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
-    })
     public Result updatePassword(@RequestBody UpdatePasswordDto dto) {
         if(dto.getId() == null || dto.getOldPassword() == null || dto.getNewPassword() == null || dto.getConfirmPassword() == null) {
             return new Result().error("参数异常！");
