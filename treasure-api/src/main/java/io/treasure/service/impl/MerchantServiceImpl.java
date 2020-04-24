@@ -229,8 +229,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         String mobile=(String)params.get("mobile");
         //店铺
         String merchantId=(String)params.get("merchantId");
+        //类型
+        String categoryId =(String) params.get("categoryId");
         QueryWrapper<MerchantEntity> wrapper = new QueryWrapper<>();
         wrapper.like(StringUtils.isNotBlank(mobile),"mobile",mobile);
+        wrapper.like(StringUtils.isNotBlank(categoryId),"categoryId",categoryId);
         wrapper.eq(StringUtils.isNotBlank(id), "id", id);
         wrapper.like(StringUtils.isNotBlank(name), "name", name);
         wrapper.ne(StringUtils.isNotBlank(status),"status",status);

@@ -5,6 +5,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.ConsumptionRankingDto;
 import io.treasure.dto.EvaluateDTO;
+import io.treasure.dto.MerchantAccountDto;
 import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -153,6 +154,13 @@ public class StatisticsController {
             return new Result().error("排序参数不正确!");
         }
         return new Result().ok(statisticsService.getConsumptionRanking(dto));
+    }
+
+    @Login
+    @PostMapping("getMerchantAccount")
+    @ApiOperation("查询商户收支明细")
+    public Result<List<ConsumptionRankingVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+        return new Result().ok(statisticsService.getMerchantAccount(dto));
     }
 
 }

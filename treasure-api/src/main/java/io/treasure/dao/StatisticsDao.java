@@ -2,9 +2,11 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.ConsumptionRankingDto;
+import io.treasure.dto.MerchantAccountDto;
 import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.ConsumptionRankingVo;
+import io.treasure.vo.MerchantAccountVo;
 import io.treasure.vo.TopSellersRankingVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +33,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto);
     List<ConsumptionRankingVo> getConsumptionRanking(ConsumptionRankingDto dto);
     BigDecimal getTotalCash(Map<String, Object> params);
+    List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
 }

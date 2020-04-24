@@ -88,4 +88,20 @@ public class DateUtil {
         Date currYearLast = calendar.getTime();
         return new SimpleDateFormat("yyyy-MM-dd").format(currYearLast);
     }
+
+    /**
+     * 获取当前月的上x个月，默认上一个月，返回字符串，返回格式范例：2020-04
+     * @return
+     */
+    public static String lastMonthFormatYYYYMM(Integer count) {
+        if(count == null) {
+            count = 1;
+        }
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM");
+        Date currdate = new Date();
+        Calendar calendar= Calendar.getInstance();
+        calendar.setTime(currdate);
+        calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH)-count);
+        return sd.format(calendar.getTime());
+    }
 }

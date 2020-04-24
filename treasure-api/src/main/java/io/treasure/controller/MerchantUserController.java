@@ -187,8 +187,8 @@ public class MerchantUserController {
     public Result updatePassword(@RequestParam Map<String,Object> param){
         Object id = param.get("id");
         Object oldPassword = param.get("oldPassword");
-        Object newPassword = param.get("oldPassword");
-        Object confirmPassword = param.get("oldPassword");
+        Object newPassword = param.get("newPassword");
+        Object confirmPassword = param.get("confirmPassword");
         if(id == null || oldPassword == null || newPassword == null || confirmPassword == null) {
             return new Result().error("参数异常！");
         }

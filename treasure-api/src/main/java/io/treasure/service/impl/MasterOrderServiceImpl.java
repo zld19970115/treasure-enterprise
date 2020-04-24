@@ -23,8 +23,6 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringExclude;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
@@ -1086,10 +1084,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //==================================================================================
     //==================================================================================
 
-    @Test
-    public void test(){
-
-    }
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
     public List<calculationAmountDTO> patchDifferences(int patchValue,List<calculationAmountDTO> slaveOrders){
 

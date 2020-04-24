@@ -55,7 +55,8 @@ public class MerchantController {
         @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="merchantId", value = "id", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="name", value = "店铺名称", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name ="mobile", value = "手机号码", paramType = "query", dataType="String")
+            @ApiImplicitParam(name ="mobile", value = "手机号码", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name ="categoryId", value = "经营类别", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status",Common.STATUS_DELETE.getStatus()+"");
