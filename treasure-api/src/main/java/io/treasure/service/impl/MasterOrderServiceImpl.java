@@ -1084,6 +1084,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //==================================================================================
     //==================================================================================
 
+    @Test
+    public void test(){
+
+    }
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
     public List<calculationAmountDTO> patchDifferences(int patchValue,List<calculationAmountDTO> slaveOrders){
 
