@@ -179,20 +179,32 @@ public class MerchantUserController {
     @PutMapping("updatePassword")
     @ApiOperation("修改密码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="oldPassword",value="第一次输入的密码",required=true,paramType="query", dataType="String"),
-            @ApiImplicitParam(name="newPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
+            @ApiImplicitParam(name="oldPassword",value="原密码",required=true,paramType="query", dataType="String"),
+            @ApiImplicitParam(name="newPassword",value="第一次输入的密码",required=true,paramType="query", dataType="String"),
+            @ApiImplicitParam(name="confirmPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
     })
-    public Result updatePassword(HttpServletRequest request,@RequestParam String oldPassword,
-                                 @RequestParam String newPassword,@RequestParam Long id){
-       String oPassword= DigestUtils.sha256Hex(oldPassword);
-       String nPassword= DigestUtils.sha256Hex(newPassword);
-        if(!oPassword.equals(nPassword)){
+    public Result updatePassword(@RequestParam Map<String,Object> param){
+        Object id = param.get("id");
+        Object oldPassword = param.get("oldPassword");
+        Object newPassword = param.get("oldPassword");
+        Object confirmPassword = param.get("oldPassword");
+        if(id == null || oldPassword == null || newPassword == null || confirmPassword == null) {
+            return new Result().error("参数异常！");
+        }
+        String oldPasswordHex= DigestUtils.sha256Hex(oldPassword+"");
+        String newPasswordHex = DigestUtils.sha256Hex(newPassword+"");
+        String confirmPasswordHex = DigestUtils.sha256Hex(confirmPassword+"");
+        if(!merchantUserService.get(Long.parseLong(id+"")).getPassword().equals(oldPasswordHex)) {
+            return new Result().error("原密码输入错误！");
+        }
+        if(!newPasswordHex.equals(confirmPasswordHex)){
             return new Result().error("两次输入密码不一致，请重新输入！");
         }
-        merchantUserService.updatePassword(nPassword,id);
+        merchantUserService.updatePassword(newPasswordHex,Long.parseLong(id+""));
         return new Result();
     }
+
 
     /**
      * 找回密码
