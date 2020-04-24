@@ -184,11 +184,11 @@ public class MerchantUserController {
             @ApiImplicitParam(name="confirmPassword",value="第二次输入的密码",required=true,paramType="query", dataType="String"),
             @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="long")
     })
-    public Result updatePassword(@RequestParam Map<String,Object> param){
-        Object id = param.get("id");
-        Object oldPassword = param.get("oldPassword");
-        Object newPassword = param.get("newPassword");
-        Object confirmPassword = param.get("confirmPassword");
+    public Result updatePassword(
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            @RequestParam Long id) {
         if(id == null || oldPassword == null || newPassword == null || confirmPassword == null) {
             return new Result().error("参数异常！");
         }
@@ -201,7 +201,7 @@ public class MerchantUserController {
         if(!newPasswordHex.equals(confirmPasswordHex)){
             return new Result().error("两次输入密码不一致，请重新输入！");
         }
-        merchantUserService.updatePassword(newPasswordHex,Long.parseLong(id+""));
+        merchantUserService.updatePassword(newPasswordHex,id);
         return new Result();
     }
 
