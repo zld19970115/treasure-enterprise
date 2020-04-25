@@ -280,18 +280,30 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         } else {
             return new Result().error("无法获取订单！");
         }
+//        //用户支付获得积分，比例暂时为1:1
+//        ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
+//        BigDecimal integral = clientUserEntity.getIntegral();
+//        List<MasterOrderEntity> auxiliaryPayOrders = masterOrderService.getAuxiliaryPayOrders(dto.getOrderId());
+//        integral = integral.add(dto.getPayMoney());
+//        for (MasterOrderEntity auxiliaryPayOrder : auxiliaryPayOrders) {
+//            integral = integral.add(auxiliaryPayOrder.getPayMoney());
+//        }
+//        clientUserEntity.setIntegral(integral);
+//        clientUserService.updateById(clientUserEntity);
+//        String orderId = dto.getOrderId();
+
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
-        List<MasterOrderEntity> auxiliaryPayOrders = masterOrderService.getAuxiliaryPayOrders(dto.getOrderId());
         integral = integral.add(dto.getPayMoney());
-        for (MasterOrderEntity auxiliaryPayOrder : auxiliaryPayOrders) {
-            integral = integral.add(auxiliaryPayOrder.getPayMoney());
+        List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectBYPOrderId(dto.getOrderId());
+        for (MasterOrderEntity masterOrderEntity : masterOrderEntities) {
+            integral = integral.add(masterOrderEntity.getPayMoney());
         }
         clientUserEntity.setIntegral(integral);
         clientUserService.updateById(clientUserEntity);
         String orderId = dto.getOrderId();
-
+        //粘入内容结束==============================================================================
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderId);
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
             GoodEntity byid = goodService.getByid(slaveOrderEntity.getGoodId());
@@ -386,7 +398,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     /**
-     * 同意退单
+     * 同意退单(反赠送金)
      *
      * @param id
      * @param status
@@ -790,9 +802,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-        if(dto.getCheckStatus()==1){
-            return result.error(-11, "已翻台订单不可以加菜！");
-        }
+//        if(dto.getCheckStatus()==1){
+//            return result.error(-11, "已翻台订单不可以加菜！");
+//        }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -927,6 +939,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
     }
 
+    @Override
+    public List<MasterOrderEntity> selectBYPOrderId(String orderId) {
+        return baseDao.selectBYPOrderId(orderId);
+    }
     /**
      * 商户端订单预约列表查询
      *
