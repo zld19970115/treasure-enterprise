@@ -296,4 +296,44 @@
         </if>
     </select>
 
+    <select id="getMerchantAccount" parameterType="io.treasure.dto.MerchantAccountDto" resultType="io.treasure.vo.MerchantAccountVo">
+        select
+            ctm.id,
+            ctm.`name`,
+            ctm.mobile,
+            ctm.total_cash as totalCash,
+            ctm.already_cash as alreadyCash,
+            ctm.not_cash as notCash,
+            ctm.wart_cash as wartCash,
+            ctm.point_money as pointMoney,
+            (
+                SELECT
+                    COUNT(ctmo.id)
+                from
+                    ct_master_order ctmo
+                where
+                    ctm.id = ctmo.merchant_id
+                    and ctmo.`status` = 10
+                    and date_format(ctmo.eat_time, '%Y-%m') in
+                    <foreach collection="dateList" item="item" open="(" close=")" separator=",">
+                        #{item}
+                    </foreach>
+            ) as count
+        from
+            ct_merchant ctm
+        <where>
+            <if test="name != null and name!=''" >
+                and ctm.`name` like concat('%', #{name}, '%')
+            </if>
+            <if test="mobile != null and mobile!=''" >
+                and ctm.mobile like concat('%', #{mobile}, '%')
+            </if>
+            <if test="id != null and id!=''" >
+                and ctm.id = #{id}
+            </if>
+        </where>
+        GROUP BY
+            ctm.total_cash desc
+    </select>
+
 </mapper>
