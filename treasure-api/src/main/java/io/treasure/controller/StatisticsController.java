@@ -109,6 +109,8 @@ public class StatisticsController {
         map.put("monthReserve",monthReserve);   //查询本月全部预定订单
         map.put("monthQuit",monthQuit); //查询本月全部退订订单
         map.put("monthMoney",monthMoney);   //查询本月实际收入
+
+        map.put("completaOrder",statisticsService.getCompletaOrder(params).doubleValue());
         return new Result().ok(map);
     }
 

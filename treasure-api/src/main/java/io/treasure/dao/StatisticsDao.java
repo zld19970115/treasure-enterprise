@@ -34,4 +34,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<ConsumptionRankingVo> getConsumptionRanking(ConsumptionRankingDto dto);
     BigDecimal getTotalCash(Map<String, Object> params);
     List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
+    BigDecimal getCompletaOrder(Map<String, Object> params);
 }

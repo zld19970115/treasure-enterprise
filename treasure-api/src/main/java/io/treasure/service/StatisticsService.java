@@ -34,4 +34,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     List<ConsumptionRankingVo> getConsumptionRanking(@RequestBody ConsumptionRankingDto dto);
     BigDecimal getTotalCash(Map<String, Object> params);
     List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
+    BigDecimal getCompletaOrder(Map<String, Object> params);
 }

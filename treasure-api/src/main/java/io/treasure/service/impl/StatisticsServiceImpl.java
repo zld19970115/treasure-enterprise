@@ -237,4 +237,9 @@ public class StatisticsServiceImpl
         return baseDao.getMerchantAccount(dto);
     }
 
+    @Override
+    public BigDecimal getCompletaOrder(Map<String, Object> params) {
+        return baseDao.getCompletaOrder(params);
+    }
+
 }
