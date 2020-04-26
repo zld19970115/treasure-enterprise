@@ -46,20 +46,20 @@
     </select>
     <select id="todayReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
         select
-            count(*)
+        count(*)
         from
-            ct_master_order
+        ct_master_order
         where
-            eat_time > now()
+        eat_time > now()
         <if test="merchantId != null">
             and merchant_id in
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
             </foreach>
         </if>
-            and status in (1,2,3,4,5,6,7)
-            and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
-            and p_order_id = 0
+        and status in (1,2,3,4,5,6,7)
+        and  DATE_FORMAT(create_date,'%Y-%m-%d') = #{format}
+        and p_order_id = 0
     </select>
     <select id="todayQuit" parameterType="io.treasure.entity.MasterOrderEntity" resultType="int">
 
@@ -141,20 +141,20 @@
     </select>
     <select id="assignReserve" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Integer">
         select
-            count(*)
+        count(*)
         from
-            ct_master_order
+        ct_master_order
         where
-            eat_time > now()
+        eat_time > now()
         <if test="merchantId != null">
             and merchant_id in
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
             </foreach>
         </if>
-          and status  in (1,2,3,4,5,6,7,10)
-          and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
-          and p_order_id = 0
+        and status  in (1,2,3,4,5,6,7,10)
+        and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1} and #{endTime1}
+        and p_order_id = 0
     </select>
     <select id="assignQuit"  parameterType="io.treasure.entity.MasterOrderEntity"  resultType="java.lang.Integer">
         select count(*) from ct_master_order where status in (6,7,8)   <if test="merchantId != null">
@@ -163,9 +163,9 @@
             #{item}
         </foreach>
     </if>  and DATE_FORMAT(create_date,'%Y-%m-%d')
-      between #{startTime1}
-      and #{endTime1}
-      and p_order_id= 0
+        between #{startTime1}
+        and #{endTime1}
+        and p_order_id= 0
     </select>
     <select id="assignMoney" parameterType="io.treasure.entity.MasterOrderEntity" resultType="java.lang.Double">
         select IFNULL(sum(pay_money),0.00)  from ct_master_order    where  status in(2,4,7,10)   <if test="merchantId != null">
@@ -174,14 +174,14 @@
             #{item}
         </foreach>
     </if>  and DATE_FORMAT(create_date,'%Y-%m-%d') between #{startTime1}
-      and #{endTime1}
-      and check_status = 1
+        and #{endTime1}
+        and check_status = 1
     </select>
 
     <!-- 查询商户热销产品排行统计 -->
     <select id="getTopSellersRanking" parameterType="io.treasure.dto.TopSellersRankingDto" resultType="io.treasure.vo.TopSellersRankingVo">
         select
-            t.name,SUM(t.count) as count,SUM(t.total) as total ,t.icon as url
+        t.name,SUM(t.count) as count,SUM(t.total) as total ,t.icon as url
         from (
         SELECT
         cg.`name`,
@@ -313,12 +313,12 @@
 
     <select id="getTotalCash" resultType="java.math.BigDecimal">
         SELECT
-            SUM(ctmo.merchant_proceeds)
+        SUM(ctmo.merchant_proceeds)
         FROM
-            ct_master_order ctmo
+        ct_master_order ctmo
         where
-            ctmo.merchant_id = #{merchantId}
-            and ctmo.`status` = 10
+        ctmo.merchant_id = #{merchantId}
+        and ctmo.`status` = 10
         <if test="startTime1 != null and startTime1!=''" >
             and date_format(ctmo.create_date, '%Y-%m-%d') &gt;= #{startTime1}
         </if>
@@ -329,29 +329,29 @@
 
     <select id="getMerchantAccount" parameterType="io.treasure.dto.MerchantAccountDto" resultType="io.treasure.vo.MerchantAccountVo">
         select
-            ctm.id,
-            ctm.`name`,
-            ctm.mobile,
-            ctm.total_cash as totalCash,
-            ctm.already_cash as alreadyCash,
-            ctm.not_cash as notCash,
-            ctm.wart_cash as wartCash,
-            ctm.point_money as pointMoney,
-            (
-                SELECT
-                    COUNT(ctmo.id)
-                from
-                    ct_master_order ctmo
-                where
-                    ctm.id = ctmo.merchant_id
-                    and ctmo.`status` = 10
-                    and date_format(ctmo.eat_time, '%Y-%m') in
-                    <foreach collection="dateList" item="item" open="(" close=")" separator=",">
-                        #{item}
-                    </foreach>
-            ) as count
+        ctm.id,
+        ctm.`name`,
+        ctm.mobile,
+        ctm.total_cash as totalCash,
+        ctm.already_cash as alreadyCash,
+        ctm.not_cash as notCash,
+        ctm.wart_cash as wartCash,
+        ctm.point_money as pointMoney,
+        (
+        SELECT
+        COUNT(ctmo.id)
         from
-            ct_merchant ctm
+        ct_master_order ctmo
+        where
+        ctm.id = ctmo.merchant_id
+        and ctmo.`status` = 10
+        and date_format(ctmo.eat_time, '%Y-%m') in
+        <foreach collection="dateList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        ) as count
+        from
+        ct_merchant ctm
         <where>
             <if test="name != null and name!=''" >
                 and ctm.`name` like concat('%', #{name}, '%')
@@ -364,7 +364,7 @@
             </if>
         </where>
         GROUP BY
-            ctm.total_cash desc
+        ctm.total_cash desc
     </select>
 
 </mapper>
