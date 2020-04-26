@@ -24,4 +24,7 @@ public class TopSellersRankingVo {
     @ApiModelProperty(value="占比")
     private BigDecimal proportion = BigDecimal.ZERO;
 
+    @ApiModelProperty(value="图片地址")
+    private String url;
+
 }

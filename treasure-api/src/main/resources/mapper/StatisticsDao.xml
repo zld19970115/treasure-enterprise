@@ -180,9 +180,12 @@
 
     <!-- 查询商户热销产品排行统计 -->
     <select id="getTopSellersRanking" parameterType="io.treasure.dto.TopSellersRankingDto" resultType="io.treasure.vo.TopSellersRankingVo">
-        select t.name,SUM(t.count) as count,SUM(t.total) as total from (
+        select
+            t.name,SUM(t.count) as count,SUM(t.total) as total ,t.icon as url
+        from (
         SELECT
         cg.`name`,
+        cg.icon,
         ctso.quantity-ctso.refund_quantity as count,
         ctso.price*(ctso.quantity-ctso.refund_quantity) as total
         from
@@ -232,15 +235,42 @@
         COUNT(ccu.username) as count,
         (
         SELECT IFNULL(SUM(ctmo1.merchant_proceeds),0) FROM ct_master_order ctmo1 where ctmo1.creator = ccu.id and ctmo1.`status` = 10 and ctmo1.merchant_id = #{merchantId}
+        <if test="startDate != null and startDate != ''" >
+            and date_format(ctmo1.create_date, '%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''" >
+            and date_format(ctmo1.create_date, '%Y-%m-%d') &lt;= #{endDate}
+        </if>
         ) as completeTotal,
         (
         SELECT IFNULL(count(ctmo1.order_id),0) FROM ct_master_order ctmo1 where ctmo1.creator = ccu.id and ctmo1.`status` = 10 and ctmo1.merchant_id = #{merchantId}
+        <if test="startDate != null and startDate != ''" >
+            and date_format(ctmo1.create_date, '%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''" >
+            and date_format(ctmo1.create_date, '%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        and ctmo1.p_order_id = 0
         ) as completeCount,
         (
         SELECT IFNULL(SUM(ctmo3.merchant_proceeds),0) FROM ct_master_order ctmo3 where ctmo3.creator = ccu.id and ctmo3.`status` in (3,5,8) and ctmo3.merchant_id = #{merchantId}
+        <if test="startDate != null and startDate != ''" >
+            and date_format(ctmo3.create_date, '%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''" >
+            and date_format(ctmo3.create_date, '%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        and ctmo3.p_order_id = 0
         ) as cancelTotal,
         (
         SELECT IFNULL(count(ctmo3.order_id),0) FROM ct_master_order ctmo3 where ctmo3.creator = ccu.id and ctmo3.`status` in (3,5,8) and ctmo3.merchant_id = #{merchantId}
+        <if test="startDate != null and startDate != ''" >
+            and date_format(ctmo3.create_date, '%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''" >
+            and date_format(ctmo3.create_date, '%Y-%m-%d') &lt;= #{endDate}
+        </if>
+        and ctmo3.p_order_id = 0
         ) as cancelCount
         from
         ct_master_order ctmo
@@ -254,6 +284,7 @@
         <if test="endDate != null and endDate != ''" >
             and date_format(ctmo.create_date, '%Y-%m-%d') &lt;= #{endDate}
         </if>
+        and ctmo.p_order_id = 0
         GROUP BY
         ccu.username
         ORDER BY
