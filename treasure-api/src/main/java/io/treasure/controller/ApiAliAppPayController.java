@@ -18,6 +18,7 @@ import io.treasure.enm.Constants;
 import io.treasure.service.MasterOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +55,7 @@ public class ApiAliAppPayController  {
             @ApiImplicitParam(name="totalAmount",value="订单金额",required=true,paramType="query")
     })
     public Result appPay(String body, String subject, String orderNo, String totalAmount) {
+        System.out.println("1---ApiAliAppPayController/(orderNo,totalAmount):"+orderNo+","+totalAmount);
         // 获取项目中实际的订单的信息
         // 此处是相关业务代码
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
@@ -95,7 +97,6 @@ public class ApiAliAppPayController  {
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
-
         // 返回支付相关信息(此处可以直接将getBody中的内容直接返回，无需再做一些其他操作)
         return new Result().ok(alipayResponse.getBody());
     }

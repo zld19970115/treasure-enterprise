@@ -2,7 +2,6 @@ package io.treasure.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.treasure.entity.SlaveOrderEntity;
 import lombok.Data;
 
 
@@ -21,7 +20,7 @@ public class DesignConditionsDTO {
     private Integer preferentialType;
 
     @ApiModelProperty(value = "订单菜品")
-    private List<calculationAmountDTO> slaveOrder;
+    private List<CalculationAmountDTO> slaveOrder;
 
     @ApiModelProperty(value = "用户id")
     private long userId;
