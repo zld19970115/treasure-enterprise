@@ -60,4 +60,5 @@
     <select id="selectByMartIdAndRoomIdAndRoomId" resultType="io.treasure.entity.MerchantRoomParamsSetEntity">
           select * from ct_merchant_room_params_set where merchant_id=#{merchantId} and room_id = #{roomId} and room_params_id  =#{roomSetId} and DATE_FORMAT(use_date,'%Y-%m-%d') = #{format}
     </select>
+
 </mapper>
