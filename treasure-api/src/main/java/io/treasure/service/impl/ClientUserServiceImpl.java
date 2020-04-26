@@ -130,7 +130,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                     BigDecimal info = new BigDecimal(10000);
                     if(mobileGift!=null){
                         if (mobileGift.compareTo(info) == 1){
-                            return new Result().error("该用户赠送金大于一万元不允许赠送");
+                            return new Result().error("该用户代付金大于一万元不允许赠送");
                         }
                     }
                     BigDecimal gift = clientUserEntity.getGift();
@@ -145,7 +145,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                             return new Result().ok("赠送成功");
 
                     } else {
-                        return new Result().error("您得赠送金余额不足");
+                        return new Result().error("您得代付金余额不足");
                     }
                 } else {
                     return new Result().error("该用户没有注册");
