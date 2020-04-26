@@ -157,7 +157,7 @@ public class MerchantWithdrawController {
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
-        merchantWithdrawService.save(dto);
+        merchantWithdrawService. save(dto);
         return new Result();
     }
     @CrossOrigin
@@ -319,8 +319,5 @@ public class MerchantWithdrawController {
 
         return new Result().ok(s);
     }
-
-
-
 
 }

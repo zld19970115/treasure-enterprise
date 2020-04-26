@@ -121,6 +121,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
 
     @Override
     public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
+
         statsDayDetailService.insertMerchantWithdraw(id);
         baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);
     }

@@ -360,6 +360,10 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
 //        return insert;
 //    }
 
+    /**
+     * @param id 提现操作
+     * @return
+     */
     @Override
     public int insertMerchantWithdraw(long id) {
         //通过提现id获取提现记录
