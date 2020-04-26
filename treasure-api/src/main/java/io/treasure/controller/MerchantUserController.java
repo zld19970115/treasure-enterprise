@@ -2,6 +2,8 @@ package io.treasure.controller;
 import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
+import io.treasure.common.exception.ErrorCode;
+import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
@@ -197,32 +199,27 @@ public class MerchantUserController {
     }
 
 
-    /**
-     * 找回密码
-     * @param mobile
-     * @return
-     */
-    @CrossOrigin
-    @Login
+
     @PutMapping("retrievePassword")
-    @ApiOperation("找回密码")
+    @ApiOperation("忘记密码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="mobile",value="手机号码",required=true,paramType="query", dataType="String"),
-            @ApiImplicitParam(name="id",value="会员编号",required = true,paramType = "query", dataType="Long")
+            @ApiImplicitParam(name = "tel", value = "注册手机号", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "password", value = "重置密码", required = true, paramType = "query")
     })
-    public Result<Map<String, Object>>  retrievePassword(@RequestParam String mobile,@RequestParam Long id){
-       MerchantUserDTO user= merchantUserService.get(id);
-       if(null!=user){
-           if(!user.getMobile().equals(mobile)){
-               return new Result().error("手机号输入错误！");
-           }
-           String password=DigestUtils.sha256Hex("123456");
-           merchantUserService.updatePassword(password,id);
-           Map<String,Object> map=new HashMap<String,Object>();
-           map.put("password",123456);
-           return new Result().ok(map);
-       }
-        return new Result().error("出错了！");
+    public Result retrievePassword(String tel, String password) {
+//        Result bool = SendSMSUtil.verifyCode(tel, request, code);
+
+        MerchantUserEntity byMobile = merchantUserService.getByMobile(tel);
+        if (byMobile == null) {
+            throw new RenException(ErrorCode.ACCOUNT_NOT_EXIST);
+        } else {
+            byMobile.setPassword(DigestUtils.sha256Hex(password));
+
+            merchantUserService.updateById(byMobile);
+        }
+
+
+        return new Result();
     }
     /**
      * 注册

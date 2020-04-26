@@ -168,6 +168,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             if(num==orderGoods.size()){
                 System.out.println("zhangguanglin"+num);
                 System.out.println("zhangguanglin"+orderGoods.size());
+                MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+                masterOrderEntity.setPayMoney(masterOrderEntity.getTotalMoney());
+                masterOrderService.updateById(masterOrderEntity);
                 masterOrderService.updateOrderStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(),orderId);
                 if(order.getReservationId()!=null){
                     merchantRoomParamsSetService.updateStatus(order.getReservationId(),0);
