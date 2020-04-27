@@ -3,6 +3,7 @@ package io.treasure.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
  */
 @Data
 @ApiModel(value = "用户信息")
+@Accessors(chain = true)
 public class ClientUserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

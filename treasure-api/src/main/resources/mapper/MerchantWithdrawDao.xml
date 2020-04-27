@@ -84,5 +84,60 @@ select param_value from sys_params where id=1144988823431553026
          SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state = 1
 
     </select>
+<!--    查询列表-->
+    <select id="selectByObject" resultType="io.treasure.entity.MerchantWithdrawEntity" parameterType="io.treasure.dto.QueryWithdrawDto">
+        select * from ct_merchant_withdarw
+
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                and merchant_id = #{merchantId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+            </if>
+            <if test="stopTime != null and stopTime != ''">
+                and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+
+        </where>
+    </select>
+<!--    分类汇总-->
+    <select id="selectTotalByType" resultType="double" parameterType="io.treasure.dto.QueryWithdrawDto">
+        select sum(money) from ct_merchant_withdarw
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                and merchant_id = #{merchantId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+            </if>
+            <if test="stopTime != null and stopTime != ''">
+                and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="verifyState != null and verifyState != ''">
+                and verify_state = #{verifyState}
+            </if>
+            <choose>
+                <when test="groupByType == 1 and verifyState != null and verifyState != ''">
+                    group by verify_state
+                </when>
+                <when test="groupByType == 2 and merchantId != null and merchantId != ''">
+                    group by merchant_id
+                </when>
+                <when test="groupByType == 3 and type != null and type != ''">
+                    group by type
+                </when>
+                <when test="groupByType == 4 and verify != null verify != ''">
+                    group by verify
+                </when>
+            </choose>
+        </where>
+    </select>
 
 </mapper>

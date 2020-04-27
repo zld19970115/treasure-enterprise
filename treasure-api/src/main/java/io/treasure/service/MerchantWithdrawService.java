@@ -4,6 +4,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 
@@ -34,4 +35,10 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
      //提现操作
     void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate);
     String selectWithStatus();
+
+    //查询增补
+    List<MerchantWithdrawEntity> selectByObject(QueryWithdrawDto queryWithdrawDto);
+    //分组汇总
+    Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);
+
 }
