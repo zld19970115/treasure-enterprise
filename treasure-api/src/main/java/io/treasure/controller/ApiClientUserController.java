@@ -289,38 +289,73 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "openId", value = "微信用户唯一标识", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "mobile", value = "用户手机号", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String")})
-    public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId) {
+            @ApiImplicitParam(name = "clientId", value = "个推ID", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "type", value = "微信或者APP", required = true, paramType = "query", dataType = "String")
+    })
+    public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId,String type) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
-        if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
-            return new Result().error("该手机号已被绑定");
+        if (type.equals("APP")){
+            if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
+                return new Result().error("该手机号已被绑定");
+            }
+            if(userByPhone.getStatus()==9){
+                return new Result().error("该手机号已注销");
+            }
+            ClientUserEntity user = new ClientUserEntity();
+            Map<String, Object> map = new HashMap<>();
+            if (userByPhone != null) {
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+                clientUserService.updateOpenid(openId, mobile);
+                map.put("token", byUserId.getToken());
+                map.put("user", userByPhone);
+            } else {
+                user.setMobile(mobile);
+                user.setUsername(mobile);
+                user.setCreateDate(new Date());
+                user.setWay("2");
+                user.setOpenid(openId);
+                user.setPassword(DigestUtils.sha256Hex(password));
+                user.setClientId(clientId);
+                clientUserService.insert(user);
+                ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(mobile);
+                tokenService.createToken(userByPhone1.getId());
+                map.put("user", userByPhone1);
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+                map.put("token", byUserId.getToken());
+            }
+            return new Result<Map<String, Object>>().ok(map);
+        }else {
+            if(userByPhone.getUnionid()!=null && userByPhone.getUnionid() != openId){
+                return new Result().error("该手机号已被绑定");
+            }
+            if(userByPhone.getStatus()==9){
+                return new Result().error("该手机号已注销");
+            }
+            ClientUserEntity user = new ClientUserEntity();
+            Map<String, Object> map = new HashMap<>();
+            if (userByPhone != null) {
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+                clientUserService.updateUnionid(openId, mobile);
+                map.put("token", byUserId.getToken());
+                map.put("user", userByPhone);
+            } else {
+                user.setMobile(mobile);
+                user.setUsername(mobile);
+                user.setCreateDate(new Date());
+                user.setWay("2");
+                user.setUnionid(openId);
+                user.setPassword(DigestUtils.sha256Hex(password));
+                user.setClientId(clientId);
+                clientUserService.insert(user);
+                ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(mobile);
+                tokenService.createToken(userByPhone1.getId());
+                map.put("user", userByPhone1);
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+                map.put("token", byUserId.getToken());
+            }
+            return new Result<Map<String, Object>>().ok(map);
         }
-        if(userByPhone.getStatus()==9){
-            return new Result().error("该手机号已注销");
-        }
-        ClientUserEntity user = new ClientUserEntity();
-        Map<String, Object> map = new HashMap<>();
-        if (userByPhone != null) {
-            TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
-            clientUserService.updateOpenid(openId, mobile);
-            map.put("token", byUserId.getToken());
-            map.put("user", userByPhone);
-        } else {
-            user.setMobile(mobile);
-            user.setUsername(mobile);
-            user.setCreateDate(new Date());
-            user.setWay("2");
-            user.setOpenid(openId);
-            user.setPassword(DigestUtils.sha256Hex(password));
-            user.setClientId(clientId);
-            clientUserService.insert(user);
-            ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(mobile);
-            tokenService.createToken(userByPhone1.getId());
-            map.put("user", userByPhone1);
-            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
-            map.put("token", byUserId.getToken());
-        }
-        return new Result<Map<String, Object>>().ok(map);
+
     }
 
     @PutMapping("userGiftToUser")

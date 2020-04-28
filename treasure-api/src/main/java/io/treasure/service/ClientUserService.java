@@ -30,6 +30,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     ClientUserEntity getUserByOpenId(String openId);
 
     void updateOpenid(String openId,String mobile);
+    void updateUnionid(String openId,String mobile);
 
     void updateCID(String clientId,String mobile);
 

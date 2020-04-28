@@ -52,6 +52,7 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
 
     //通过手机号更新用户openid
     void updateOpenid(String openId, String mobile);
+    void updateMiniOpenid(String openId, String mobile);
 
     //通过手机号查询商户信息
     MerchantUserEntity getUserByPhone(String mobile);

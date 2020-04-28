@@ -37,10 +37,10 @@
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
     </select>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
-        update ct_good set status=#{status} where id=#{id}
+        update ct_good set status=#{status} where id=#{id}  order by rank asc
     </update>
     <select id="getGoodCategoryByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodCategoryEntity">
-      select  *  from  ct_good_category   where merchant_id=#{martId} and status= 1
+      select  *  from  ct_good_category   where merchant_id=#{martId} and status= 1 order by sort asc
     </select>
     <select id="getGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
         select * FROM ct_good where 1=1

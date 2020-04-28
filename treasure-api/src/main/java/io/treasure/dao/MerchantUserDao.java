@@ -38,6 +38,7 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     List getMerchantByMobile(String mobile);
     //更新用户手机号
     void updateOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
+    void updateMiniOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
     //通过手机号查询商户信息
     MerchantUserEntity getUserByPhone(@Param("mobile") String mobile);
     //通过openid查询商户管理员信息
