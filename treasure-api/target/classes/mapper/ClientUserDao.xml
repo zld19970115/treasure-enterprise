@@ -62,6 +62,77 @@
         where id = #{creator}
     </update>
 
+    <select id="selectListByCondition" resultType="io.treasure.entity.ClientUserEntity" parameterType="io.treasure.dto.QueryClientUserDto">
+         select * from ct_client_user
+         <where>
 
+            <if test="integral != null and integral != ''">
+                <choose>
+                    <when test="integralConditionType == 0">
+                        and integeral >= #{integral}
+                    </when>
+                    <otherwise>
+                        or integral >= #{integral}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="coin != 0 and coin != ''">
+                <choose>
+                    <when test="coinConditionType == 0">
+                        and coin >= #{coin}
+                    </when>
+                    <otherwise>
+                        or coin >= #{coin}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="gift != 0 and gift != ''">
+                <choose>
+                    <when test="giftConditionType == 0">
+                        and gift >= #{gift}
+                    </when>
+                    <otherwise>
+                        or gift >= #{gift}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="level != 0 and level != ''">
+                <choose>
+                    <when test="levelConditionType == 0">
+                        and level >= #{level}
+                    </when>
+                    <otherwise>
+                        or level >= #{level}
+                    </otherwise>
+                </choose>
+            </if>
+            <choose>
+                <when test="createDateConditionType == 0"><!--具体时间-->
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(create_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(create_date,'%Y %m %d %T')
+                    </if>
+                </when>
+                <when test="createDateConditionType == 1"><!--按日算-->
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(create_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(create_date,'%Y %m %d')
+                    </if>
+                </when>
+                <otherwise><!--按月算-->
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(create_date,'%Y %m') >= DATE_FORMAT(#{startTime},'%Y %m')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m') >= DATE_FORMAT(create_date,'%Y %m')
+                    </if>
+                </otherwise>
+            </choose>
+         </where>
+    </select>
 
 </mapper>
