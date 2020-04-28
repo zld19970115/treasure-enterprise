@@ -113,6 +113,8 @@ public class ApiWXAppPayController {
         data.put("trade_type", "APP");//支付类型
         data.put("attach","ZF");//订单附加信息 (业务需要数据，自定义的)
 
+//        signXml = WXPayUtil.generateSignedXml(data, Configure.getKey(),SignType.MD5);
+//        String result = HttpRequest.sendPost(url, signXml);
         Map<String, String> orderInfo= wxPay.unifiedOrder(data);
         boolean rtn = orderInfo.get("return_code").equals(WXPayConstants.SUCCESS) && orderInfo.get("result_code").equals(WXPayConstants.SUCCESS);
 
@@ -123,9 +125,12 @@ public class ApiWXAppPayController {
             params.put("partnerid", wxPayConfig.getMchID());
             Long time = (System.currentTimeMillis() / 1000);
             params.put("timestamp", time.toString());
+            String nonceStr = orderInfo.get("nonce_str");
+            String prepayIdStr = orderInfo.get("prepay_id");
             params.put("noncestr", orderInfo.get("nonce_str"));
             params.put("prepayid", orderInfo.get("prepay_id"));
             params.put("package", "Sign=WXPay");
+            //二次签名
             String sign = WXPayUtil.generateSignature(params, wxPayConfig.getKey());
             Map<String, String> reslutMap = new HashMap<>();
             reslutMap.put("appid",wxPayConfig.getAppID());
@@ -136,10 +141,25 @@ public class ApiWXAppPayController {
             reslutMap.put("package","Sign=WXPay");
             reslutMap.put("sign", sign);
             result.ok(reslutMap);
+
+            for(Map.Entry<String,String> m : reslutMap.entrySet()){
+                System.out.println("resultMap:("+m.getKey()+","+m.getValue()+")");
+            }
+            mapToXml(reslutMap);
         }
+
         return result;
     }
 
+    public void mapToXml(Map<String,String> map){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<xml>");
+        for(Map.Entry<String,String> m:map.entrySet()){
+            sb.append("<"+m.getKey()+">"+m.getValue()+"</"+m.getKey()+">");
+        }
+        sb.append("</xml>");
+        System.out.println(sb.toString().trim());
+    }
     /**
      * 异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
      * @param request
@@ -193,5 +213,6 @@ public class ApiWXAppPayController {
             response.flushBuffer();
         }
     }
+
 
 }

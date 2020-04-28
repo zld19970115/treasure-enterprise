@@ -27,6 +27,7 @@ import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,18 +93,21 @@ public class PayServiceImpl implements PayService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
+
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
-//        if(masterOrderEntity.getStatus()!=1){
+        //        if(masterOrderEntity.getStatus()!=1){
 ////            mapRtn.put("return_code", "SUCCESS");
 ////            return mapRtn;
 ////        }
+
         if(masterOrderEntity==null||"".equals(masterOrderEntity)){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
             return mapRtn;
         }
+
         if(masterOrderEntity.getStatus()!=Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-            System.out.println("66666666阿斯顿撒多撒奥奥奥奥奥奥奥奥奥奥6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666");
+            System.out.println("wxNotify02===============masterOrderEnitity.getStatus():"+masterOrderEntity.getStatus());
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
             return mapRtn;
@@ -135,19 +139,19 @@ public class PayServiceImpl implements PayService {
         Long creator = masterOrderEntity.getCreator();
 
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
-        System.out.println("position 5 : "+slaveOrderEntities.toString());
+        //System.out.println("position 5 : "+slaveOrderEntities.toString());
 
         BigDecimal a = new BigDecimal(0);
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
             a = a.add(slaveOrderEntity.getFreeGold());
         }
         ClientUserEntity clientUserEntity = clientUserService.selectById(creator);
-        System.out.println("position 6 : "+clientUserEntity.toString());
+        //System.out.println("position 6 : "+clientUserEntity.toString());
         BigDecimal gift = clientUserEntity.getGift();
-        System.out.println(gift+"666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666");
+        System.out.println("wxNotify03==============gift+"+gift);
         gift=gift.subtract(a);
         clientUserEntity.setGift(gift);
-        System.out.println(gift+"4444444444444444444444444444444444444444444444444444444444555555555555555555555555555555555555555");
+        System.out.println("wxNotify04==============gift+"+gift);
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
@@ -175,7 +179,7 @@ public class PayServiceImpl implements PayService {
         }
 
         MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
-        System.out.println("position 3 : "+merchantDto.toString());
+        //System.out.println("position 3 : "+merchantDto.toString());
 
         if(null!=merchantDto){
             MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
@@ -206,7 +210,7 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
-        System.out.println("position 4 : "+masterOrderEntity.toString());
+        //System.out.println("position 4 : "+masterOrderEntity.toString());
 
 
         if(null != merchantDto.getMobile()){

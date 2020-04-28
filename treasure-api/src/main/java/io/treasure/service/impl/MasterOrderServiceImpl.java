@@ -68,6 +68,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MasterOrderService masterOrderService;
     @Autowired
     private MerchantCouponService merchantCouponService;
+    @Autowired(required =  false)
+    private MasterOrderDao masterOrderDao;
 
     @Autowired
     private IWXPay wxPay;

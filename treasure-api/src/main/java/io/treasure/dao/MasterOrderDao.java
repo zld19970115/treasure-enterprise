@@ -72,4 +72,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     void updatePayStatus(@Param("orderId")  String orderId,@Param("payMode")int payMode,
                          @Param("payDate")Date payDate,@Param("status") int status);
 
+//       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
+    MasterOrderEntity selectMOById(String orderId);
+
 }
