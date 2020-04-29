@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @Accessors(chain = true)
 @ApiModel(value = "计算赠送金和优惠卷菜品信息返回参数")
-public class CalculationAmountDTO extends ComparableCondition implements Comparable<CalculationAmountDTO>{
+public class calculationAmountDTO extends ComparableCondition implements Comparable<calculationAmountDTO>{
 
     /**
      * 数量
@@ -73,11 +73,11 @@ public class CalculationAmountDTO extends ComparableCondition implements Compara
         return super.fractionPart;
     }
 
-    public CalculationAmountDTO setFranctionPart(BigDecimal franctionPart){
+    public calculationAmountDTO setFranctionPart(BigDecimal franctionPart){
         super.setFractionPart(fractionPart);
         return this;
     }
-    public int compareField(CalculationAmountDTO t){
+    public int compareField(calculationAmountDTO t){
         int res = 0;
         try{
             String methodName = this.getFieldName();
@@ -102,7 +102,7 @@ public class CalculationAmountDTO extends ComparableCondition implements Compara
     }
 
     @Override
-    public int compareTo(CalculationAmountDTO t) {
+    public int compareTo(calculationAmountDTO t) {
         return compareField(t);
     }
 

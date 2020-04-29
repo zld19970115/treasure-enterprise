@@ -20,7 +20,7 @@ public class DesignConditionsDTO {
     private Integer preferentialType;
 
     @ApiModelProperty(value = "订单菜品")
-    private List<CalculationAmountDTO> slaveOrder;
+    private List<calculationAmountDTO> slaveOrder;
 
     @ApiModelProperty(value = "用户id")
     private long userId;
