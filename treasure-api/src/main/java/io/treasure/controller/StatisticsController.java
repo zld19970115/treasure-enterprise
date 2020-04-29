@@ -1,28 +1,26 @@
 package io.treasure.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.ConsumptionRankingDto;
-import io.treasure.dto.EvaluateDTO;
-import io.treasure.dto.MerchantAccountDto;
-import io.treasure.dto.TopSellersRankingDto;
+import io.treasure.dto.*;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.service.impl.StatisticsServiceImpl;
 import io.treasure.utils.DateUtil;
 import io.treasure.utils.RegularUtil;
 import io.treasure.vo.ConsumptionRankingVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import io.treasure.vo.TopSellersRankingVo;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -163,6 +161,14 @@ public class StatisticsController {
     @ApiOperation("查询商户收支明细")
     public Result<List<ConsumptionRankingVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
+    }
+
+    @Login
+    @GetMapping("getReturnDishesPage")
+    @ApiOperation("商户端-退菜订单")
+    public Result<PageData<ReturnDishesPageVo>> getReturnDishesPage(@RequestParam Map<String,Object> map){
+        PageData<ReturnDishesPageVo> page = statisticsService.getReturnDishesPage(map);
+        return new Result<PageData<ReturnDishesPageVo>>().ok(page);
     }
 
 }

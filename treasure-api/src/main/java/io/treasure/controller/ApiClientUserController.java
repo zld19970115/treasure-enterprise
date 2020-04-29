@@ -297,6 +297,7 @@ public class ApiClientUserController {
     })
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId,String type) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
+        System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
             if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
                 return new Result().error("该手机号已被绑定");

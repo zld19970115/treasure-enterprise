@@ -1,29 +1,26 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
-import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.StatisticsDao;
-import io.treasure.dto.ConsumptionRankingDto;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.dto.MerchantAccountDto;
-import io.treasure.dto.TopSellersRankingDto;
-import io.treasure.entity.EvaluateEntity;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.StatisticsService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.ConsumptionRankingVo;
 import io.treasure.vo.MerchantAccountVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import io.treasure.vo.TopSellersRankingVo;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class StatisticsServiceImpl
@@ -240,6 +237,13 @@ public class StatisticsServiceImpl
     @Override
     public BigDecimal getCompletaOrder(Map<String, Object> params) {
         return baseDao.getCompletaOrder(params);
+    }
+
+    @Override
+    public PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map) {
+        PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
+        Page<ReturnDishesPageVo> page = (Page) baseDao.getReturnDishesPage(map);
+        return new PageData<ReturnDishesPageVo>(page.getResult(),page.getTotal());
     }
 
 }

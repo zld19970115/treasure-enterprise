@@ -380,4 +380,27 @@
         </if>
     </select>
 
+    <select id="getReturnDishesPage" resultType="io.treasure.vo.ReturnDishesPageVo">
+        select
+            ctmo.order_id as orderId,
+            ctmo.contacts,
+            ctmo.contact_number as contactNumber,
+            ( select ctmr.`name` from ct_merchant_room ctmr where ctmr.id = ctmo.room_id ) as roomName,
+            ctmo.pay_money as payMoney,
+            ctmo.description,
+            ctmo.eat_time as eatTime
+        from
+            ct_master_order ctmo
+        LEFT JOIN
+            ct_slave_order ctso on ctso.order_id = ctmo.order_id and ctmo.merchant_id = #{merchantId}
+        where
+            ctmo.`status` = 2
+            and ctso.`status` = 6
+            and ctmo.merchant_id = #{merchantId}
+            <if test="orderId != null" >
+            and ctmo.order_id like concat('%', #{orderId}, '%')
+            </if>
+        ORDER BY ctmo.eat_time ASC
+    </select>
+
 </mapper>

@@ -1,13 +1,12 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
-import io.treasure.dto.ConsumptionRankingDto;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.dto.MerchantAccountDto;
-import io.treasure.dto.TopSellersRankingDto;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.ConsumptionRankingVo;
 import io.treasure.vo.MerchantAccountVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import io.treasure.vo.TopSellersRankingVo;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -35,4 +34,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     BigDecimal getTotalCash(Map<String, Object> params);
     List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
+    PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
 }
