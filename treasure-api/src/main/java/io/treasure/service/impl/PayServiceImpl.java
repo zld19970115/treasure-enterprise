@@ -112,21 +112,36 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
+        //db option flag 1
         if(masterOrderEntity.getStatus()==Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
             if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId()>0){
                 merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_YEA.getType());
             }
         }
-        if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
+        /****************************************************************************************/
+        try{
+            if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
+                System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
+                throw new Exception("wx_pay_fail:code01");
+            }
+
+        }catch(Exception e){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
             return mapRtn;
+
         }
-        if(masterOrderEntity==null){
+        try{
+            if(masterOrderEntity==null){
+                System.out.println("微信支付：支付失败！请联系管理员！【未找到订单】");
+                throw new Exception("wx_pay_fail:code02");
+            }
+        }catch(Exception e){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
             return mapRtn;
         }
+        /****************************************************************************************/
         if(masterOrderEntity.getStatus()!=1){
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
@@ -160,20 +175,31 @@ public class PayServiceImpl implements PayService {
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             //System.out.println("position 2 : "+slaveOrderEntitys);
-
+            /****************************************************************************************/
             if(slaveOrderEntitys==null){
-                mapRtn.put("return_code", "FAIL");
-                mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单菜品】");
-                return mapRtn;
+                try{
+                    System.out.println("支付失败！请联系管理员！【未找到订单菜品】");
+                    throw new Exception("wx_pay_fail:code03");
+                }catch(Exception e) {
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单菜品】");
+                    return mapRtn;
+                }
             }else{
                 slaveOrderEntitys.forEach(slaveOrderEntity -> {
                     slaveOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
                 });
                 boolean b=slaveOrderService.updateBatchById(slaveOrderEntitys);
+
                 if(!b){
-                    mapRtn.put("return_code", "FAIL");
-                    mapRtn.put("return_msg", "支付失败！请联系管理员！【更新菜品】");
-                    return mapRtn;
+                    try{
+                        System.out.println("支付失败！请联系管理员！【更新菜品】");
+                        throw new Exception("wx_pay_fail:code04");
+                    }catch(Exception e){
+                        mapRtn.put("return_code", "FAIL");
+                        mapRtn.put("return_msg", "支付失败！请联系管理员！【更新菜品】");
+                        return mapRtn;
+                    }
                 }
             }
         }
@@ -196,19 +222,36 @@ public class PayServiceImpl implements PayService {
                     stimmeEntity.setCreator(masterOrderEntity.getCreator());
                     stimmeService.insert(stimmeEntity);
                 }else{
-                    mapRtn.put("return_code", "FAIL");
-                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                    return mapRtn;
+
+                    try{
+                        System.out.println("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                        throw new Exception("wx_pay_fail:code05");
+                    }catch (Exception e){
+                        mapRtn.put("return_code", "FAIL");
+                        mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                        return mapRtn;
+                    }
                 }
             }else{
-                mapRtn.put("return_code", "FAIL");
-                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
-                return mapRtn;
+
+                try{
+                    System.out.println("支付失败！请联系管理员！【无法获取商户会员信息】");
+                    throw new Exception("wx_pay_fail:code06");
+                }catch (Exception e){
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+                    return mapRtn;
+                }
             }
         }else{
-            mapRtn.put("return_code", "FAIL");
-            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
-            return mapRtn;
+            try{
+                System.out.println("支付失败！请联系管理员！【无法获取商户信息】");
+                throw new Exception("wx_pay_fail:code07");
+            }catch (Exception e){
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
+                return mapRtn;
+            }
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 

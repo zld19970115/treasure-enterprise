@@ -415,9 +415,11 @@ public class MerchantUserController {
             @ApiImplicitParam(name="openId",value="微信用户唯一标识",required=true,paramType="query",dataType="String"),
             @ApiImplicitParam(name="mobile",value="用户手机号",required=true,paramType="query",dataType="String"),
             @ApiImplicitParam(name="password",value="密码",required=true,paramType="query",dataType="String"),
-            @ApiImplicitParam(name="clientId",value="个推ID",required=true,paramType="query",dataType="String")})
-    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile,String password,String clientId){
+            @ApiImplicitParam(name="clientId",value="个推ID",required=true,paramType="query",dataType="String"),
+            @ApiImplicitParam(name="type",value="微信或者APP",required=true,paramType="query",dataType="String")})
+    public Result<Map<String,Object>> estimateOpenId(String openId,String mobile,String password,String clientId,String type){
         MerchantUserEntity userByPhone = merchantUserService.getUserByPhone(mobile);
+        if (type.equals("APP")){
         if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
             return new Result().error("该手机号已被绑定");
         }
@@ -445,7 +447,36 @@ public class MerchantUserController {
             TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
             map.put("token",byUserId.getToken());
         }
-        return new Result<Map<String,Object>>().ok(map);
+        return new Result<Map<String,Object>>().ok(map);}
+        else {
+            if(userByPhone.getMiniOpenid()!=null && userByPhone.getMiniOpenid() != openId){
+                return new Result().error("该手机号已被绑定");
+            }
+            if(userByPhone.getStatus()==3){
+                return new Result().error("该手机号已注销");
+            }
+            MerchantUserEntity user = new MerchantUserEntity();
+            Map<String, Object> map = new HashMap<>();
+            if(userByPhone!=null){
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+                merchantUserService.updateMiniOpenid(openId,mobile);
+                map.put("token",byUserId.getToken());
+                map.put("user",userByPhone);
+            }else {
+                user.setMobile(mobile);
+                user.setCreateDate(new Date());
+                user.setMiniOpenid(openId);
+                user.setPassword(DigestUtils.sha256Hex(password));
+                user.setClientId(clientId);
+                user.setStatus(1);
+                merchantUserService.insert(user);
+                MerchantUserEntity userByPhone1 = merchantUserService.getUserByPhone(mobile);
+                tokenService.createToken(userByPhone1.getId());
+                map.put("user",userByPhone1);
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+                map.put("token",byUserId.getToken());
+            }
+            return new Result<Map<String,Object>>().ok(map);}
     }
 
 

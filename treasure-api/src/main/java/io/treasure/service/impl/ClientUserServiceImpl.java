@@ -105,6 +105,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void updateUnionid(String openId, String mobile) {
+        baseDao.updateUnionid(openId,mobile);
+    }
+
+    @Override
     public void updateCID(String clientId, String mobile) {
         baseDao.updateCID(clientId,mobile);
     }
@@ -127,13 +132,13 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                 ClientUserEntity clientUserEntity1 = baseDao.selectByMobile(mobile);
                 if (clientUserEntity1 != null) {
                     if (clientUserEntity1.getId()==clientUserEntity.getId() || clientUserEntity1.getId().equals(clientUserEntity.getId()) ){
-                        return new Result().error("请输入正确用户");
+                        return new Result().error("不能赠送给自己");
                     }
                     BigDecimal mobileGift = clientUserEntity1.getGift();
                     BigDecimal info = new BigDecimal(10000);
                     if(mobileGift!=null){
                         if (mobileGift.compareTo(info) == 1){
-                            return new Result().error("该用户代付金大于一万元不允许赠送");
+                            return new Result().error("对方用户代付金大于一万元不允许赠送");
                         }
                     }
                     BigDecimal gift = clientUserEntity.getGift();
@@ -148,14 +153,14 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                             return new Result().ok("赠送成功");
 
                     } else {
-                        return new Result().error("您得代付金余额不足");
+                        return new Result().error("您的代付金余额不足");
                     }
                 } else {
-                    return new Result().error("该用户没有注册");
+                    return new Result().error("对方用户没有注册");
                 }
             }
         }else {
-            return new Result().error("赠送金额不能包含小数且必须大于0");
+            return new Result().error("代付金额不能包含小数且必须大于0");
         }
         return new Result().error("请重新登录");
     }

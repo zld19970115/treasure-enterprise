@@ -5,6 +5,7 @@ import cn.binarywang.wx.miniapp.api.WxMaUserService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.api.impl.WxMaUserServiceImpl;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -40,7 +41,7 @@ public class ApiMiniAppController {
     @GetMapping("/login")
     @ApiOperation(value="小程序登录凭证校验")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="code",value="登录时获取的 code",required=true,paramType="query"),
+            @ApiImplicitParam(name="code",value="登录时获取的 code",required=true,paramType="query")
     })
     public Result login(String code) {
         WxMaService wxMaService=new WxMaServiceImpl();
@@ -48,17 +49,17 @@ public class ApiMiniAppController {
         WxMaJscode2SessionResult result= null;
         try {
             result = wxMaService.getUserService().getSessionInfo(code);
+            return  new Result().ok(result);
         } catch (WxErrorException e) {
             e.printStackTrace();
             return  new Result().error(e.getMessage());
         }
-        return  new Result().ok(result);
     }
 
     @GetMapping("/merchant/login")
     @ApiOperation(value="小程序商户登录凭证校验")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="code",value="登录时获取的 code",required=true,paramType="query"),
+            @ApiImplicitParam(name="code",value="登录时获取的 code",required=true,paramType="query")
     })
     public Result merchantLogin(String code) {
         WxMaService wxMaService=new WxMaServiceImpl();
@@ -68,10 +69,10 @@ public class ApiMiniAppController {
         WxMaJscode2SessionResult result= null;
         try {
             result = wxMaService.getUserService().getSessionInfo(code);
+            return  new Result().ok(result);
         } catch (WxErrorException e) {
             e.printStackTrace();
             return  new Result().error(e.getMessage());
         }
-        return   new Result().ok(result);
     }
 }

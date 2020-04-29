@@ -78,8 +78,7 @@ public class SysOssController {
 
         Map<String, Object> data = new HashMap<>(1);
         data.put("src", url);
-
         return new Result<Map<String, Object>>().ok(data);
-    }
 
+    }
 }

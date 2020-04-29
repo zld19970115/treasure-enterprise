@@ -41,6 +41,10 @@ public class MerchantUserEntity implements Serializable {
      * 微信头像
      */
 	private String weixinurl;
+	/**
+	 * miniOpenid
+	 */
+	private String miniOpenid;
     /**
      * 
      */

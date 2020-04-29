@@ -30,7 +30,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/cashWxPay")
-@Api(tags="微信支付-APP支付.")
+@Api(tags="微信支付-现金充值.")
 public class ApiWXChargePayController {
 
     @Autowired

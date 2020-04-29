@@ -160,6 +160,11 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.updateOpenid(openId,mobile);
     }
 
+    @Override
+    public void updateMiniOpenid(String openId, String mobile) {
+        baseDao.updateMiniOpenid(openId,mobile);
+    }
+
 
     @Override
     public MerchantUserEntity getUserByPhone(String mobile) {

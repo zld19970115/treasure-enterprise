@@ -44,6 +44,8 @@ public class MerchantUserDTO {
 
 	@ApiModelProperty(value = "")
 	private String openid;
+	@ApiModelProperty(value = "")
+	private String miniOpenid;
 
 	@ApiModelProperty(value = "备注")
 	private String remark;
