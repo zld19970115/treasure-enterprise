@@ -45,6 +45,8 @@ public class ApiMiniAppController {
     })
     public Result login(String code) {
         WxMaService wxMaService=new WxMaServiceImpl();
+        wxMaConfig.setAppid("wx6e2e6aa4fa13a6f0");
+        wxMaConfig.setSecret("f06389fc9c699f60aad424b146f1e911");
         wxMaService.setWxMaConfig(wxMaConfig);
         WxMaJscode2SessionResult result= null;
         try {
