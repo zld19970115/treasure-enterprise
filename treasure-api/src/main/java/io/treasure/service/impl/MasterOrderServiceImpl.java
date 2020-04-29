@@ -802,9 +802,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-//        if(dto.getCheckStatus()==1){
-//            return result.error(-11, "已翻台订单不可以加菜！");
-//        }
+        if(masterOrderService.selectById(dto.getId()).getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加菜！");
+        }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
