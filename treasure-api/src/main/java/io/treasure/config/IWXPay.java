@@ -50,7 +50,7 @@ public class IWXPay extends WXPay {
     private IWXConfig config;
 
     public IWXPay(IWXConfig config) throws Exception {
-        super(config,true,false);
+        super(config);
         this.config =config;
     }
 
