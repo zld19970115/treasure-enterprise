@@ -618,6 +618,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             a = a.add(orderEntity.getPayMoney());
         }
         b = a.add(orderDTO.getPayMoney());
+
         orderDTO.setPpaymoney(a);
         orderDTO.setAllPaymoney(b);
 //        //菜单信息
@@ -1560,7 +1561,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (masterOrderEntities.size() != 0) {
             return result.error("已预定包房，不可重复预定");
         }
-
+        if(masterOrderService.selectByOrderId(mainOrderId).getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加房！");
+        }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
