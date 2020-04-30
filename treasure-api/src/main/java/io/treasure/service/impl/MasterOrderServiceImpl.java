@@ -804,7 +804,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-        if(masterOrderService.selectById(dto.getId()).getCheckStatus()==1){
+        if(masterOrderService.selectByOrderId(dto.getOrderId()).getCheckStatus()==1){
             return result.error(-11, "已翻台订单不可以加菜！");
         }
 
@@ -1659,6 +1659,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (mainReservationType != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             return result.error(-9, "非只预定包房，不可以订餐！");
         }
+        if(orderDTO.getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加菜！");
+        }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
@@ -1994,7 +1997,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         params.put("status", Constants.OrderStatus.PAYORDER.getValue());
-        List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
+        List<OrderDTO> allMainOrder = baseDao.getPayOrders(params);
 
         for (OrderDTO s : allMainOrder) {
             int status1 = Integer.parseInt(params.get("status").toString());
