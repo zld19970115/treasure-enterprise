@@ -96,7 +96,7 @@
         <if test="merchantId != null and merchantId>0 ">
             and merchant_id=#{merchantId}
          </if>
-        order by use_date
+        /*order by use_date*/
 
     </select>
 

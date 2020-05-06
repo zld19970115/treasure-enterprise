@@ -6,10 +6,7 @@ import io.treasure.dto.MerchantAccountDto;
 import io.treasure.dto.ReturnDishesPageDto;
 import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.MasterOrderEntity;
-import io.treasure.vo.ConsumptionRankingVo;
-import io.treasure.vo.MerchantAccountVo;
-import io.treasure.vo.ReturnDishesPageVo;
-import io.treasure.vo.TopSellersRankingVo;
+import io.treasure.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.math.BigDecimal;
@@ -37,4 +34,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
     List<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
+    List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
 }

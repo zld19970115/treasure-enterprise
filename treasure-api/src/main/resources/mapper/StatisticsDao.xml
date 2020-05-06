@@ -403,4 +403,54 @@
         ORDER BY ctmo.eat_time ASC
     </select>
 
+    <select id="getVisualizationRoom" resultType="io.treasure.vo.VisualizationRoomVo">
+        SELECT
+            room.`name` as roomName,
+            room.icon,
+            room.num_low as numLow,
+            room.num_high as numHigh,
+            (SELECT ctp.content FROM ct_merchant_room_params ctp WHERE ctp.id = 1) as oneTime,
+            (SELECT ctp.content FROM ct_merchant_room_params ctp WHERE ctp.id = 2) as twoTime,
+            (SELECT ctp.content FROM ct_merchant_room_params ctp WHERE ctp.id = 3) as threeTime,
+            (SELECT ctp.content FROM ct_merchant_room_params ctp WHERE ctp.id = 4) as fourTime,
+            (
+                select ct2.state from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 1
+                and ct2.room_id = ct.room_id
+            ) as oneState,
+            (
+                select ct2.state from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 2
+                and ct2.room_id = ct.room_id
+            ) as twoState,
+            (
+                select ct2.state from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 3
+                and ct2.room_id = ct.room_id
+            ) as threeState,
+            (
+                select ct2.state from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 4
+                and ct2.room_id = ct.room_id
+            ) as fourState
+        from
+            ct_merchant_room_params_set ct
+        LEFT JOIN
+            ct_merchant_room room on room.id = ct.room_id
+        where
+            ct.merchant_id = #{merchantId}
+            and ct.`status` != 9
+            and date_format(ct.use_date, '%Y-%m-%d') = #{time}
+        GROUP BY
+            ct.room_id
+        ORDER BY
+	        ct.create_date
+    </select>
+
 </mapper>

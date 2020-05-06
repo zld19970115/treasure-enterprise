@@ -11,10 +11,7 @@ import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.StatisticsService;
 import io.treasure.utils.DateUtil;
-import io.treasure.vo.ConsumptionRankingVo;
-import io.treasure.vo.MerchantAccountVo;
-import io.treasure.vo.ReturnDishesPageVo;
-import io.treasure.vo.TopSellersRankingVo;
+import io.treasure.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -244,6 +241,11 @@ public class StatisticsServiceImpl
         PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
         Page<ReturnDishesPageVo> page = (Page) baseDao.getReturnDishesPage(map);
         return new PageData<ReturnDishesPageVo>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public List<VisualizationRoomVo> getVisualizationRoom(Map<String, Object> map) {
+        return baseDao.getVisualizationRoom(map);
     }
 
 }

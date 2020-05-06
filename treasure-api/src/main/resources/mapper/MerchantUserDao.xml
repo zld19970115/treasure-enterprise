@@ -64,7 +64,7 @@
                 #{item}
             </foreach>
         </if>
-         order by users.create_date desc
+         /*order by users.create_date desc*/
     </select>
 
     <update id="updatePassword"   parameterType="io.treasure.entity.MerchantUserEntity">

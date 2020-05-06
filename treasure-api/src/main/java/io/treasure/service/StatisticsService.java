@@ -4,10 +4,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
-import io.treasure.vo.ConsumptionRankingVo;
-import io.treasure.vo.MerchantAccountVo;
-import io.treasure.vo.ReturnDishesPageVo;
-import io.treasure.vo.TopSellersRankingVo;
+import io.treasure.vo.*;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
@@ -35,4 +32,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
     PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
+    List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
 }

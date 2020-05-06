@@ -16,6 +16,7 @@ import io.treasure.utils.RegularUtil;
 import io.treasure.vo.ConsumptionRankingVo;
 import io.treasure.vo.ReturnDishesPageVo;
 import io.treasure.vo.TopSellersRankingVo;
+import io.treasure.vo.VisualizationRoomVo;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -167,8 +168,14 @@ public class StatisticsController {
     @GetMapping("getReturnDishesPage")
     @ApiOperation("商户端-退菜订单")
     public Result<PageData<ReturnDishesPageVo>> getReturnDishesPage(@RequestParam Map<String,Object> map){
-        PageData<ReturnDishesPageVo> page = statisticsService.getReturnDishesPage(map);
-        return new Result<PageData<ReturnDishesPageVo>>().ok(page);
+        return new Result<PageData<ReturnDishesPageVo>>().ok(statisticsService.getReturnDishesPage(map));
+    }
+
+    @Login
+    @GetMapping("getVisualizationRoom")
+    @ApiOperation("商户端-可视化房间")
+    public Result<List<VisualizationRoomVo>> getVisualizationRoom(@RequestParam Map<String,Object> map){
+        return new Result<List<VisualizationRoomVo>>().ok(statisticsService.getVisualizationRoom(map));
     }
 
 }
