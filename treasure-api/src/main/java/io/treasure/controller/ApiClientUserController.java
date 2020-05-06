@@ -175,7 +175,7 @@ public class ApiClientUserController {
     public Result userRegister(@RequestBody ClientUserDTO dto) {
         //表单校验
         ValidatorUtils.validateEntity(dto);
-
+        Map map = new HashMap();
         ClientUserEntity user = new ClientUserEntity();
         user.setMobile(dto.getMobile());
         user.setUsername(dto.getMobile());
@@ -183,7 +183,12 @@ public class ApiClientUserController {
         user.setCreateDate(new Date());
         user.setClientId(dto.getClientId());
         clientUserService.insert(user);
-        return new Result();
+        ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(dto.getMobile());
+        tokenService.createToken(userByPhone1.getId());
+        map.put("user", userByPhone1);
+        TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+        map.put("token", byUserId.getToken());
+        return new Result().ok(map);
     }
 
     @PostMapping("userLogin")
@@ -299,15 +304,16 @@ public class ApiClientUserController {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
         System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
-            if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
-                return new Result().error("该手机号已被绑定");
-            }
-            if(userByPhone.getStatus()==9){
-                return new Result().error("该手机号已注销");
-            }
+
             ClientUserEntity user = new ClientUserEntity();
             Map<String, Object> map = new HashMap<>();
             if (userByPhone != null) {
+                if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
+                    return new Result().error("该手机号已被绑定");
+                }
+                if(userByPhone.getStatus()==9){
+                    return new Result().error("该手机号已注销");
+                }
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateOpenid(openId, mobile);
                 map.put("token", byUserId.getToken());
@@ -329,15 +335,16 @@ public class ApiClientUserController {
             }
             return new Result<Map<String, Object>>().ok(map);
         }else {
-            if(userByPhone.getUnionid()!=null && userByPhone.getUnionid() != openId){
-                return new Result().error("该手机号已被绑定");
-            }
-            if(userByPhone.getStatus()==9){
-                return new Result().error("该手机号已注销");
-            }
+
             ClientUserEntity user = new ClientUserEntity();
             Map<String, Object> map = new HashMap<>();
             if (userByPhone != null) {
+                if(userByPhone.getUnionid()!=null && userByPhone.getUnionid() != openId){
+                    return new Result().error("该手机号已被绑定");
+                }
+                if(userByPhone.getStatus()==9){
+                    return new Result().error("该手机号已注销");
+                }
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateUnionid(openId, mobile);
                 map.put("token", byUserId.getToken());
