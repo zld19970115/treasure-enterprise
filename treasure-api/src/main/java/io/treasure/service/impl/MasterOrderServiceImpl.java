@@ -68,6 +68,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MasterOrderService masterOrderService;
     @Autowired
     private MerchantCouponService merchantCouponService;
+    @Autowired(required =  false)
+    private MasterOrderDao masterOrderDao;
 
     @Autowired
     private IWXPay wxPay;
@@ -616,6 +618,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             a = a.add(orderEntity.getPayMoney());
         }
         b = a.add(orderDTO.getPayMoney());
+
         orderDTO.setPpaymoney(a);
         orderDTO.setAllPaymoney(b);
 //        //菜单信息
@@ -802,9 +805,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-//        if(dto.getCheckStatus()==1){
-//            return result.error(-11, "已翻台订单不可以加菜！");
-//        }
+        if(masterOrderService.selectByOrderId(dto.getOrderId()).getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加菜！");
+        }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -1102,7 +1105,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
 
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
-    public List<CalculationAmountDTO> patchDifferences(int patchValue, List<CalculationAmountDTO> slaveOrders){
+    public List<calculationAmountDTO> patchDifferences(int patchValue, List<calculationAmountDTO> slaveOrders){
 
         Collections.sort(slaveOrders);                                  //降序排列
         BigDecimal platformRatio    = new BigDecimal("0.15");         //商家扣点标准(总金额-赠送金，后的15%)
@@ -1113,7 +1116,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(tmp.equals(ComparableCondition.SortRule.getDiscountsMoney.name())){
             //优惠券补差
             for(int i=0;i<patchValue;i++){
-                CalculationAmountDTO item = slaveOrders.get(i);
+                calculationAmountDTO item = slaveOrders.get(i);
 
                 item.setTotalMoney(item.getTotalMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN))       //优惠后的项总价
                         .setDiscountsMoney(item.getDiscountsMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //优惠金额=(原项总价-优惠后的项总价)
@@ -1127,7 +1130,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             //赠送金补差
             for(int i=0;i<patchValue;i++){
 
-                CalculationAmountDTO item = slaveOrders.get(i);
+                calculationAmountDTO item = slaveOrders.get(i);
                 if(item.getQuantity().compareTo(new BigDecimal("1"))== 0){
                     item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));//使用赠送金后的价格
                 }
@@ -1140,7 +1143,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             //平对扣点补差
             for(int i=0;i<patchValue;i++) {
 
-                CalculationAmountDTO item = slaveOrders.get(i);
+                calculationAmountDTO item = slaveOrders.get(i);
                 BigDecimal totalItemDiscountPatch = item.getTotalItemDiscount().add(patchStep);
                 BigDecimal itemIncomePlatformPatch       = totalItemDiscountPatch.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
                 BigDecimal itemIncomeMerchantPatch       = totalItemDiscountPatch.subtract(itemIncomePlatformPatch).setScale(2,BigDecimal.ROUND_DOWN);
@@ -1177,7 +1180,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
     public DesignConditionsDTO itemsClculate(DesignConditionsDTO target,DiscountType discountType){
         if(target == null)      return null;
-        List<CalculationAmountDTO> slaveOrders = target.getSlaveOrder();
+        List<calculationAmountDTO> slaveOrders = target.getSlaveOrder();
 
         //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
         BigDecimal priceTotal = target.getTotalMoney();        //原始总价
@@ -1190,7 +1193,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         for(int i = 0; i < slaveOrders.size(); i++) {
             //检查商品是否存在，存在则取回
             GoodDTO goodDTO = goodService.get(slaveOrders.get(i).getGoodId());
-            CalculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
             //当商品信息不存在时，保留商品基本信息（其它信息不做处理，留给其它业务2020-04-13）
             if (goodDTO != null)
@@ -1242,7 +1245,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 //更新项参数
                 for(int i = 0; i < slaveOrders.size(); i++){
-                    CalculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+                    calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
                     //newPrice(优惠后单项总价) = (priceAfterDiscount/priceTotal)*itemPrice*quantity
                     BigDecimal totalItemDiscount = priceAfterDiscount.multiply(slaveOrderItem.getPrice()).multiply(slaveOrderItem.getQuantity()).setScale(2,BigDecimal.ROUND_DOWN);
@@ -1302,7 +1305,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //更新项参数
                     for(int i = 0; i < slaveOrders.size(); i++) {
 
-                        CalculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+                        calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
                         //单项赠送金的值 (totalMoney/priceAfterDiscount)*giftValue
                         BigDecimal itemGiftValue = slaveOrderItem.getTotalMoney().multiply(giftValue).setScale(4,BigDecimal.ROUND_DOWN);
@@ -1355,10 +1358,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @param priceAfterDiscount 优惠后的金额
      * @return
      */
-    public List<CalculationAmountDTO> calculateIncome(List<CalculationAmountDTO> slaveOrders, BigDecimal priceAfterDiscount){
+    public List<calculationAmountDTO> calculateIncome(List<calculationAmountDTO> slaveOrders, BigDecimal priceAfterDiscount){
         BigDecimal platformRatio    = new BigDecimal("0.15");         //商家扣点标准(总金额-赠送金，后的15%)
         for(int i = 0; i < slaveOrders.size(); i++) {
-            CalculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
             //单项优惠后的项总价
             BigDecimal itemDiscountTmp = slaveOrderItem.getTotalItemDiscount();
@@ -1558,7 +1561,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (masterOrderEntities.size() != 0) {
             return result.error("已预定包房，不可重复预定");
         }
-
+        if(masterOrderService.selectByOrderId(mainOrderId).getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加房！");
+        }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
@@ -1656,6 +1661,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Integer mainReservationType = orderDTO.getReservationType();
         if (mainReservationType != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             return result.error(-9, "非只预定包房，不可以订餐！");
+        }
+        if(orderDTO.getCheckStatus()==1){
+            return result.error(-11, "已翻台订单不可以加菜！");
         }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
@@ -1992,7 +2000,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         params.put("status", Constants.OrderStatus.PAYORDER.getValue());
-        List<OrderDTO> allMainOrder = baseDao.getPayOrder(params);
+        List<OrderDTO> allMainOrder = baseDao.getPayOrders(params);
 
         for (OrderDTO s : allMainOrder) {
             int status1 = Integer.parseInt(params.get("status").toString());

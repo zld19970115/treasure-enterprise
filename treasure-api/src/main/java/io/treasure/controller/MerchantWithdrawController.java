@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.google.gson.Gson;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
@@ -10,6 +11,7 @@ import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.enm.Common;
 import io.treasure.enm.WithdrawEnm;
 import io.treasure.entity.MasterOrderEntity;
@@ -21,6 +23,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.service.impl.MerchantServiceImpl;
+import io.treasure.utils.RegularUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -157,7 +160,7 @@ public class MerchantWithdrawController {
         dto.setStatus(Common.STATUS_ON.getStatus());
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
-        merchantWithdrawService.save(dto);
+        merchantWithdrawService. save(dto);
         return new Result();
     }
     @CrossOrigin
@@ -310,6 +313,7 @@ public class MerchantWithdrawController {
         return new Result().ok("提现成功");
     }
 
+
     @CrossOrigin
     @Login
     @PutMapping("selectWithStatus")
@@ -320,7 +324,64 @@ public class MerchantWithdrawController {
         return new Result().ok(s);
     }
 
+    /**
+     * 根据 条件查询所有提现信息列表
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("/list")
+    @ResponseBody
+    public String requireItems(@RequestParam(name ="merchantId",defaultValue="",required = false) long merchantId,
+                               @RequestParam(name = "startTime",defaultValue="",required = false)Date startTime,
+                               @RequestParam(name ="stopTime",defaultValue="",required = false)Date stopTime,
+                               @RequestParam(name="type",defaultValue = "",required = false)int type,
+                               @RequestParam(name="index",defaultValue = "",required = false)int index,
+                               @RequestParam(name="itemNum",defaultValue = "",required = false)int itemNum){
 
+        Gson gson = new Gson();
+        List<MerchantWithdrawEntity> entities = merchantWithdrawService.selectByObject(generalQueryWithdrawDto(merchantId,startTime,stopTime,type,index,itemNum));
+        if(entities != null)
+            return gson.toJson(entities);
+        return "没有内容";
 
+    }
+
+    /**
+     * 根据 条件汇总提现金额
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("/money")
+    @ResponseBody
+    public String requireAmount(@RequestParam(name ="merchantId",defaultValue="",required = false) long merchantId,
+                                @RequestParam(name = "startTime",defaultValue="",required = false)Date startTime,
+                                @RequestParam(name ="stopTime",defaultValue="",required = false)Date stopTime,
+                                @RequestParam(name="type",defaultValue = "",required = false)int type,
+                                @RequestParam(name="index",defaultValue = "",required = false)int index,
+                                @RequestParam(name="itemNum",defaultValue = "",required = false)int itemNum){
+
+        Gson gson = new Gson();
+        List<MerchantWithdrawEntity> entities = merchantWithdrawService.selectByObject(generalQueryWithdrawDto(merchantId,startTime,stopTime,type,index,itemNum));
+        if(entities != null)
+            return gson.toJson(entities);
+        return "没有内容";
+    }
+
+    public QueryWithdrawDto generalQueryWithdrawDto(long merchantId,Date startTime,Date stopTime,int type,int index,int itemNum){
+        QueryWithdrawDto queryWithdrawDto = new QueryWithdrawDto();
+        if(merchantId>=1000000000000000000L)
+            queryWithdrawDto.setMerchantId(merchantId);
+        if(startTime != null)
+            queryWithdrawDto.setStartTime(startTime);
+        if(stopTime != null)
+            queryWithdrawDto.setStopTime(stopTime);
+        if(type >0 && type <=4)         //分组方式
+            queryWithdrawDto.setType(type);
+        //分页
+
+        return queryWithdrawDto;
+    }
 
 }

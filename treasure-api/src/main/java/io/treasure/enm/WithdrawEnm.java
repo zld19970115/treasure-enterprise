@@ -10,6 +10,7 @@ public enum WithdrawEnm {
 	STATUS_AGREE_YES(2),
 	/**不同意提现**/
 	STATUS_AGREE_NO(3),
+
 	/**微信提现**/
 	TYPE_WEIXIN(1),
 	/**支付宝提现**/

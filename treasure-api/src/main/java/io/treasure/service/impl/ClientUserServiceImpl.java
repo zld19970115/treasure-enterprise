@@ -9,6 +9,8 @@ import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.QueryClientUserDto;
+import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -169,4 +172,8 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         clientUserDao.subtractGiftByMasterOrderCreate(creator,gift);
     }
 
+    @Override
+    public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
+        return clientUserDao.selectListByCondition(queryClientUserDto);
+    }
 }

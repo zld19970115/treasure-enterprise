@@ -59,6 +59,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
     List<MasterOrderEntity>  selectAgreeRefundOrder(String orderId);
     List<OrderDTO> getPayOrder(Map params);
+    List<OrderDTO> getPayOrders(Map params);
     List<MasterOrderEntity>getAuxiliaryPayOrder(@Param("orderId")  String orderId,@Param("status") int status);
     List<MasterOrderEntity>getAuxiliaryPayOrders(String orderId);
     List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
@@ -71,5 +72,8 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //String orderid,int支付方式，date支付日期,支付状态由1变为4
     void updatePayStatus(@Param("orderId")  String orderId,@Param("payMode")int payMode,
                          @Param("payDate")Date payDate,@Param("status") int status);
+
+//       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
+    MasterOrderEntity selectMOById(String orderId);
 
 }

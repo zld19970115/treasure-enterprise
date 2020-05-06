@@ -304,19 +304,19 @@ public class MerchantUserController {
 
     /**
      * 获取验证码
-     * @param request
+     * @param
      * @param
      * @return
      */
     @CrossOrigin
-    @PutMapping("code")
+    @GetMapping("code")
     @ApiOperation("获取验证码")
     @ApiImplicitParams({
             @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
     })
-    public Result registerCode(HttpServletRequest request,@RequestParam String mobile){
-        boolean bool= SendSMSUtil.sendCodeForRegister(mobile,request,smsConfig);
-        return new Result().ok(bool);
+    public Result registerCode(@RequestParam String mobile){
+        Result result = SendSMSUtil.sendCodeForRegister(mobile, smsConfig);
+        return new Result().ok(result);
     }
     @CrossOrigin
     @GetMapping("verifyCode")

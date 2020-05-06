@@ -8,6 +8,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
@@ -34,6 +35,10 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
 
     @Autowired
     private StatsDayDetailService statsDayDetailService;
+
+    @Autowired(required = false)
+    private MerchantWithdrawDao merchantWithdrawDao;
+
     @Override
     public QueryWrapper<MerchantWithdrawEntity> getWrapper(Map<String, Object> params){
         String id = (String)params.get("id");
@@ -121,6 +126,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
 
     @Override
     public void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate) {
+
         statsDayDetailService.insertMerchantWithdraw(id);
         baseDao.verify(id,verify,verifyStatus,verifyReason,verifyDate);
     }
@@ -130,4 +136,24 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
         String s = baseDao.selectWithStatus();
         return  s;
     }
+
+    /**
+     * @param queryWithdrawDto (根据条件查询)
+     * @return
+     */
+    @Override
+    public List<MerchantWithdrawEntity> selectByObject(QueryWithdrawDto queryWithdrawDto) {
+        return merchantWithdrawDao.selectByObject(queryWithdrawDto);
+    }
+
+    /**
+     * @param queryWithdrawDto（根据条件汇总）
+     * @return
+     */
+    @Override
+    public Double selectTotalByType(QueryWithdrawDto queryWithdrawDto) {
+        return merchantWithdrawDao.selectTotalByType(queryWithdrawDto);
+    }
+
+
 }

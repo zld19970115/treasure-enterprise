@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import com.google.gson.Gson;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
@@ -20,6 +21,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -28,6 +30,7 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -294,6 +297,7 @@ public class ApiClientUserController {
     })
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId,String type) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
+        System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
             if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
                 return new Result().error("该手机号已被绑定");
@@ -403,4 +407,45 @@ public class ApiClientUserController {
         return new Result().ok("用户已注销");
     }
 
+    @Login
+    @GetMapping("/list")
+    @ResponseBody
+    String selectListByCondition(@RequestParam(name = "integral",defaultValue = "0",required = false)int integral,
+                                 @RequestParam(name = "integralConditionType",defaultValue = "0",required = false)int integralConditionType,
+                                 @RequestParam(name = "coin",defaultValue = "0",required = false)int coin,
+                                 @RequestParam(name = "coinConditionType",defaultValue = "0",required = false)int coinConditionType,
+                                 @RequestParam(name = "gift",defaultValue = "0",required = false)int gift,
+                                 @RequestParam(name = "giftConditionType",defaultValue = "0",required = false)int giftConditionType,
+                                 @RequestParam(name = "level",defaultValue = "0",required = false)int level,
+                                 @RequestParam(name = "levelConditionType",defaultValue = "0",required = false)int levelConditionType,
+                                 @RequestParam(name = "createDateConditionType",defaultValue = "0",required = false)int createDateConditionType,
+                                 @RequestParam(name = "startTime",defaultValue = "null",required = false)Date startTime,
+                                 @RequestParam(name = "stopTime",defaultValue = "null",required = false)Date stopTime
+                                ){
+        List<ClientUserEntity> clientUserEntities = clientUserService.selectListByCondition(generalQueryClientUserDto(integral,integralConditionType,coin,coinConditionType,
+        gift,giftConditionType,level,levelConditionType,createDateConditionType,startTime,stopTime));
+        if(clientUserEntities.size() == 0)
+            return "没有内容";
+        Gson gson = new Gson();
+        return gson.toJson(clientUserEntities);
+    }
+
+    public QueryClientUserDto generalQueryClientUserDto(int integral,int integralConditionType,int coin,int coinConditionType,int gift,int giftConditionType,
+                                                        int level,int levelConditionType,int createDateConditionType, Date startTime,Date stopTime){
+        QueryClientUserDto queryClientUserDto = new QueryClientUserDto();
+        queryClientUserDto.setIntegral(new BigDecimal(integral+""));
+        queryClientUserDto.setCoin(new BigDecimal(coin+""));
+        queryClientUserDto.setGift(new BigDecimal(gift+""));
+        queryClientUserDto.setLevel(level);
+        queryClientUserDto.setIntegralConditionType(integralConditionType)
+                .setCoinConditionType(coinConditionType)
+                .setGiftConditionType(giftConditionType)
+                .setLevelConditionType(levelConditionType)
+                .setCreateDateConditionType(createDateConditionType);
+        if(startTime != null)
+            queryClientUserDto.setStartTime(startTime);
+        if(stopTime != null)
+            queryClientUserDto.setStopTime(stopTime);
+        return queryClientUserDto;
+    }
 }

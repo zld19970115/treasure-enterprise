@@ -42,6 +42,7 @@ public class IWXConfig extends WXConfig {
     private String notifyUrl;
 
     public IWXConfig() throws Exception {
+
         String os = System.getProperty("os.name");
         String certPath = "/www/apiclient_cert.p12";
         if(os.toLowerCase().startsWith("win")){

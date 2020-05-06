@@ -4,11 +4,14 @@ import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.QueryClientUserDto;
+import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,4 +40,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     ClientUserEntity getClientUser(Long id);
    Result userGiftToUser(long userId, String mobile,BigDecimal giftMoney) ;
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator, String gift);
+
+    List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
 }

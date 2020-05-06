@@ -1,9 +1,12 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 用户信息
@@ -26,6 +29,8 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     //添加一项
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator,
                                          @Param("gift") String gift);
+
+    List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
 
 
 }

@@ -19,9 +19,9 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://47.105.143.248:3306/treasure?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      url: jdbc:mysql://118.190.203.107:3306/treasure?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
       username: root
-      password: treasure3306
+      password: jubaokj@2019.
       initial-size: 10
       max-active: 100
       min-idle: 10
