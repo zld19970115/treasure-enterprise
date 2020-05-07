@@ -35,4 +35,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     BigDecimal getCompletaOrder(Map<String, Object> params);
     List<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
     List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
+    List<VisualizationRoomVo> selectRoomAllByMid(Map<String,Object> map);
 }

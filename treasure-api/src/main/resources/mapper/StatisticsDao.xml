@@ -405,6 +405,9 @@
 
     <select id="getVisualizationRoom" resultType="io.treasure.vo.VisualizationRoomVo">
         SELECT
+            room.id,
+            ct.type,
+            ct.creator,
             room.`name` as roomName,
             room.icon,
             room.num_low as numLow,
@@ -438,7 +441,59 @@
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 4
                 and ct2.room_id = ct.room_id
-            ) as fourState
+            ) as fourState,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 1
+                and ct2.room_id = ct.room_id
+            ) as oneCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 2
+                and ct2.room_id = ct.room_id
+            ) as twoCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 3
+                and ct2.room_id = ct.room_id
+            ) as threeCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 4
+                and ct2.room_id = ct.room_id
+            ) as fourCreator,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 1
+                and ct2.room_id = ct.room_id
+            ) as oneCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 2
+                and ct2.room_id = ct.room_id
+            ) as twoCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 3
+                and ct2.room_id = ct.room_id
+            ) as threeCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 4
+                and ct2.room_id = ct.room_id
+            ) as fourCid
         from
             ct_merchant_room_params_set ct
         LEFT JOIN
@@ -446,11 +501,26 @@
         where
             ct.merchant_id = #{merchantId}
             and ct.`status` != 9
+            and room.`status` != 9
             and date_format(ct.use_date, '%Y-%m-%d') = #{time}
         GROUP BY
             ct.room_id
         ORDER BY
 	        ct.create_date
+    </select>
+
+    <select id="selectRoomAllByMid" resultType="io.treasure.vo.VisualizationRoomVo">
+        select
+        room.id,
+        room.type,
+        room.`name` as roomName,
+        room.icon,
+        room.num_low as numLow,
+        room.num_high as numHigh,
+        1 as flag
+        from ct_merchant_room room
+        where room.`status` != 9 and room.merchant_id = #{merchantId} and
+        room.id not in (select DISTINCT ct.room_id from ct_merchant_room_params_set ct where ct.merchant_id = #{merchantId})
     </select>
 
 </mapper>
