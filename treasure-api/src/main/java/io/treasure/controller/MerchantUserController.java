@@ -534,6 +534,7 @@ public class MerchantUserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "masterUserId", value = "商户用户ID", required = true, paramType = "query", dataType = "long")})
     public Result getAuditStatus(long masterUserId){
+        Map map = new HashMap();
         MerchantUserEntity merchantUserEntity = merchantUserService.selectById(masterUserId);
         if (merchantUserEntity==null){
             return new Result().error("请先注册账号");
@@ -543,6 +544,11 @@ public class MerchantUserController {
         if (merchantEntity==null){
             return new Result().error("请先注册商户");
         }
-        return new Result().ok(merchantEntity.getAuditstatus());
+        tokenService.createToken(masterUserId);
+        map.put("user",merchantUserEntity);
+        TokenEntity byUserId = tokenService.getByUserId(masterUserId);
+        map.put("token",byUserId.getToken());
+        map.put("auditstatus",merchantEntity.getAuditstatus());
+        return new Result().ok(map);
     }
 }

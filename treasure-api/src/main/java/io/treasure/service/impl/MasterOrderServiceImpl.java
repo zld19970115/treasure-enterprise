@@ -427,7 +427,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if(giftMoney.compareTo(num)==1){
                         BigDecimal gift =clientUserDTO.getGift();
                         BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
-                        clientUserDTO.setNewGift(abc);
+                        clientUserDTO.setGift(abc);
                         clientUserService.update(clientUserDTO);
                     }
                 }
@@ -443,7 +443,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                    clientUserService.update(clientUserDTO);
                     BigDecimal gift =clientUserDTO.getGift();
                     BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
-                    clientUserDTO.setNewGift(abc);
+                    clientUserDTO.setGift(abc);
                     clientUserService.update(clientUserDTO);
                 }
                 if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {

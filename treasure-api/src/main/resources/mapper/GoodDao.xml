@@ -53,6 +53,7 @@
         </if>
     </select>
 
+
     <select id="getByInfo" resultType="io.treasure.dto.GoodDTO">
         select goods.*,merchant.name merchantName,cate.name categoryName
         from ct_good goods
@@ -76,5 +77,15 @@
      select goods.* from ct_good  goods
      left join ct_merchant merchant on merchant.id=goods.mart_id
      where goods.status=1 and merchant.status = 1
+
+    </select>
+
+    <!--        替换以上查询方法，用于加菜及查询商家商品（仅限于用户使用）    -->
+    <select id="selectEnableGoodsByMerchantIdForUserOnly" resultType="io.treasure.dto.GoodDTO">
+        select id,name,description,price,introduce,show_in_hot,units,good_category_id,sales,icon,favorable_price,favorable_price
+        from ct_good
+        where status = 1
+        and mart_id =#{merchantId}
+        limit #{pageNum},#{num}
     </select>
 </mapper>
