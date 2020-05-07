@@ -35,7 +35,7 @@
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
     </select>
     <select id="listPage" resultType="io.treasure.dto.GoodDTO">
-        select goods.*,merchant.name merchantName,merchant.headUrl merchantIcon
+        select goods.id,goods.name,goods.description,goods.price,goods.introduce,goods.show_in_hot,goods.units,goods.good_category_id,goods.sales,goods.icon,goods.favorable_price,goods.favorable_price,merchant.name merchantName,merchant.headUrl merchantIcon
         from ct_good goods
         left join ct_merchant merchant on merchant.id=goods.mart_id
         where 1=1

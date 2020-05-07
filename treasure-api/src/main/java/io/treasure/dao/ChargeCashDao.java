@@ -1,7 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.entity.CategoryEntity;
+import io.treasure.dto.ChargeCashDTO;
 import io.treasure.entity.ChargeCashEntity;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,4 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ChargeCashDao  extends BaseDao<ChargeCashEntity> {
+    ChargeCashDTO selectByCashOrderId(String cashOrderId);
 }

@@ -9,9 +9,8 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
-import io.treasure.dto.OrderDTO;
-import io.treasure.enm.Constants;
-import io.treasure.service.MasterOrderService;
+import io.treasure.dto.ChargeCashDTO;
+import io.treasure.service.ChargeCashService;
 import io.treasure.service.PayService;
 import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.AdressIPUtil;
@@ -43,7 +42,7 @@ public class ApiWXChargePayController {
     private PayService payService;
 
     @Autowired
-    private MasterOrderService masterOrderService;
+    private ChargeCashService chargeCashService;
     @Autowired
     private SlaveOrderService slaveOrderService;
 
@@ -75,7 +74,7 @@ public class ApiWXChargePayController {
     })
     public Result wxpay(HttpServletRequest request, String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
-        OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+        ChargeCashDTO chargeCashDTO = chargeCashService.selectByCashOrderId(orderNo);
 //        // 防止微信支付失败重新支付失败
 //        String tmpOrderId =generalGrowUpOrderId(orderNo);
 //        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
@@ -94,7 +93,7 @@ public class ApiWXChargePayController {
 //        }
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
-        data.put("out_trade_no",orderDTO.getOrderId()); //更改为新订单号
+        data.put("out_trade_no",chargeCashDTO.getCashOrderId()); //更改为新订单号
 //        data.put("device_info", "");//调用接口提交的终端设备号
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换

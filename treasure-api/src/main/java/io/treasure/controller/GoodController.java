@@ -342,10 +342,12 @@ public class GoodController {
         int limit = 10;
         long merchantId = 0L;
         try{
-            page = (Integer) params.get(Constant.PAGE);
-            limit = (Integer)params.get(Constant.LIMIT);
-            merchantId = (Long)params.get("merchantId");
+            page = Integer.parseInt(params.get(Constant.PAGE)+"");
+            limit = Integer.parseInt(params.get(Constant.LIMIT)+"");
+            merchantId = Long.parseLong(params.get("merchantId")+"");
+
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("api参数有误【good/onPageSimple】：page,limit,merchantId="+ params.get(Constant.PAGE)+","+params.get(Constant.LIMIT)+","+ params.get("merchantId"));
             return null;
         }

@@ -1,9 +1,7 @@
 package io.treasure.service;
 
 import io.treasure.common.service.CrudService;
-import io.treasure.dto.ChargeCashDTO;
 import io.treasure.dto.ChargeCashSetDTO;
-import io.treasure.entity.ChargeCashEntity;
 import io.treasure.entity.ChargeCashSetEntity;
 
 import java.math.BigDecimal;
@@ -17,4 +15,5 @@ import java.math.BigDecimal;
 public interface ChargeCashSetService extends CrudService<ChargeCashSetEntity, ChargeCashSetDTO> {
 
     ChargeCashSetEntity selectByCash(BigDecimal cash);
+
 }
