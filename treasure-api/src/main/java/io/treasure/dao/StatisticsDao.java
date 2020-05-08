@@ -1,10 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.dto.ConsumptionRankingDto;
-import io.treasure.dto.MerchantAccountDto;
-import io.treasure.dto.ReturnDishesPageDto;
-import io.treasure.dto.TopSellersRankingDto;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -36,4 +33,6 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
     List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
     List<VisualizationRoomVo> selectRoomAllByMid(Map<String,Object> map);
+    List<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
+    DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
 }

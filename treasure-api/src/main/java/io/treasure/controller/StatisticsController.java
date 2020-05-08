@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.*;
@@ -13,10 +14,7 @@ import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.service.impl.StatisticsServiceImpl;
 import io.treasure.utils.DateUtil;
 import io.treasure.utils.RegularUtil;
-import io.treasure.vo.ConsumptionRankingVo;
-import io.treasure.vo.ReturnDishesPageVo;
-import io.treasure.vo.TopSellersRankingVo;
-import io.treasure.vo.VisualizationRoomVo;
+import io.treasure.vo.*;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -176,6 +174,30 @@ public class StatisticsController {
     @ApiOperation("商户端-可视化房间")
     public Result<List<VisualizationRoomVo>> getVisualizationRoom(@RequestParam Map<String,Object> map){
         return new Result<List<VisualizationRoomVo>>().ok(statisticsService.getVisualizationRoom(map));
+    }
+
+    @Login
+    @GetMapping("daysTogetherPage")
+    @ApiOperation("商户日汇总分页列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<DaysTogetherPageDTO>> daysTogetherPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<PageData<DaysTogetherPageDTO>>().ok(statisticsService.daysTogetherPage(params));
+    }
+
+    @Login
+    @GetMapping("daysTogetherStat")
+    @ApiOperation("商户日列表汇总")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", dataType="String",paramType = "query") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", dataType="String",paramType = "query")
+    })
+    public Result<DaysTogetherStatisticsVo> daysTogetherStat(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<DaysTogetherStatisticsVo>().ok(statisticsService.daysTogetherStat(params));
     }
 
 }

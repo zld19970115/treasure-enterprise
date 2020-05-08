@@ -252,4 +252,16 @@ public class StatisticsServiceImpl
 
     }
 
+    @Override
+    public PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<DaysTogetherPageDTO> page = (Page) baseDao.daysTogetherPage(params);
+        return new PageData<DaysTogetherPageDTO>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params) {
+        return baseDao.daysTogetherStat(params);
+    }
+
 }
