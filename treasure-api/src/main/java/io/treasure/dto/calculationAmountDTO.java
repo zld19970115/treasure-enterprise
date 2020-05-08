@@ -3,7 +3,7 @@ package io.treasure.dto;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import java.lang.reflect.Method;
+
 import java.math.BigDecimal;
 
 
@@ -68,36 +68,18 @@ public class calculationAmountDTO extends ComparableCondition implements Compara
      */
     private BigDecimal merchantProceeds;
 
-    @Override
-    public BigDecimal getFractionPart() {
-        return super.fractionPart;
-    }
-
-    public calculationAmountDTO setFranctionPart(BigDecimal franctionPart){
-        super.setFractionPart(fractionPart);
-        return this;
-    }
+//    public calculationAmountDTO updateFranctionPart(BigDecimal franctionPart){
+//        super.setFractionPart(fractionPart);
+//        return this;
+//    }
     public int compareField(calculationAmountDTO t){
         int res = 0;
-        try{
-            String methodName = this.getFieldName();
-            Method cMethod = this.getClass().getDeclaredMethod(methodName);
-            Method tMethod = t.getClass().getDeclaredMethod(methodName);
-
-            String tmpC = (cMethod.invoke(this)+"").trim().length()==0?"0":cMethod.invoke(this)+"";
-            String tmpT = (tMethod.invoke(t)+"").trim().length()==0?"0":tMethod.invoke(t)+"";
-
-            BigDecimal cValue = new BigDecimal(tmpC);
-            BigDecimal tValue = new BigDecimal(tmpT);
-            System.out.println("o1,o2"+cValue+","+tValue);
-            if(cValue.compareTo(tValue)<0){
-                return 1;
-            }else{
-                return -1;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            return res;
+        if(this.getFractionPart().compareTo(t.getFractionPart())>0){
+            return -1;
+        }else if(this.getFractionPart().compareTo(t.getFractionPart())<0){
+            return 1;
+        }else{
+            return 0;
         }
     }
 

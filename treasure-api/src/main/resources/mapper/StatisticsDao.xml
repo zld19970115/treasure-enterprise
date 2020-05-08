@@ -337,6 +337,27 @@
         ctm.not_cash as notCash,
         ctm.wart_cash as wartCash,
         ctm.point_money as pointMoney,
+        IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 1
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0)
+        AS wxTotal,
+        IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 2
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0) AS aliTotald,
         (
         SELECT
         COUNT(ctmo.id)

@@ -158,7 +158,7 @@ public class StatisticsController {
     @Login
     @PostMapping("getMerchantAccount")
     @ApiOperation("查询商户收支明细")
-    public Result<List<ConsumptionRankingVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+    public Result<List<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
     }
 
