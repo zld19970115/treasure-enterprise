@@ -103,4 +103,10 @@
             and name  like  CONCAT('%',#{name},'%')
         </if>
     </select>
+
+    <select id="selectBaseInfoByMartId" resultType="io.treasure.dto.MerchantDTO" parameterType="long">
+        select name merchantName,headUrl merchantIcon
+        from  ct_merchant merchant
+        where id = #{marId}
+    </select>
 </mapper>

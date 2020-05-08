@@ -1,6 +1,5 @@
 package io.treasure.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,6 +23,8 @@ public class ChargeCashDTO implements Serializable {
      */
     @ApiModelProperty(value = "ID")
     private Long id;
+    @ApiModelProperty(value = "类型")
+    private String cashOrderId;
     /**
      * 用户ID
      */

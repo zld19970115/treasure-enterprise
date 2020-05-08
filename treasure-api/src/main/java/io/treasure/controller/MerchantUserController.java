@@ -530,13 +530,25 @@ public class MerchantUserController {
         return new Result().ok("注销成功");
     }
     @GetMapping("getAuditStatus")
-    @ApiOperation("商户端注销")
+    @ApiOperation("获取是否审核通过")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "masterUserId", value = "商户用户ID", required = true, paramType = "query", dataType = "long")})
     public Result getAuditStatus(long masterUserId){
+        Map map = new HashMap();
         MerchantUserEntity merchantUserEntity = merchantUserService.selectById(masterUserId);
+        if (merchantUserEntity==null){
+            return new Result().error("请先注册账号");
+        }
         String merchantid = merchantUserEntity.getMerchantid();
         MerchantEntity merchantEntity = merchantService.selectById(merchantid);
-        return new Result().ok(merchantEntity.getAuditstatus());
+        if (merchantEntity==null){
+            return new Result().error("请先注册商户");
+        }
+        tokenService.createToken(masterUserId);
+        map.put("user",merchantUserEntity);
+        TokenEntity byUserId = tokenService.getByUserId(masterUserId);
+        map.put("token",byUserId.getToken());
+        map.put("auditstatus",merchantEntity.getAuditstatus());
+        return new Result().ok(map);
     }
 }

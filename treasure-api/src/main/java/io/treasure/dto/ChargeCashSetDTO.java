@@ -25,6 +25,10 @@ public class ChargeCashSetDTO {
     /**
      * 用户ID
      */
+//    @ApiModelProperty(value = "类型")
+//    private String cashOrderId;
+//    @ApiModelProperty(value = "类型")
+//    private Integer userId;
     @ApiModelProperty(value = "类型")
     private Integer type;
     /**

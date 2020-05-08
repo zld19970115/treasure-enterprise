@@ -2,12 +2,16 @@ package io.treasure.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.EvaluateDTO;
-import io.treasure.entity.CardInfoEntity;
+import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.common.validator.group.AddGroup;
+import io.treasure.common.validator.group.DefaultGroup;
+import io.treasure.dto.ChargeCashDTO;
 import io.treasure.entity.ChargeCashEntity;
 import io.treasure.entity.ChargeCashSetEntity;
-import io.treasure.service.BannerService;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
 import io.treasure.utils.OrderUtil;
@@ -15,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -52,5 +56,12 @@ public class ChargeCashController {
         //获取充值订单Id
         String orderId = OrderUtil.getOrderIdByTime(userId);
         return new Result().ok(orderId);
+    }
+    @Login
+    @PostMapping("generateOrder")
+    @ApiOperation("生成订单")
+    public Result generateOrder(@RequestBody ChargeCashDTO dto, @LoginUser ClientUserEntity user) throws ParseException {
+        ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+        return  chargeCashService.orderSave(dto,user);
     }
 }

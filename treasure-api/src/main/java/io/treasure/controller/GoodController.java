@@ -1,5 +1,10 @@
 package io.treasure.controller;
 
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
@@ -7,7 +12,10 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.*;
+import io.treasure.dto.ExportGoodDTO;
+import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.CategoryEnm;
 import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
@@ -15,12 +23,7 @@ import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.GoodService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import io.treasure.service.MerchantService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -46,6 +49,7 @@ public class GoodController {
     private MerchantService merchantService;//商户
     @Autowired
     private GoodCategoryService goodCategoryService;//分类
+
     @CrossOrigin
     @Login
     @GetMapping("onPage")
@@ -59,7 +63,7 @@ public class GoodController {
             @ApiImplicitParam(name="name",value="商品名称",paramType = "query",dataType = "String")
     })
     public Result<PageData<GoodDTO>> onPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status",Common.STATUS_ON.getStatus()+"");
+        params.put("status", Common.STATUS_ON.getStatus()+"");
         PageData<GoodDTO> page = goodService.listPage(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
@@ -159,7 +163,7 @@ public class GoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(@RequestParam  Long id){
+    public Result delete(@RequestParam Long id){
         //判断商户是否关闭店铺
         GoodDTO goodDto=goodService.get(id);
         long merchantId=goodDto.getMartId();
@@ -218,7 +222,7 @@ public class GoodController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result off(@RequestParam  Long id){
+    public Result off(@RequestParam Long id){
         //判断商户是否关闭店铺
         GoodDTO goodDto=goodService.get(id);
         long merchantId=goodDto.getMartId();
@@ -314,4 +318,50 @@ public class GoodController {
         GoodEntity goodEntity = goodService.selectById(id);
         return new Result().ok(goodEntity);
     }
+
+    /**
+     * 简化查询商品模式
+     * @param params
+     * @return
+     */
+
+    @CrossOrigin
+    @Login
+    @GetMapping("onPageSimple")
+    @ApiOperation("销售中商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name="merchantId",value="商户编号",paramType = "query",required = true,dataType = "String")
+    })
+    public Result<List<GoodDTO>> onPageSimple(@ApiIgnore @RequestParam Map<String, Object> params){
+        //page,limit,orderField,order,merchantId
+        int page =0;
+        int limit = 10;
+        long merchantId = 0L;
+        try{
+            page = Integer.parseInt(params.get(Constant.PAGE)+"");
+            limit = Integer.parseInt(params.get(Constant.LIMIT)+"");
+            merchantId = Long.parseLong(params.get("merchantId")+"");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("api参数有误【good/onPageSimple】：page,limit,merchantId="+ params.get(Constant.PAGE)+","+params.get(Constant.LIMIT)+","+ params.get("merchantId"));
+            return null;
+        }
+        System.out.println("api:good/onpage==page,limit,merchantId"+page+","+limit+","+merchantId);
+        if(merchantId   >  1000000000L){
+            List<GoodDTO> pages = goodService.listPageSimple(page,limit,merchantId);
+            return new Result<List<GoodDTO>>().ok(pages);
+        }
+        return null;
+    }
+
+//    public boolean checkMerchantId(String target){
+//        String str = "^\\d{20}";//商户id是多少位
+//        return Pattern.matches(str,target);
+//    }
+
 }

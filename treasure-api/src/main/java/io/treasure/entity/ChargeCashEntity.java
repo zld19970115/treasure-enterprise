@@ -28,6 +28,8 @@ public class ChargeCashEntity  extends BaseEntity {
     /**
      * 用户ID
      */
+    private String cashOrderId;
+
     private long userId;
     /**
      * 存入现金金额

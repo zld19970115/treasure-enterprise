@@ -102,4 +102,9 @@ public class ClientUserDTO implements Serializable {
 	@ApiModelProperty(value = "个推客户Id")
 	private String clientId;
 
+	public void setGift(BigDecimal gift){
+		System.out.println("the gift current value:"+gift);
+		this.gift = gift;
+	}
+
 }

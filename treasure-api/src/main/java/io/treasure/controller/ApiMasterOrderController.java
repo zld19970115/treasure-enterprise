@@ -1,50 +1,38 @@
 package io.treasure.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
-import io.treasure.config.IWXConfig;
-import io.treasure.config.IWXPay;
-import io.treasure.dto.*;
-import io.treasure.enm.Constants;
-import io.treasure.enm.MerchantRoomEnm;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.SlaveOrderEntity;
-import io.treasure.push.AppInfo;
-import io.treasure.push.AppPushUtil;
-import io.treasure.service.ClientUserService;
-import io.treasure.service.MasterOrderService;
-
-
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
-
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
+import io.treasure.dto.DesignConditionsDTO;
+import io.treasure.dto.MasterOrderDTO;
+import io.treasure.dto.MerchantOrderDTO;
+import io.treasure.dto.OrderDTO;
+import io.treasure.enm.Constants;
+import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.service.ClientUserService;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.utils.OrderUtil;
-import oracle.jdbc.driver.Const;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.io.ResolverUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -245,7 +233,7 @@ public class ApiMasterOrderController {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
          return  masterOrderService.saveOrder(dto,dtoList,user);
-}
+    }
     @Login
     @GetMapping("allOrderPage")
     @ApiOperation("全部订单列表")
@@ -492,7 +480,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result refuseUpdate(@RequestParam  long id,@RequestParam  long verify, @RequestParam  String verify_reason) throws Exception {
+    public Result refuseUpdate(@RequestParam long id, @RequestParam long verify, @RequestParam String verify_reason) throws Exception {
         return masterOrderService.caleclUpdate(id,Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(),verify,new Date(),verify_reason);
     }
     @CrossOrigin
@@ -504,7 +492,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "取消人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result calcelUpdate(@RequestParam  long id,@RequestParam(value = "verify",defaultValue = "")  long verify, @RequestParam(value = "verify_reason",defaultValue = "")  String verify_reason) throws Exception {
+    public Result calcelUpdate(@RequestParam long id, @RequestParam(value = "verify",defaultValue = "")  long verify, @RequestParam(value = "verify_reason",defaultValue = "")  String verify_reason) throws Exception {
        return masterOrderService.caleclUpdate(id,verify,new Date(),verify_reason);
     }
 
@@ -516,7 +504,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "接受人", paramType = "query", required = true, dataType="long")
     })
-    public Result acceptUpdate(@RequestParam  long id,@RequestParam   long verify) throws Exception {
+    public Result acceptUpdate(@RequestParam long id, @RequestParam long verify) throws Exception {
        return  masterOrderService.acceptUpdate(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
     }
     @CrossOrigin
@@ -528,7 +516,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "操作人", paramType = "query", required = true, dataType="long")
     })
-    public Result finishUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
+    public Result finishUpdate(@RequestParam long id, @RequestParam long verify) throws Exception {
         return masterOrderService.finishUpdate(id,Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),verify,new Date(),"完成订单");
     }
     @CrossOrigin
@@ -540,7 +528,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result refundYesUpdate(@RequestParam  long id,@RequestParam  long verify) throws Exception {
+    public Result refundYesUpdate(@RequestParam long id, @RequestParam long verify) throws Exception {
         return masterOrderService.refundYesUpdate(id, Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue(), verify, new Date(), "同意退款");
 
     }
@@ -553,7 +541,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "verify", value = "拒绝人", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name="verify_reason",value="拒绝原因",paramType = "query",required = true,dataType = "String")
     })
-    public Result refundNoUpdate(@RequestParam long id,@RequestParam long verify,@RequestParam String verify_reason) throws Exception {
+    public Result refundNoUpdate(@RequestParam long id, @RequestParam long verify, @RequestParam String verify_reason) throws Exception {
        return masterOrderService.refundNoUpdate(id,Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue(),verify,new Date(),verify_reason);
     }
 
@@ -592,7 +580,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = "id", value = "订单编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "roomSetId", value = "预约包房编号", paramType = "query", required = true, dataType="long")
     })
-    public Result setRoom(@RequestParam  long id, @RequestParam long roomSetId) throws Exception {
+    public Result setRoom(@RequestParam long id, @RequestParam long roomSetId) throws Exception {
         return masterOrderService.setRoom(id,roomSetId);
     }
     @Login
@@ -601,7 +589,7 @@ public class ApiMasterOrderController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mainOrderId", value = "编号", paramType = "query", required = true, dataType="String")
     })
-    public Result reserveRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId) throws ParseException {
+    public Result reserveRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user, String mainOrderId) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         return  masterOrderService.reserveRoom(dto,user,mainOrderId);
     }
@@ -612,7 +600,7 @@ public class ApiMasterOrderController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mainOrderId", value = "预订包房订单号", paramType = "query", required = true, dataType="String")
     })
-    public Result orderFoodByRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,String mainOrderId){
+    public Result orderFoodByRoom(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user, String mainOrderId){
         List<SlaveOrderEntity> slaveOrder = dto.getSlaveOrder();
         BigDecimal platformBrokerage=new BigDecimal("0");
         BigDecimal merchantProceeds=new BigDecimal("0");

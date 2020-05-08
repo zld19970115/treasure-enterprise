@@ -2,22 +2,27 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.GoodDao;
+import io.treasure.dao.MerchantDao;
 import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantRoomParamsDTO;
-import io.treasure.dto.SlaveOrderDTO;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.GoodEntity;
-import io.treasure.entity.MerchantRoomParamsEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.GoodService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+
+//import com.github.pagehelper.Page;
+//import com.github.pagehelper.PageHelper;
+//import com.github.pagehelper.PageInfo;
+//import io.swagger.annotations.ApiImplicitParam;
+//import io.treasure.common.constant.Constant;
 
 /**
  * 商品表
@@ -28,6 +33,12 @@ import java.util.Map;
 @Service
 public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDTO> implements GoodService {
 
+
+    @Autowired(required = false)
+    GoodDao goodDao;
+
+    @Autowired(required = false)
+    MerchantDao merchantDao;
 
     @Override
     public QueryWrapper<GoodEntity> getWrapper(Map<String, Object> params){
@@ -118,7 +129,7 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
     }
 
     @Override
-    public List<SlaveOrderEntity> getRefundGoods(String orderId,long goodId) {
+    public List<SlaveOrderEntity> getRefundGoods(String orderId, long goodId) {
         return baseDao.getRefundGoods(orderId,goodId);
     }
 
@@ -127,5 +138,29 @@ public class GoodServiceImpl extends CrudServiceImpl<GoodDao, GoodEntity, GoodDT
         IPage<GoodEntity> pages=getPage(params, (String) params.get("ORDER_FIELD"),false);
         List<GoodDTO> list=baseDao.sortingPage(params);
         return getPageData(list,pages.getTotal(), GoodDTO.class);
+    }
+
+
+    /**
+     * 根据商家需求查询指定商品
+     * @return
+     */
+    @Override
+    public List<GoodDTO> listPageSimple(int page,int limit,Long merchantId) {
+
+        //改用新的自定义的简化查询
+        //Page<Object> pages = PageHelper.startPage(page,limit);     //分页插件
+        List<GoodDTO> goods=goodDao.selectEnableGoodsByMerchantIdForUserOnly(merchantId,page,limit);
+        //System.out.println("页码/页数"+pages.getPageNum()+"/"+pages.getPages());
+        //PageInfo<GoodDTO> pageInfo = new PageInfo<>(goods);
+
+        if(goods.size()>0){
+            //检索商户信息并封装
+            MerchantDTO merchantDTO = merchantDao.selectBaseInfoByMartId(merchantId);
+            goods.get(0).setMerchantName(merchantDTO.getName());
+            goods.get(0).setMerchantIcon(merchantDTO.getHeadurl());
+        }
+
+        return goods;
     }
 }
