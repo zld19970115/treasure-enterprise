@@ -5,29 +5,27 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayDataDataserviceBillDownloadurlQueryModel;
 import com.alipay.api.domain.AlipayTradeCloseModel;
 import com.alipay.api.domain.AlipayTradeFastpayRefundQueryModel;
-import com.alipay.api.domain.AlipayTradeRefundModel;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayDataDataserviceBillDownloadurlQueryRequest;
 import com.alipay.api.request.AlipayTradeCloseRequest;
 import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
-import com.alipay.api.request.AlipayTradeRefundRequest;
-import com.alipay.api.response.*;
+import com.alipay.api.response.AlipayDataDataserviceBillDownloadurlQueryResponse;
+import com.alipay.api.response.AlipayTradeCloseResponse;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.utils.Result;
 import io.treasure.config.AlipayProperties;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.treasure.dao.MasterOrderDao;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
-import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -147,10 +145,23 @@ public class ApiAlipayController {
 
             // 调用业务
             if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
-
-//                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
+                if(masterOrderDao.selectByOrderId(out_trade_no)==null){
+                    //                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
                     try {
-                        System.out.println("status:"+masterOrderDao.selectByOrderId(out_trade_no).getStatus());
+
+                        Map<String, String> responseMap = null;
+                        //151业务调用内
+                        responseMap = payService.cashExecAliCallBack(new BigDecimal(total_amount), out_trade_no);
+                        System.out.println("responseMap:"+responseMap);
+
+                        return responseMap.get("return_code");
+                    } catch (Exception ex) {
+                        return "FAIL";
+                    }
+                }else {
+                    //                if(masterOrderDao.selectByOrderId(out_trade_no).getStatus()==1){
+                    try {
+
                         Map<String, String> responseMap = null;
                         //151业务调用内
                         responseMap = payService.execAliCallBack(new BigDecimal(total_amount), out_trade_no);
@@ -160,7 +171,10 @@ public class ApiAlipayController {
                     } catch (Exception ex) {
                         return "FAIL";
                     }
-//                }
+                }
+
+
+
             }
 
 

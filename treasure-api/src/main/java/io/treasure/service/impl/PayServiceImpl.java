@@ -5,7 +5,6 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayTradeRefundModel;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
@@ -17,17 +16,13 @@ import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.SlaveOrderEntity;
-import io.treasure.entity.StimmeEntity;
+import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +54,8 @@ public class PayServiceImpl implements PayService {
     StimmeService stimmeService;
     @Autowired
     ClientUserServiceImpl clientUserService;
-
+    @Autowired
+    ChargeCashService chargeCashService;
     @Autowired
     SlaveOrderService slaveOrderService;
     @Autowired
@@ -67,6 +63,8 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private AlipayClient alipayClient;
+    @Autowired
+    private ChargeCashSetService chargeCashSetService;
 
     @Autowired
     private IWXConfig wxPayConfig;
@@ -79,7 +77,6 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     MerchantUserService merchantUserService;
-
     @Autowired
     private RefundOrderService refundOrderService;
 
@@ -259,6 +256,68 @@ public class PayServiceImpl implements PayService {
         if(null != merchantDto.getMobile()){
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
+        mapRtn.put("return_code", "SUCCESS");
+        mapRtn.put("return_msg", "OK");
+        return mapRtn;
+    }
+
+    @Override
+    public Map<String, String> cashWxNotify(BigDecimal total_amount, String out_trade_no) {
+        Map<String, String> mapRtn = new HashMap<>(2);
+
+        ChargeCashDTO chargeCashDTO = chargeCashService.selectByCashOrderId(out_trade_no);
+        //        if(masterOrderEntity.getStatus()!=1){
+////            mapRtn.put("return_code", "SUCCESS");
+////            return mapRtn;
+////        }
+
+        if(chargeCashDTO==null||"".equals(chargeCashDTO)){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
+            return mapRtn;
+        }
+
+        if(chargeCashDTO.getStatus()!=1){
+            mapRtn.put("return_code", "SUCCESS");
+            mapRtn.put("return_msg", "OK");
+            return mapRtn;
+        }
+
+        /****************************************************************************************/
+        try{
+            if(chargeCashDTO.getCash().compareTo(total_amount)!=0){
+                System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
+                throw new Exception("wx_pay_fail:code01");
+            }
+
+        }catch(Exception e){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
+            return mapRtn;
+
+        }
+        try{
+            if(chargeCashDTO==null){
+                System.out.println("微信支付：支付失败！请联系管理员！【未找到订单】");
+                throw new Exception("wx_pay_fail:code02");
+            }
+        }catch(Exception e){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
+            return mapRtn;
+        }
+
+        chargeCashDTO.setStatus(2);
+        chargeCashDTO.setSaveTime(new Date());
+        chargeCashService.update(chargeCashDTO);
+        ClientUserEntity clientUserEntity = clientUserService.selectById(chargeCashDTO.getUserId());
+        BigDecimal balance = clientUserEntity.getBalance();
+        balance =  balance.add(total_amount);
+        ChargeCashSetEntity chargeCashSetEntity = chargeCashSetService.selectByCash(chargeCashDTO.getCash());
+        BigDecimal gift = clientUserEntity.getGift();
+        gift = gift.add(chargeCashSetEntity.getChangeGift());
+        clientUserEntity.setGift(gift);
+        clientUserEntity.setBalance(balance);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -728,6 +787,70 @@ public class PayServiceImpl implements PayService {
         mapRtn.put("return_msg", "OK");
         return mapRtn;
     }
+
+    @Override
+    public Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no) {
+        Map<String, String> mapRtn = new HashMap<>(2);
+
+        ChargeCashDTO chargeCashDTO = chargeCashService.selectByCashOrderId(out_trade_no);
+        //        if(masterOrderEntity.getStatus()!=1){
+////            mapRtn.put("return_code", "SUCCESS");
+////            return mapRtn;
+////        }
+
+        if(chargeCashDTO==null||"".equals(chargeCashDTO)){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
+            return mapRtn;
+        }
+
+        if(chargeCashDTO.getStatus()!=1){
+            mapRtn.put("return_code", "SUCCESS");
+            mapRtn.put("return_msg", "OK");
+            return mapRtn;
+        }
+
+        /****************************************************************************************/
+        try{
+            if(chargeCashDTO.getCash().compareTo(total_amount)!=0){
+                System.out.println("支付失败！请联系管理员！【支付金额不一致】");
+                throw new Exception("wx_pay_fail:code01");
+            }
+
+        }catch(Exception e){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
+            return mapRtn;
+
+        }
+        try{
+            if(chargeCashDTO==null){
+                System.out.println("支付失败！请联系管理员！【未找到订单】");
+                throw new Exception("wx_pay_fail:code02");
+            }
+        }catch(Exception e){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
+            return mapRtn;
+        }
+
+        chargeCashDTO.setStatus(2);
+        chargeCashDTO.setSaveTime(new Date());
+        chargeCashService.update(chargeCashDTO);
+        ClientUserEntity clientUserEntity = clientUserService.selectById(chargeCashDTO.getUserId());
+        BigDecimal balance = clientUserEntity.getBalance();
+        balance =  balance.add(total_amount);
+        ChargeCashSetEntity chargeCashSetEntity = chargeCashSetService.selectByCash(chargeCashDTO.getCash());
+        BigDecimal gift = clientUserEntity.getGift();
+        gift = gift.add(chargeCashSetEntity.getChangeGift());
+        clientUserEntity.setGift(gift);
+        clientUserEntity.setBalance(balance);
+        mapRtn.put("return_code", "SUCCESS");
+        mapRtn.put("return_msg", "OK");
+        return mapRtn;
+
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {

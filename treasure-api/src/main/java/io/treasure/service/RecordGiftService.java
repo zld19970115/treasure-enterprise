@@ -6,9 +6,12 @@ import io.treasure.entity.RecordGiftEntity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public interface RecordGiftService  extends CrudService<RecordGiftEntity, RecordGiftDTO> {
 
     void insertRecordGift(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
     void insertRecordGift2(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
+
+    List<RecordGiftDTO> selectByUserId(long userId);
 }

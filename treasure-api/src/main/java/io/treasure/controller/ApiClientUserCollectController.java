@@ -1,28 +1,20 @@
 package io.treasure.controller;
 
 
-import io.treasure.annotation.Login;
-import io.treasure.common.constant.Constant;
-import io.treasure.common.page.PageData;
-import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
-import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.ClientUserCollectDTO;
-import io.treasure.dto.ClientUserDTO;
-import io.treasure.service.ClientUserCollectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
+import io.treasure.common.utils.Result;
+import io.treasure.dto.ClientUserCollectDTO;
+import io.treasure.service.ClientUserCollectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
 
 
@@ -94,11 +86,14 @@ public class ApiClientUserCollectController {
     @GetMapping("/yesOrNo")
     @ApiOperation("是否收藏")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = false, dataType = "long"),
             @ApiImplicitParam(name = "martId", value = "商家id", paramType = "query", required = true, dataType = "long"),
 
     })
-    public Result yesOrNo(long userId,long martId){
+    public Result yesOrNo(Long userId,Long martId){
+        if(userId==null){
+            return new Result().ok("false");
+        }
         ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
         if (clientUserCollectDTO!=null){
         Integer status = clientUserCollectDTO.getStatus();

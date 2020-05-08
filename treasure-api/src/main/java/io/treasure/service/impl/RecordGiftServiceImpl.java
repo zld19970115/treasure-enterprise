@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,5 +28,12 @@ public class RecordGiftServiceImpl  extends CrudServiceImpl<RecordGiftDao, Recor
     @Override
     public void insertRecordGift2(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift) {
         baseDao.insertRecordGift2(userId,date,balanceGift,useGift);
+    }
+
+
+
+    @Override
+    public List<RecordGiftDTO> selectByUserId(long userId) {
+        return baseDao.selectByUserId(userId);
     }
 }

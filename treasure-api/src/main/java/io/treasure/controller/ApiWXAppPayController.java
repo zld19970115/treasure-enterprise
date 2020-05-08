@@ -4,9 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.treasure.annotation.Login;
 import io.treasure.common.constant.WXPayConstants;
-import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
@@ -14,14 +12,11 @@ import io.treasure.config.IWXPay;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
 import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.AdressIPUtil;
-import io.treasure.utils.PayCommonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.jdom.JDOMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -206,11 +201,22 @@ public class ApiWXAppPayController {
             String out_trade_no = reqData.get("out_trade_no");
             //单位分变成元
             BigDecimal total_amount = new BigDecimal(reqData.get("total_fee")).divide(new BigDecimal("100"));
-            Map<String, String> responseMap = payService.wxNotify(total_amount,out_trade_no);
-            String responseXml = WXPayUtil.mapToXml(responseMap);
-            response.setContentType("text/xml");
-            response.getWriter().write(responseXml);
-            response.flushBuffer();
+            MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(out_trade_no);
+            if(masterOrderEntity==null){
+                Map<String, String> responseMap = payService.cashWxNotify(total_amount,out_trade_no);
+                String responseXml = WXPayUtil.mapToXml(responseMap);
+                response.setContentType("text/xml");
+                response.getWriter().write(responseXml);
+                response.flushBuffer();
+            }else {
+                Map<String, String> responseMap = payService.wxNotify(total_amount,out_trade_no);
+                String responseXml = WXPayUtil.mapToXml(responseMap);
+                response.setContentType("text/xml");
+                response.getWriter().write(responseXml);
+                response.flushBuffer();
+            }
+
+
         }
     }
 

@@ -39,7 +39,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     public Result orderSave(ChargeCashDTO dto, ClientUserEntity user) throws ParseException {
         Result result = new Result();
         //生成订单号
-        String cashOrderId = OrderUtil.getOrderIdByTime(user.getId());
+        String cashOrderId = OrderUtil.getCashOrderIdByTime(user.getId());
         Date d = new Date();
         //保存主订单
         ChargeCashEntity chargeCashEntity = ConvertUtils.sourceToTarget(dto, ChargeCashEntity.class);
