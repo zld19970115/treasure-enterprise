@@ -1,6 +1,9 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.RecordGiftDao;
 import io.treasure.dto.RecordGiftDTO;
@@ -33,7 +36,10 @@ public class RecordGiftServiceImpl  extends CrudServiceImpl<RecordGiftDao, Recor
 
 
     @Override
-    public List<RecordGiftDTO> selectByUserId(long userId) {
-        return baseDao.selectByUserId(userId);
+    public PageData<RecordGiftDTO> selectByUserId(Map<String, Object> params) {
+        IPage<RecordGiftEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        List<RecordGiftDTO> list=baseDao.selectByUserId(params);
+        return getPageData(list,pages.getTotal(), RecordGiftDTO.class);
+
     }
 }

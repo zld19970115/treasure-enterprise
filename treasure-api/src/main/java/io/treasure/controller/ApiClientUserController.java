@@ -18,10 +18,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.ClientUserDTO;
-import io.treasure.dto.LoginDTO;
-import io.treasure.dto.QueryClientUserDto;
-import io.treasure.dto.RecordGiftDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -457,11 +454,16 @@ public class ApiClientUserController {
     @GetMapping("getRecondGiftcharge")
     @ApiOperation("获取代付金转增记录")
     @ApiImplicitParams({
+
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
     })
-    public Result getRecondGiftcharge(@RequestParam long userId) {
-        List<RecordGiftDTO> recordGiftDTOS = recordGiftService.selectByUserId(userId);
-        return new Result().ok(recordGiftDTOS);
+    public Result<PageData<RecordGiftDTO>> getRecondGiftcharge(@ApiIgnore @RequestParam Map<String, Object> params) {
+        PageData<RecordGiftDTO> page  = recordGiftService.selectByUserId(params);
+        return new Result().ok(page);
     }
     @GetMapping("registerGetGift")
     @ApiOperation("用户注册领取代付金")

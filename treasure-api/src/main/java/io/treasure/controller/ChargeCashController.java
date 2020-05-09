@@ -9,6 +9,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.dto.ChargeCashDTO;
+import io.treasure.dto.ChargeCashSetDTO;
 import io.treasure.entity.ChargeCashEntity;
 import io.treasure.entity.ChargeCashSetEntity;
 import io.treasure.entity.ClientUserEntity;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 现金充值表
@@ -63,5 +65,12 @@ public class ChargeCashController {
     public Result generateOrder(@RequestBody ChargeCashDTO dto, @LoginUser ClientUserEntity user) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         return  chargeCashService.orderSave(dto,user);
+    }
+    @Login
+    @GetMapping("getCash")
+    @ApiOperation("获取可充值金额")
+    public Result getCash() {
+        List<ChargeCashSetDTO> select = chargeCashSetService.select();
+        return  new Result().ok(select);
     }
 }

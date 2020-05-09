@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,11 @@ public class ChargeCashSetServiceImpl extends CrudServiceImpl<ChargeCashSetDao, 
     @Override
     public ChargeCashSetEntity selectByCash(BigDecimal cash) {
         return baseDao.selectByCash(cash);
+    }
+
+    @Override
+    public List<ChargeCashSetDTO> select() {
+        return baseDao.select();
     }
 
 
