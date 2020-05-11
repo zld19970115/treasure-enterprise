@@ -3,19 +3,20 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
-import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
@@ -368,6 +369,26 @@ public class MerchantController {
         merchantEntity.setWxAccountOpenid(null);
         merchantService.updateById(merchantEntity);
         return new Result().ok("解绑成功");//未绑定微信
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("selectWx")
+    @ApiOperation("查询商家是否绑定微信提现openid")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string")
+    })
+    public Result selectWx(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        if (merchantEntity==null){
+            return new Result().error("没有该商户");
+        }
+      if (merchantEntity.getWxAccountOpenid()!=null){
+          return new Result().ok(1);//绑定微信
+      }else {
+          return new Result().ok(2);//未绑定微信
+      }
+
     }
 
 
