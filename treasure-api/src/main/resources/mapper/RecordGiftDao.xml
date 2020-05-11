@@ -13,4 +13,8 @@
          VALUES
         ( default ,#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
     </insert>
+    <select id="selectByUserId" resultType="io.treasure.dto.RecordGiftDTO">
+        select * from ct_record_gift where userId = #{userId} and status = 3
+    </select>
+
 </mapper>

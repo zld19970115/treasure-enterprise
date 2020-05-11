@@ -44,7 +44,7 @@ public class ChargeCashDTO implements Serializable {
      * 存入时间
      */
     @ApiModelProperty(value = "存入时间")
-    private BigDecimal saveTime;
+    private Date saveTime;
     /**
      * 状态
      */

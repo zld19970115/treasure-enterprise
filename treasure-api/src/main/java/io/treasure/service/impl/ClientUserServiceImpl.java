@@ -10,10 +10,11 @@ import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
-import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.RecordGiftEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
+import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,8 @@ import java.util.Map;
 public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, ClientUserEntity, ClientUserDTO> implements ClientUserService {
     @Autowired
     private TokenService tokenService;
-
+    @Autowired
+    private RecordGiftService recordGiftService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
 
@@ -144,12 +147,29 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                     BigDecimal gift = clientUserEntity.getGift();
                         BigDecimal gift1 = clientUserEntity1.getGift();
                         if (gift.compareTo(giftMoney) > -1) {
+                            Date date = new Date();
                             gift = gift.subtract(giftMoney);
                             gift1 = gift1.add(giftMoney);
                             clientUserEntity.setGift(gift);
                             clientUserEntity1.setGift(gift1);
                             baseDao.updateById(clientUserEntity);
                             baseDao.updateById(clientUserEntity1);
+                            RecordGiftEntity recordGiftEntity = new RecordGiftEntity(); //转移记录
+                            RecordGiftEntity recordGiftEntityed = new RecordGiftEntity();// 被转移记录
+                            recordGiftEntity.setBalanceGift(gift);
+                            recordGiftEntity.setCreateDate(date);
+                            recordGiftEntity.setUserId(userId);
+                            recordGiftEntity.setTransferredMobile(mobile);
+                            recordGiftEntity.setUseGift(giftMoney);
+                            recordGiftEntity.setStatus(3);
+                            recordGiftEntityed.setUseGift(giftMoney);
+                            recordGiftEntityed.setUserId(clientUserEntity1.getId());
+                            recordGiftEntityed.setCreateDate(date);
+                            recordGiftEntityed.setBalanceGift(gift1);
+                            recordGiftEntityed.setTransferredMobile(clientUserEntity.getMobile());
+                            recordGiftEntityed.setStatus(4);
+                            recordGiftService.insert(recordGiftEntity);
+                            recordGiftService.insert(recordGiftEntityed);
                             return new Result().ok("赠送成功");
 
                     } else {

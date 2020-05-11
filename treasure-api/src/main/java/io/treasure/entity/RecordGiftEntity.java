@@ -21,6 +21,10 @@ public class RecordGiftEntity {
      */
     private long userId;
     /**
+     * 被转移用户手机号
+     */
+    private String transferredMobile;
+    /**
      * 使用或充值得赠送金
      */
     private BigDecimal useGift;

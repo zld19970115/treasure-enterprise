@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
-
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
@@ -26,22 +29,21 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
+import io.treasure.dto.*;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
-
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -68,6 +70,8 @@ public class ApiClientUserController {
     private SMSConfig smsConfig;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private RecordGiftService recordGiftService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
 
@@ -311,7 +315,6 @@ public class ApiClientUserController {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
         System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
-
             ClientUserEntity user = new ClientUserEntity();
             Map<String, Object> map = new HashMap<>();
             if (userByPhone != null) {

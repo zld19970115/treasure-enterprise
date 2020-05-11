@@ -24,6 +24,22 @@ public class OrderUtil {
     }
 
     /**
+     * 现金订单编号
+     * @param id
+     * @return
+     */
+    public static String getCashOrderIdByTime(Long id) {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+        String newDate=sdf.format(new Date());
+
+        String result="";
+        Random random=new Random();
+        for(int i=0;i<3;i++){
+            result+=random.nextInt(10);
+        }
+        return "C"+id.toString()+newDate+result;
+    }
+    /**
      * 退款单编号
      * @param id
      * @return

@@ -20,4 +20,7 @@
     <select id="selectByCash"  resultType="io.treasure.entity.ChargeCashSetEntity">
         select * from ct_charge_cash_set where cash= #{cash}
     </select>
+    <select id="select" resultType="io.treasure.dto.ChargeCashSetDTO">
+        select  * from ct_charge_cash_set where status = 1
+    </select>
 </mapper>

@@ -25,6 +25,11 @@ public class RecordGiftDTO  implements Serializable {
     @ApiModelProperty(value = "用户ID")
     private long userId;
     /**
+     * 被转移用户手机号
+     */
+    @ApiModelProperty(value = "被转移用户手机号")
+    private String transferredMobile;
+    /**
      * 使用或充值得赠送金
      */
     @ApiModelProperty(value = "使用或充值得赠送金")

@@ -5,6 +5,7 @@ import io.treasure.dto.ChargeCashSetDTO;
 import io.treasure.entity.ChargeCashSetEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 现金充值设置表
@@ -16,4 +17,7 @@ public interface ChargeCashSetService extends CrudService<ChargeCashSetEntity, C
 
     ChargeCashSetEntity selectByCash(BigDecimal cash);
 
+
+
+    List<ChargeCashSetDTO>  select();
 }
