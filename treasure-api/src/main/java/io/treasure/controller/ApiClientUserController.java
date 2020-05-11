@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
-
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
@@ -23,22 +26,20 @@ import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
+import io.treasure.dto.*;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
-
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
 import javax.servlet.http.HttpServletRequest;
-
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -67,6 +68,8 @@ public class ApiClientUserController {
     private TokenService tokenService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
+    @Autowired
+    private RecordGiftService recordGiftService;
 
     @Login
     @GetMapping("page")
@@ -307,7 +310,6 @@ public class ApiClientUserController {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
         System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
-
             ClientUserEntity user = new ClientUserEntity();
             Map<String, Object> map = new HashMap<>();
             if (userByPhone != null) {
@@ -464,6 +466,36 @@ public class ApiClientUserController {
         return new Result().ok(cue);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
+    @GetMapping("getRecondGiftcharge")
+    @ApiOperation("获取代付金转增记录")
+    @ApiImplicitParams({
 
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result<PageData<RecordGiftDTO>> getRecondGiftcharge(@ApiIgnore @RequestParam Map<String, Object> params) {
+        PageData<RecordGiftDTO> page  = recordGiftService.selectByUserId(params);
+        return new Result().ok(page);
+    }
+    @GetMapping("registerGetGift")
+    @ApiOperation("用户注册领取代付金")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result registerGetGift(@RequestParam long userId) {
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity == null) {
+            return new Result().error("此用户不存在");
+        }
+        BigDecimal a = new BigDecimal("200");
+        BigDecimal gift = clientUserEntity.getGift();
 
+        BigDecimal newGift = a.add(gift);
+        clientUserEntity.setGift(newGift);
+        clientUserService.updateById(clientUserEntity);
+        return new Result().ok("领取成功");
+    }
 }

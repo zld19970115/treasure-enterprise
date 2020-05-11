@@ -49,6 +49,18 @@ public class UserCouponController {
     //    AllMerchantCouponEntitiesList.add(AllMerchantCouponEntities);
         AllMerchantCouponEntities.removeAll(merchantCouponEntities);
         */
+        //List<MerchantCouponEntity> AllMerchantCouponEntities = userCouponService.selectBymartId(martId);
+        if (userId==null){
+            List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
+            //   List merchantCouponEntitiesList = new ArrayList();
+            //   merchantCouponEntitiesList.add(merchantCouponEntities);
+
+            //  List AllMerchantCouponEntitiesList = new ArrayList();
+            //    AllMerchantCouponEntitiesList.add(AllMerchantCouponEntities);
+
+            AllMerchantCouponEntities.removeAll(merchantCouponEntities);
+
+        }
           return new Result().ok(AllMerchantCouponEntities);
     }
     @PostMapping("/addCoupon")
@@ -80,7 +92,6 @@ public class UserCouponController {
 
 
     }
-
 
     @GetMapping("/selectCoupon")
     @ApiOperation("查询用户可使用的优惠表")

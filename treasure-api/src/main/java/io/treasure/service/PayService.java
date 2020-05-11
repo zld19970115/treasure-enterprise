@@ -1,7 +1,6 @@
 package io.treasure.service;
 
 import io.treasure.common.utils.Result;
-import io.treasure.entity.ClientUserEntity;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 public interface PayService {
 
     Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no);
-
+    Map<String, String> cashWxNotify(BigDecimal total_amount, String out_trade_no);
     Result aliRefund(String orderNo, String refund_fee, Long goodId);
 
     Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no);
@@ -33,4 +32,5 @@ public interface PayService {
     Result refundByGood(String orderId, String refund_fee,Long goodId);
 
     Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no);
+    Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no);
 }

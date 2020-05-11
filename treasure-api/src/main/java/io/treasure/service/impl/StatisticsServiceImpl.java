@@ -1,5 +1,6 @@
 package io.treasure.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -245,7 +246,22 @@ public class StatisticsServiceImpl
 
     @Override
     public List<VisualizationRoomVo> getVisualizationRoom(Map<String, Object> map) {
-        return baseDao.getVisualizationRoom(map);
+        List list = baseDao.getVisualizationRoom(map);
+        list.addAll(baseDao.selectRoomAllByMid(map));
+        return list;
+
+    }
+
+    @Override
+    public PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<DaysTogetherPageDTO> page = (Page) baseDao.daysTogetherPage(params);
+        return new PageData<DaysTogetherPageDTO>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params) {
+        return baseDao.daysTogetherStat(params);
     }
 
 }

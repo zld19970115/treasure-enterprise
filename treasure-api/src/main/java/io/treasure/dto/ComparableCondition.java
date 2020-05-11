@@ -1,7 +1,6 @@
 package io.treasure.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 

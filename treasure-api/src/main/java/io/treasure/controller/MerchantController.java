@@ -434,7 +434,7 @@ public class MerchantController {
         map.setCurrent(index);
         map.setSize(itemNum);
         IPage<MerchantEntity> merchantEntityIPage = merchantDao.selectPage(map, mweqw);
-
+        
         //汇总
         if(merchantEntityIPage == null)
             return null;

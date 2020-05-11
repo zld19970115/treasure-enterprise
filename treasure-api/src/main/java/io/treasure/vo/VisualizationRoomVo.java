@@ -9,6 +9,26 @@ import lombok.Setter;
 @ApiModel("查询可视化包房VO")
 public class VisualizationRoomVo {
 
+    private Long id;
+
+    private Long oneCid;
+
+    private Long twoCid;
+
+    private Long threeCid;
+
+    private Long fourCid;
+
+    private int type;
+
+    private Long oneCreator;
+
+    private Long twoCreator;
+
+    private Long threeCreator;
+
+    private Long fourCreator;
+
     private String roomName;
 
     private String icon;
@@ -32,5 +52,7 @@ public class VisualizationRoomVo {
     private Integer threeState;
 
     private Integer fourState;
+
+    private Integer flag = 0;
 
 }

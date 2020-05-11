@@ -337,6 +337,27 @@
         ctm.not_cash as notCash,
         ctm.wart_cash as wartCash,
         ctm.point_money as pointMoney,
+        IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 1
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0)
+        AS wxTotal,
+        IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 2
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0) AS aliTotald,
         (
         SELECT
         COUNT(ctmo.id)
@@ -405,6 +426,9 @@
 
     <select id="getVisualizationRoom" resultType="io.treasure.vo.VisualizationRoomVo">
         SELECT
+            room.id,
+            ct.type,
+            ct.creator,
             room.`name` as roomName,
             room.icon,
             room.num_low as numLow,
@@ -438,7 +462,59 @@
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 4
                 and ct2.room_id = ct.room_id
-            ) as fourState
+            ) as fourState,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 1
+                and ct2.room_id = ct.room_id
+            ) as oneCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 2
+                and ct2.room_id = ct.room_id
+            ) as twoCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 3
+                and ct2.room_id = ct.room_id
+            ) as threeCreator,
+            (
+                select ct2.creator from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 4
+                and ct2.room_id = ct.room_id
+            ) as fourCreator,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 1
+                and ct2.room_id = ct.room_id
+            ) as oneCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where
+                date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 2
+                and ct2.room_id = ct.room_id
+            ) as twoCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 3
+                and ct2.room_id = ct.room_id
+            ) as threeCid,
+            (
+                select ct2.id from ct_merchant_room_params_set ct2
+                where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
+                and ct2.room_params_id = 4
+                and ct2.room_id = ct.room_id
+            ) as fourCid
         from
             ct_merchant_room_params_set ct
         LEFT JOIN
@@ -446,11 +522,71 @@
         where
             ct.merchant_id = #{merchantId}
             and ct.`status` != 9
+            and room.`status` != 9
             and date_format(ct.use_date, '%Y-%m-%d') = #{time}
         GROUP BY
             ct.room_id
         ORDER BY
 	        ct.create_date
+    </select>
+
+    <select id="selectRoomAllByMid" resultType="io.treasure.vo.VisualizationRoomVo">
+        select
+        room.id,
+        room.type,
+        room.`name` as roomName,
+        room.icon,
+        room.num_low as numLow,
+        room.num_high as numHigh,
+        1 as flag
+        from ct_merchant_room room
+        where room.`status` != 9 and room.merchant_id = #{merchantId} and
+        room.id not in (select DISTINCT ct.room_id from ct_merchant_room_params_set ct where ct.merchant_id = #{merchantId})
+    </select>
+
+    <select id="daysTogetherPage" resultType="io.treasure.dto.DaysTogetherPageDTO">
+        SELECT coalesce(id,9999) id,pay_date as payDate,merchant_id as merchantId,pay_type as payType,sum(order_total) as orderTotal,
+        sum(service_chanrge) as serviceChanrge,sum(merchant_proceeds) as merchantProceeds,sum(platform_brokerage) as platformBrokerage,
+        sum(reality_money) as realityMoney,sum(merchant_discount_amount) as merchantDiscount_amount,sum(gift_money) as giftMoney
+        from ct_days_together where 1=1
+        <if test="startDate != null and startDate.trim() != ''">
+            and pay_date >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[and pay_date <= #{endDate}]]>
+        </if>
+        <if test="payType != null and payType.trim() != ''">
+            and pay_type = #{payType}
+        </if>
+        group by id WITH ROLLUP
+    </select>
+
+    <select id="daysTogetherStat" resultType="io.treasure.vo.DaysTogetherStatisticsVo">
+        SELECT
+        sum(case pay_type when 1 then 1 else 0 end) as banalceCount,
+        sum(case pay_type when 2 then 1 else 0 end) as alipayCount,
+        sum(case pay_type when 3 then 1 else 0 end) as wxpayCount,
+        sum(case pay_type when 4 then 1 else 0 end) as bankcardCount,
+        sum(order_total) AS orderTotal,
+        sum(service_chanrge) AS serviceChanrge,
+        sum(merchant_proceeds) AS merchantProceeds,
+        sum(platform_brokerage) AS platformBrokerage,
+        sum(reality_money) AS realityMoney,
+        sum(merchant_discount_amount) AS merchantDiscountAmount,
+        sum(gift_money) AS giftMoney
+        FROM
+        ct_days_together
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                and pay_date >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[and pay_date <= #{endDate}]]>
+            </if>
+            <if test="payType != null and payType.trim() != ''">
+                and pay_type = #{payType}
+            </if>
+        </where>
     </select>
 
 </mapper>

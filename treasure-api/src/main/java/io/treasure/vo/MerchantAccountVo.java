@@ -37,4 +37,10 @@ public class MerchantAccountVo {
     @ApiModelProperty(value = "销量")
     private Integer count;
 
+    @ApiModelProperty(value = "微信总提现金额")
+    private BigDecimal wxTotal;
+
+    @ApiModelProperty(value = "支付宝总提现金额")
+    private BigDecimal aliTotald;
+
 }

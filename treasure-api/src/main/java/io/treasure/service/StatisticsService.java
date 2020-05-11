@@ -6,6 +6,8 @@ import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,4 +35,6 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     BigDecimal getCompletaOrder(Map<String, Object> params);
     PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
     List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
+    PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
+    DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
 }
