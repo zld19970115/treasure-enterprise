@@ -28,7 +28,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -865,8 +864,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderEntity.setStatus(1);
                 slaveOrderService.insert(slaveOrderEntity);
             }
-//        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
-//            boolean b=slaveOrderService.insertBatch(dtoList);
+//          List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
+//          boolean b=slaveOrderService.insertBatch(dtoList);
             MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantDTO.getMobile(), smsConfig);
         }
@@ -1108,7 +1107,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //==================================================================================
     //==================================================================================
 
-
     //chiguoqiang:优惠补差子程序(排序并补差),正常值放大100倍
     public List<calculationAmountDTO> patchDifferences(int patchValue, List<calculationAmountDTO> slaveOrders){
 
@@ -1136,12 +1134,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             for(int i=0;i<patchValue;i++){
 
                 calculationAmountDTO item = slaveOrders.get(i);
-                if(item.getQuantity().compareTo(new BigDecimal("1"))== 0){
-                    item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));//使用赠送金后的价格
-                }
+                item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN))//使用赠送金后的价格
+                        .setTotalMoney(item.getTotalMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN))
+                        .setFreeGold(item.getFreeGold().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //项赠送金使用量//赠送金是项单价还是项总价，目前按项总价取差值
 
-                item.setTotalMoney(item.getTotalMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN))
-                        .setFreeGold(item.getFreeGold().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));    //项赠送金使用量//赠送金是项单价还是项总价，目前按项总价取差值
             }
 
         }else if(tmp.equals(ComparableCondition.SortRule.getPlatformBrokerage.name())){
@@ -1168,6 +1164,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         ORIGIN_PRICE;       //默认不扣减
     }
 
+
     //chiguoqiang:生成主体部分与小数标记部分
     public String generateDecimalPart(String target){
         String tmp = target;
@@ -1176,6 +1173,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }else{
             tmp = 0+"";
         }
+        if(tmp.length()==0)
+            tmp = "0";
         if(tmp.equals("00")){
             tmp = 0+"";
         }
@@ -1252,6 +1251,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 for(int i = 0; i < slaveOrders.size(); i++){
                     calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
+                    //优惠后的价格
                     //newPrice(优惠后单项总价) = (priceAfterDiscount/priceTotal)*itemPrice*quantity
                     BigDecimal totalItemDiscount = priceAfterDiscount.multiply(slaveOrderItem.getPrice()).multiply(slaveOrderItem.getQuantity()).setScale(2,BigDecimal.ROUND_DOWN);
                     totalItemDiscount = totalItemDiscount.divide(priceTotal,4,BigDecimal.ROUND_DOWN);
@@ -1268,9 +1268,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                             .setNewPrice(newPrice.setScale(2,BigDecimal.ROUND_DOWN))//优惠后的项单价
                             .setTotalMoney(totalItemDiscount.setScale(2,BigDecimal.ROUND_DOWN))    //优惠后的项总价
                             .setDiscountsMoney(discountsMoney.setScale(2,BigDecimal.ROUND_DOWN))   //优惠金额=(原项总价-优惠后的项总价)
-
-                            .setFranctionPart(new BigDecimal(generateDecimalPart(totalItemDiscount+"")))
                             .setFieldName(ComparableCondition.SortRule.getDiscountsMoney);//使用优惠券进行排序
+
+                    slaveOrderItem.setFractionPart(new BigDecimal(generateDecimalPart(totalItemDiscount+"")));
 
                     diferencedDiscountPatch = diferencedDiscountPatch.subtract(discountsMoney);
                     slaveOrders.set(i,slaveOrderItem);
@@ -1303,7 +1303,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if (giftValue.compareTo(userOwnerGiftValue) >=0) {
                         giftValue = userOwnerGiftValue;
                     }
-
                     //初始化差值
                     BigDecimal differenceGift = giftValue;
 
@@ -1315,6 +1314,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         //单项赠送金的值 (totalMoney/priceAfterDiscount)*giftValue
                         BigDecimal itemGiftValue = slaveOrderItem.getTotalMoney().multiply(giftValue).setScale(4,BigDecimal.ROUND_DOWN);
                         itemGiftValue = itemGiftValue.divide(priceAfterDiscount,4,BigDecimal.ROUND_DOWN);
+
                         //单项优惠赠送金优惠后的价格
                         BigDecimal itemPriceTotalAfterGift = slaveOrderItem.getTotalMoney().subtract(itemGiftValue).setScale(2,BigDecimal.ROUND_DOWN);
                         BigDecimal newPriceAfterGift = itemPriceTotalAfterGift.divide(slaveOrderItem.getQuantity(),2,BigDecimal.ROUND_DOWN);
@@ -1324,9 +1324,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                                 .setNewPrice(newPriceAfterGift.setScale(2,BigDecimal.ROUND_DOWN))//使用赠送金后的价格
                                 .setTotalMoney(payMoney.setScale(2,BigDecimal.ROUND_DOWN))
                                 .setFreeGold(itemGiftValue.setScale(2,BigDecimal.ROUND_DOWN))    //项赠送金使用量
-
-                                .setFranctionPart(new BigDecimal(generateDecimalPart(itemGiftValue+"")))
-                                .setFieldName(ComparableCondition.SortRule.getFreeGold);           //排序方式设置
+                                .setFieldName(ComparableCondition.SortRule.getFreeGold);                   //排序方式设置
+                          slaveOrderItem.setFractionPart(new BigDecimal(generateDecimalPart(itemGiftValue+"")));
 
                         //差值累计---待复核 ??
                         differenceGift = differenceGift.subtract(itemGiftValue.setScale(2,BigDecimal.ROUND_DOWN)).setScale(2,BigDecimal.ROUND_DOWN);
@@ -1375,8 +1374,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             slaveOrderItem
                     .setMerchantProceeds(itemIncomeMerchant.setScale(2,BigDecimal.ROUND_DOWN))        //商家收入
                     .setPlatformBrokerage(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN))      //平台收入
-                    .setFranctionPart(new BigDecimal(generateDecimalPart(slaveOrderItem.getTotalItemDiscount()+"")))
                     .setFieldName(ComparableCondition.SortRule.getPlatformBrokerage);
+             slaveOrderItem.setFractionPart(new BigDecimal(generateDecimalPart(slaveOrderItem.getTotalItemDiscount()+"")));
 
             slaveOrders.set(i,slaveOrderItem);
 

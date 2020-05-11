@@ -21,6 +21,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * 权限(Token)验证
@@ -64,6 +65,10 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if(tokenEntity == null || tokenEntity.getExpireDate().getTime() < System.currentTimeMillis()){
             throw new RenException(ErrorCode.TOKEN_INVALID);
         }
+
+        Long longDate = new Date().getTime();
+        tokenEntity.setExpireDate(new Date(longDate+7*24*60*60*1000));
+        tokenService.updateById(tokenEntity);
 
         //设置userId到request里，后续根据userId，获取用户信息
         request.setAttribute(USER_KEY, tokenEntity.getUserId());

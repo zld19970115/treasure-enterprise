@@ -28,6 +28,19 @@ public class UserCouponController {
     @ApiOperation("查询商家可领取优惠卷")
     public  Result selectMartCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId){
 
+        List<MerchantCouponEntity> AllMerchantCouponEntities = userCouponService.selectBymartId(martId);
+        if (userId==null ){
+            List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
+            //   List merchantCouponEntitiesList = new ArrayList();
+            //   merchantCouponEntitiesList.add(merchantCouponEntities);
+
+            //  List AllMerchantCouponEntitiesList = new ArrayList();
+            //    AllMerchantCouponEntitiesList.add(AllMerchantCouponEntities);
+
+            AllMerchantCouponEntities.removeAll(merchantCouponEntities);
+
+        }
+        /*
         List<MerchantCouponEntity> merchantCouponEntities = userCouponService.selectMartCoupon(userId, martId);
      //   List merchantCouponEntitiesList = new ArrayList();
      //   merchantCouponEntitiesList.add(merchantCouponEntities);
@@ -35,7 +48,7 @@ public class UserCouponController {
       //  List AllMerchantCouponEntitiesList = new ArrayList();
     //    AllMerchantCouponEntitiesList.add(AllMerchantCouponEntities);
         AllMerchantCouponEntities.removeAll(merchantCouponEntities);
-
+        */
           return new Result().ok(AllMerchantCouponEntities);
     }
     @PostMapping("/addCoupon")

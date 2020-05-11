@@ -17,10 +17,7 @@ import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.SlaveOrderEntity;
-import io.treasure.entity.StimmeEntity;
+import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
@@ -89,6 +86,7 @@ public class PayServiceImpl implements PayService {
     @Autowired
     private SMSConfig smsConfig;
 
+    //本方法与107一致与248不同，不要调换
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
@@ -99,7 +97,6 @@ public class PayServiceImpl implements PayService {
 ////            mapRtn.put("return_code", "SUCCESS");
 ////            return mapRtn;
 ////        }
-
         if(masterOrderEntity==null||"".equals(masterOrderEntity)){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
@@ -112,46 +109,42 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
-        //db option flag 1
+        //超时订单
         if(masterOrderEntity.getStatus()==Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
             if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId()>0){
                 merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_YEA.getType());
             }
         }
         /****************************************************************************************/
-        try{
             if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
                 System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
-                throw new Exception("wx_pay_fail:code01");
+                //throw new Exception("wx_pay_fail:code01");
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
+                return mapRtn;
             }
-
-        }catch(Exception e){
-            mapRtn.put("return_code", "FAIL");
-            mapRtn.put("return_msg", "支付失败！请联系管理员！【支付金额不一致】");
-            return mapRtn;
-
-        }
-        try{
             if(masterOrderEntity==null){
                 System.out.println("微信支付：支付失败！请联系管理员！【未找到订单】");
-                throw new Exception("wx_pay_fail:code02");
+                //throw new Exception("wx_pay_fail:code02");
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
+                return mapRtn;
             }
-        }catch(Exception e){
-            mapRtn.put("return_code", "FAIL");
-            mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单】");
-            return mapRtn;
-        }
         /****************************************************************************************/
+        if(masterOrderEntity.getStatus()==1){
+            masterOrderEntity.setStatus(4);//Constants.OrderStatus.PAYORDER.getValue());
+            masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+            masterOrderEntity.setPayDate(new Date());
+            System.out.println("wxNotify03-0==============更新主单状态");
+            masterOrderDao.updateById(masterOrderEntity);
+            System.out.println("wxNotify03-1==============更新主单状态"+masterOrderEntity.getStatus());
+            //Long creator = masterOrderEntity.getCreator();
+        }
         if(masterOrderEntity.getStatus()!=1){
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
-        masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-        masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
-        masterOrderEntity.setPayDate(new Date());
-        masterOrderDao.updateById(masterOrderEntity);
-        Long creator = masterOrderEntity.getCreator();
 
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
         //System.out.println("position 5 : "+slaveOrderEntities.toString());
@@ -160,16 +153,19 @@ public class PayServiceImpl implements PayService {
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
             a = a.add(slaveOrderEntity.getFreeGold());
         }
-        ClientUserEntity clientUserEntity = clientUserService.selectById(creator);
+        ClientUserEntity clientUserEntity = clientUserService.selectById(masterOrderEntity.getCreator());
         //System.out.println("position 6 : "+clientUserEntity.toString());
         BigDecimal gift = clientUserEntity.getGift();
-        System.out.println("wxNotify03==============gift+"+gift);
-        gift=gift.subtract(a);
+        System.out.println("wxNotify03==============代付金："+gift);
+        gift=gift.subtract(a).setScale(2,BigDecimal.ROUND_DOWN);
         clientUserEntity.setGift(gift);
-        System.out.println("wxNotify04==============gift+"+gift);
+        //clientUserEntity.setGiftAnotherWay(gift);
+        System.out.println("wxNotify04==============当前用户的代付金为："+clientUserEntity.getGift());
         clientUserService.updateById(clientUserEntity);
+        System.out.println("wxNotify05==============");
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
+        System.out.println("wxNotify06==============");
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
         //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
@@ -177,14 +173,10 @@ public class PayServiceImpl implements PayService {
             //System.out.println("position 2 : "+slaveOrderEntitys);
             /****************************************************************************************/
             if(slaveOrderEntitys==null){
-                try{
                     System.out.println("支付失败！请联系管理员！【未找到订单菜品】");
-                    throw new Exception("wx_pay_fail:code03");
-                }catch(Exception e) {
                     mapRtn.put("return_code", "FAIL");
                     mapRtn.put("return_msg", "支付失败！请联系管理员！【未找到订单菜品】");
                     return mapRtn;
-                }
             }else{
                 slaveOrderEntitys.forEach(slaveOrderEntity -> {
                     slaveOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
@@ -192,14 +184,10 @@ public class PayServiceImpl implements PayService {
                 boolean b=slaveOrderService.updateBatchById(slaveOrderEntitys);
 
                 if(!b){
-                    try{
-                        System.out.println("支付失败！请联系管理员！【更新菜品】");
-                        throw new Exception("wx_pay_fail:code04");
-                    }catch(Exception e){
-                        mapRtn.put("return_code", "FAIL");
-                        mapRtn.put("return_msg", "支付失败！请联系管理员！【更新菜品】");
-                        return mapRtn;
-                    }
+                    System.out.println("支付失败！请联系管理员！【更新菜品】");
+                    mapRtn.put("return_code", "FAIL");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【更新菜品】");
+                    return mapRtn;
                 }
             }
         }
@@ -223,35 +211,24 @@ public class PayServiceImpl implements PayService {
                     stimmeService.insert(stimmeEntity);
                 }else{
 
-                    try{
-                        System.out.println("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                        throw new Exception("wx_pay_fail:code05");
-                    }catch (Exception e){
-                        mapRtn.put("return_code", "FAIL");
-                        mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                        return mapRtn;
-                    }
-                }
-            }else{
-
-                try{
-                    System.out.println("支付失败！请联系管理员！【无法获取商户会员信息】");
-                    throw new Exception("wx_pay_fail:code06");
-                }catch (Exception e){
+                    System.out.println("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
                     mapRtn.put("return_code", "FAIL");
-                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
                     return mapRtn;
                 }
+            }else{
+                System.out.println("支付失败！请联系管理员！【无法获取商户会员信息】");
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+                return mapRtn;
+
             }
         }else{
-            try{
-                System.out.println("支付失败！请联系管理员！【无法获取商户信息】");
-                throw new Exception("wx_pay_fail:code07");
-            }catch (Exception e){
-                mapRtn.put("return_code", "FAIL");
-                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
-                return mapRtn;
-            }
+
+            System.out.println("支付失败！请联系管理员！【无法获取商户信息】");
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
+            return mapRtn;
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
@@ -259,6 +236,7 @@ public class PayServiceImpl implements PayService {
         if(null != merchantDto.getMobile()){
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -347,7 +325,7 @@ public class PayServiceImpl implements PayService {
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
 
 
-//                    //返还赠送金
+//                    //返还赠送金--重复
 //                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 //                    ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
 //                    BigDecimal gift = clientUser.getGift();
@@ -367,7 +345,7 @@ public class PayServiceImpl implements PayService {
                     }
                 }
 
-//                    //返还赠送金
+//                    //返还赠送金--重复
 //                    ClientUserEntity clientUser = clientUserService.getClientUser(masterOrderEntity.getCreator());
 //                    BigDecimal gift = clientUser.getGift();
 //                    clientUser.setGift(gift.add(masterOrderEntity.getGiftMoney()));
@@ -594,12 +572,11 @@ public class PayServiceImpl implements PayService {
     public Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no){
 
         Map<String, String> mapRtn = new HashMap<>(2);
-        System.out.println("position==========0"+ total_amount+","+out_trade_no);
         //0、检查单号是否存在
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
         System.out.println("position==========0"+masterOrderEntity.toString());
         if(masterOrderEntity == null){
-            System.out.println("position==========1");
+            System.out.println("position=1:主单不存在，无法完成后续处理");
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "主单不存在，无法完成后续处理");
             return mapRtn;
@@ -618,7 +595,7 @@ public class PayServiceImpl implements PayService {
             masterOrderDao.updateById(masterOrderEntity);
 
         }else{
-            System.out.println("position==========4");
+            System.out.println("position4:return_code==>SUCCESS");
             mapRtn.put("return_code", "SUCCESS");               //代表此单已经支付完成了，不需要进行二次支付
             mapRtn.put("return_msg", "OK");
             return mapRtn;
@@ -628,14 +605,9 @@ public class PayServiceImpl implements PayService {
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             //List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(orderId);//应该包含从单
             System.out.println("position==========5");
-            try{
-                System.out.println("position==========6");
-                //没有从单
-                if(slaveOrderService.selectCountOfNoPayOrderByOrderId(out_trade_no)==0)
-                    throw new Exception("无法获取从单需更新的支付信息，支付失败");
-            }catch(Exception e){
-
-                System.out.println("position==========7");
+            //没有从单
+            if(slaveOrderService.selectCountOfNoPayOrderByOrderId(out_trade_no)==0){
+                System.out.println("无法获取从单需更新的支付信息，支付失败");
                 mapRtn.put("return_code", "FAIL");
                 mapRtn.put("return_msg", "无法获取从单需更新的支付信息，支付失败");
                 return mapRtn;
@@ -647,48 +619,55 @@ public class PayServiceImpl implements PayService {
             //3、扣除花费的赠送金
             BigDecimal totalFreeGold= slaveOrderService.getTotalFreeGoldByMasterOrderId(masterOrderEntity.getOrderId());
             if(totalFreeGold.compareTo(new BigDecimal("0"))>0){
-                System.out.println("position==========9");
-                //注意此处是否会报错，特别注意
-                clientUserService.subtractGiftByMasterOrderCreate(clientId,totalFreeGold.toString());
-                //更新赠送金消费记录(clientUserId,当前时间，赠送金余额【有点麻烦】，花费的数量)
-                recordGiftService.insertRecordGift2( masterOrderEntity.getCreator(),new Date(), clientUserService.selectById(clientId).getGift(),totalFreeGold);
+                System.out.println("position:9==>更新赠送金记录  。。。 。。。"+totalFreeGold);
+
+                //更新用户赠送金数量
+                ClientUserEntity clientUserEntity = clientUserService.selectById(masterOrderEntity.getCreator());
+                //System.out.println("position 6 : "+clientUserEntity.toString());
+                BigDecimal gift = clientUserEntity.getGift();
+                System.out.println("aliNotify03==============代付金："+gift);
+                gift=gift.subtract(totalFreeGold).setScale(2,BigDecimal.ROUND_DOWN);
+                clientUserEntity.setGift(gift);
+                //clientUserEntity.setGiftAnotherWay(gift);
+                System.out.println("aliNotify04==============当前用户的代付金为："+clientUserEntity.getGift());
+                clientUserService.updateById(clientUserEntity);
+                System.out.println("aliNotify05=======用户id"+clientUserEntity.getId());
+                //本语句不执行 。。。 。。。
+                recordGiftService.insertRecordGift2(clientUserEntity.getId(),new Date(),gift,totalFreeGold);
+//                RecordGiftEntity recordGiftEntity = new  RecordGiftEntity();
+//                recordGiftEntity.setCreateDate(new Date());
+//                recordGiftEntity.setBalanceGift(gift);
+//                recordGiftEntity.setUseGift(totalFreeGold);
+//                recordGiftEntity.setUserId(clientUserEntity.getId());
+//                recordGiftEntity.setCreator(clientUserEntity.getId());
+//                recordGiftService.insert(recordGiftEntity);
+
+                System.out.println("aliNotify06==============");
             }
         }
 
         //4-1、检查商户信息
         MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
-        try{
-            System.out.println("position==========10"+merchantDto.toString());
-            if(merchantDto == null) throw new Exception("支付失败！请联系管理员！【无法获取商户信息】");
-        }catch(Exception e){
-            System.out.println("position==========11");
+
+        if(merchantDto == null){
             mapRtn.put("return_code", "FAIL");
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
-            System.out.println("exec004");
+            System.out.println("支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
-
         //4-2、检查商户会员信息
         MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
-
         if(userDto == null){
-            try{
-                System.out.println("position==========12");
-                throw new Exception("支付失败！请联系管理员！【无法获取商户会员信息】");
-            }catch(Exception e){
-                System.out.println("position==========13");
-                mapRtn.put("return_code", "FAIL");
-                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
-
-                return mapRtn;
-            }
+            System.out.println("position===支付失败！请联系管理员！【无法获取商户会员信息】");
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+            return mapRtn;
 
         }else{
-
             System.out.println("position==========14");
             //4-3、发消息给商户会员
             if(StringUtils.isNotBlank(userDto.getClientId())){
-                System.out.println("position==========15");
+                System.out.println("position:15=发送消息=>您有新的订单，请注意查收！");
                 AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
 
                 StimmeEntity stimmeEntity = new StimmeEntity();
@@ -703,31 +682,25 @@ public class PayServiceImpl implements PayService {
 
             }else{
 
-                System.out.println("position==========17");
-                try{
-                    throw new Exception("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                }catch(Exception e){
-                    System.out.println("position==========18");
-                    mapRtn.put("return_code", "FAIL");
-                    mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                    return mapRtn;
-
-                }
-
+                System.out.println("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                mapRtn.put("return_code", "FAIL");
+                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+                return mapRtn;
             }
         }
-        System.out.println("position==========19");
+        System.out.println("position:17==>SUCCESS");
 /*
         //4-4、发消息 新订单
         if(null != merchantDto.getMobile()){
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
-
  */
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
     }
+
+    //本方法与107一致与248不同，不要调换
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no) {

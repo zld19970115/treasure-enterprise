@@ -8,9 +8,10 @@
         ( default ,#{userId},#{useGift},#{balanceGift},0,#{date},#{userId});
     </insert>
 
+<!--    测试：移出部分字段 id , default ,-->
     <insert id="insertRecordGift2">
-        insert into ct_record_gift (id ,userId,use_gift,balance_gift,status,create_date,creator )
+        insert into ct_record_gift (userId,use_gift,balance_gift,status,create_date,creator )
          VALUES
-        ( default ,#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
+        (#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
     </insert>
 </mapper>

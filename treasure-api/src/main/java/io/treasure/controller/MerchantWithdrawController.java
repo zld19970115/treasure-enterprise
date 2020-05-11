@@ -320,68 +320,8 @@ public class MerchantWithdrawController {
     @ApiOperation("查询可提现状态")
     public Result selectWithStatus(){
         String s = merchantWithdrawService.selectWithStatus();
-
         return new Result().ok(s);
     }
 
-    /**
-     * 根据 条件查询所有提现信息列表
-     * @return
-     */
-    @CrossOrigin
-    @Login
-    @GetMapping("/list")
-    @ResponseBody
-    public String requireItems(@RequestParam(name ="merchantId",defaultValue="",required = false) long merchantId,
-                               @RequestParam(name = "startTime",defaultValue="",required = false)Date startTime,
-                               @RequestParam(name ="stopTime",defaultValue="",required = false)Date stopTime,
-                               @RequestParam(name="type",defaultValue = "",required = false)int type,
-                               @RequestParam(name="index",defaultValue = "",required = false)int index,
-                               @RequestParam(name="itemNum",defaultValue = "",required = false)int itemNum){
-
-        Gson gson = new Gson();
-        List<MerchantWithdrawEntity> entities = merchantWithdrawService.selectByObject(generalQueryWithdrawDto(merchantId,startTime,stopTime,type,index,itemNum));
-        if(entities != null)
-            return gson.toJson(entities);
-        return "没有内容";
-
-    }
-
-    /**
-     * 根据 条件汇总提现金额
-     * @return
-     */
-    @CrossOrigin
-    @Login
-    @GetMapping("/money")
-    @ResponseBody
-    public String requireAmount(@RequestParam(name ="merchantId",defaultValue="",required = false) long merchantId,
-                                @RequestParam(name = "startTime",defaultValue="",required = false)Date startTime,
-                                @RequestParam(name ="stopTime",defaultValue="",required = false)Date stopTime,
-                                @RequestParam(name="type",defaultValue = "",required = false)int type,
-                                @RequestParam(name="index",defaultValue = "",required = false)int index,
-                                @RequestParam(name="itemNum",defaultValue = "",required = false)int itemNum){
-
-        Gson gson = new Gson();
-        List<MerchantWithdrawEntity> entities = merchantWithdrawService.selectByObject(generalQueryWithdrawDto(merchantId,startTime,stopTime,type,index,itemNum));
-        if(entities != null)
-            return gson.toJson(entities);
-        return "没有内容";
-    }
-
-    public QueryWithdrawDto generalQueryWithdrawDto(long merchantId,Date startTime,Date stopTime,int type,int index,int itemNum){
-        QueryWithdrawDto queryWithdrawDto = new QueryWithdrawDto();
-        if(merchantId>=1000000000000000000L)
-            queryWithdrawDto.setMerchantId(merchantId);
-        if(startTime != null)
-            queryWithdrawDto.setStartTime(startTime);
-        if(stopTime != null)
-            queryWithdrawDto.setStopTime(stopTime);
-        if(type >0 && type <=4)         //分组方式
-            queryWithdrawDto.setType(type);
-        //分页
-
-        return queryWithdrawDto;
-    }
 
 }

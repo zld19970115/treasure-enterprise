@@ -65,5 +65,45 @@
         UPDATE `ct_client_user` SET `unionid` = #{openId} where mobile=#{mobile}
     </update>
 
+<select id="selectListByCondition" resultType="io.treasure.entity.ClientUserEntity" parameterType="io.treasure.dto.QueryClientUserDto">
+    select * from ct_client_user
+    <where>
+        <if test="integral != null and integral !=''">
+            and integral>= #{integral}
+        </if>
+
+        <if test="coin != null and coin !=''">
+            and coin >= #{coin}
+        </if>
+
+        <if test="gift != null and gift !=''">
+            and gift >= #{gift}
+        </if>
+        <if test="level != null and level != ''">
+            and level >= #{level}
+        </if>
+
+        <choose>
+            <when test="createDateConditionType == 0">
+                <if test="startTime != null and startTime != ''">
+                    and DATE_FORMAT(create_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                </if>
+                <if test="stopTime != null and stopTime != ''">
+                    and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(create_date,'%Y %m %d %T')
+                </if>
+            </when>
+            <otherwise>
+                <if test="startTime != null and startTime != ''">
+                    and DATE_FORMAT(create_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                </if>
+                <if test="stopTime != null and stopTime != ''">
+                    and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(create_date,'%Y %m %d')
+                </if>
+            </otherwise>
+        </choose>
+    </where>
+
+</select>
+
 
 </mapper>

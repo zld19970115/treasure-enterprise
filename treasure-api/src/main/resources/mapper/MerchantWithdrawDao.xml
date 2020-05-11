@@ -84,20 +84,33 @@ select param_value from sys_params where id=1144988823431553026
          SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state = 1
 
     </select>
-<!--    查询列表-->
+<!--    根据商户id(有，无)时间范围(时分秒)，时间方式，精确，精确到天为2,按支付方式进行查询-->
     <select id="selectByObject" resultType="io.treasure.entity.MerchantWithdrawEntity" parameterType="io.treasure.dto.QueryWithdrawDto">
-        select * from ct_merchant_withdarw
+        select * from ct_merchant_withdraw
 
         <where>
             <if test="merchantId != null and merchantId !=''">
                 and merchant_id = #{merchantId}
             </if>
-            <if test="startTime != null and startTime != ''">
-                and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
-            </if>
-            <if test="stopTime != null and stopTime != ''">
-                and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
-            </if>
+
+            <choose>
+                <when test="queryType != null and queryType != ''">
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+                    </if>
+                </when>
+                <otherwise>
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(update_date,'%Y %m %d')
+                    </if>
+                </otherwise>
+            </choose>
             <if test="type != null and type != ''">
                 and type = #{type}
             </if>
@@ -106,18 +119,30 @@ select param_value from sys_params where id=1144988823431553026
     </select>
 <!--    分类汇总-->
     <select id="selectTotalByType" resultType="double" parameterType="io.treasure.dto.QueryWithdrawDto">
-        select sum(money) from ct_merchant_withdarw
+        select sum(money) from ct_merchant_withdraw
         <where>
-            <if test="merchantId != null and merchantId !=''">
+            <if test="merchantId != null and merchantId !=''and groupByType != 2">
                 and merchant_id = #{merchantId}
             </if>
-            <if test="startTime != null and startTime != ''">
-                and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
-            </if>
-            <if test="stopTime != null and stopTime != ''">
-                and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
-            </if>
-            <if test="type != null and type != ''">
+            <choose>
+                <when test="queryType != null and queryType != ''">
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+                    </if>
+                </when>
+                <otherwise>
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(update_date,'%Y %m %d')
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="type != null and type != ''and groupByType != 3">
                 and type = #{type}
             </if>
             <if test="verifyState != null and verifyState != ''">

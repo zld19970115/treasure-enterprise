@@ -68,17 +68,21 @@ public class calculationAmountDTO extends ComparableCondition implements Compara
      */
     private BigDecimal merchantProceeds;
 
-    @Override
-    public BigDecimal getFractionPart() {
-        return super.fractionPart;
-    }
-
-    public calculationAmountDTO setFranctionPart(BigDecimal franctionPart){
-        super.setFractionPart(fractionPart);
-        return this;
-    }
+//    public calculationAmountDTO updateFranctionPart(BigDecimal franctionPart){
+//        super.setFractionPart(fractionPart);
+//        return this;
+//    }
     public int compareField(calculationAmountDTO t){
         int res = 0;
+        if(this.getFractionPart().compareTo(t.getFractionPart())>0){
+            return -1;
+        }else if(this.getFractionPart().compareTo(t.getFractionPart())<0){
+            return 1;
+        }else{
+            return 0;
+        }
+        //return this.getFractionPart().compareTo(t.getFractionPart());
+        /*
         try{
             String methodName = this.getFieldName();
             Method cMethod = this.getClass().getDeclaredMethod(methodName);
@@ -98,7 +102,7 @@ public class calculationAmountDTO extends ComparableCondition implements Compara
         }catch(Exception e){
             e.printStackTrace();
             return res;
-        }
+        }*/
     }
 
     @Override

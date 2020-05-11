@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 public class ComparableCondition {
 
     @Getter
-    String fieldName = null;
+    String fieldName = "getMerchantProceeds";
 
-    BigDecimal totalItemDiscount = new BigDecimal(0);
+    BigDecimal totalItemDiscount = new BigDecimal("0");
 
-    BigDecimal fractionPart = new BigDecimal(0);
+    BigDecimal fractionPart = new BigDecimal("0");
 
     public enum SortRule{
         getFreeGold,//赠送金

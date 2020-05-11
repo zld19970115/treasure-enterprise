@@ -62,8 +62,8 @@ public class ApiAliAppPayController  {
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return new Result().error(-1,"非未支付订单，请选择未支付订单支付！");
         }
-        // 获取配置文件中支付宝相关信息(可以使用自己的方式获取)
 
+        // 获取配置文件中支付宝相关信息(可以使用自己的方式获取)
         String aliPayGateway = aliPayProperties.getGatewayUrl();
         String aliPayAppId = aliPayProperties.getAppid();
         String rsaPrivatKey = aliPayProperties.getAppPrivateKey();

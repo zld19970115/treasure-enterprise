@@ -94,24 +94,40 @@ public class ApiClientUserCollectController {
     @GetMapping("/yesOrNo")
     @ApiOperation("是否收藏")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "userId", value = "会员id", paramType = "query", required = false, dataType = "long"),
             @ApiImplicitParam(name = "martId", value = "商家id", paramType = "query", required = true, dataType = "long"),
-
     })
-    public Result yesOrNo(long userId,long martId){
+    public Result yesOrNo(Long userId,Long martId){
+
+        if(userId==null){
+            return new Result().ok("false");
+        }
+        ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
+        if (clientUserCollectDTO!=null){
+            Integer status = clientUserCollectDTO.getStatus();
+            Integer a = 1;
+            if (a.equals(status)){
+                return new Result().ok("true");
+            }else {
+                return new Result().ok("false");
+            }
+
+        }
+        return new Result().ok("false");
+        /*
         ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
         if (clientUserCollectDTO!=null){
         Integer status = clientUserCollectDTO.getStatus();
         Integer a = 1;
         if (a.equals(status)){
-    return new Result().ok("true");
-}else {
+            return new Result().ok("true");
+        }else {
             return new Result().ok("false");
         }
 
         }
         return new Result().ok("false");
-
+        */
 
     }
     @Login
