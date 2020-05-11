@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.MerchantCouponDTO;
 import io.treasure.dto.UserCouponDTO;
@@ -12,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户优惠卷表
@@ -24,6 +26,7 @@ import java.util.*;
 public class UserCouponController {
     @Autowired
     UserCouponServiceImpl userCouponService;
+    @Login
     @GetMapping("/selectMartCoupon")
     @ApiOperation("查询商家可领取优惠卷")
     public  Result selectMartCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId){
@@ -43,6 +46,7 @@ public class UserCouponController {
 
           return new Result().ok(AllMerchantCouponEntities);
     }
+    @Login
     @PostMapping("/addCoupon")
     @ApiOperation("用户领取商家优惠卷")
     public  Result addCoupon(@RequestBody UserCouponDTO dto){
@@ -73,7 +77,7 @@ public class UserCouponController {
 
     }
 
-
+    @Login
     @GetMapping("/selectCoupon")
     @ApiOperation("查询用户可使用的优惠表")
     public Result selectCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId,@RequestParam(value = "money")double money){
@@ -82,12 +86,14 @@ public class UserCouponController {
         return  new  Result().ok(list);
 
     }
+    @Login
     @GetMapping("/selectGift")
     @ApiOperation("查询用户赠送金")
     public Result selectGift(@RequestParam Long userId){
         BigDecimal gift = userCouponService.selectGift(userId);
         return  new  Result().ok(gift);
     }
+    @Login
     @GetMapping("/myCoupon")
     @ApiOperation("查询我的优惠卷")
 

@@ -1,31 +1,24 @@
 package io.treasure.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
-import io.treasure.dto.AppVersionDTO;
-import io.treasure.service.AppVersionService;
-
-
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
-
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
+import io.treasure.dto.AppVersionDTO;
+import io.treasure.service.AppVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
 
 
@@ -53,7 +46,6 @@ public class ApiAppVersionController {
     })
     public Result<PageData<AppVersionDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<AppVersionDTO> page = appVersionService.page(params);
-
         return new Result<PageData<AppVersionDTO>>().ok(page);
     }
 
@@ -107,11 +99,7 @@ public class ApiAppVersionController {
     public Result delete(@RequestBody Long[] ids){
         //效验数据
         AssertUtils.isArrayEmpty(ids, "id");
-
         appVersionService.delete(ids);
-
         return new Result();
     }
-    
-    
 }

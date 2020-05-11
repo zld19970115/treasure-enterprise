@@ -26,7 +26,7 @@ import java.util.List;
 public class UserCardController {
     @Autowired
     private UserCardServiceImpl userCardService;
-
+    @Login
     @GetMapping("/goCard")
     @ApiOperation("用户充值赠送金表")
     public Result selectMartCoupon(@RequestParam long userId, @RequestParam long id , @RequestParam String password){

@@ -625,6 +625,7 @@ public class PayServiceImpl implements PayService {
                 BigDecimal a=new BigDecimal("0");
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
+
                 return result.ok(true);
             }else{
                 masterOrderEntity.setRefundId(refundNo);

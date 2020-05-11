@@ -333,8 +333,7 @@ public class MerchantController {
     @ApiOperation("绑定商户微信")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string"),
-            @ApiImplicitParam(name = "wx_account_realname", value = "微信收款人真实姓名", paramType = "query", required = false, dataType = "string")
+            @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string")
     })
     public Result inserWX(@ApiIgnore @RequestParam Map<String, Object> params){
         String martId = (String) params.get("martId");
@@ -342,18 +341,33 @@ public class MerchantController {
         if (merchantEntity==null){
             return new Result().ok("没有该商户");
         }
-        if (StringUtils.isNotBlank(merchantEntity.getWxAccountOpenid())&&StringUtils.isNotBlank(merchantEntity.getWxAccountRealname())){
+        if (StringUtils.isNotBlank(merchantEntity.getWxAccountOpenid())){
             return new Result().ok("1");//已绑定微信
         }
         String wx_account_openid = (String) params.get("wx_account_openid");
-       String ali_account_realname = (String) params.get("ali_account_realname");
         if (wx_account_openid!=null){
             merchantEntity.setWxAccountOpenid(wx_account_openid);
-            merchantEntity.setWxAccountRealname(ali_account_realname);
             merchantService.updateById(merchantEntity);
             return new Result().ok("绑定成功");
         }
         return new Result().ok("0");//未绑定微信
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("deleltWX")
+    @ApiOperation("解除绑定商户微信")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string")
+    })
+    public Result deleltWX(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        if (merchantEntity==null){
+            return new Result().error("没有该商户");
+        }
+        merchantEntity.setWxAccountOpenid(null);
+        merchantService.updateById(merchantEntity);
+        return new Result().ok("解绑成功");//未绑定微信
     }
 
 
