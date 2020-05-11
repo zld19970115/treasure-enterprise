@@ -1,12 +1,15 @@
 package io.treasure.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.*;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Audit;
@@ -16,11 +19,13 @@ import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
+import io.treasure.vo.PagePlus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +46,8 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantUserService merchantUserService;
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
     //店铺分类
     @Autowired
     private CategoryService categoryService;
@@ -376,5 +383,80 @@ public class MerchantController {
     public Result<PageData<MerchantDTO>> sorting(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.merchantSortingPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+
+
+    /**
+     * 根据 条件查询所有提现信息列表
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("/list_sum")
+    @ApiOperation(value = "分类提现列表与汇总",tags = "按不同方式显示提现记录和汇总信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="id",value = "商户id",dataType = "long",defaultValue = "0",paramType = "query",required = false),
+            @ApiImplicitParam(name = "startTime",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="stopTime",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name="total_cash",value = "总收入大于",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="already_cash",value = "已提现",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="wart_cash",value = "审核中",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="not_cash",value = "未提现",dataType = "int",paramType = "query",required=false),
+            @ApiImplicitParam(name="index",value = "页码",dataType = "int",defaultValue = "1",paramType = "query",required = false),
+            @ApiImplicitParam(name="itemNum",value = "页数",dataType = "int",defaultValue = "10",paramType = "query",required = false)
+    })
+    public Result requireItems(Long id,Date startTime,Date stopTime,
+                               Integer total_cash,Integer already_cash,Integer wart_cash,Integer not_cash,Integer index,Integer itemNum) throws ParseException {
+
+        QueryWrapper<MerchantEntity> mweqw = new QueryWrapper<>();
+
+        if(id != null)
+            mweqw.eq("id",id);
+        if(startTime != null && stopTime != null){
+            mweqw.between("create_date",startTime,stopTime);
+        }else if(startTime != null){
+            mweqw.gt("create_date",startTime);//大于
+        }else if(stopTime != null){
+
+            mweqw.lt("create_date",stopTime);
+        }
+        if(total_cash != null)
+            mweqw.gt("total_cash",total_cash);
+        if(already_cash != null)
+            mweqw.gt("already_cash",already_cash);
+        if(wart_cash != null)
+            mweqw.gt("wart_cash",wart_cash);
+        if(not_cash !=  null)
+            mweqw.gt("not_cash",not_cash);
+
+
+        PagePlus<MerchantEntity> map = new PagePlus<MerchantEntity>(index,itemNum);
+        map.setCurrent(index);
+        map.setSize(itemNum);
+        IPage<MerchantEntity> merchantEntityIPage = merchantDao.selectPage(map, mweqw);
+
+        //汇总
+        if(merchantEntityIPage == null)
+            return null;
+
+        //更新附加内容
+        List<MerchantEntity> records = merchantEntityIPage.getRecords();
+        Double total = 0d;
+        Double  already = 0d;
+        Double not = 0d;
+
+        for(int i=0;i<records.size();i++){
+            MerchantEntity item = records.get(i);
+            total += item.getTotalCash();
+            already += item.getAlreadyCash();
+            not += item.getNotCash();
+        }
+        //System.out.println("总页数"+map.getTotal());
+        map.setTotal_cash(total);
+        map.setAlready_cash(already);
+        map.setNot_cash(not);
+
+        return new Result().ok(merchantEntityIPage);
+        //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
 }
