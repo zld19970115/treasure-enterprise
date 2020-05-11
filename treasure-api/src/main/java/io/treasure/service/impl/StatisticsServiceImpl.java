@@ -17,8 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl
@@ -223,13 +225,15 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
+    public PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
         List<String> list = Lists.newArrayList();
         list.add(DateUtil.lastMonthFormatYYYYMM(1));
         list.add(DateUtil.lastMonthFormatYYYYMM(2));
         list.add(DateUtil.lastMonthFormatYYYYMM(3));
         dto.setDateList(list);
-        return baseDao.getMerchantAccount(dto);
+        PageHelper.startPage(dto.getPage(),dto.getLimit());
+        Page<MerchantAccountVo> page = (Page) baseDao.getMerchantAccount(dto);
+        return new PageData<MerchantAccountVo>(page.getResult(),page.getTotal());
     }
 
     @Override
@@ -262,6 +266,33 @@ public class StatisticsServiceImpl
     @Override
     public DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params) {
         return baseDao.daysTogetherStat(params);
+    }
+
+    @Override
+    public PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<StatSdayDetailPageVo> page = (Page) baseDao.statSdayDetailPage(params);
+        List<StatSdayDetailPageVo> list = page.getResult();
+        Map map = new HashMap();
+        if(list != null && list.size() > 0) {
+            List<Long> ids = list.stream().map(StatSdayDetailPageVo::getId).collect(Collectors.toList());
+            StatSdayDetailPageVo vo = baseDao.statSdayDetailPageTotalRow(ids);
+            if(vo != null) {
+                map.put("orderTotal",vo.getOrderTotal());
+                map.put("merchantDiscountAmount",vo.getMerchantDiscountAmount());
+                map.put("transactionAmount",vo.getTransactionAmount());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("realityMoney",vo.getRealityMoney());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("withdrawMoney",vo.getWithdrawMoney());
+                map.put("platformBalance",vo.getPlatformBalance());
+                map.put("wxPaymoney",vo.getWxPaymoney());
+                map.put("aliPaymoney",vo.getAliPaymoney());
+                map.put("serviceCharge",vo.getServiceCharge());
+            }
+        }
+        return new PageTotalRowData<StatSdayDetailPageVo>(page.getResult(),page.getTotal(),map);
     }
 
 }

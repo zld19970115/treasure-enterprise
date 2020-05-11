@@ -24,4 +24,8 @@ public class MerchantAccountDto {
     @ApiModelProperty(value = "日期")
     private List<String> dateList;
 
+    private Integer page;
+
+    private Integer limit;
+
 }

@@ -545,20 +545,25 @@
     </select>
 
     <select id="daysTogetherPage" resultType="io.treasure.dto.DaysTogetherPageDTO">
-        SELECT coalesce(id,9999) id,pay_date as payDate,merchant_id as merchantId,pay_type as payType,sum(order_total) as orderTotal,
-        sum(service_chanrge) as serviceChanrge,sum(merchant_proceeds) as merchantProceeds,sum(platform_brokerage) as platformBrokerage,
-        sum(reality_money) as realityMoney,sum(merchant_discount_amount) as merchantDiscount_amount,sum(gift_money) as giftMoney
-        from ct_days_together where 1=1
-        <if test="startDate != null and startDate.trim() != ''">
-            and pay_date >= #{startDate}
-        </if>
-        <if test="endDate != null and endDate.trim() != ''">
-            <![CDATA[and pay_date <= #{endDate}]]>
-        </if>
-        <if test="payType != null and payType.trim() != ''">
-            and pay_type = #{payType}
-        </if>
-        group by id WITH ROLLUP
+        SELECT coalesce(ctdt.id,9999) id,ctdt.pay_date as payDate,ctdt.merchant_id as merchantId,ctdt.pay_type as payType,sum(ctdt.order_total) as orderTotal,
+        sum(ctdt.service_chanrge) as serviceChanrge,sum(ctdt.merchant_proceeds) as merchantProceeds,sum(ctdt.platform_brokerage) as platformBrokerage,
+        sum(ctdt.reality_money) as realityMoney,sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,sum(ctdt.gift_money) as giftMoney
+        , ctm.`name`,
+        ctm.id as mid
+        from ct_days_together ctdt
+         left join ct_merchant ctm on ctm.id = ctdt.merchant_id
+         <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                and ctdt.pay_date >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[and ctdt.pay_date <= #{endDate}]]>
+            </if>
+            <if test="payType != null and payType.trim() != ''">
+                and ctdt.pay_type = #{payType}
+            </if>
+         </where>
+        group by ctdt.id WITH ROLLUP
     </select>
 
     <select id="daysTogetherStat" resultType="io.treasure.vo.DaysTogetherStatisticsVo">
@@ -587,6 +592,63 @@
                 and pay_type = #{payType}
             </if>
         </where>
+    </select>
+
+    <select id="statSdayDetailPage" resultType="io.treasure.vo.StatSdayDetailPageVo">
+    SELECT
+        sdd.id,
+        sdd.create_date as createDate,
+        sdd.order_id as orderId,
+        sdd.pay_type as payType,
+        sdd.incident_type as incidentType,
+        sdd.pay_mobile as payMobile,
+        sdd.pay_merchant_name as payMerchantName,
+        sdd.pay_merchant_id as payMerchantId,
+        sdd.order_total as orderTotal,
+        sdd.merchant_discount_amount as merchantDiscountAmount,
+        sdd.transaction_amount as transactionAmount,
+        sdd.gift_money as giftMoney,
+        sdd.reality_money as realityMoney,
+        sdd.platform_brokerage as platformBrokerage,
+        sdd.merchant_proceeds as merchantProceeds,
+        sdd.withdraw_money as withdrawMoney,
+        sdd.platform_balance as platformBalance,
+        sdd.wx_paymoney as wxPaymoney,
+        sdd.ali_paymoney as aliPaymoney,
+        sdd.service_charge as serviceCharge,
+        sdd.update_date as updateDate
+    FROM
+	    stats_day_detail sdd
+	    <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="statSdayDetailPageTotalRow" resultType="io.treasure.vo.StatSdayDetailPageVo">
+        SELECT
+        IFNULL(SUM(CASE when sdd.order_total>0 then sdd.order_total else 0 end),0) as orderTotal,
+        IFNULL(SUM(CASE when sdd.merchant_discount_amount>0 then sdd.merchant_discount_amount else 0 end),0) as merchantDiscountAmount,
+        IFNULL(SUM(CASE when sdd.transaction_amount>0 then sdd.transaction_amount else 0 end),0) as transactionAmount,
+        IFNULL(SUM(CASE when sdd.gift_money>0 then sdd.gift_money else 0 end),0) as giftMoney,
+        IFNULL(SUM(CASE when sdd.reality_money>0 then sdd.reality_money else 0 end),0) as realityMoney,
+        IFNULL(SUM(CASE when sdd.platform_brokerage>0 then sdd.platform_brokerage else 0 end),0) as platformBrokerage,
+        IFNULL(SUM(CASE when sdd.merchant_proceeds>0 then sdd.merchant_proceeds else 0 end),0) as merchantProceeds,
+        IFNULL(SUM(CASE when sdd.withdraw_money>0 then sdd.withdraw_money else 0 end),0) as withdrawMoney,
+        IFNULL(SUM(CASE when sdd.platform_balance>0 then sdd.platform_balance else 0 end),0) as platformBalance,
+        IFNULL(SUM(CASE when sdd.wx_paymoney>0 then sdd.wx_paymoney else 0 end),0) as wxPaymoney,
+        IFNULL(SUM(CASE when sdd.ali_paymoney>0 then sdd.ali_paymoney else 0 end),0) as aliPaymoney,
+        IFNULL(SUM(CASE when sdd.service_charge>0 then sdd.service_charge else 0 end),0) as serviceCharge
+            FROM
+                stats_day_detail sdd
+            where sdd.id in
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
     </select>
 
 </mapper>

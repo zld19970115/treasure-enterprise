@@ -5,6 +5,7 @@ import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,4 +36,6 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<VisualizationRoomVo> selectRoomAllByMid(Map<String,Object> map);
     List<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
+    List<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
+    StatSdayDetailPageVo statSdayDetailPageTotalRow(@Param("ids") List<Long> ids);
 }

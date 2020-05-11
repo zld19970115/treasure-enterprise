@@ -155,10 +155,9 @@ public class StatisticsController {
         return new Result().ok(statisticsService.getConsumptionRanking(dto));
     }
 
-    @Login
     @PostMapping("getMerchantAccount")
     @ApiOperation("查询商户收支明细")
-    public Result<List<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+    public Result<PageData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
     }
 
@@ -198,6 +197,19 @@ public class StatisticsController {
     })
     public Result<DaysTogetherStatisticsVo> daysTogetherStat(@ApiIgnore @RequestParam Map<String, Object> params){
         return new Result<DaysTogetherStatisticsVo>().ok(statisticsService.daysTogetherStat(params));
+    }
+
+    @Login
+    @GetMapping("statSdayDetailPage")
+    @ApiOperation("商户明细费用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageTotalRowData<StatSdayDetailPageVo>> statSdayDetailPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<PageTotalRowData<StatSdayDetailPageVo>>().ok(statisticsService.statSdayDetailPage(params));
     }
 
 }

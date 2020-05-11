@@ -31,10 +31,11 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto);
     List<ConsumptionRankingVo> getConsumptionRanking(@RequestBody ConsumptionRankingDto dto);
     BigDecimal getTotalCash(Map<String, Object> params);
-    List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
+    PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
     PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
     List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
     PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
+    PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
 }
