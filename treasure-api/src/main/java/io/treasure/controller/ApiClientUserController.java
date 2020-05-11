@@ -1,6 +1,9 @@
 package io.treasure.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
@@ -15,6 +18,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,6 +43,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +68,8 @@ public class ApiClientUserController {
     private SMSConfig smsConfig;
     @Autowired
     private TokenService tokenService;
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
 
     @Login
     @GetMapping("page")
@@ -413,46 +420,51 @@ public class ApiClientUserController {
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("用户已注销");
     }
-
+    /**
+     * 根据 条件查询所有提现信息列表
+     * @return
+     */
+    @CrossOrigin
     @Login
     @GetMapping("/list")
-    @ResponseBody
-    String selectListByCondition(@RequestParam(name = "integral",defaultValue = "0",required = false)int integral,
-                                 @RequestParam(name = "integralConditionType",defaultValue = "0",required = false)int integralConditionType,
-                                 @RequestParam(name = "coin",defaultValue = "0",required = false)int coin,
-                                 @RequestParam(name = "coinConditionType",defaultValue = "0",required = false)int coinConditionType,
-                                 @RequestParam(name = "gift",defaultValue = "0",required = false)int gift,
-                                 @RequestParam(name = "giftConditionType",defaultValue = "0",required = false)int giftConditionType,
-                                 @RequestParam(name = "level",defaultValue = "0",required = false)int level,
-                                 @RequestParam(name = "levelConditionType",defaultValue = "0",required = false)int levelConditionType,
-                                 @RequestParam(name = "createDateConditionType",defaultValue = "0",required = false)int createDateConditionType,
-                                 @RequestParam(name = "startTime",defaultValue = "null",required = false)Date startTime,
-                                 @RequestParam(name = "stopTime",defaultValue = "null",required = false)Date stopTime
-                                ){
-        List<ClientUserEntity> clientUserEntities = clientUserService.selectListByCondition(generalQueryClientUserDto(integral,integralConditionType,coin,coinConditionType,
-        gift,giftConditionType,level,levelConditionType,createDateConditionType,startTime,stopTime));
-        if(clientUserEntities.size() == 0)
-            return "没有内容";
-        Gson gson = new Gson();
-        return gson.toJson(clientUserEntities);
-    }
+    @ApiOperation(value = "用户赠送金列表",tags = "用户赠送金列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startTime",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="stopTime",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name="index",value = "页码",dataType = "int",defaultValue = "1",paramType = "query",required = false),
+            @ApiImplicitParam(name="itemNum",value = "页数",dataType = "int",defaultValue = "10",paramType = "query",required = false),
+            @ApiImplicitParam(name="gift",value = "赠送金不小于",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="coin",value = "金币不小于",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="integral",value = "积分不小于",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="balance",value = "级别不小于",dataType = "int",paramType = "query",required = false)
+    })
+    public Result requireItems(Date startTime,Date stopTime,
+                               Integer index,Integer itemNum,Integer gift,
+                               Integer coin,Integer integral,Integer balance) throws ParseException {
 
-    public QueryClientUserDto generalQueryClientUserDto(int integral,int integralConditionType,int coin,int coinConditionType,int gift,int giftConditionType,
-                                                        int level,int levelConditionType,int createDateConditionType, Date startTime,Date stopTime){
-        QueryClientUserDto queryClientUserDto = new QueryClientUserDto();
-        queryClientUserDto.setIntegral(new BigDecimal(integral+""));
-        queryClientUserDto.setCoin(new BigDecimal(coin+""));
-        queryClientUserDto.setGift(new BigDecimal(gift+""));
-        queryClientUserDto.setLevel(level);
-        queryClientUserDto.setIntegralConditionType(integralConditionType)
-                .setCoinConditionType(coinConditionType)
-                .setGiftConditionType(giftConditionType)
-                .setLevelConditionType(levelConditionType)
-                .setCreateDateConditionType(createDateConditionType);
-        if(startTime != null)
-            queryClientUserDto.setStartTime(startTime);
-        if(stopTime != null)
-            queryClientUserDto.setStopTime(stopTime);
-        return queryClientUserDto;
+        QueryWrapper<ClientUserEntity> mweqw = new QueryWrapper<>();
+
+        if(startTime != null && stopTime != null){
+            mweqw.between("create_date",startTime,stopTime);
+        }else if(startTime != null){
+            mweqw.gt("create_date",startTime);//大于
+        }else if(stopTime != null){
+
+            mweqw.lt("create_date",stopTime);
+        }
+        if(gift != null)
+            mweqw.gt("gift",gift);
+        if(coin != null)
+            mweqw.gt("coin",coin);
+        if(integral != null)
+            mweqw.gt("integral",integral);
+        if(balance != null)
+            mweqw.gt("balance",balance);
+
+        Page<ClientUserEntity> map = new Page<ClientUserEntity>(index,itemNum);
+        IPage<ClientUserEntity> cue = clientUserDao.selectPage(map, mweqw);
+
+        return new Result().ok(cue);
+        //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
 }
