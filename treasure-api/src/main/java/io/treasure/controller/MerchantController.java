@@ -366,8 +366,7 @@ public class MerchantController {
         if (merchantEntity==null){
             return new Result().error("没有该商户");
         }
-        merchantEntity.setWxAccountOpenid(null);
-        merchantService.updateById(merchantEntity);
+        merchantService.updateWX(martId);
         return new Result().ok("解绑成功");//未绑定微信
     }
     @CrossOrigin

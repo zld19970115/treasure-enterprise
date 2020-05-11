@@ -183,6 +183,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
+    @Override
+    public void updateWX(String martId) {
+        baseDao.updateWX(martId);
+    }
+
     /**
      * 查询条件
      * @param params
