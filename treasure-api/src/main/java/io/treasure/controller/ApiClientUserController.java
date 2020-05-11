@@ -371,7 +371,7 @@ public class ApiClientUserController {
         }
 
     }
-
+    @Login
     @PutMapping("userGiftToUser")
     @ApiOperation("用户给用户转移赠送金")
     @ApiImplicitParams({
@@ -384,7 +384,7 @@ public class ApiClientUserController {
         Result result = clientUserService.userGiftToUser(userId, mobile, giftMoney);
         return new Result().ok(result);
     }
-
+    @Login
     @GetMapping("getMobileByUserId")
     @ApiOperation("根据用户id查询手机号")
     @ApiImplicitParams({
@@ -397,6 +397,7 @@ public class ApiClientUserController {
         }
         return new Result().ok(clientUserEntity.getMobile());
     }
+    @Login
     @GetMapping("userCancel")
     @ApiOperation("用户注销")
     @ApiImplicitParams({
