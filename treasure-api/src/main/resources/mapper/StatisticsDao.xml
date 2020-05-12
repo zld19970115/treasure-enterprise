@@ -669,6 +669,24 @@
 
     <select id="merchantPage" resultType="io.treasure.vo.MerchantPageVo">
         select * from ct_merchant
+        <where>
+            <if test="name != null and name.trim() != ''">
+                name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                mobile like CONCAT('%',#{mobile},'%')
+            </if>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="id != null">
+                id = #{id}
+            </if>
+        </where>
+
     </select>
 
 </mapper>
