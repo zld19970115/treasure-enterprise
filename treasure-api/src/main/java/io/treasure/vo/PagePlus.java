@@ -2,11 +2,6 @@ package io.treasure.vo;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.math.BigDecimal;
 
 @Data
 public class PagePlus<T> extends Page<T> {

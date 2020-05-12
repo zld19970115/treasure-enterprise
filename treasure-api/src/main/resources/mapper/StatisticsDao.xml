@@ -651,4 +651,24 @@
             </foreach>
     </select>
 
+    <select id="fmisHome" resultType="io.treasure.vo.FmisHomeVo">
+        SELECT
+            IFNULL(sum(ctm.total_cash)+sum(ctm.point_money),0) as totalCash,
+            IFNULL(sum(ctm.total_cash),0) as merchantTotalCash,
+            IFNULL(sum(ctm.point_money),0) as pointMoney,
+            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 1) as balanceTotalCash,
+            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 2) as aliTotalCash,
+            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 3) as wxTotalCash,
+            COUNT(0) as merchantCount,
+            (select COUNT(0) from ct_client_user ccu) as userCount,
+            (select COUNT(0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.p_order_id = '0') as pOrderCount,
+            (select COUNT(0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.p_order_id != '0') as orderCount
+        FROM
+	        ct_merchant ctm
+    </select>
+
+    <select id="merchantPage" resultType="io.treasure.vo.MerchantPageVo">
+        select * from ct_merchant
+    </select>
+
 </mapper>

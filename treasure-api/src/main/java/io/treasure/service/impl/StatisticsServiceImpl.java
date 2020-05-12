@@ -9,24 +9,29 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.StatisticsDao;
 import io.treasure.dto.*;
+import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.service.CategoryService;
 import io.treasure.service.StatisticsService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.*;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl
         extends CrudServiceImpl<StatisticsDao, MasterOrderEntity, MasterOrderDTO> implements StatisticsService {
 
-
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -294,5 +299,30 @@ public class StatisticsServiceImpl
         }
         return new PageTotalRowData<StatSdayDetailPageVo>(page.getResult(),page.getTotal(),map);
     }
+
+    @Override
+    public FmisHomeVo fmisHome(Map<String, Object> params) {
+        return baseDao.fmisHome(params);
+    }
+
+    @Override
+    public PageData<MerchantPageVo> merchantPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<MerchantPageVo> page = (Page) baseDao.merchantPage(params);
+        List<MerchantPageVo> list = page.getResult();
+        for(MerchantPageVo vo : list) {
+            if(Strings.isNotBlank(vo.getCategoryid())) {
+                String[] ids = vo.getCategoryid().split(",");
+                List<Long> l = new ArrayList<Long>();
+                for(String str : ids) {
+                    l.add(Long.parseLong(str));
+                }
+                String names = categoryService.getListById(l).stream().map(CategoryEntity::getName).collect(Collectors.joining(","));
+                vo.setCategoryName(names);
+            }
+        }
+        return new PageData<MerchantPageVo>(page.getResult(),page.getTotal());
+    }
+
 
 }

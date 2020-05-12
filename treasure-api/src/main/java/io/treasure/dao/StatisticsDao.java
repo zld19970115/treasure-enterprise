@@ -1,7 +1,10 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.dto.*;
+import io.treasure.dto.ConsumptionRankingDto;
+import io.treasure.dto.DaysTogetherPageDTO;
+import io.treasure.dto.MerchantAccountDto;
+import io.treasure.dto.TopSellersRankingDto;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -38,4 +41,6 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
     List<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
     StatSdayDetailPageVo statSdayDetailPageTotalRow(@Param("ids") List<Long> ids);
+    FmisHomeVo fmisHome(Map<String, Object> params);
+    List<MerchantPageVo> merchantPage(Map<String, Object> params);
 }

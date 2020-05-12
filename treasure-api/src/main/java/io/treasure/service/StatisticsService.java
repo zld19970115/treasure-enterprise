@@ -6,8 +6,6 @@ import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,4 +36,6 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
     PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
+    FmisHomeVo fmisHome(Map<String, Object> params);
+    PageData<MerchantPageVo> merchantPage(Map<String, Object> params);
 }
