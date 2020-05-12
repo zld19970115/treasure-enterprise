@@ -39,6 +39,10 @@
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
     </update>
+    <update id="updateWX">
+        update ct_merchant set  wx_account_openid= null  where id=#{martId}
+
+    </update>
     <select id="getByNameAndCards" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.MerchantEntity">
         select * from ct_merchant where name = #{name} and cards=#{cards}  and status!=9 order by id desc
     </select>

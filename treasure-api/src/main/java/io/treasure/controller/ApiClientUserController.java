@@ -4,7 +4,6 @@ package io.treasure.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -23,13 +22,7 @@ import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.LoginDTO;
-import io.treasure.dto.QueryClientUserDto;
-import io.treasure.dto.*;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -245,7 +238,7 @@ public class ApiClientUserController {
         clientUserService.update(data);
         return new Result();
     }
-
+    @Login
     @PutMapping("forgetPassword")
     @ApiOperation("忘记密码")
     @ApiImplicitParams({
@@ -378,7 +371,7 @@ public class ApiClientUserController {
         }
 
     }
-
+    @Login
     @PutMapping("userGiftToUser")
     @ApiOperation("用户给用户转移赠送金")
     @ApiImplicitParams({
@@ -391,7 +384,7 @@ public class ApiClientUserController {
         Result result = clientUserService.userGiftToUser(userId, mobile, giftMoney);
         return new Result().ok(result);
     }
-
+    @Login
     @GetMapping("getMobileByUserId")
     @ApiOperation("根据用户id查询手机号")
     @ApiImplicitParams({
@@ -404,6 +397,7 @@ public class ApiClientUserController {
         }
         return new Result().ok(clientUserEntity.getMobile());
     }
+    @Login
     @GetMapping("userCancel")
     @ApiOperation("用户注销")
     @ApiImplicitParams({

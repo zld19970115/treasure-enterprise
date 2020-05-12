@@ -6,12 +6,10 @@ import io.treasure.entity.CategoryEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -110,9 +108,9 @@ public class MerchantDTO implements Serializable {
 	 */
 	@ApiModelProperty(value = "收款微信openid")
 	private String wxAccountOpenid;
-	/**
-	 * 微信收款人真实姓名
-	 */
+
+	@ApiModelProperty(value = " 微信绑定方式 1---小程序 2---app")
+	private Integer wxStatus;
 	@ApiModelProperty(value = "微信收款人真实姓名")
 	@NotBlank(message = "微信收款人真实姓名不能为空")
 	private String wxAccountRealname;

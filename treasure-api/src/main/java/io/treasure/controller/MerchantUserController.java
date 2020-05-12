@@ -1,5 +1,8 @@
 package io.treasure.controller;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
@@ -9,16 +12,13 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.*;
-
 import io.treasure.enm.Common;
-import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
-
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -407,7 +407,14 @@ public class MerchantUserController {
         merchantUserService.updateMerchant(merchantId,id);
         return new Result();
     }
-
+    @Login
+    @PutMapping("getToken")
+    @ApiOperation("获取token")
+    @ApiImplicitParams({
+    })
+    public Result  getToken(){
+        return new Result();
+    }
 
     @GetMapping("estimateMobile")
     @ApiOperation("商户端-绑定微信-根据mobile查询用户信息")
@@ -511,7 +518,7 @@ public class MerchantUserController {
         MerchantUserEntity merchantUserEntity = merchantUserService.selectById(masterUserId);
         Map params = new HashMap();
         String merchantId = merchantUserEntity.getMerchantid();
-        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)){
             String[] str = merchantId.split(",");
             params.put("merchantIdStr", str);
         }else{

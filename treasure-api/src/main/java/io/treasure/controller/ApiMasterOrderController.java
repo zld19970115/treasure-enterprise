@@ -214,8 +214,7 @@ public class ApiMasterOrderController {
     @GetMapping("MartOrder/{orderId}")
     @ApiOperation("商户端预约列表订单详情")
     public Result<List<OrderDTO>> getMartOrderInfo(@PathVariable("orderId") String orderId){
-
-       List<OrderDTO> data = masterOrderService.getMartOrderInfo(orderId);
+        List<OrderDTO> data = masterOrderService.getMartOrderInfo(orderId);
         return new Result<List<OrderDTO>>().ok(data);
     }
     @Login
