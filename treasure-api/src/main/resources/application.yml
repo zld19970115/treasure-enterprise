@@ -2,7 +2,7 @@
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: dev
+    active: prod
   messages:
     encoding: UTF-8
     basename: i18n/messages
