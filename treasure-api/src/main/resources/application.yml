@@ -2,7 +2,7 @@
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: dev
+    active: prod
   messages:
     encoding: UTF-8
     basename: i18n/messages
@@ -67,8 +67,3 @@ sms:
   config:
     accessKeyId: LTAIcmvqUXgQC8Mw
     accessSecret: FAv9m2cDTTbIoN4NaHN476V5v4KC4g
-pagehelper:
-  helper-dialect: mysql
-  reasonable: true
-  support-methods-arguments: true
-  params: count=countSql
