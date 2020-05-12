@@ -79,6 +79,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     public Result orderSave(ChargeCashDTO dto, ClientUserEntity user) throws ParseException {
         Result result = new Result();
         //生成订单号
+        System.out.println(user.getId()+"4564");
+        System.out.println(dto.getCash()+"s4564");
         String cashOrderId = OrderUtil.getCashOrderIdByTime(user.getId());
         Date d = new Date();
         //保存主订单
@@ -161,7 +163,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             return mapRtn;
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-        masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+        masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         Long creator = masterOrderEntity.getCreator();
