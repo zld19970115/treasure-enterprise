@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
@@ -20,6 +21,7 @@ import io.treasure.entity.MerchantEntity;
 import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
+import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PagePlus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -52,6 +51,8 @@ public class MerchantController {
     private CategoryService categoryService;
     @Autowired(required = false)
     private MerchantDao merchantDao;
+    @Autowired
+    private SMSConfig smsConfig;
     @CrossOrigin
     @Login
     @GetMapping("page")
@@ -334,7 +335,8 @@ public class MerchantController {
     @ApiOperation("绑定商户微信")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string")
+            @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string"),
+            @ApiImplicitParam(name = "status", value = "APP/VX", paramType = "query", required = true, dataType = "string")
     })
     public Result inserWX(@ApiIgnore @RequestParam Map<String, Object> params){
         String martId = (String) params.get("martId");
@@ -346,10 +348,16 @@ public class MerchantController {
             return new Result().ok("1");//已绑定微信
         }
         String wx_account_openid = (String) params.get("wx_account_openid");
+        String status = (String) params.get("status");
         if (wx_account_openid!=null){
+            if ("VX".equals(status) || status == "VX"){
+                merchantEntity.setWxStatus(1);
+            }else {
+                merchantEntity.setWxStatus(2);
+            }
             merchantEntity.setWxAccountOpenid(wx_account_openid);
             merchantService.updateById(merchantEntity);
-            return new Result().ok("绑定成功");
+            return new Result().ok(merchantEntity.getMobile());
         }
         return new Result().ok("0");//未绑定微信
     }
@@ -369,6 +377,17 @@ public class MerchantController {
         merchantService.updateWX(martId);
         return new Result().ok("解绑成功");//未绑定微信
     }
+    @Login
+    @GetMapping("deleltWXByCode")
+    @ApiOperation("商户解绑验证码(返回验证码)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tel", value = "手机号", required = true, paramType = "query")
+    })
+    public Result register(String tel) {
+        Result result = SendSMSUtil.sendCodeFordeletWx(tel, smsConfig);
+        return result;
+    }
+
     @CrossOrigin
     @Login
     @PutMapping("selectWx")
@@ -379,13 +398,17 @@ public class MerchantController {
     public Result selectWx(@ApiIgnore @RequestParam Map<String, Object> params){
         String martId = (String) params.get("martId");
         MerchantEntity merchantEntity = merchantService.selectById(martId);
+        Map map = new HashMap();
         if (merchantEntity==null){
             return new Result().error("没有该商户");
         }
       if (merchantEntity.getWxAccountOpenid()!=null){
-          return new Result().ok(1);//绑定微信
+          map.put("status",1);
+          map.put("martId",merchantEntity.getMobile());
+          return new Result().ok(map);//绑定微信
       }else {
-          return new Result().ok(2);//未绑定微信
+          map.put("status",2);
+          return new Result().ok(map);//未绑定微信
       }
 
     }

@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
-import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -141,6 +138,10 @@ public class MerchantEntity implements Serializable {
 	 * 收款微信openid
 	 */
 	private String wxAccountOpenid;
+	/**
+	 * 微信绑定方式 1---小程序 2---app
+	 */
+	private Integer wxStatus;
 	/**
 	 * 微信收款人真实姓名
 	 */

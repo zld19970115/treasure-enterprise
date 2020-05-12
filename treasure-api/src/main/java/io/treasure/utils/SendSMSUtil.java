@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.sms.SMSSend;
 import io.treasure.common.utils.Result;
-import io.treasure.config.ISMSConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -228,7 +227,27 @@ public class SendSMSUtil {
         }
         return ret;
     }
-
+    /**
+     * 获取解绑验证码
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static Result sendCodeFordeletWx(String phoneNumber, SMSConfig smsConfig) {
+        Result result=new Result();
+        SMSSend send=new SMSSend(smsConfig);
+        String number = RandomUtil.randomNumbers(6);
+        Map map=new HashMap();
+        map.put("code",number);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_189835466", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            result.ok(number);
+        }
+        return result;
+    }
     /**
      * 获取验证码
      * @param phoneNumber
