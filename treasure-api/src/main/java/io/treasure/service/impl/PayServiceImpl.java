@@ -318,6 +318,7 @@ public class PayServiceImpl implements PayService {
         gift = gift.add(chargeCashSetEntity.getChangeGift());
         clientUserEntity.setGift(gift);
         clientUserEntity.setBalance(balance);
+        clientUserService.updateById(clientUserEntity);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -846,6 +847,7 @@ public class PayServiceImpl implements PayService {
         gift = gift.add(chargeCashSetEntity.getChangeGift());
         clientUserEntity.setGift(gift);
         clientUserEntity.setBalance(balance);
+        clientUserService.updateById(clientUserEntity);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
