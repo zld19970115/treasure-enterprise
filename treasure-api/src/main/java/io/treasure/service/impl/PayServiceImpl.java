@@ -486,6 +486,9 @@ public class PayServiceImpl implements PayService {
         if(payMode.equals(Constants.PayMode.WXPAY.getValue())){
             return this.wxRefund(orderNo,refund_fee,null);
         }
+        if(payMode.equals(Constants.PayMode.BALANCEPAY.getValue())){
+            return this.CashRefund(orderNo,refund_fee,null);
+        }
         if(payMode.equals(Constants.PayMode.ALIPAY.getValue())){
             return this.aliRefund(orderNo,refund_fee,null);
         }
@@ -506,6 +509,9 @@ public class PayServiceImpl implements PayService {
         String payMode=masterOrderEntity.getPayMode();
         if(payMode.equals(Constants.PayMode.WXPAY.getValue())){
             return this.wxRefund(orderNo,refund_fee,goodId);
+        }
+        if(payMode.equals(Constants.PayMode.BALANCEPAY.getValue())){
+            return this.CashRefund(orderNo,refund_fee,goodId);
         }
         if(payMode.equals(Constants.PayMode.ALIPAY.getValue())){
             return this.aliRefund(orderNo,refund_fee,goodId);
@@ -647,6 +653,90 @@ public class PayServiceImpl implements PayService {
 
         }
         return result.ok(false);
+    }
+
+    @Override
+    public Result CashRefund(String orderNo, String refund_fee, Long goodId) {
+        Map<String, String> reqData = new HashMap<>();
+        Result result=new Result();
+        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(orderNo);
+        // 订单总金额，单位为分，只能为整数
+        BigDecimal totalAmount = masterOrderEntity.getTotalMoney();
+        BigDecimal payMoney = masterOrderEntity.getPayMoney();
+        //退款金额
+        BigDecimal refundAmount = new BigDecimal(refund_fee);
+        SlaveOrderDTO slaveOrderDTO=null;
+        Long userId=masterOrderEntity.getCreator();
+        if(masterOrderEntity.getCheckStatus()==1) {
+            return result.error("已结算不可以退款！");
+        }
+        //判断是否可以退款
+
+        //判断是否退菜
+        if(goodId!=null){
+            //退菜
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()){
+                return result.error("无法退菜！【订单状态错误】");
+            }
+            slaveOrderDTO=slaveOrderService.getAllGoods(orderNo,goodId);
+            if(slaveOrderDTO.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&slaveOrderDTO.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()){
+                return result.error("无法退菜！【订单菜品状态错误】");
+            }
+            if(slaveOrderDTO.getPayMoney().compareTo(refundAmount)!=0){
+                return result.error("退款金额不一致，无法退款！");
+            }
+        }else{
+            //退单
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+                return result.error("不是退款订单,无法退款！");
+            }
+            if(payMoney.compareTo(refundAmount)!=0){
+                return result.error("退款金额不一致，无法退款！");
+            }
+        }
+
+        String refundNo=OrderUtil.getRefundOrderIdByTime(userId);
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        BigDecimal balance = clientUserEntity.getBalance();
+        BigDecimal add = balance.add(refundAmount);
+        clientUserEntity.setBalance(add);
+
+        if (goodId != null) {
+                //将退款ID更新到refundOrder表中refund_id
+                refundOrderService.updateRefundId(refundNo, orderNo, goodId);
+
+                //将退款ID更新到订单菜品表中
+                slaveOrderService.updateRefundId(refundNo, orderNo, goodId);
+                BigDecimal bigDecimal=totalAmount.subtract(refundAmount);
+                masterOrderEntity.setPayMoney(bigDecimal);
+                masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
+                SlaveOrderDTO allGoods = slaveOrderService.getAllGoods(orderNo, goodId);
+                OrderDTO order = masterOrderService.getOrder(orderNo);
+                BigDecimal platformBrokerage = order.getPlatformBrokerage();
+                BigDecimal merchantProceeds = order.getMerchantProceeds();
+                //退菜后将平台扣点金额和商户所得更新到主订单表中
+                masterOrderService.updateSlaveOrderPointDeduction(merchantProceeds.subtract(allGoods.getMerchantProceeds()),platformBrokerage.subtract(allGoods.getPlatformBrokerage()),orderNo);
+                BigDecimal a=new BigDecimal("0");
+                //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
+                slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
+
+                return result.ok(true);
+            }else{
+                masterOrderEntity.setRefundId(refundNo);
+                masterOrderEntity.setPayMoney(masterOrderEntity.getPayMoney());
+                masterOrderService.update(ConvertUtils.sourceToTarget(masterOrderEntity, MasterOrderDTO.class));
+                List<SlaveOrderEntity> slaveOrderEntityList=slaveOrderService.selectByOrderId(orderNo);
+                BigDecimal a=new BigDecimal("0");
+                for(int i=0;i<slaveOrderEntityList.size();i++){
+                    SlaveOrderEntity slaveOrderEntity=slaveOrderEntityList.get(i);
+                    if(slaveOrderEntity.getRefundId()==null||slaveOrderEntity.getRefundId().length()==0){
+                        slaveOrderEntity.setRefundId(refundNo);
+                    }
+                    slaveOrderService.updateSlaveOrderPointDeduction(a,a,orderNo,goodId);
+                }
+                masterOrderService.updateSlaveOrderPointDeduction(a,a,orderNo);
+                return result.ok(true);
+            }
     }
 
 

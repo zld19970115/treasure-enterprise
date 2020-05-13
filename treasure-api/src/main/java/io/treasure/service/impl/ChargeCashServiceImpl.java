@@ -120,7 +120,12 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             mapRtn.put("return_msg", "支付失败！请联系管理员！【没有此订单："+out_trade_no+"】");
             return mapRtn;
         }
-
+        ClientUserEntity clientUserEntity1 = clientUserService.selectById(masterOrderEntity.getCreator());
+        if (clientUserEntity1.getBalance().compareTo(total_amount)==-1){
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！余额不足请充值后再试！");
+            return mapRtn;
+        }
         if(masterOrderEntity.getStatus()!= Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
             System.out.println("wxNotify02===============masterOrderEnitity.getStatus():"+masterOrderEntity.getStatus());
             mapRtn.put("return_code", "SUCCESS");
@@ -136,7 +141,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         /****************************************************************************************/
         try{
             if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
-                System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
+                System.out.println("支付失败！请联系管理员！【支付金额不一致】");
                 throw new Exception("wx_pay_fail:code01");
             }
 
@@ -148,7 +153,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         }
         try{
             if(masterOrderEntity==null){
-                System.out.println("微信支付：支付失败！请联系管理员！【未找到订单】");
+                System.out.println("支付失败！请联系管理员！【未找到订单】");
                 throw new Exception("wx_pay_fail:code02");
             }
         }catch(Exception e){
@@ -166,7 +171,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
-        Long creator = masterOrderEntity.getCreator();
+
 
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
         //System.out.println("position 5 : "+slaveOrderEntities.toString());
@@ -175,16 +180,19 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
             a = a.add(slaveOrderEntity.getFreeGold());
         }
-        ClientUserEntity clientUserEntity = clientUserService.selectById(creator);
+
         //System.out.println("position 6 : "+clientUserEntity.toString());
-        BigDecimal gift = clientUserEntity.getGift();
+        BigDecimal gift = clientUserEntity1.getGift();
         System.out.println("wxNotify03==============gift+"+gift);
         gift=gift.subtract(a);
-        clientUserEntity.setGift(gift);
+        clientUserEntity1.setGift(gift);
         System.out.println("wxNotify04==============gift+"+gift);
-        clientUserService.updateById(clientUserEntity);
+        BigDecimal balance = clientUserEntity1.getBalance();
+        BigDecimal subtract = balance.subtract(total_amount);
+        clientUserEntity1.setBalance(subtract);
+        clientUserService.updateById(clientUserEntity1);
         Date date = new Date();
-        recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
+        recordGiftService.insertRecordGift2(clientUserEntity1.getId(),date,gift,a);
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
         //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
