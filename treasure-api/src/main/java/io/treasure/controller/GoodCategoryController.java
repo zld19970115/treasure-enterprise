@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 1.0.0 2019-07-24
  */
 @RestController
-@RequestMapping("/- ")
+@RequestMapping("/goodcategory")
 @Api(tags="菜品分类管理")
 public class GoodCategoryController {
     @Autowired
