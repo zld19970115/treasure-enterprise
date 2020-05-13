@@ -47,7 +47,7 @@ public class ChargeCashController {
         // 调用业务
         String out_trade_no = orderNo;
         //单位分变成元
-        BigDecimal total_amount = new BigDecimal(total_fee).divide(new BigDecimal("100"));
+        BigDecimal total_amount = new BigDecimal(total_fee);
         Map<String, String> responseMap = chargeCashService.cashNotify(total_amount, out_trade_no);
         return new Result().ok(responseMap);
     }

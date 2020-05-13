@@ -139,6 +139,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             }
         }
         /****************************************************************************************/
+        System.out.println(masterOrderEntity.getPayMoney()+"masterOrderEntity.getPayMoney()");
+        System.out.println(total_amount+"total_amount");
         try{
             if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
                 System.out.println("支付失败！请联系管理员！【支付金额不一致】");
