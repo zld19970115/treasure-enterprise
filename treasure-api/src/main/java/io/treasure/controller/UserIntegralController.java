@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ClientUserService;
@@ -24,6 +25,7 @@ public class UserIntegralController {
 
     @Autowired
     private ClientUserService clientUserService;
+    @Login
     @GetMapping("/IntegralGift")
     @ApiOperation("用户积分兑换赠送金")
     public Result integralGift(@RequestParam Long userId, @RequestParam BigDecimal integral){
