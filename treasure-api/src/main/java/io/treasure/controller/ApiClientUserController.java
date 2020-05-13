@@ -23,6 +23,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
+import io.treasure.dto.RecordGiftDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -384,6 +385,7 @@ public class ApiClientUserController {
         Result result = clientUserService.userGiftToUser(userId, mobile, giftMoney);
         return new Result().ok(result);
     }
+
     @Login
     @GetMapping("getMobileByUserId")
     @ApiOperation("根据用户id查询手机号")
@@ -463,5 +465,37 @@ public class ApiClientUserController {
 
         return new Result().ok(cue);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
+    }
+    @GetMapping("getRecondGiftcharge")
+    @ApiOperation("获取代付金转增记录")
+    @ApiImplicitParams({
+
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result<PageData<RecordGiftDTO>> getRecondGiftcharge(@ApiIgnore @RequestParam Map<String, Object> params) {
+        PageData<RecordGiftDTO> page  = recordGiftService.selectByUserId(params);
+        return new Result().ok(page);
+    }
+    @GetMapping("registerGetGift")
+    @ApiOperation("用户注册领取代付金")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result registerGetGift(@RequestParam long userId) {
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity == null) {
+            return new Result().error("此用户不存在");
+        }
+        BigDecimal a = new BigDecimal("200");
+        BigDecimal gift = clientUserEntity.getGift();
+
+        BigDecimal newGift = a.add(gift);
+        clientUserEntity.setGift(newGift);
+        clientUserService.updateById(clientUserEntity);
+        return new Result().ok("领取成功");
     }
 }
