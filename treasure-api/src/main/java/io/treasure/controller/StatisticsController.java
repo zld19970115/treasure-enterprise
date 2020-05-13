@@ -35,7 +35,6 @@ public class StatisticsController {
     private StatisticsServiceImpl statisticsService;
     @Autowired
     private MerchantServiceImpl merchantService;
-    @Login
     @GetMapping("/sta")
     @ApiOperation("统计")
     @ApiImplicitParams({

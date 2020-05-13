@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.StimmeEntity;
 import io.treasure.service.impl.StimmeServiceImpl;
@@ -24,7 +23,6 @@ import java.util.Map;
 public class StimmeController {
     @Autowired
     private StimmeServiceImpl stimmeService;
-    @Login
     @GetMapping("/sti")
     @ApiOperation("获取是否有新订单")
     @ApiImplicitParams({
