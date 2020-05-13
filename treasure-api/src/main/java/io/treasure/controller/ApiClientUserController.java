@@ -239,7 +239,6 @@ public class ApiClientUserController {
         clientUserService.update(data);
         return new Result();
     }
-    @Login
     @PutMapping("forgetPassword")
     @ApiOperation("忘记密码")
     @ApiImplicitParams({
