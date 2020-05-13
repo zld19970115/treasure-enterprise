@@ -1,4 +1,5 @@
 package io.treasure.controller;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,6 +11,7 @@ import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
+import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.*;
 import io.treasure.enm.Common;
@@ -220,6 +222,16 @@ public class MerchantUserController {
 
 
         return new Result();
+    }
+    @GetMapping("isRegister")
+    @ApiOperation("验证手机是否注册:true-已注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tel", value = "手机号", required = true, paramType = "query")
+    })
+    public Result isRegister(String tel) {
+        AssertUtils.isBlank(tel, "tel");
+        boolean b = merchantUserService.isRegister(tel);
+        return new Result().ok(b);
     }
     /**
      * 注册
