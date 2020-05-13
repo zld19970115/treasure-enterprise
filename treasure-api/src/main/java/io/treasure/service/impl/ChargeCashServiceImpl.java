@@ -173,9 +173,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
-
-
-        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+     List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
         //System.out.println("position 5 : "+slaveOrderEntities.toString());
 
         BigDecimal a = new BigDecimal(0);

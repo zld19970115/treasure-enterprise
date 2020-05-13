@@ -700,8 +700,8 @@ public class PayServiceImpl implements PayService {
         BigDecimal balance = clientUserEntity.getBalance();
         BigDecimal add = balance.add(refundAmount);
         clientUserEntity.setBalance(add);
-
-        if (goodId != null) {
+        clientUserService.updateById(clientUserEntity);
+    if (goodId != null) {
                 //将退款ID更新到refundOrder表中refund_id
                 refundOrderService.updateRefundId(refundNo, orderNo, goodId);
 
