@@ -43,4 +43,6 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     StatSdayDetailPageVo statSdayDetailPageTotalRow(@Param("ids") List<Long> ids);
     FmisHomeVo fmisHome(Map<String, Object> params);
     List<MerchantPageVo> merchantPage(Map<String, Object> params);
+    List<EChartInfoVo> userChartByDay(Map<String, Object> params);
+    List<EChartInfoVo> userChartByYear(Map<String, Object> params);
 }

@@ -689,4 +689,35 @@
 
     </select>
 
+    <select id="userChartByDay" resultType="io.treasure.vo.EChartInfoVo">
+        select
+            date_format(create_date, '%Y-%m-%d') as dataRow,
+            count(id) as dataCount
+        from
+            ct_client_user
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(create_date, '%Y-%m-%d')
+    </select>
+
+    <select id="userChartByYear" resultType="io.treasure.vo.EChartInfoVo">
+        select
+            date_format(create_date, '%Y-%m') as dataRow,
+            count(id) as dataCount
+        from
+            ct_client_user
+        <where>
+            <if test="year != null and year.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y') = #{year} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(create_date, '%Y-%m')
+    </select>
+
 </mapper>

@@ -38,4 +38,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
     FmisHomeVo fmisHome(Map<String, Object> params);
     PageData<MerchantPageVo> merchantPage(Map<String, Object> params);
+    EChartVo userChart(Map<String, Object> params);
 }

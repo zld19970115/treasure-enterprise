@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.StatisticsDao;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -324,5 +326,35 @@ public class StatisticsServiceImpl
         return new PageData<MerchantPageVo>(page.getResult(),page.getTotal());
     }
 
+    @Override
+    public EChartVo userChart(Map<String, Object> params) {
+        EChartVo vo = new EChartVo();
+        List<String> dataCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.userChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.userChartByYear(params);
+        }
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartInfoVo chartInfoVo : chartInfoList) {
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getDataCount());
+        }
+        for(String dateVo : dateList) {
+            String obj = map.get(dateVo);
+            if(obj == null) {
+                dataCount.add("0");
+            } else {
+                dataCount.add(obj);
+            }
+        }
+        vo.setDataCount(dataCount);
+        return vo;
+    }
 
 }

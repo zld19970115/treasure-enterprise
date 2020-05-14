@@ -236,4 +236,15 @@ public class StatisticsController {
         return new Result<PageData<MerchantPageVo>>().ok(statisticsService.merchantPage(params));
     }
 
+    @Login
+    @GetMapping("userChart")
+    @ApiOperation("用户统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartVo> userChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartVo>().ok(statisticsService.userChart(params));
+    }
+
 }
