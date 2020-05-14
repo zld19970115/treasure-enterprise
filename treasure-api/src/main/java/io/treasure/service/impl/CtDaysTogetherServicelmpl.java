@@ -82,11 +82,11 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             CtDaysTogetherEntity cdte=new CtDaysTogetherEntity();
             cdte.setPayDate(sdde.getCreateDate());
             cdte.setMerchantId(merchantId);
-            if( null==wxPaymoney ||wxPaymoney.compareTo(num)==0){
-                cdte.setPayType("2");
-            }else if( null==aliPaymoney ||aliPaymoney.compareTo(num)==0) {
+            if( null!=wxPaymoney ||wxPaymoney.compareTo(num)!=0){
                 cdte.setPayType("3");
-            }else if( null==YePaymoney ||YePaymoney.compareTo(num)==0) {
+            }else if( null!=aliPaymoney ||aliPaymoney.compareTo(num)!=0) {
+                cdte.setPayType("2");
+            }else if( null!=YePaymoney ||YePaymoney.compareTo(num)!=0) {
                 cdte.setPayType("1");
             }
             cdte.setOrderTotal(sdde.getOrderTotal());
