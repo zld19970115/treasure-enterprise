@@ -661,6 +661,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public MasterOrderEntity selectByOrderId(String orderId) {
         return baseDao.selectByOrderId(orderId);
     }
+
     public int paseIntViaTime(Date target){
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String res[] = sdf.format(target).split(":");
@@ -696,6 +697,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date b4 =sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
             Date b5 =sdf.parse(" 4:59:00");
+            System.out.println(dto.getEatTime());
+            System.out.println(a1);
+            System.out.println(b1);
             boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
             boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
             boolean s3 = timeInRange(dto.getEatTime(), a3, b3);
@@ -1589,6 +1593,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date b4 =sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
             Date b5 =sdf.parse(" 4:59:00");
+            System.out.println(dto.getEatTime());
+            System.out.println(a1);
+            System.out.println(b1);
             boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
             boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
             boolean s3 = timeInRange(dto.getEatTime(), a3, b3);

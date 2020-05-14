@@ -2,22 +2,21 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
-import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
-import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.StatsDayDetailDao;
 import io.treasure.dto.*;
-import io.treasure.entity.*;
+import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.entity.StatsDayDetailEntity;
 import io.treasure.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 平台日交易明细表
@@ -101,6 +100,9 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                         } else if (dto.getPayMode().equals("3")) {
                             sdde.setWxPaymoney((dto.getPayMoney()).negate());
                             sdde.setPayType("3");
+                        } else if (dto.getPayMode().equals("1")) {
+                            sdde.setYePaymoney((dto.getPayMoney()).negate());
+                            sdde.setPayType("1");
                         }
                     }
                     return baseDao.insert(sdde);
@@ -136,6 +138,9 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                 } else if (dto.getPayMode().equals("3")) {
                     sdde.setWxPaymoney(dto.getPayMoney());
                     sdde.setPayType("3");
+                }else if (dto.getPayMode().equals("1")) {
+                    sdde.setYePaymoney((dto.getPayMoney()).negate());
+                    sdde.setPayType("1");
                 }
             }
             return  baseDao.insert(sdde);
@@ -171,6 +176,9 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                 sdde.setAliPaymoney(statsDayDetailEntity.getPayMoney());
             } else if (statsDayDetailEntity.getPayMode().equals("3")) {
                 sdde.setWxPaymoney(statsDayDetailEntity.getPayMoney());
+            }else if (statsDayDetailEntity.getPayMode().equals("1")) {
+                sdde.setYePaymoney(statsDayDetailEntity.getPayMoney());
+
             }
         }
 
@@ -312,6 +320,8 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
             sddd.setAliPaymoney((order.getPayMoney()).negate());
         } else if (payMode.equals("3")) {
             sddd.setWxPaymoney((order.getPayMoney()).negate());
+        }else if (payMode.equals("1")) {
+            sddd.setYePaymoney((order.getPayMoney()).negate());
         }
         BigDecimal num1=new BigDecimal("0.006");
         BigDecimal servicechanrge = payMoney.multiply(num1).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -426,10 +436,14 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
                     if(payMode.equals("2")){
                         sdde.setPayType("2");
                         sdde.setAliPaymoney(totalMoney.negate());
-                    }else{
+                    }else if(payMode.equals("3")){
                         sdde.setPayType("3");
                         sdde.setWxPaymoney(totalMoney.negate());
+                    }else if(payMode.equals("1")){
+                        sdde.setPayType("1");
+                        sdde.setYePaymoney(totalMoney.negate());
                     }
+
                     num = baseDao.insert(sdde);
                 }
             }else{

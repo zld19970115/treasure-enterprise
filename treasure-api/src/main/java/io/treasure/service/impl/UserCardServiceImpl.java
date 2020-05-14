@@ -50,7 +50,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         if (clientUserEntity==null){
             return new Result().error("请登录");
-        }
+          }
         if( clientUserEntity.getGift().compareTo(a)==1){
             return new Result().error("代付金余额大于500不可充值");
         }

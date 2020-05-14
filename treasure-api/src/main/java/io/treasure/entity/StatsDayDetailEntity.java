@@ -1,7 +1,6 @@
 package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -120,7 +119,10 @@ public class StatsDayDetailEntity {
      * 支付宝支付金额
      */
     private BigDecimal aliPaymoney;
-
+    /**
+     * 余额支付金额
+     */
+    private BigDecimal yePaymoney;
     /**
      * 最后更新时间
      */
