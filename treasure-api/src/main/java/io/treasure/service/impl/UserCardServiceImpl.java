@@ -3,7 +3,6 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
-import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.UserCardDao;
 import io.treasure.dto.CardInfoDTO;
 import io.treasure.entity.CardInfoEntity;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -68,6 +66,6 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
 
         recordGiftService.insertRecordGift(userId,date,clientUserEntity.getGift(),cardInfoEntity.getMoney());
 
-        return new Result().error("充值成功");
+        return new Result().ok("充值成功");
     }
 }
