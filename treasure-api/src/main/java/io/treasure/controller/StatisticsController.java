@@ -247,4 +247,26 @@ public class StatisticsController {
         return new Result<EChartVo>().ok(statisticsService.userChart(params));
     }
 
+    @Login
+    @GetMapping("merchantChart")
+    @ApiOperation("商家统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartVo> merchantChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartVo>().ok(statisticsService.merchantChart(params));
+    }
+
+    @Login
+    @GetMapping("orderChart")
+    @ApiOperation("订单统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartOrderVo> orderChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartOrderVo>().ok(statisticsService.orderChart(params));
+    }
+
 }

@@ -357,4 +357,76 @@ public class StatisticsServiceImpl
         return vo;
     }
 
+    @Override
+    public EChartVo merchantChart(Map<String, Object> params) {
+        EChartVo vo = new EChartVo();
+        List<String> dataCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.merchantChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.merchantChartByYear(params);
+        }
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartInfoVo chartInfoVo : chartInfoList) {
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getDataCount());
+        }
+        for(String dateVo : dateList) {
+            String obj = map.get(dateVo);
+            if(obj == null) {
+                dataCount.add("0");
+            } else {
+                dataCount.add(obj);
+            }
+        }
+        vo.setDataCount(dataCount);
+        return vo;
+    }
+
+    @Override
+    public EChartOrderVo orderChart(Map<String, Object> params) {
+        EChartOrderVo vo = new EChartOrderVo();
+        List<String> porderCount = Lists.newArrayList();
+        List<String> orderCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartOrderInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.orderChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.orderChartByYear(params);
+        }
+        Map<String,String> pmap = Maps.newHashMap();
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartOrderInfoVo chartInfoVo : chartInfoList) {
+            pmap.put(chartInfoVo.getDataRow(), chartInfoVo.getPorderCount());
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getOrderCount());
+        }
+        for(String dateVo : dateList) {
+            String pobj = pmap.get(dateVo);
+            String obj = map.get(dateVo);
+            if(pobj == null) {
+                porderCount.add("0");
+            } else {
+                porderCount.add(pobj);
+            }
+            if(obj == null) {
+                orderCount.add("0");
+            } else {
+                orderCount.add(obj);
+            }
+        }
+        vo.setPorderCount(porderCount);
+        vo.setOrderCount(orderCount);
+        return vo;
+    }
+
 }

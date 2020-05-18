@@ -653,18 +653,26 @@
 
     <select id="fmisHome" resultType="io.treasure.vo.FmisHomeVo">
         SELECT
-            IFNULL(sum(ctm.total_cash)+sum(ctm.point_money),0) as totalCash,
-            IFNULL(sum(ctm.total_cash),0) as merchantTotalCash,
-            IFNULL(sum(ctm.point_money),0) as pointMoney,
-            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 1) as balanceTotalCash,
-            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 2) as aliTotalCash,
-            (select IFNULL(SUM(ctmo.pay_money),0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.pay_mode = 3) as wxTotalCash,
-            COUNT(0) as merchantCount,
+            SUM( case when `status` = 10 then merchant_proceeds+platform_brokerage else 0 end ) as totalCash,
+            SUM( case when `status` = 10 then merchant_proceeds else 0 end ) as merchantTotalCash,
+            SUM( case when `status` = 10 then platform_brokerage else 0 end ) as pointMoney,
+            SUM( case when `status` = 10 and pay_mode = 1 then pay_money else 0 end ) as balanceTotalCash,
+            SUM( case when `status` = 10 and pay_mode = 2 then pay_money else 0 end ) as aliTotalCash,
+            SUM( case when `status` = 10 and pay_mode = 3 then pay_money else 0 end ) as wxTotalCash,
+            ( select COUNT(0) from ct_merchant ) as merchantCount,
             (select COUNT(0) from ct_client_user ccu) as userCount,
-            (select COUNT(0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.p_order_id = '0') as pOrderCount,
-            (select COUNT(0) from ct_master_order ctmo where ctmo.`status` = 10 and ctmo.p_order_id != '0') as orderCount
+            SUM( case when `status` = 10 and p_order_id = '0' then 1 else 0 end ) as pOrderCount,
+            SUM( case when `status` = 10 and p_order_id != '0' then 1 else 0 end ) as orderCount
         FROM
-	        ct_merchant ctm
+            ct_master_order
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(eat_time, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(eat_time, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
     </select>
 
     <select id="merchantPage" resultType="io.treasure.vo.MerchantPageVo">
@@ -718,6 +726,70 @@
             </if>
         </where>
         GROUP BY date_format(create_date, '%Y-%m')
+    </select>
+
+    <select id="merchantChartByDay" resultType="io.treasure.vo.EChartInfoVo">
+        select
+        date_format(create_date, '%Y-%m-%d') as dataRow,
+        count(id) as dataCount
+        from
+        ct_merchant
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(create_date, '%Y-%m-%d')
+    </select>
+
+    <select id="merchantChartByYear" resultType="io.treasure.vo.EChartInfoVo">
+        select
+        date_format(create_date, '%Y-%m') as dataRow,
+        count(id) as dataCount
+        from
+        ct_merchant
+        <where>
+            <if test="year != null and year.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y') = #{year} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(create_date, '%Y-%m')
+    </select>
+
+    <select id="orderChartByDay" resultType="io.treasure.vo.EChartOrderInfoVo">
+        select
+        date_format(eat_time, '%Y-%m-%d') as dataRow,
+        sum(case when `status` = 10 and p_order_id = '0' then 1 else 0 end) as porderCount,
+        sum(case when `status` = 10 and p_order_id != '0' then 1 else 0 end) as orderCount
+        from
+        ct_master_order
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(eat_time, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(eat_time, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(eat_time, '%Y-%m-%d')
+    </select>
+
+    <select id="orderChartByYear" resultType="io.treasure.vo.EChartOrderInfoVo">
+        select
+        date_format(eat_time, '%Y-%m') as dataRow,
+        sum(case when `status` = 10 and p_order_id = '0' then 1 else 0 end) as porderCount,
+        sum(case when `status` = 10 and p_order_id != '0' then 1 else 0 end) as orderCount
+        from
+        ct_master_order
+        <where>
+            <if test="year != null and year.trim() != ''">
+                <![CDATA[ and date_format(eat_time, '%Y') = #{year} ]]>
+            </if>
+        </where>
+        GROUP BY date_format(eat_time, '%Y-%m')
     </select>
 
 </mapper>

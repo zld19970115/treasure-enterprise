@@ -1,0 +1,115 @@
+package io.treasure.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
+import io.treasure.dao.NewsDao;
+import io.treasure.dto.NewsDto;
+import io.treasure.entity.NewsEntity;
+import io.treasure.service.NewsService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class NewsServiceImpl implements NewsService {
+
+    @Autowired
+    private NewsDao newsDao;
+
+    @Override
+    public PageData<NewsDto> page(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<NewsDto> page = (Page) newsDao.pageList(params);
+        return new PageData<NewsDto>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public List<NewsDto> list(Map<String, Object> params) {
+        return null;
+    }
+
+    @Override
+    public NewsDto get(Long id) {
+        NewsEntity obj = newsDao.selectById(id);
+        NewsDto dto = new NewsDto();
+        BeanUtils.copyProperties(obj,dto);
+        return dto;
+    }
+
+    @Override
+    public void save(NewsDto dto) {
+        NewsEntity obj = new NewsEntity();
+        BeanUtils.copyProperties(dto,obj);
+        newsDao.insert(obj);
+    }
+
+    @Override
+    public void update(NewsDto dto) {
+        NewsEntity obj = new NewsEntity();
+        BeanUtils.copyProperties(dto,obj);
+        newsDao.updateById(obj);
+    }
+
+    @Override
+    public void delete(Long[] ids) {
+    }
+
+    @Override
+    public boolean insert(NewsEntity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean insertBatch(Collection<NewsEntity> entityList) {
+        return false;
+    }
+
+    @Override
+    public boolean insertBatch(Collection<NewsEntity> entityList, int batchSize) {
+        return false;
+    }
+
+    @Override
+    public boolean updateById(NewsEntity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean update(NewsEntity entity, Wrapper<NewsEntity> updateWrapper) {
+        return false;
+    }
+
+    @Override
+    public boolean updateBatchById(Collection<NewsEntity> entityList) {
+        return false;
+    }
+
+    @Override
+    public boolean updateBatchById(Collection<NewsEntity> entityList, int batchSize) {
+        return false;
+    }
+
+    @Override
+    public NewsEntity selectById(Serializable id) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteById(Serializable id) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteBatchIds(Collection<? extends Serializable> idList) {
+        newsDao.deleteBatchIds(idList);
+        return true;
+    }
+
+}

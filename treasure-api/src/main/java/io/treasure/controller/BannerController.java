@@ -8,16 +8,13 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.GoodDTO;
+import io.treasure.dto.BannerDto;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.BannerEntity;
 import io.treasure.service.BannerService;
 import io.treasure.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -56,6 +53,49 @@ public class BannerController {
     public Result<PageData<MerchantDTO>> martLike(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.martLike(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+
+    @GetMapping("bannerById")
+    @ApiOperation("根据id查询banner")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="String") ,
+    })
+    public Result<BannerEntity> bannerById(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<BannerEntity>().ok(bannerService.bannerById(params));
+    }
+
+    @GetMapping("del")
+    @ApiOperation("删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="String") ,
+    })
+    public Result<Integer> del(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<Integer>().ok(bannerService.del(params));
+    }
+
+    @PostMapping("update")
+    @ApiOperation("更新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "排序", value = "sort", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "图片地址", value = "imgUrl", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "类型", value = "type", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "商户或活动id", value = "typeId", paramType = "query",dataType="String")
+    })
+    public Result<Integer> update(@ApiIgnore @RequestBody BannerDto dto) {
+        return new Result<Integer>().ok(bannerService.update(dto));
+    }
+
+    @PostMapping("insert")
+    @ApiOperation("新增")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "排序", value = "sort", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "图片地址", value = "imgUrl", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "类型", value = "type", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "商户或活动id", value = "typeId", paramType = "query",dataType="String")
+    })
+    public Result<Integer> insert(@ApiIgnore @RequestBody BannerDto dto) {
+        return new Result<Integer>().ok(bannerService.insert(dto));
     }
 
 }
