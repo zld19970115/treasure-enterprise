@@ -249,6 +249,27 @@ public class SendSMSUtil {
         return result;
     }
     /**
+     * 获取注销验证码
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static Result sendCodeFordeletzhuxiao(String phoneNumber, SMSConfig smsConfig) {
+        Result result=new Result();
+        SMSSend send=new SMSSend(smsConfig);
+        String number = RandomUtil.randomNumbers(6);
+        Map map=new HashMap();
+        map.put("code",number);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_165340693", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            result.ok(number);
+        }
+        return result;
+    }
+    /**
      * 获取验证码
      * @param phoneNumber
      * @param smsConfig

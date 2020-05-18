@@ -521,7 +521,22 @@ public class MerchantUserController {
         }
         return new Result<Map>().ok(map);
     }
-
+    /**
+     * 获取验证码
+     * @param
+     * @param
+     * @return
+     */
+    @CrossOrigin
+    @GetMapping("cancelcode")
+    @ApiOperation("获取注销验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
+    })
+    public Result cancelcode(@RequestParam String mobile){
+        Result result = SendSMSUtil.sendCodeFordeletzhuxiao(mobile, smsConfig);
+        return new Result().ok(result);
+    }
     @GetMapping("masterCancel")
     @ApiOperation("商户端注销")
     @ApiImplicitParams({
@@ -544,7 +559,12 @@ public class MerchantUserController {
         if (list.size()!=0){
             return new Result().error("您有订单未处理");
         }
-        merchantUserEntity.setStatus(3);
+        merchantUserEntity.setMobile(merchantUserEntity.getMobile()+"已注销");
+        merchantUserEntity.setMiniOpenid("0");
+        merchantUserEntity.setClientId("0");
+        merchantUserEntity.setMerchantid("0");
+        merchantUserEntity.setOpenid("0");
+        merchantUserEntity.setStatus(0);
         merchantUserService.updateById(merchantUserEntity);
         return new Result().ok("注销成功");
     }

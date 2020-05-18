@@ -50,9 +50,7 @@ public class TokenServiceImpl extends BaseServiceImpl<TokenDao, TokenEntity> imp
 			tokenEntity.setUserId(userId);
 			tokenEntity.setToken(token);
 			tokenEntity.setUpdateDate(now);
-			tokenEntity.setExpireDate(expireTime);
-
-			//保存token
+			tokenEntity.setExpireDate(expireTime);		//保存token
 			this.insert(tokenEntity);
 		}else{
 			//判断token是否过期
