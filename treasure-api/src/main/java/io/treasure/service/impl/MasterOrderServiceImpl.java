@@ -1623,6 +1623,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-5, "没有此包房/散台");
             }
             int isUse = merchantRoomParamsSetEntity1.getState();
+            c = merchantRoomParamsSetEntity;
             if (isUse == 0) {
                 merchantRoomParamsSetEntity1.setState(1);
                 //更新状态值
@@ -1631,6 +1632,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
+//        if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+//            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
+//            if (merchantRoomParamsSetEntity == null) {
+//                return result.error(-5, "没有此包房/散台");
+//            }
+//            int isUse = merchantRoomParamsSetEntity.getState();
+//            c = merchantRoomParamsSetEntity;
+//            if (isUse != 1) {
+//                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), 1);
+//
+//            } else {
+//                return result.error(-1, "包房/散台已经预定,请重新选择！");
+//            }
+//        }
         Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
@@ -1807,12 +1822,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         String orderId = params.get("orderId").toString();
+        System.out.println(orderId+"orderId");
         OrderDTO order = masterOrderService.getMasterOrder(orderId);
 
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
+        System.out.println(allMainOrder+"allMainOrder");
         allMainOrder.add(order);
-        if (allMainOrder != null) {
+        if (allMainOrder.size()!=0) {
             for (OrderDTO s : allMainOrder) {
+                System.out.println(s+"s.getOrderId()");
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
                 for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));

@@ -413,7 +413,11 @@ public class ApiClientUserController {
         if (list.size()!=0){
             return new Result().error("您有订单未完成");
         }
-
+        clientUserEntity.setUsername(clientUserEntity.getUsername()+"已注销");
+        clientUserEntity.setClientId("0");
+        clientUserEntity.setMobile(clientUserEntity.getMobile()+"已注销");
+        clientUserEntity.setOpenid("0");
+        clientUserEntity.setUnionid("0");
         clientUserEntity.setStatus(9);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("用户已注销");
@@ -439,7 +443,6 @@ public class ApiClientUserController {
     public Result requireItems(Date startTime,Date stopTime,
                                Integer index,Integer itemNum,Integer gift,
                                Integer coin,Integer integral,Integer balance) throws ParseException {
-
         QueryWrapper<ClientUserEntity> mweqw = new QueryWrapper<>();
 
         if(startTime != null && stopTime != null){
@@ -491,7 +494,6 @@ public class ApiClientUserController {
         }
         BigDecimal a = new BigDecimal("200");
         BigDecimal gift = clientUserEntity.getGift();
-
         BigDecimal newGift = a.add(gift);
         clientUserEntity.setGift(newGift);
         clientUserService.updateById(clientUserEntity);
