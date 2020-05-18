@@ -65,7 +65,8 @@ public class MerchantRoomDTO implements Serializable {
 
 	@ApiModelProperty(value = "状态")
 	private int  status;
-
+	@ApiModelProperty(value = "排序字段")
+	private Integer  sort;
 	@ApiModelProperty(value = "修改时间")
 	private Date updateDate;
 
