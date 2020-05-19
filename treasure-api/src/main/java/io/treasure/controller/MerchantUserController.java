@@ -514,6 +514,7 @@ public class MerchantUserController {
             map.put("boolean",c);
         }else {
             c=true;
+            tokenService.createToken(userByOpenId.getId());
             TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
             map.put("boolean",c);
             map.put("user",userByOpenId);
