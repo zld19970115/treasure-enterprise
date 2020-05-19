@@ -549,7 +549,8 @@
         sum(ctdt.service_chanrge) as serviceChanrge,sum(ctdt.merchant_proceeds) as merchantProceeds,sum(ctdt.platform_brokerage) as platformBrokerage,
         sum(ctdt.reality_money) as realityMoney,sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,sum(ctdt.gift_money) as giftMoney
         , ctm.`name`,
-        ctm.id as mid
+        ctm.id as mid,
+        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney
         from ct_days_together ctdt
          left join ct_merchant ctm on ctm.id = ctdt.merchant_id
          <where>
@@ -616,7 +617,9 @@
         sdd.wx_paymoney as wxPaymoney,
         sdd.ali_paymoney as aliPaymoney,
         sdd.service_charge as serviceCharge,
-        sdd.update_date as updateDate
+        sdd.update_date as updateDate,
+        case when sdd.incident_type = 0 then (select ro.order_id from refund_order ro where ro.refund_id = sdd.order_id) else '' end as tgoodOrderId,
+        case when sdd.incident_type = 8 then (select ctmo.order_id from ct_master_order ctmo where ctmo.refund_id = sdd.order_id) else '' end as torderId
     FROM
 	    stats_day_detail sdd
 	    <where>

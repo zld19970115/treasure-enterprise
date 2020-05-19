@@ -52,6 +52,7 @@ public class NewsController {
     }
 
     @Login
+    @CrossOrigin
     @GetMapping("newsById")
     @ApiOperation("根据id查询")
     @ApiImplicitParams({

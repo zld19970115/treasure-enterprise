@@ -50,4 +50,8 @@ public class StatSdayDetailPageVo {
 
     private String updateDate;
 
+    private String tgoodOrderId;
+
+    private String torderId;
+
 }
