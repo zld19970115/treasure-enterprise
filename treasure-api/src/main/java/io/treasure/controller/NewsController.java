@@ -40,6 +40,18 @@ public class NewsController {
         return new Result<PageData<NewsDto>>().ok(newsService.page(params));
     }
 
+    @Login
+    @GetMapping("agreePage")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData<NewsDto>> agreePage(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<NewsDto>>().ok(newsService.agreePage(params));
+    }
+
+    @Login
     @GetMapping("newsById")
     @ApiOperation("根据id查询")
     @ApiImplicitParams({
@@ -49,6 +61,7 @@ public class NewsController {
         return new Result<NewsDto>().ok(newsService.get(id));
     }
 
+    @Login
     @GetMapping("del")
     @ApiOperation("删除")
     @ApiImplicitParams({
@@ -58,6 +71,7 @@ public class NewsController {
         return new Result<Boolean>().ok(newsService.deleteBatchIds(Arrays.asList(new Long[]{id})));
     }
 
+    @Login
     @PostMapping("update")
     @ApiOperation("更新")
     public Result<String> update(@RequestBody NewsDto dto) {
@@ -65,6 +79,7 @@ public class NewsController {
         return new Result<String>().ok("ok");
     }
 
+    @Login
     @PostMapping("insert")
     @ApiOperation("新增")
     public Result<String> insert(@RequestBody NewsEntity dto) {

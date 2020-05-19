@@ -15,13 +15,17 @@
     </resultMap>
 
     <select id="pageList" resultType="io.treasure.dto.NewsDto">
-        select * from ct_news where `status` != 9
+        select * from ct_news where `status` in (1,2)
         <if test="startDate != null and startDate.trim() != ''">
             <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
         </if>
         <if test="endDate != null and endDate.trim() != ''">
             <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
         </if>
+    </select>
+
+    <select id="agreePage" resultType="io.treasure.dto.NewsDto">
+        select * from ct_news where `status` in (2,3)
     </select>
 
 </mapper>

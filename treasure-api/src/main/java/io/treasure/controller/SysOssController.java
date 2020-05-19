@@ -9,6 +9,7 @@
 package io.treasure.controller;
 
 //import com.google.gson.Gson;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
@@ -21,16 +22,18 @@ import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.service.SysOssService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.util.*;
 
 import static org.apache.commons.io.IOUtils.toByteArray;
 
@@ -79,6 +82,33 @@ public class SysOssController {
         Map<String, Object> data = new HashMap<>(1);
         data.put("src", url);
         return new Result<Map<String, Object>>().ok(data);
-
     }
+
+    @CrossOrigin
+    @Login
+    @PostMapping("upload2")
+    @ApiOperation(value = "上传文件富文本专用")
+    public Result<Map<String, Object>> upload2(HttpServletRequest request) throws IOException {
+        int length = request.getContentLength();
+        byte[] bytes = new byte[length];
+        DataInputStream dis = new DataInputStream(request.getInputStream());
+        int readcount = 0;
+        while(readcount < length){
+            int count = dis.read(bytes,readcount,length);
+            readcount = count + readcount;
+        }
+        String url = null;
+        String extension = FilenameUtils.getExtension(UUID.randomUUID().toString());
+        url = OSSFactory.build().uploadSuffix(bytes, extension);
+        SysOssEntity ossEntity = new SysOssEntity();
+        ossEntity.setUrl(url);
+        ossEntity.setCreateDate(new Date());
+        sysOssService.insert(ossEntity);
+
+        Map<String, Object> data = new HashMap<>(1);
+        data.put("error", 0);
+        data.put("url", url);
+        return new Result<Map<String, Object>>().ok(data);
+    }
+
 }

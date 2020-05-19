@@ -21,4 +21,6 @@ public interface NewsDao extends BaseDao<NewsEntity> {
 
     List<NewsDto> pageList(Map<String, Object> params);
 
+    List<NewsDto> agreePage();
+
 }

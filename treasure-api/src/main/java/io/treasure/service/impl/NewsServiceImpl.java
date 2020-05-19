@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +48,17 @@ public class NewsServiceImpl implements NewsService {
     public void save(NewsDto dto) {
         NewsEntity obj = new NewsEntity();
         BeanUtils.copyProperties(dto,obj);
+        obj.setCreateDate(new Date());
         newsDao.insert(obj);
     }
 
     @Override
     public void update(NewsDto dto) {
+        NewsEntity entity = newsDao.selectById(dto.getId());
         NewsEntity obj = new NewsEntity();
         BeanUtils.copyProperties(dto,obj);
+        obj.setUpdateDate(new Date());
+        obj.setCreateDate(entity.getCreateDate());
         newsDao.updateById(obj);
     }
 
@@ -63,7 +68,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public boolean insert(NewsEntity entity) {
-        return false;
+        entity.setCreateDate(new Date());
+        newsDao.insert(entity);
+        return true;
     }
 
     @Override
@@ -108,8 +115,18 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public boolean deleteBatchIds(Collection<? extends Serializable> idList) {
-        newsDao.deleteBatchIds(idList);
+        Long id = (Long) idList.toArray()[0];
+        NewsEntity entity = newsDao.selectById(id);
+        entity.setUpdateDate(new Date());
+        entity.setStatus(9);
+        newsDao.updateById(entity);
         return true;
     }
 
+    @Override
+    public PageData<NewsDto> agreePage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<NewsDto> page = (Page) newsDao.agreePage();
+        return new PageData<NewsDto>(page.getResult(),page.getTotal());
+    }
 }

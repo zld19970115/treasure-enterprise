@@ -1,10 +1,14 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
+@TableName("ct_news")
 public class NewsEntity {
 
     private Long id;
@@ -17,7 +21,7 @@ public class NewsEntity {
 
     private Date updateDate;
 
-    private Date create_date;
+    private Date createDate;
 
     private Long creator;
 
