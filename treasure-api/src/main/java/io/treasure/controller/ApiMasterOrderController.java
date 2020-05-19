@@ -653,7 +653,7 @@ public class ApiMasterOrderController {
     }
     @Login
     @GetMapping("deleteOrder")
-    @ApiOperation("商户端退款订单详情")
+    @ApiOperation("用户端删除订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "orderId", value = "主订单编号", paramType = "query", required = true, dataType="string")
     })
