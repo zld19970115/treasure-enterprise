@@ -1,14 +1,13 @@
 package io.treasure.dto;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
-
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 订单表
@@ -41,7 +40,9 @@ public class MasterOrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "订单优惠ID")
 	private Long discountId;
-
+	@ApiModelProperty(value = "逻辑删除字段")
+	@TableLogic
+	private Integer deleted;
 	@ApiModelProperty(value = "就餐时间")
 	private Date eatTime;
 

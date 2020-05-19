@@ -42,6 +42,7 @@ import java.util.*;
  */
 @Service
 public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, MasterOrderEntity, MasterOrderDTO> implements MasterOrderService {
+
     @Autowired
     private SMSConfig smsConfig;
     @Autowired
@@ -2010,6 +2011,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {
         return baseDao.selectPOrderIdHavePaid(orderId);
+    }
+
+    @Override
+    public Result deleteOrder(String orderId) {
+        MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return new Result().error("订单不存在");
+        }
+        masterOrderEntity.setDeleted(1);
+        baseDao.updateById(masterOrderEntity);
+        return new Result().ok("删除成功");
     }
 
     @Override
