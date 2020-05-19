@@ -286,6 +286,7 @@ public class ApiClientUserController {
             map.put("boolean", c);
         } else {
             c = true;
+            tokenService.createToken(userByOpenId.getId());
             TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
             map.put("boolean", c);
             map.put("user", userByOpenId);
@@ -317,6 +318,7 @@ public class ApiClientUserController {
                 if(userByPhone.getStatus()==9){
                     return new Result().error("该手机号已注销");
                 }
+                tokenService.createToken(userByPhone.getId());
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateOpenid(openId, mobile);
                 map.put("token", byUserId.getToken());
@@ -348,6 +350,7 @@ public class ApiClientUserController {
                 if(userByPhone.getStatus()==9){
                     return new Result().error("该手机号已注销");
                 }
+                tokenService.createToken(userByPhone.getId());
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateUnionid(openId, mobile);
                 map.put("token", byUserId.getToken());

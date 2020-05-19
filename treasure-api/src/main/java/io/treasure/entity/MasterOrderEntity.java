@@ -2,13 +2,13 @@ package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -92,6 +92,11 @@ public class MasterOrderEntity extends BaseEntity {
      * 联系电话
      */
 	private String contactNumber;
+	/**
+	 * 逻辑删除字段
+	 */
+	@TableLogic
+	private Integer deleted;
     /**
      * 结账状态：0-未结账，1-已结账
      */
