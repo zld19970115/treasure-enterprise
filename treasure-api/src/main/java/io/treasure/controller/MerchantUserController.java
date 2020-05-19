@@ -537,6 +537,7 @@ public class MerchantUserController {
         Result result = SendSMSUtil.sendCodeFordeletzhuxiao(mobile, smsConfig);
         return new Result().ok(result);
     }
+    @Login
     @GetMapping("masterCancel")
     @ApiOperation("商户端注销")
     @ApiImplicitParams({
