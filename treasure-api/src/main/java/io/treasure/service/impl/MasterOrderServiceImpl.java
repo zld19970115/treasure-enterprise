@@ -2017,15 +2017,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result deleteOrder(String orderId) {
         MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
         if (masterOrderEntity==null){
-            return new Result().error("删除成功");
+            return new Result().error("没有找到订单");
         }
-        if (masterOrderEntity.getStatus()==3 || masterOrderEntity.getStatus()==5 ||masterOrderEntity.getStatus()==8 ||masterOrderEntity.getStatus()==11){
-            masterOrderEntity.setDeleted(1);
-            baseDao.updateById(masterOrderEntity);
+        if(masterOrderEntity.getStatus()==3 || masterOrderEntity.getStatus()==5 ||masterOrderEntity.getStatus()==8 ||masterOrderEntity.getStatus()==11){
+            List<MasterOrderEntity> masterOrderEntities = baseDao.selectNodelOrders(orderId);
+            if(masterOrderEntities.size()!=0){
+                return new Result().error("您有从单未处理，请处理后再试");
+            }
+            List<MasterOrderEntity> order2 = baseDao.getOrder2(orderId);
+            for (MasterOrderEntity masterOrderEntity1 : order2) {
+                baseDao.updateOrderDeletedById(masterOrderEntity1.getId());
+            }
             return new Result().ok("删除成功");
         }else {
-            return new Result().ok("该订单不能删除，请稍后再试");
+               return new Result().error("该订单不能删除，请稍后再试");
         }
+
+
+
 
     }
 

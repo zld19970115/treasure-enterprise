@@ -1,5 +1,6 @@
 package io.treasure.dto;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.treasure.entity.*;
@@ -95,7 +96,9 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "创建时间")
 	private Date createDate;
-
+	@ApiModelProperty(value = "逻辑删除字段")
+	@TableLogic
+	private Integer deleted;
 	@ApiModelProperty(value = "创建者")
 	private Long creator;
 
