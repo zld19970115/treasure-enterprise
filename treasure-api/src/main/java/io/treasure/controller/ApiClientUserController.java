@@ -186,6 +186,7 @@ public class ApiClientUserController {
         user.setUsername(dto.getMobile());
         user.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
         user.setCreateDate(new Date());
+        user.setUnionid(dto.getUnionid());
         user.setClientId(dto.getClientId());
         clientUserService.insert(user);
         ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(dto.getMobile());
