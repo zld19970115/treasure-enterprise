@@ -141,10 +141,12 @@ select param_value from sys_params where id=1144988823431553026
     </select>
 
     <select id="getMerchanWithDrawAll"  resultType="io.treasure.dto.MerchantWithdrawDTO">
-        select mw.*,cm.name,cm.total_cash from ct_merchant_withdraw mw , ct_merchant cm
+        select cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+                mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw , ct_merchant cm
     </select>
     <select id="getMerchanWithDrawByMerchantId"  resultType="io.treasure.dto.MerchantWithdrawDTO">
-        select mw.*,cm.name,cm.total_cash,cm.mobile from ct_merchant_withdraw mw , ct_merchant cm
+        select cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+                mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw , ct_merchant cm
         where 1=1
         <if test="mobile != null and mobile!='' ">
             and  cm.mobile like  CONCAT('%',${mobile},'%')

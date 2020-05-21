@@ -26,6 +26,16 @@ public class ChargeCashDTO implements Serializable {
     @ApiModelProperty(value = "类型")
     private String cashOrderId;
     /**
+     * 用户真实姓名
+     */
+    @ApiModelProperty(value = "用户真实姓名")
+    private String name;
+    /**
+     * 用户名
+     */
+    @ApiModelProperty(value = "用户名")
+    private String userName;
+    /**
      * 用户ID
      */
     @ApiModelProperty(value = "用户ID")

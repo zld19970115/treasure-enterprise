@@ -21,14 +21,16 @@
         select * from ct_charge_cash where cash_order_id = #{cashOrderId}
     </select>
     <select id="getChargeCashAll"  resultType="io.treasure.dto.ChargeCashDTO">
-        select * from ct_charge_cash
+        select ccu.name,ccu.username,ccu.mobile,ccc.cash_order_id,ccc.cash,ccc.change_gift,
+        ccc.save_time,ccc.status,ccc.create_date,ccc.creator from ct_charge_cash ccc , ct_client_user ccu
     </select>
 
     <select id="getChargeCashByCreateDate"  resultType="io.treasure.dto.ChargeCashDTO">
-        select * from ct_charge_cash ccc , ct_client_user ccu
+        select ccu.name,ccu.username,ccu.mobile,ccc.cash_order_id,ccc.cash,ccc.change_gift,
+        ccc.save_time,ccc.status,ccc.create_date,ccc.creator from ct_charge_cash ccc , ct_client_user ccu
         where 1=1
         <if test="phone != null and phone!='' ">
-            and  ccu.phone like  CONCAT('%',${phone},'%')
+            and  ccu.mobile like  CONCAT('%',${phone},'%')
         </if>
         <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
             and ccc.create_date BETWEEN #{createDateTop} AND #{createDateDown}

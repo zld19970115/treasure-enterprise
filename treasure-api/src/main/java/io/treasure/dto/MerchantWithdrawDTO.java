@@ -25,6 +25,8 @@ public class MerchantWithdrawDTO implements Serializable {
 	@ApiModelProperty(value = "")
 	private Long id;
 
+	@ApiModelProperty(value = "商户名称")
+	private String name;
 	@ApiModelProperty(value = "提现金额")
 	@NotNull(message="提现金额不能为空",groups = AddGroup.class)
 	private Double money;
@@ -75,4 +77,8 @@ public class MerchantWithdrawDTO implements Serializable {
 	private String userMobile;
 	@ApiModelProperty(value = "会员昵称")
 	private String nickName;
+	@ApiModelProperty(value = "营业额总收入")
+	private String totalCash;
+	@ApiModelProperty(value = "商户手机号码")
+	private String mobile;
 }
