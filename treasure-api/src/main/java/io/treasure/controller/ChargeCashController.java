@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
@@ -18,6 +20,7 @@ import io.treasure.service.ChargeCashSetService;
 import io.treasure.utils.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -74,4 +77,38 @@ public class ChargeCashController {
         List<ChargeCashSetDTO> select = chargeCashSetService.select();
         return  new Result().ok(select);
     }
+
+    @PostMapping("/getChargeCashAll")
+    @ApiOperation("全部充值记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+    })
+    public Result getChargeCashAll(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<ChargeCashDTO> page = chargeCashService.getChargeCashAll(params);
+        return new Result().ok(page);
+    }
+
+    @PostMapping("/getChargeCashByCreateDate")
+    @ApiOperation("根据手机号或者日期查询充值记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "phone", value = "手机号", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+
+    })
+    public Result getChargeCashByCreateDate(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<ChargeCashDTO> page = chargeCashService.getChargeCashByCreateDate(params);
+        return new Result().ok(page);
+    }
+
+
+
+
 }

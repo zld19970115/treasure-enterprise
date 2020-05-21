@@ -17,4 +17,25 @@
         select * from ct_record_gift where user_id = #{userId} and status = 3
     </select>
 
+    <insert id="insertRecordGiftAdmin">
+        insert into ct_record_gift (user_id,transferred_mobile,use_gift,status,create_date,creator )
+         VALUES
+        ( #{userId},#{transferredMobile},#{useGift},5,#{createDate},#{creator});
+    </insert>
+
+    <select id="getAllRecordGoht" resultType="io.treasure.dto.RecordGiftDTO">
+        select * from ct_record_gift where status = 5
+    </select>
+    <select id="getRecordGiftByUserId" resultType="io.treasure.dto.RecordGiftDTO">
+        select * from ct_record_gift
+        where status = 5
+        <if test="transferredMobile != null and transferredMobile!='' ">
+            and transferred_mobile like  CONCAT('%',${transferredMobile},'%')
+        </if>
+        <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
+            and create_date BETWEEN #{createDateTop} AND #{createDateDown}
+        </if>
+    </select>
+
+
 </mapper>

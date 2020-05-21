@@ -1,8 +1,11 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
@@ -113,6 +116,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void addRecordGiftByUserid(String userId, String useGift) {
+        baseDao.addRecordGiftByUserid(userId,useGift);
+    }
+
+    @Override
     public void updateCID(String clientId, String mobile) {
         baseDao.updateCID(clientId,mobile);
     }
@@ -196,4 +204,16 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
         return clientUserDao.selectListByCondition(queryClientUserDto);
     }
+
+    @Override
+    public PageData<ClientUserDTO> getRecordUserAll(Map<String, Object> params) {
+        //分页
+        IPage<ClientUserEntity> page = getPage(params, Constant.CREATE_DATE, false);
+
+        //查询
+        List<ClientUserDTO> list = baseDao.getRecordUserAll(params);
+
+        return getPageData(list, page.getTotal(), ClientUserDTO.class);
+    }
+
 }

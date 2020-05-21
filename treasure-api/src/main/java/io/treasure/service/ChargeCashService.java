@@ -1,5 +1,6 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.ChargeCashDTO;
@@ -20,4 +21,15 @@ public interface ChargeCashService extends CrudService<ChargeCashEntity, ChargeC
     Result orderSave(ChargeCashDTO dto, ClientUserEntity user) throws ParseException;
     ChargeCashDTO selectByCashOrderId(String cashOrderId);
     Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no);
+
+    /**
+     * 查询全部用户充值记录
+     */
+    PageData<ChargeCashDTO> getChargeCashAll(Map<String, Object> params);
+
+    /**
+     * 查询根据日期或者用户id查询充值记录
+     */
+    PageData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params);
+
 }

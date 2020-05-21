@@ -140,4 +140,24 @@ select param_value from sys_params where id=1144988823431553026
         </where>
     </select>
 
+    <select id="getMerchanWithDrawAll"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select mw.*,cm.name,cm.total_cash from ct_merchant_withdraw mw , ct_merchant cm
+    </select>
+    <select id="getMerchanWithDrawByMerchantId"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select mw.*,cm.name,cm.total_cash,cm.mobile from ct_merchant_withdraw mw , ct_merchant cm
+        where 1=1
+        <if test="mobile != null and mobile!='' ">
+            and  cm.mobile like  CONCAT('%',${mobile},'%')
+        </if>
+        <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
+            and mw.create_date BETWEEN #{createDateTop} AND #{createDateDown}
+        </if>
+        <if test="merchantId != null and merchantId!='' ">
+            and  mw.merchant_id= cm.id
+        </if>
+
+
+    </select>
+
+
 </mapper>

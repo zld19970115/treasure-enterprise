@@ -412,4 +412,35 @@ public class MerchantWithdrawController {
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
 
+    @PostMapping("getMerchanWithDrawAll")
+    @ApiOperation("全部商户提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+    })
+    public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawAll(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawAll(params);
+        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    }
+
+    @PostMapping("getMerchanWithDrawByMerchantId")
+    @ApiOperation("根据手机号/日期查询商户提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+    })
+    public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawByMerchantId(params);
+        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    }
+
+
+
 }
