@@ -34,4 +34,5 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     PageData<MerchantDTO>  merchantSortingPage (Map<String, Object> params);
     MerchantEntity getMerchantById(Long id);
     PageData<MerchantDTO>   martLike(Map<String, Object> params);
+    Integer AuditMerchantStatus(Long id);
 }

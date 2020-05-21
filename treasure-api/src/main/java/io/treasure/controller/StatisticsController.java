@@ -224,6 +224,21 @@ public class StatisticsController {
     }
 
     @Login
+    @GetMapping("merchantPcHome")
+    @ApiOperation("商户pc系统首页统计")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "id", paramType = "query",dataType="long")
+    })
+    public Result<FmisHomeVo> merchantPcHome(@ApiIgnore @RequestParam Map<String, Object> params){
+        if(params.get("merchantId") == null) {
+            return new Result<FmisHomeVo>().error(1);
+        }
+        return new Result<FmisHomeVo>().ok(statisticsService.merchantPcHome(params));
+    }
+
+    @Login
     @GetMapping("merchantPage")
     @ApiOperation("财务系统首页统计")
     @ApiImplicitParams({
@@ -267,6 +282,31 @@ public class StatisticsController {
     })
     public Result<EChartOrderVo> orderChart(@ApiIgnore @RequestParam Map<String, Object> params){
         return new Result<EChartOrderVo>().ok(statisticsService.orderChart(params));
+    }
+
+    @Login
+    @GetMapping("merchantOrderChart")
+    @ApiOperation("订单统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "id", paramType = "query",dataType="long")
+    })
+    public Result<EChartOrderVo> merchantOrderChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        if(params.get("merchantId") == null) {
+            return new Result<EChartOrderVo>().error();
+        }
+        return new Result<EChartOrderVo>().ok(statisticsService.orderChart(params));
+    }
+
+    @Login
+    @GetMapping("realTimeOrder")
+    @ApiOperation("商户端PC订单数量获取(websocket)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商家ID", paramType = "query",dataType="String")
+    })
+    public RealTimeOrder realTimeOrder(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return statisticsService.realTimeOrder(params);
     }
 
 }

@@ -429,4 +429,14 @@ public class StatisticsServiceImpl
         return vo;
     }
 
+    @Override
+    public RealTimeOrder realTimeOrder(Map<String, Object> params) {
+        return baseDao.realTimeOrder(params);
+    }
+
+    @Override
+    public FmisHomeVo merchantPcHome(Map<String, Object> params) {
+        return baseDao.fmisHome(params);
+    }
+
 }

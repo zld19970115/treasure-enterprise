@@ -514,4 +514,14 @@ public class MerchantController {
         return new Result().ok(merchantEntityIPage);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
+
+    @GetMapping("auditMerchantStatus")
+    @ApiOperation("商户审核")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true, dataType="long")
+    })
+    public Result<Integer> auditMerchantStatus(@ApiIgnore @RequestParam Long id){
+        return new Result<Integer>().ok(merchantService.AuditMerchantStatus(id));
+    }
+
 }

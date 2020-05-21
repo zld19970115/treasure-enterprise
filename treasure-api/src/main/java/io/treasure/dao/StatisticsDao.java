@@ -49,4 +49,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<EChartInfoVo> merchantChartByYear(Map<String, Object> params);
     List<EChartOrderInfoVo> orderChartByDay(Map<String, Object> params);
     List<EChartOrderInfoVo> orderChartByYear(Map<String, Object> params);
+    RealTimeOrder realTimeOrder(Map<String, Object> params);
 }

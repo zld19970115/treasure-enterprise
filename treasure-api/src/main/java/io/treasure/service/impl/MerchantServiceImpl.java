@@ -165,6 +165,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public Integer AuditMerchantStatus(Long id) {
+        baseDao.updateAuditById(id,2);
+        return 1;
+    }
+
+    @Override
     public PageData<MerchantDTO> queryPage(Map<String, Object> params){
 //        IPage<MerchantEntity> page = baseDao.selectPage(
 //                getPage(params, null, false),

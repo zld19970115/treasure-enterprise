@@ -6,6 +6,7 @@ import io.treasure.dto.NewsDto;
 import io.treasure.entity.MerchantActivityEntity;
 import io.treasure.entity.NewsEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -22,5 +23,7 @@ public interface NewsDao extends BaseDao<NewsEntity> {
     List<NewsDto> pageList(Map<String, Object> params);
 
     List<NewsDto> agreePage();
+
+    List<NewsDto> selectByStatus(@Param("status") Integer status);
 
 }
