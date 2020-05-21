@@ -314,7 +314,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         IPage<ChargeCashEntity> page = getPage(params, Constant.CREATE_DATE, false);
 
         //查询
-        List<ChargeCashDTO> list = baseDao.getChargeCashAll(params);
+        List<ChargeCashDTO> list = baseDao.getChargeCashByCreateDate(params);
 
         return getPageData(list, page.getTotal(), ChargeCashDTO.class);
     }

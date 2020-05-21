@@ -24,17 +24,22 @@
     </insert>
 
     <select id="getAllRecordGoht" resultType="io.treasure.dto.RecordGiftDTO">
-        select * from ct_record_gift where status = 5
+        select ccu.name,ccu,username,crg.transferred_mobile,
+                crg.use_gift,crg.balance_gift,crg.status,crg.create_date,
+                 crg.creator from ct_record_gift crg , ct_client_user ccu
     </select>
     <select id="getRecordGiftByUserId" resultType="io.treasure.dto.RecordGiftDTO">
-        select * from ct_record_gift
-        where status = 5
+        select ccu.name,ccu,username,crg.transferred_mobile,
+                crg.use_gift,crg.balance_gift,crg.status,crg.create_date,
+                 crg.creator from ct_record_gift crg , ct_client_user ccu
+        where 1=1
         <if test="transferredMobile != null and transferredMobile!='' ">
-            and transferred_mobile like  CONCAT('%',${transferredMobile},'%')
+            and crg.transferred_mobile like  CONCAT('%',${transferredMobile},'%')
         </if>
         <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
-            and create_date BETWEEN #{createDateTop} AND #{createDateDown}
+            and crg.create_date BETWEEN #{createDateTop} AND #{createDateDown}
         </if>
+            and ccu.id = crg.user_id
     </select>
 
 
