@@ -2045,6 +2045,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (masterOrderEntity==null){
             return shareOrderDTO;
         }
+        if (masterOrderEntity.getEatTime().getTime() < System.currentTimeMillis()){
+            return shareOrderDTO;
+        }
         MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
         ClientUserEntity clientUserEntity = clientUserService.selectById(masterOrderEntity.getCreator());
         Calendar c = Calendar.getInstance();
