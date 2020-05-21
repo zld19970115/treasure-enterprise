@@ -41,4 +41,7 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     //分组汇总
     Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);
 
+    PageData<MerchantWithdrawDTO>  getMerchanWithDrawAll(Map<String, Object> params);
+    PageData<MerchantWithdrawDTO>  getMerchanWithDrawByMerchantId(Map<String, Object> params);
+
 }

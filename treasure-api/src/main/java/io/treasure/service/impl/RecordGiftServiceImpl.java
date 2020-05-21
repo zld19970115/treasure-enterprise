@@ -42,4 +42,34 @@ public class RecordGiftServiceImpl  extends CrudServiceImpl<RecordGiftDao, Recor
         return getPageData(list,pages.getTotal(), RecordGiftDTO.class);
 
     }
+
+
+    @Override
+    public int insertRecordGiftAdmin(Map<String,Object> params) {
+        return baseDao.insertRecordGiftAdmin(params);
+    }
+
+    @Override
+    public PageData<RecordGiftDTO> getAllRecordGoht(Map<String,Object> params) {
+        //分页
+        IPage<RecordGiftEntity> page = getPage(params, Constant.CREATE_DATE, false);
+
+        //查询
+        List<RecordGiftDTO> list = baseDao.getAllRecordGoht(params);
+
+        return getPageData(list, page.getTotal(), RecordGiftDTO.class);
+    }
+
+
+
+    @Override
+    public PageData<RecordGiftDTO> getRecordGiftByUserId(Map<String,Object> params) {
+        //分页
+        IPage<RecordGiftEntity> page = getPage(params, Constant.CREATE_DATE, false);
+
+        //查询
+        List<RecordGiftDTO> list = baseDao.getRecordGiftByUserId(params);
+
+        return getPageData(list, page.getTotal(), RecordGiftDTO.class);
+    }
 }

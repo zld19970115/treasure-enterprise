@@ -162,4 +162,6 @@ public class MerchantDTO implements Serializable {
 	private int desk;
 	@ApiModelProperty(value = "月销量")
 	private Integer monthySales;
+	@ApiModelProperty(value = "商户二维码")
+	private String merchantQrUrl;
 }

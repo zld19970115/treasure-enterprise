@@ -102,6 +102,11 @@ public class MerchantController {
             }
             data.setCategoryTwoList(categoryService.getListById(cateTwoId));
         }
+//        MerchantQrCodeEntity merchantQrCodeEntity = merchantQrCodeService.getMerchantQrCodeByMerchantId(Long.parseLong(id));
+//        if(merchantQrCodeEntity!=null){
+//            data.setQrUrl(merchantQrCodeEntity.getQrUrl());
+//        }
+
 
         return new Result<MerchantDTO>().ok(data);
     }

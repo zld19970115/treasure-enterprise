@@ -71,4 +71,27 @@ public class ChargeCashDTO implements Serializable {
      */
     @ApiModelProperty(value = "修改者")
     private long updater;
+    /**
+     * 用户充值账号，手机号
+     */
+    @ApiModelProperty(value = "充值账号")
+    private String accound;
+
+    /**
+     * 账户余额
+     */
+    @ApiModelProperty(value = "账户余额")
+    private int amount;
+    /**
+     * 消费金额
+     */
+    @ApiModelProperty(value = "消费金额")
+    private int ConsumptionAmount;
+
+    /**
+     * 消费时间
+     */
+    @ApiModelProperty(value = "消费时间")
+    private int ConsumptionAmountDate;
+
 }

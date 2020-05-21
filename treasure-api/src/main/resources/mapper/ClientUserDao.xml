@@ -61,9 +61,15 @@
         update ct_client_user set gift=gift- ${gift}
         where id = #{creator}
     </update>
+    <update id="addRecordGiftByUserid">
+        update ct_client_user set gift=gift+ ${useGift}
+        where id = #{userId}
+    </update>
     <update id="updateUnionid" parameterType="io.treasure.entity.ClientUserEntity">
         UPDATE `ct_client_user` SET `unionid` = #{openId} where mobile=#{mobile}
     </update>
-
+    <select id="getRecordUserAll" resultType="io.treasure.dto.ClientUserDTO">
+        select * from ct_client_user where mobile like  CONCAT('%',${mobile},'%')
+    </select>
 
 </mapper>
