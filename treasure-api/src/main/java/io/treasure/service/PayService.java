@@ -33,4 +33,5 @@ public interface PayService {
 
     Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no);
     Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no);
+    Result CashRefund(String orderNo, String refund_fee, Long goodId);
 }

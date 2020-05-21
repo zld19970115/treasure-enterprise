@@ -9,6 +9,7 @@ import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.PayCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.JDOMException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
