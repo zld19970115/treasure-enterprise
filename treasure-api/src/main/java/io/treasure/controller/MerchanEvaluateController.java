@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -33,7 +34,7 @@ public class MerchanEvaluateController {
     private EvaluateServiceImpl evaluateService;
 
 
-
+    @Login
     @GetMapping("/MerchanSee")
     @ApiOperation("查看评价表")
     @ApiImplicitParams({

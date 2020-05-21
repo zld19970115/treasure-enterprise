@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /***
@@ -42,6 +41,8 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
     public int decideInsertOrUpdate(Date date,long merchantId,String type,StatsDayDetailEntity sdde) {
         CtDaysTogetherEntity cdt = this.getDateAndMerid(date, merchantId,type);
         BigDecimal wxPaymoney = sdde.getWxPaymoney();
+        BigDecimal aliPaymoney = sdde.getAliPaymoney();
+        BigDecimal YePaymoney = sdde.getYePaymoney();
         BigDecimal realityMoney1 = sdde.getRealityMoney();
         BigDecimal num=new BigDecimal("0");
         int c=0;
@@ -81,10 +82,12 @@ public class CtDaysTogetherServicelmpl  extends CrudServiceImpl<CtDaysTogetherDa
             CtDaysTogetherEntity cdte=new CtDaysTogetherEntity();
             cdte.setPayDate(sdde.getCreateDate());
             cdte.setMerchantId(merchantId);
-            if( null==wxPaymoney ||wxPaymoney.compareTo(num)==0){
-                cdte.setPayType("2");
-            }else {
+            if( null!=wxPaymoney ){
                 cdte.setPayType("3");
+            }else if( null!=aliPaymoney ) {
+                cdte.setPayType("2");
+            }else if( null!=YePaymoney ) {
+                cdte.setPayType("1");
             }
             cdte.setOrderTotal(sdde.getOrderTotal());
             cdte.setServiceChanrge(sdde.getServiceCharge());

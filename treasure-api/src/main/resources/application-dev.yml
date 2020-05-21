@@ -73,3 +73,10 @@ pay:
     alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqSrqWzT7+YJV6wGDNXKOvzZ0xkurGEvTOGv7ih/JWQhqt2j0zygo+YtjEROPD32BpQUJXBhAPIp6Dv2iXMa26EYZi3Q8H3D6qxDvw+aOJ5sYw8KiNil0ylGqLrh+a0TCWdMcR/AjJItrJwWLJsCWpGf4/fAV3xTR8uGY4jCx9ZxggblvtH1jUkFcio2ffn+/+9XLiFT+/2d2xYUYueAVabe4ximzeFsclbPYjYF0O0tWa5e33bGgqhPDakqH4j9gTgb9HS05WgGB769NX+bCP9ekQi849Spo+JLZfj5xgRfMNFvegdKaWtbAILJ90V6r0bfrbvEjLv8+Dejn+15EIwIDAQAB
     returnUrl: http://api.jubaoapp.com:8081/treasure-api/api/ali/return
     notifyUrl: http://api.jubaoapp.com:8081/treasure-api/api/ali/notify
+
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql

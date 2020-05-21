@@ -3,19 +3,18 @@
 <mapper namespace="io.treasure.dao.RecordGiftDao">
 
     <insert id="insertRecordGift">
-        insert into ct_record_gift (id ,userId,use_gift,balance_gift,status,create_date,creator )
+        insert into ct_record_gift (id ,user_id,use_gift,balance_gift,status,create_date,creator )
          VALUES
         ( default ,#{userId},#{useGift},#{balanceGift},0,#{date},#{userId});
     </insert>
 
-<!--    测试：移出部分字段 id , default ,-->
     <insert id="insertRecordGift2">
-        insert into ct_record_gift (userId,use_gift,balance_gift,status,create_date,creator )
+        insert into ct_record_gift (id ,user_id,use_gift,balance_gift,status,create_date,creator )
          VALUES
-        (#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
+        ( default ,#{userId},#{useGift},#{balanceGift},1,#{date},#{userId});
     </insert>
     <select id="selectByUserId" resultType="io.treasure.dto.RecordGiftDTO">
-        select * from ct_record_gift where userId = #{userId} and status = 3
+        select * from ct_record_gift where user_id = #{userId} and status = 3
     </select>
 
 </mapper>

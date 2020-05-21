@@ -20,7 +20,7 @@ public interface PayService {
     Map<String, String> getAliNotify(BigDecimal total_amount, String out_trade_no);
 
     Result wxRefund(String orderNo, String refund_fee, Long goodId);
-
+    Result CashRefund(String orderNo, String refund_fee, Long goodId);
     Result wxRefund(String orderNo, String refund_fee);
 
     Result refundByGood(String payMode, String orderId, String refund_fee,Long goodId);

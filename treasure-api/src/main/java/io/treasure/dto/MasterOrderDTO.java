@@ -5,10 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
-
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 订单表

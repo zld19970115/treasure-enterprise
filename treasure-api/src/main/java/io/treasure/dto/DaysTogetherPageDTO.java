@@ -45,4 +45,13 @@ public class DaysTogetherPageDTO {
     @ApiModelProperty(value = "商家信息")
     private MerchantDTO merchantInfo;
 
+    @ApiModelProperty(value = "商家id")
+    private Long mid;
+
+    @ApiModelProperty(value = "商家名称")
+    private String name;
+
+    @ApiModelProperty(value = "平台实际所得")
+    private BigDecimal platformRealityMoney;
+
 }

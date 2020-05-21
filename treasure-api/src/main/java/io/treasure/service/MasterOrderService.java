@@ -134,7 +134,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     List<OrderDTO> getMartOrderInfo(String orderId);
     List<OrderDTO> refundOrder( Map<String, Object> params);
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
-
+    Result deleteOrder(String orderId);
     List<MasterOrderEntity>  selectAgreeRefundOrder(String orderId);
 
     PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params);

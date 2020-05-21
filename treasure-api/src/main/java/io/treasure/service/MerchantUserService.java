@@ -2,16 +2,14 @@ package io.treasure.service;
 
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
-import io.treasure.dto.GoodDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
-import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantUserEntity;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商户管理员
@@ -23,7 +21,7 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     //根据 手机号码/注册账号查询
     MerchantUserEntity getByMobile(String mobile);
     MerchantUserEntity getByMobiles(String mobile);
-
+    boolean isRegister(String tel);
     //用户登陆
     Map<String, Object> login(LoginDTO loginDTO);
 

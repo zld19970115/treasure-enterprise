@@ -1,5 +1,9 @@
 package io.treasure.controller;
-import io.swagger.annotations.*;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
@@ -7,18 +11,16 @@ import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
+import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.*;
-
 import io.treasure.enm.Common;
-import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
-
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -221,6 +223,16 @@ public class MerchantUserController {
 
         return new Result();
     }
+    @GetMapping("isRegister")
+    @ApiOperation("验证手机是否注册:true-已注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tel", value = "手机号", required = true, paramType = "query")
+    })
+    public Result isRegister(String tel) {
+        AssertUtils.isBlank(tel, "tel");
+        boolean b = merchantUserService.isRegister(tel);
+        return new Result().ok(b);
+    }
     /**
      * 注册
      *
@@ -407,7 +419,14 @@ public class MerchantUserController {
         merchantUserService.updateMerchant(merchantId,id);
         return new Result();
     }
-
+    @Login
+    @PutMapping("getToken")
+    @ApiOperation("获取token")
+    @ApiImplicitParams({
+    })
+    public Result  getToken(){
+        return new Result();
+    }
 
     @GetMapping("estimateMobile")
     @ApiOperation("商户端-绑定微信-根据mobile查询用户信息")
@@ -495,6 +514,7 @@ public class MerchantUserController {
             map.put("boolean",c);
         }else {
             c=true;
+            tokenService.createToken(userByOpenId.getId());
             TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
             map.put("boolean",c);
             map.put("user",userByOpenId);
@@ -502,7 +522,23 @@ public class MerchantUserController {
         }
         return new Result<Map>().ok(map);
     }
-
+    /**
+     * 获取验证码
+     * @param
+     * @param
+     * @return
+     */
+    @CrossOrigin
+    @GetMapping("cancelcode")
+    @ApiOperation("获取注销验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
+    })
+    public Result cancelcode(@RequestParam String mobile){
+        Result result = SendSMSUtil.sendCodeFordeletzhuxiao(mobile, smsConfig);
+        return new Result().ok(result);
+    }
+    @Login
     @GetMapping("masterCancel")
     @ApiOperation("商户端注销")
     @ApiImplicitParams({
@@ -511,7 +547,7 @@ public class MerchantUserController {
         MerchantUserEntity merchantUserEntity = merchantUserService.selectById(masterUserId);
         Map params = new HashMap();
         String merchantId = merchantUserEntity.getMerchantid();
-        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)){
             String[] str = merchantId.split(",");
             params.put("merchantIdStr", str);
         }else{
@@ -525,7 +561,12 @@ public class MerchantUserController {
         if (list.size()!=0){
             return new Result().error("您有订单未处理");
         }
-        merchantUserEntity.setStatus(3);
+        merchantUserEntity.setMobile(merchantUserEntity.getMobile()+"已注销");
+        merchantUserEntity.setMiniOpenid("0");
+        merchantUserEntity.setClientId("0");
+        merchantUserEntity.setMerchantid("0");
+        merchantUserEntity.setOpenid("0");
+        merchantUserEntity.setStatus(0);
         merchantUserService.updateById(merchantUserEntity);
         return new Result().ok("注销成功");
     }

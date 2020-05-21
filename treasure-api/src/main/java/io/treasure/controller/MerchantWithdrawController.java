@@ -2,39 +2,30 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.google.gson.Gson;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
-import io.treasure.common.validator.group.DefaultGroup;
-import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dao.MerchantDao;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.dto.MerchantWithdrawDTO;
-import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.enm.Common;
 import io.treasure.enm.WithdrawEnm;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import io.treasure.service.impl.MerchantServiceImpl;
-import io.treasure.utils.RegularUtil;
 import io.treasure.vo.PagePlus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -329,14 +320,17 @@ public class MerchantWithdrawController {
     @ApiOperation("查询可提现状态")
     public Result selectWithStatus(){
         String s = merchantWithdrawService.selectWithStatus();
+
         return new Result().ok(s);
     }
+
     public Date paseYMD(Date date) throws ParseException {
         SimpleDateFormat ymdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat ymd = new SimpleDateFormat("yyyy-MM-dd");
 
         return ymd.parse(ymd.format(date)+" 00:00:00");
     }
+
     /**
      * 根据 条件查询所有提现信息列表
      * @return
@@ -417,6 +411,5 @@ public class MerchantWithdrawController {
         return new Result().ok(merchantWithdrawEntityIPage);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
-
 
 }

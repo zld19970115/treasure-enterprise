@@ -41,6 +41,7 @@ import java.util.*;
  */
 @Service
 public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, MasterOrderEntity, MasterOrderDTO> implements MasterOrderService {
+
     @Autowired
     private SMSConfig smsConfig;
     @Autowired
@@ -660,6 +661,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public MasterOrderEntity selectByOrderId(String orderId) {
         return baseDao.selectByOrderId(orderId);
     }
+
     public int paseIntViaTime(Date target){
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String res[] = sdf.format(target).split(":");
@@ -695,6 +697,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date b4 =sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
             Date b5 =sdf.parse(" 4:59:00");
+            System.out.println(dto.getEatTime());
+            System.out.println(a1);
+            System.out.println(b1);
             boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
             boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
             boolean s3 = timeInRange(dto.getEatTime(), a3, b3);
@@ -1589,6 +1594,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date b4 =sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
             Date b5 =sdf.parse(" 4:59:00");
+            System.out.println(dto.getEatTime());
+            System.out.println(a1);
+            System.out.println(b1);
             boolean s1 = timeInRange(dto.getEatTime(), a1, b1);
             boolean s2 = timeInRange(dto.getEatTime(), a2, b2);
             boolean s3 = timeInRange(dto.getEatTime(), a3, b3);
@@ -1616,6 +1624,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-5, "没有此包房/散台");
             }
             int isUse = merchantRoomParamsSetEntity1.getState();
+            c = merchantRoomParamsSetEntity;
             if (isUse == 0) {
                 merchantRoomParamsSetEntity1.setState(1);
                 //更新状态值
@@ -1624,6 +1633,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 return result.error(-1, "包房/散台已经预定,请重新选择！");
             }
         }
+//        if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
+//            MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
+//            if (merchantRoomParamsSetEntity == null) {
+//                return result.error(-5, "没有此包房/散台");
+//            }
+//            int isUse = merchantRoomParamsSetEntity.getState();
+//            c = merchantRoomParamsSetEntity;
+//            if (isUse != 1) {
+//                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), 1);
+//
+//            } else {
+//                return result.error(-1, "包房/散台已经预定,请重新选择！");
+//            }
+//        }
         Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
@@ -1800,12 +1823,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         String orderId = params.get("orderId").toString();
+        System.out.println(orderId+"orderId");
         OrderDTO order = masterOrderService.getMasterOrder(orderId);
 
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
+        System.out.println(allMainOrder+"allMainOrder");
         allMainOrder.add(order);
-        if (allMainOrder != null) {
+        if (allMainOrder.size()!=0) {
             for (OrderDTO s : allMainOrder) {
+                System.out.println(s+"s.getOrderId()");
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
                 for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));
@@ -1985,6 +2011,31 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public List<MasterOrderEntity> selectPOrderIdHavePaid(String orderId) {
         return baseDao.selectPOrderIdHavePaid(orderId);
+    }
+
+    @Override
+    public Result deleteOrder(String orderId) {
+        MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return new Result().error("没有找到订单");
+        }
+        if(masterOrderEntity.getStatus()==3 || masterOrderEntity.getStatus()==5 ||masterOrderEntity.getStatus()==8 ||masterOrderEntity.getStatus()==11){
+            List<MasterOrderEntity> masterOrderEntities = baseDao.selectNodelOrders(orderId);
+            if(masterOrderEntities.size()!=0){
+                return new Result().error("您有从单未处理，请处理后再试");
+            }
+            List<MasterOrderEntity> order2 = baseDao.getOrder2(orderId);
+            for (MasterOrderEntity masterOrderEntity1 : order2) {
+                baseDao.updateOrderDeletedById(masterOrderEntity1.getId());
+            }
+            return new Result().ok("删除成功");
+        }else {
+               return new Result().error("该订单不能删除，请稍后再试");
+        }
+
+
+
+
     }
 
     @Override

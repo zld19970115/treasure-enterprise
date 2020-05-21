@@ -23,7 +23,6 @@ import java.util.Map;
 public class StimmeController {
     @Autowired
     private StimmeServiceImpl stimmeService;
-
     @GetMapping("/sti")
     @ApiOperation("获取是否有新订单")
     @ApiImplicitParams({

@@ -6,8 +6,6 @@ import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,10 +29,16 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     List<TopSellersRankingVo> getTopSellersRanking(TopSellersRankingDto dto);
     List<ConsumptionRankingVo> getConsumptionRanking(@RequestBody ConsumptionRankingDto dto);
     BigDecimal getTotalCash(Map<String, Object> params);
-    List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
+    PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
     PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
     List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
     PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
+    PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
+    FmisHomeVo fmisHome(Map<String, Object> params);
+    PageData<MerchantPageVo> merchantPage(Map<String, Object> params);
+    EChartVo userChart(Map<String, Object> params);
+    EChartVo merchantChart(Map<String, Object> params);
+    EChartOrderVo orderChart(Map<String, Object> params);
 }

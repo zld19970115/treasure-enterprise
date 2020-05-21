@@ -52,7 +52,7 @@ public class ApiClientUserCollectController {
 
         return new Result<ClientUserCollectDTO>().ok(data);
     }
-
+    @Login
     @PostMapping
     @ApiOperation("收藏")
     public Result save(@RequestBody ClientUserCollectDTO dto){
@@ -64,7 +64,7 @@ public class ApiClientUserCollectController {
 
         return new Result();
     }
-
+    @Login
     @GetMapping("/delete")
     @ApiOperation("取消收藏")
     @ApiImplicitParams({
@@ -83,6 +83,7 @@ public class ApiClientUserCollectController {
         return new Result().ok("未收藏");
 
     }
+    @Login
     @GetMapping("/yesOrNo")
     @ApiOperation("是否收藏")
     @ApiImplicitParams({

@@ -5,26 +5,35 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.StatisticsDao;
 import io.treasure.dto.*;
+import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.service.CategoryService;
 import io.treasure.service.StatisticsService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.*;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl
         extends CrudServiceImpl<StatisticsDao, MasterOrderEntity, MasterOrderDTO> implements StatisticsService {
 
-
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -223,13 +232,15 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public List<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
+    public PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
         List<String> list = Lists.newArrayList();
         list.add(DateUtil.lastMonthFormatYYYYMM(1));
         list.add(DateUtil.lastMonthFormatYYYYMM(2));
         list.add(DateUtil.lastMonthFormatYYYYMM(3));
         dto.setDateList(list);
-        return baseDao.getMerchantAccount(dto);
+        PageHelper.startPage(dto.getPage(),dto.getLimit());
+        Page<MerchantAccountVo> page = (Page) baseDao.getMerchantAccount(dto);
+        return new PageData<MerchantAccountVo>(page.getResult(),page.getTotal());
     }
 
     @Override
@@ -262,6 +273,160 @@ public class StatisticsServiceImpl
     @Override
     public DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params) {
         return baseDao.daysTogetherStat(params);
+    }
+
+    @Override
+    public PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<StatSdayDetailPageVo> page = (Page) baseDao.statSdayDetailPage(params);
+        List<StatSdayDetailPageVo> list = page.getResult();
+        Map map = new HashMap();
+        if(list != null && list.size() > 0) {
+            List<Long> ids = list.stream().map(StatSdayDetailPageVo::getId).collect(Collectors.toList());
+            StatSdayDetailPageVo vo = baseDao.statSdayDetailPageTotalRow(ids);
+            if(vo != null) {
+                map.put("orderTotal",vo.getOrderTotal());
+                map.put("merchantDiscountAmount",vo.getMerchantDiscountAmount());
+                map.put("transactionAmount",vo.getTransactionAmount());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("realityMoney",vo.getRealityMoney());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("withdrawMoney",vo.getWithdrawMoney());
+                map.put("platformBalance",vo.getPlatformBalance());
+                map.put("wxPaymoney",vo.getWxPaymoney());
+                map.put("aliPaymoney",vo.getAliPaymoney());
+                map.put("serviceCharge",vo.getServiceCharge());
+            }
+        }
+        return new PageTotalRowData<StatSdayDetailPageVo>(page.getResult(),page.getTotal(),map);
+    }
+
+    @Override
+    public FmisHomeVo fmisHome(Map<String, Object> params) {
+        return baseDao.fmisHome(params);
+    }
+
+    @Override
+    public PageData<MerchantPageVo> merchantPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<MerchantPageVo> page = (Page) baseDao.merchantPage(params);
+        List<MerchantPageVo> list = page.getResult();
+        for(MerchantPageVo vo : list) {
+            if(Strings.isNotBlank(vo.getCategoryid())) {
+                String[] ids = vo.getCategoryid().split(",");
+                List<Long> l = new ArrayList<Long>();
+                for(String str : ids) {
+                    l.add(Long.parseLong(str));
+                }
+                String names = categoryService.getListById(l).stream().map(CategoryEntity::getName).collect(Collectors.joining(","));
+                vo.setCategoryName(names);
+            }
+        }
+        return new PageData<MerchantPageVo>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public EChartVo userChart(Map<String, Object> params) {
+        EChartVo vo = new EChartVo();
+        List<String> dataCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.userChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.userChartByYear(params);
+        }
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartInfoVo chartInfoVo : chartInfoList) {
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getDataCount());
+        }
+        for(String dateVo : dateList) {
+            String obj = map.get(dateVo);
+            if(obj == null) {
+                dataCount.add("0");
+            } else {
+                dataCount.add(obj);
+            }
+        }
+        vo.setDataCount(dataCount);
+        return vo;
+    }
+
+    @Override
+    public EChartVo merchantChart(Map<String, Object> params) {
+        EChartVo vo = new EChartVo();
+        List<String> dataCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.merchantChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.merchantChartByYear(params);
+        }
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartInfoVo chartInfoVo : chartInfoList) {
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getDataCount());
+        }
+        for(String dateVo : dateList) {
+            String obj = map.get(dateVo);
+            if(obj == null) {
+                dataCount.add("0");
+            } else {
+                dataCount.add(obj);
+            }
+        }
+        vo.setDataCount(dataCount);
+        return vo;
+    }
+
+    @Override
+    public EChartOrderVo orderChart(Map<String, Object> params) {
+        EChartOrderVo vo = new EChartOrderVo();
+        List<String> porderCount = Lists.newArrayList();
+        List<String> orderCount = Lists.newArrayList();
+        List<String> dateList = null;
+        List<EChartOrderInfoVo> chartInfoList = null;
+        if((params.get("type")+"").equals("1")) {
+            dateList = DateUtil.getDaysFormatYYYYMMDD(params.get("startDate") == null ? null : params.get("startDate")+"", params.get("endDate") == null ? null : params.get("endDate")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.orderChartByDay(params);
+        } else {
+            dateList = DateUtil.getMonths(params.get("year") == null ? null : params.get("year")+"");
+            vo.setDataRow(dateList);
+            chartInfoList = baseDao.orderChartByYear(params);
+        }
+        Map<String,String> pmap = Maps.newHashMap();
+        Map<String,String> map = Maps.newHashMap();
+        for(EChartOrderInfoVo chartInfoVo : chartInfoList) {
+            pmap.put(chartInfoVo.getDataRow(), chartInfoVo.getPorderCount());
+            map.put(chartInfoVo.getDataRow(), chartInfoVo.getOrderCount());
+        }
+        for(String dateVo : dateList) {
+            String pobj = pmap.get(dateVo);
+            String obj = map.get(dateVo);
+            if(pobj == null) {
+                porderCount.add("0");
+            } else {
+                porderCount.add(pobj);
+            }
+            if(obj == null) {
+                orderCount.add("0");
+            } else {
+                orderCount.add(obj);
+            }
+        }
+        vo.setPorderCount(porderCount);
+        vo.setOrderCount(orderCount);
+        return vo;
     }
 
 }

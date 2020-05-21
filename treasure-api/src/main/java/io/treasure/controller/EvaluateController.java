@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
@@ -12,9 +12,7 @@ import io.treasure.dto.EvaluateDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.EvaluateEntity;
-import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
-import io.treasure.service.MasterOrderService;
 import io.treasure.service.impl.ClientUserServiceImpl;
 import io.treasure.service.impl.EvaluateServiceImpl;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -22,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,6 +40,7 @@ public class EvaluateController {
     private ClientUserServiceImpl clientUserService;
     @Autowired
     private MerchantServiceImpl merchantService;
+    @Login
     @PostMapping("/add")
     @ApiOperation("添加评价表")
     public Result addEvaluate(@RequestBody EvaluateDTO dto){
@@ -74,6 +76,7 @@ public class EvaluateController {
         merchantService.updateById(merchantEntity);
         return new Result().ok("评价成功 ");
     }
+    @Login
     @RequestMapping("/del")
     @ApiOperation("删除评价表")
     public Result  delEvaluate(@ApiIgnore int id){
@@ -81,6 +84,7 @@ public class EvaluateController {
         evaluateService.delEvaluate(id);
         return new Result();
     }
+    @Login
     @GetMapping("/see")
     @ApiOperation("查看评价表")
     @ApiImplicitParams({
@@ -113,6 +117,7 @@ public class EvaluateController {
         list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }
+    @Login
     @GetMapping("/seeComment")
     @ApiOperation("查看评论表")
     @ApiImplicitParams({

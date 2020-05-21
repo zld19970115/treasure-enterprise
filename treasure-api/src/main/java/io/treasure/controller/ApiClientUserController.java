@@ -4,8 +4,6 @@ package io.treasure.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
-import io.swagger.annotations.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -25,8 +23,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
-import io.treasure.dto.QueryClientUserDto;
-import io.treasure.dto.*;
+import io.treasure.dto.RecordGiftDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -39,6 +36,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -66,10 +64,10 @@ public class ApiClientUserController {
     private SMSConfig smsConfig;
     @Autowired
     private TokenService tokenService;
-    @Autowired(required = false)
-    private ClientUserDao clientUserDao;
     @Autowired
     private RecordGiftService recordGiftService;
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
 
     @Login
     @GetMapping("page")
@@ -82,6 +80,7 @@ public class ApiClientUserController {
     })
     public Result<PageData<ClientUserDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params) {
         PageData<ClientUserDTO> page = clientUserService.page(params);
+
         return new Result<PageData<ClientUserDTO>>().ok(page);
     }
 
@@ -187,6 +186,7 @@ public class ApiClientUserController {
         user.setUsername(dto.getMobile());
         user.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
         user.setCreateDate(new Date());
+        user.setUnionid(dto.getUnionid());
         user.setClientId(dto.getClientId());
         clientUserService.insert(user);
         ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(dto.getMobile());
@@ -240,7 +240,6 @@ public class ApiClientUserController {
         clientUserService.update(data);
         return new Result();
     }
-
     @PutMapping("forgetPassword")
     @ApiOperation("忘记密码")
     @ApiImplicitParams({
@@ -288,6 +287,7 @@ public class ApiClientUserController {
             map.put("boolean", c);
         } else {
             c = true;
+            tokenService.createToken(userByOpenId.getId());
             TokenEntity byUserId = tokenService.getByUserId(userByOpenId.getId());
             map.put("boolean", c);
             map.put("user", userByOpenId);
@@ -319,6 +319,7 @@ public class ApiClientUserController {
                 if(userByPhone.getStatus()==9){
                     return new Result().error("该手机号已注销");
                 }
+                tokenService.createToken(userByPhone.getId());
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateOpenid(openId, mobile);
                 map.put("token", byUserId.getToken());
@@ -350,6 +351,7 @@ public class ApiClientUserController {
                 if(userByPhone.getStatus()==9){
                     return new Result().error("该手机号已注销");
                 }
+                tokenService.createToken(userByPhone.getId());
                 TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
                 clientUserService.updateUnionid(openId, mobile);
                 map.put("token", byUserId.getToken());
@@ -373,7 +375,7 @@ public class ApiClientUserController {
         }
 
     }
-
+    @Login
     @PutMapping("userGiftToUser")
     @ApiOperation("用户给用户转移赠送金")
     @ApiImplicitParams({
@@ -387,6 +389,7 @@ public class ApiClientUserController {
         return new Result().ok(result);
     }
 
+    @Login
     @GetMapping("getMobileByUserId")
     @ApiOperation("根据用户id查询手机号")
     @ApiImplicitParams({
@@ -399,6 +402,7 @@ public class ApiClientUserController {
         }
         return new Result().ok(clientUserEntity.getMobile());
     }
+    @Login
     @GetMapping("userCancel")
     @ApiOperation("用户注销")
     @ApiImplicitParams({
@@ -413,12 +417,15 @@ public class ApiClientUserController {
         if (list.size()!=0){
             return new Result().error("您有订单未完成");
         }
-
+        clientUserEntity.setUsername(clientUserEntity.getUsername()+"已注销");
+        clientUserEntity.setClientId("0");
+        clientUserEntity.setMobile(clientUserEntity.getMobile()+"已注销");
+        clientUserEntity.setOpenid("0");
+        clientUserEntity.setUnionid("0");
         clientUserEntity.setStatus(9);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("用户已注销");
     }
-
     /**
      * 根据 条件查询所有提现信息列表
      * @return
@@ -440,7 +447,6 @@ public class ApiClientUserController {
     public Result requireItems(Date startTime,Date stopTime,
                                Integer index,Integer itemNum,Integer gift,
                                Integer coin,Integer integral,Integer balance) throws ParseException {
-
         QueryWrapper<ClientUserEntity> mweqw = new QueryWrapper<>();
 
         if(startTime != null && stopTime != null){
@@ -492,7 +498,6 @@ public class ApiClientUserController {
         }
         BigDecimal a = new BigDecimal("200");
         BigDecimal gift = clientUserEntity.getGift();
-
         BigDecimal newGift = a.add(gift);
         clientUserEntity.setGift(newGift);
         clientUserService.updateById(clientUserEntity);

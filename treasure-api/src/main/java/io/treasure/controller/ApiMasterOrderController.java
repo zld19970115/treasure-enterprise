@@ -214,8 +214,7 @@ public class ApiMasterOrderController {
     @GetMapping("MartOrder/{orderId}")
     @ApiOperation("商户端预约列表订单详情")
     public Result<List<OrderDTO>> getMartOrderInfo(@PathVariable("orderId") String orderId){
-
-       List<OrderDTO> data = masterOrderService.getMartOrderInfo(orderId);
+        List<OrderDTO> data = masterOrderService.getMartOrderInfo(orderId);
         return new Result<List<OrderDTO>>().ok(data);
     }
     @Login
@@ -652,4 +651,15 @@ public class ApiMasterOrderController {
         List<OrderDTO> data = masterOrderService.refundOrder(params);
         return new Result<List<OrderDTO>>().ok(data);
     }
+    @Login
+    @GetMapping("deleteOrder")
+    @ApiOperation("用户端删除订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "主订单编号", paramType = "query", required = true, dataType="string")
+    })
+    public Result deleteOrder (@RequestParam String orderId){
+        Result result =  masterOrderService.deleteOrder(orderId);
+        return new Result().ok(result);
+    }
+
 }

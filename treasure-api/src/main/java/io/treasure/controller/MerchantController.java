@@ -3,22 +3,25 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
-import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
+import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PagePlus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -46,11 +46,13 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantUserService merchantUserService;
-    @Autowired(required = false)
-    private MerchantDao merchantDao;
     //店铺分类
     @Autowired
     private CategoryService categoryService;
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
+    @Autowired
+    private SMSConfig smsConfig;
     @CrossOrigin
     @Login
     @GetMapping("page")
@@ -334,7 +336,7 @@ public class MerchantController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string"),
             @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string"),
-            @ApiImplicitParam(name = "wx_account_realname", value = "微信收款人真实姓名", paramType = "query", required = false, dataType = "string")
+            @ApiImplicitParam(name = "status", value = "APP/VX", paramType = "query", required = true, dataType = "string")
     })
     public Result inserWX(@ApiIgnore @RequestParam Map<String, Object> params){
         String martId = (String) params.get("martId");
@@ -342,18 +344,73 @@ public class MerchantController {
         if (merchantEntity==null){
             return new Result().ok("没有该商户");
         }
-        if (StringUtils.isNotBlank(merchantEntity.getWxAccountOpenid())&&StringUtils.isNotBlank(merchantEntity.getWxAccountRealname())){
+        if (StringUtils.isNotBlank(merchantEntity.getWxAccountOpenid())){
             return new Result().ok("1");//已绑定微信
         }
         String wx_account_openid = (String) params.get("wx_account_openid");
-       String ali_account_realname = (String) params.get("ali_account_realname");
+        String status = (String) params.get("status");
         if (wx_account_openid!=null){
+            if ("VX".equals(status) || status == "VX"){
+                merchantEntity.setWxStatus(1);
+            }else {
+                merchantEntity.setWxStatus(2);
+            }
             merchantEntity.setWxAccountOpenid(wx_account_openid);
-            merchantEntity.setWxAccountRealname(ali_account_realname);
             merchantService.updateById(merchantEntity);
-            return new Result().ok("绑定成功");
+            return new Result().ok(merchantEntity.getMobile());
         }
         return new Result().ok("0");//未绑定微信
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("deleltWX")
+    @ApiOperation("解除绑定商户微信")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string")
+    })
+    public Result deleltWX(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        if (merchantEntity==null){
+            return new Result().error("没有该商户");
+        }
+        merchantService.updateWX(martId);
+        return new Result().ok("解绑成功");//未绑定微信
+    }
+    @Login
+    @GetMapping("deleltWXByCode")
+    @ApiOperation("商户解绑验证码(返回验证码)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tel", value = "手机号", required = true, paramType = "query")
+    })
+    public Result register(String tel) {
+        Result result = SendSMSUtil.sendCodeFordeletWx(tel, smsConfig);
+        return result;
+    }
+
+    @CrossOrigin
+    @Login
+    @PutMapping("selectWx")
+    @ApiOperation("查询商家是否绑定微信提现openid")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "string")
+    })
+    public Result selectWx(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        Map map = new HashMap();
+        if (merchantEntity==null){
+            return new Result().error("没有该商户");
+        }
+      if (merchantEntity.getWxAccountOpenid()!=null){
+          map.put("status",1);
+          map.put("martId",merchantEntity.getMobile());
+          return new Result().ok(map);//绑定微信
+      }else {
+          map.put("status",2);
+          return new Result().ok(map);//未绑定微信
+      }
+
     }
 
 
@@ -384,8 +441,6 @@ public class MerchantController {
         PageData<MerchantDTO> page = merchantService.merchantSortingPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
-
-
     /**
      * 根据 条件查询所有提现信息列表
      * @return
@@ -434,7 +489,7 @@ public class MerchantController {
         map.setCurrent(index);
         map.setSize(itemNum);
         IPage<MerchantEntity> merchantEntityIPage = merchantDao.selectPage(map, mweqw);
-        
+
         //汇总
         if(merchantEntityIPage == null)
             return null;

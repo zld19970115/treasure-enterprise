@@ -155,10 +155,9 @@ public class StatisticsController {
         return new Result().ok(statisticsService.getConsumptionRanking(dto));
     }
 
-    @Login
     @PostMapping("getMerchantAccount")
     @ApiOperation("查询商户收支明细")
-    public Result<List<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+    public Result<PageData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
     }
 
@@ -198,6 +197,76 @@ public class StatisticsController {
     })
     public Result<DaysTogetherStatisticsVo> daysTogetherStat(@ApiIgnore @RequestParam Map<String, Object> params){
         return new Result<DaysTogetherStatisticsVo>().ok(statisticsService.daysTogetherStat(params));
+    }
+
+    @Login
+    @GetMapping("statSdayDetailPage")
+    @ApiOperation("商户明细费用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageTotalRowData<StatSdayDetailPageVo>> statSdayDetailPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<PageTotalRowData<StatSdayDetailPageVo>>().ok(statisticsService.statSdayDetailPage(params));
+    }
+
+    @Login
+    @GetMapping("fmisHome")
+    @ApiOperation("财务系统首页统计")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<FmisHomeVo> fmisHome(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<FmisHomeVo>().ok(statisticsService.fmisHome(params));
+    }
+
+    @Login
+    @GetMapping("merchantPage")
+    @ApiOperation("财务系统首页统计")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<MerchantPageVo>> merchantPage(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<MerchantPageVo>>().ok(statisticsService.merchantPage(params));
+    }
+
+    @Login
+    @GetMapping("userChart")
+    @ApiOperation("用户统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartVo> userChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartVo>().ok(statisticsService.userChart(params));
+    }
+
+    @Login
+    @GetMapping("merchantChart")
+    @ApiOperation("商家统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartVo> merchantChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartVo>().ok(statisticsService.merchantChart(params));
+    }
+
+    @Login
+    @GetMapping("orderChart")
+    @ApiOperation("订单统计图")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<EChartOrderVo> orderChart(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<EChartOrderVo>().ok(statisticsService.orderChart(params));
     }
 
 }

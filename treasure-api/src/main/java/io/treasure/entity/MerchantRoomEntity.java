@@ -3,7 +3,6 @@ package io.treasure.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -50,9 +49,14 @@ public class MerchantRoomEntity extends BaseEntity {
      * 商户
      */
 	private Long merchantId;
+	/**
+	 * 排序字段
+	 */
+	private Integer  sort;
     /**
      * 状态
      */
+
 	private int status;
     /**
      * 修改时间

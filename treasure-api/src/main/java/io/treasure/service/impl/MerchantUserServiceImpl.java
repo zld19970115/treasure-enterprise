@@ -9,12 +9,12 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.MerchantUserDao;
-import io.treasure.dto.GoodDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Role;
-import io.treasure.entity.*;
+import io.treasure.entity.MerchantUserEntity;
+import io.treasure.entity.TokenEntity;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import io.treasure.service.TokenService;
@@ -241,6 +241,15 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
    @Override
     public MerchantUserEntity getByMobiles(String mobile) {
         return baseDao.getByMobiles(mobile);
+    }
+
+    @Override
+    public boolean isRegister(String tel) {
+        int count=baseDao.selectCount(new QueryWrapper<MerchantUserEntity>().eq("mobile",tel));
+        if(count==0){
+            return false;
+        }
+        return true;
     }
 
 }

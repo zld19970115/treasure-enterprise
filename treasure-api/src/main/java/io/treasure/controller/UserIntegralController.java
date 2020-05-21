@@ -2,11 +2,10 @@ package io.treasure.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.ClientUserService;
-import io.treasure.service.MasterOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +25,7 @@ public class UserIntegralController {
 
     @Autowired
     private ClientUserService clientUserService;
+    @Login
     @GetMapping("/IntegralGift")
     @ApiOperation("用户积分兑换赠送金")
     public Result integralGift(@RequestParam Long userId, @RequestParam BigDecimal integral){

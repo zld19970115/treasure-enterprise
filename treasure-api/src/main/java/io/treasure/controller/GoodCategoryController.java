@@ -151,9 +151,12 @@ public class GoodCategoryController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
-    public Result delete(@RequestParam  Long id){
+    public Result delete(@ApiIgnore @RequestParam  Long id){
         //判断商户是否关闭店铺
         GoodCategoryDTO categortyDto=goodCategoryService.get(id);
+        if(categortyDto!=null){
+            return new Result().error("没有获取到分类");
+        }
         long merchantId=categortyDto.getMerchantId();
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);

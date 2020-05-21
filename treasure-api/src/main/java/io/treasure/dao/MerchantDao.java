@@ -32,7 +32,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     List<MerchantDTO> getLikeMerchant(Map<String, Object> params);
     List<MerchantDTO> merchantSortingPage(Map<String, Object> params);
     List<MerchantDTO>   martLike(Map<String, Object> params);
-
+    void  updateWX(String martId);
     //根据商户id获取商家基本信息
     MerchantDTO selectBaseInfoByMartId(long marId);
 }

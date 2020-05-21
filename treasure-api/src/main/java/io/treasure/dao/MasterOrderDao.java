@@ -1,17 +1,11 @@
 package io.treasure.dao;
-import io.treasure.common.page.PageData;
-import io.treasure.dto.ClientUserCollectDTO;
+import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
-
-import io.treasure.common.dao.BaseDao;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -56,6 +50,8 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     OrderDTO getMasterOrder(String orderId);
     OrderDTO getOrder(String orderId);
     List<OrderDTO> getOrder1(String orderId);
+    List<MasterOrderEntity> getOrder2(String orderId);
+    List<MasterOrderEntity>  selectNodelOrders(String orderId);
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
     List<MasterOrderEntity>  selectAgreeRefundOrder(String orderId);
     List<OrderDTO> getPayOrder(Map params);
@@ -72,7 +68,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //String orderid,int支付方式，date支付日期,支付状态由1变为4
     void updatePayStatus(@Param("orderId")  String orderId,@Param("payMode")int payMode,
                          @Param("payDate")Date payDate,@Param("status") int status);
-
+    void  updateOrderDeletedById(long id);
 //       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
     MasterOrderEntity selectMOById(String orderId);
 

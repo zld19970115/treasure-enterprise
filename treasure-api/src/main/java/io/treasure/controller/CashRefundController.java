@@ -17,12 +17,12 @@ public class CashRefundController {
     @Autowired
     PayService payService;
 
-    @GetMapping("/cash_refund")
+    @GetMapping("cash_refund")
     @ResponseBody
     public Result CashRefund(@RequestParam(name ="order_no",defaultValue = "",required = true) String orderNo,
                              @RequestParam(name="refund_fee",defaultValue = "",required = true) String refund_fee,
                              @RequestParam(name = "good_id",defaultValue = "",required = false) Long goodId){
-        System.out.println(orderNo+","+refund_fee+","+goodId);
+        //System.out.println(orderNo+","+refund_fee+","+goodId);
        Result result = payService.CashRefund(orderNo, refund_fee, goodId);
         //Result result=new Result();
         //return result.ok(true);
