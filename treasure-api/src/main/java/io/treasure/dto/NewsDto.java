@@ -23,7 +23,7 @@ public class NewsDto {
 
     private Date updateDate;
 
-    private Date create_date;
+    private Date createDate;
 
     private Long creator;
 

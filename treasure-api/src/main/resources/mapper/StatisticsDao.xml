@@ -656,16 +656,26 @@
 
     <select id="fmisHome" resultType="io.treasure.vo.FmisHomeVo">
         SELECT
-            SUM( case when `status` = 10 then merchant_proceeds+platform_brokerage else 0 end ) as totalCash,
-            SUM( case when `status` = 10 then merchant_proceeds else 0 end ) as merchantTotalCash,
-            SUM( case when `status` = 10 then platform_brokerage else 0 end ) as pointMoney,
-            SUM( case when `status` = 10 and pay_mode = 1 then pay_money else 0 end ) as balanceTotalCash,
-            SUM( case when `status` = 10 and pay_mode = 2 then pay_money else 0 end ) as aliTotalCash,
-            SUM( case when `status` = 10 and pay_mode = 3 then pay_money else 0 end ) as wxTotalCash,
-            ( select COUNT(0) from ct_merchant ) as merchantCount,
-            (select COUNT(0) from ct_client_user ccu) as userCount,
-            SUM( case when `status` = 10 and p_order_id = '0' then 1 else 0 end ) as pOrderCount,
-            SUM( case when `status` = 10 and p_order_id != '0' then 1 else 0 end ) as orderCount
+
+        IFNULL(SUM( case when `status` = 10 then merchant_proceeds else 0 end ),0) as merchantTotalCash,
+        <if test="merchantId == null">
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 1 then pay_money else 0 end ),0) as balanceTotalCash,
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 2 then pay_money else 0 end ),0) as aliTotalCash,
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 3 then pay_money else 0 end ),0) as wxTotalCash,
+        </if>
+        <if test="merchantId != null">
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 1 then merchant_proceeds else 0 end ),0) as balanceTotalCash,
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 2 then merchant_proceeds else 0 end ),0) as aliTotalCash,
+            IFNULL(SUM( case when `status` = 10 and pay_mode = 3 then merchant_proceeds else 0 end ),0) as wxTotalCash,
+        </if>
+        <if test="merchantId == null">
+            IFNULL(SUM( case when `status` = 10 then platform_brokerage else 0 end ),0) as pointMoney,
+            IFNULL(SUM( case when `status` = 10 then merchant_proceeds+platform_brokerage else 0 end ),0) as totalCash,
+            ( select IFNULL(COUNT(0),0) from ct_merchant ) as merchantCount,
+            (select IFNULL(COUNT(0),0) from ct_client_user ccu) as userCount,
+        </if>
+        IFNULL(SUM( case when `status` = 10 and p_order_id = '0' then 1 else 0 end ),0) as pOrderCount,
+        IFNULL(SUM( case when `status` = 10 and p_order_id != '0' then 1 else 0 end ),0) as orderCount
         FROM
             ct_master_order
         <where>
@@ -675,6 +685,9 @@
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(eat_time, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
+            <if test="merchantId != null">
+                and merchant_id = #{merchantId}
+            </if>
         </where>
     </select>
 
@@ -682,10 +695,10 @@
         select * from ct_merchant
         <where>
             <if test="name != null and name.trim() != ''">
-                name like CONCAT('%',#{name},'%')
+                and name like CONCAT('%',#{name},'%')
             </if>
             <if test="mobile != null and mobile.trim() != ''">
-                mobile like CONCAT('%',#{mobile},'%')
+                and mobile like CONCAT('%',#{mobile},'%')
             </if>
             <if test="startDate != null and startDate.trim() != ''">
                 <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
@@ -693,11 +706,15 @@
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
+            <if test="auditStatus != null">
+                and auditStatus = #{auditStatus}
+            </if>
+
             <if test="id != null">
-                id = #{id}
+               and id = #{id}
             </if>
         </where>
-
+        ORDER BY create_date desc
     </select>
 
     <select id="userChartByDay" resultType="io.treasure.vo.EChartInfoVo">
@@ -776,6 +793,9 @@
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(eat_time, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
+            <if test="merchantId != null">
+                and merchant_id = #{merchantId}
+            </if>
         </where>
         GROUP BY date_format(eat_time, '%Y-%m-%d')
     </select>
@@ -791,8 +811,30 @@
             <if test="year != null and year.trim() != ''">
                 <![CDATA[ and date_format(eat_time, '%Y') = #{year} ]]>
             </if>
+            <if test="merchantId != null">
+                and merchant_id = #{merchantId}
+            </if>
         </where>
         GROUP BY date_format(eat_time, '%Y-%m')
+    </select>
+
+    <select id="realTimeOrder" resultType="io.treasure.vo.RealTimeOrder">
+        SELECT
+            IFNULL(SUM(case when STATUS = 4 then 1 else 0 end),0) as completeOrder,
+            IFNULL(SUM(case when STATUS = 2 then 1 else 0 end),0) as conductOrder,
+            IFNULL(SUM(case when STATUS = 6 then 1 else 0 end),0) as applyRefundOrder,
+            IFNULL((select
+                            COUNT(0)
+                        from
+                            ct_slave_order ctso
+                        where
+                            ctso.order_id = ctmo.order_id
+                            and ctmo.merchant_id = #{merchantId}
+                            and ctmo.`status` = 2
+                            and ctso.`status` = 6),0)
+                         as applyBackDishes
+        FROM ct_master_order ctmo
+        where id = #{merchantId}
     </select>
 
 </mapper>

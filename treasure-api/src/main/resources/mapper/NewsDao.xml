@@ -28,4 +28,7 @@
         select * from ct_news where `status` in (2,3)
     </select>
 
+    <select id="selectByStatus" resultType="io.treasure.dto.NewsDto">
+        select * from ct_news where `status` = #{status}
+    </select>
 </mapper>

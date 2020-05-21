@@ -2039,6 +2039,51 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public ShareOrderDTO shareOrder(String orderId) {
+        ShareOrderDTO shareOrderDTO = new ShareOrderDTO();
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return shareOrderDTO;
+        }
+        MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
+        ClientUserEntity clientUserEntity = clientUserService.selectById(masterOrderEntity.getCreator());
+        Calendar c = Calendar.getInstance();
+        c.setTime(masterOrderEntity.getEatTime());
+        int dayForWeek = 0;
+        if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+            dayForWeek = 7;
+        } else {
+            dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        }
+        shareOrderDTO.setWeek(dayForWeek);
+        shareOrderDTO.setDinnerTime(masterOrderEntity.getEatTime());
+        shareOrderDTO.setMerchantEntity(merchantEntity);
+        shareOrderDTO.setMobile(clientUserEntity.getMobile());
+        shareOrderDTO.setOrderId(orderId);
+        if (masterOrderEntity.getContacts()!=null){
+            shareOrderDTO.setName(masterOrderEntity.getContacts());
+        }
+        if (masterOrderEntity.getRoomId()!=null){
+            MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
+            shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
+            shareOrderDTO.setRoomType(merchantRoomEntity.getType());
+            return shareOrderDTO;
+        }else {
+            List<MasterOrderEntity>  masterOrderEntities =  baseDao.selectSharePorderid(orderId);
+            if (masterOrderEntities.size()==0){
+                return shareOrderDTO;
+            }else {
+                for (MasterOrderEntity orderEntity : masterOrderEntities) {
+                    MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(orderEntity.getRoomId());
+                    shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
+                    shareOrderDTO.setRoomType(merchantRoomEntity.getType());
+                }
+                return shareOrderDTO;
+            }
+        }
+    }
+
+    @Override
     public List<MasterOrderEntity> selectAgreeRefundOrder(String orderId) {
         return baseDao.selectAgreeRefundOrder(orderId);
     }

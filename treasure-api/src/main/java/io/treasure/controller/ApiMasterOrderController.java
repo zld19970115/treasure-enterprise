@@ -14,10 +14,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.DesignConditionsDTO;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.dto.MerchantOrderDTO;
-import io.treasure.dto.OrderDTO;
+import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
@@ -661,5 +658,13 @@ public class ApiMasterOrderController {
         Result result =  masterOrderService.deleteOrder(orderId);
         return new Result().ok(result);
     }
-
+    @GetMapping("shareOrder")
+    @ApiOperation("用户端分享订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "主订单编号", paramType = "query", required = true, dataType="string")
+    })
+    public Result shareOrder (@RequestParam String orderId){
+        ShareOrderDTO shareOrder =  masterOrderService.shareOrder(orderId);
+        return new Result().ok(shareOrder);
+    }
 }

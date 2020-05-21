@@ -54,6 +54,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity>  selectNodelOrders(String orderId);
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
     List<MasterOrderEntity>  selectAgreeRefundOrder(String orderId);
+    List<MasterOrderEntity> selectSharePorderid(String orderId);
     List<OrderDTO> getPayOrder(Map params);
     List<OrderDTO> getPayOrders(Map params);
     List<MasterOrderEntity>getAuxiliaryPayOrder(@Param("orderId")  String orderId,@Param("status") int status);
