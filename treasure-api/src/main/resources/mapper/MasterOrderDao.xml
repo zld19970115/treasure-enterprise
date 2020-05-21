@@ -226,6 +226,9 @@
     <select id="getOrder2" resultType="io.treasure.entity.MasterOrderEntity">
           select * from ct_master_order where order_id=#{orderId}  or p_order_id =#{orderId}
     </select>
+    <select id="selectSharePorderid" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from  ct_master_order where p_order_id =#{orderId} and reservation_type = 2 and status in (2,7)
+    </select>
     <update id="updatePayStatus">
         update ct_master_order SET status=#{status},pay_mode=#{payMode},pay_date=#{payDate}
         where order_id=#{orderId}

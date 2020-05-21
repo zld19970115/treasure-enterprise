@@ -40,10 +40,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -417,6 +414,9 @@ public class ApiClientUserController {
         if (list.size()!=0){
             return new Result().error("您有订单未完成");
         }
+        List list1 = new ArrayList();
+        list1.add(userId);
+        tokenService.deleteBatchIds(list1);
         clientUserEntity.setUsername(clientUserEntity.getUsername()+"已注销");
         clientUserEntity.setClientId("0");
         clientUserEntity.setMobile(clientUserEntity.getMobile()+"已注销");

@@ -3,10 +3,7 @@ package io.treasure.service;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.DesignConditionsDTO;
-import io.treasure.dto.MasterOrderDTO;
-import io.treasure.dto.MerchantOrderDTO;
-import io.treasure.dto.OrderDTO;
+import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
@@ -135,6 +132,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     List<OrderDTO> refundOrder( Map<String, Object> params);
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
     Result deleteOrder(String orderId);
+    ShareOrderDTO shareOrder(String orderId);
     List<MasterOrderEntity>  selectAgreeRefundOrder(String orderId);
 
     PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params);

@@ -219,7 +219,6 @@ public class PayServiceImpl implements PayService {
                     stimmeEntity.setCreator(masterOrderEntity.getCreator());
                     stimmeService.insert(stimmeEntity);
                 }else{
-
                     try{
                         System.out.println("支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
                         throw new Exception("wx_pay_fail:code05");
