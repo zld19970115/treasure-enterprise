@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
@@ -21,6 +22,7 @@ import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.impl.MerchantServiceImpl;
+import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PagePlus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +53,8 @@ public class MerchantWithdrawController {
     private MerchantServiceImpl merchantService;
     @Autowired(required = false)
     private MerchantWithdrawDao merchantWithdrawDao;
+    @Autowired
+    private SMSConfig smsConfig;
     @CrossOrigin
     @Login
     @GetMapping("allPage")
@@ -161,6 +165,8 @@ public class MerchantWithdrawController {
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
         merchantWithdrawService. save(dto);
+        String mobile = merchantService.selectOfficialMobile();
+        SendSMSUtil.MerchantsWithdrawal(mobile, merchantEntity.getName(), smsConfig);
         return new Result();
     }
     @CrossOrigin

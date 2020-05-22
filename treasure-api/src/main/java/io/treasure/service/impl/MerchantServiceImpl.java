@@ -63,6 +63,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         return baseDao.getByName(name,status);
     }
 
+    @Override
+    public String selectOfficialMobile() {
+        return baseDao.selectOfficialMobile();
+    }
+
     /**
      * 闭店
      * @param id

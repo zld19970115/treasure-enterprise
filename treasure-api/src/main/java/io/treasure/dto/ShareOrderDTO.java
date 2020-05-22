@@ -20,6 +20,8 @@ public class ShareOrderDTO {
     private String mobile;
     @ApiModelProperty(value = "包房类型")
     private int roomType;
+    @ApiModelProperty(value = "包房姓名")
+    private String roomName;
     @ApiModelProperty(value = "包房人数")
     private int roomCount;
     @ApiModelProperty(value = "星期")
