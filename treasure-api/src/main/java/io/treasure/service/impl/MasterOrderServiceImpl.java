@@ -2070,6 +2070,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
             shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
             shareOrderDTO.setRoomType(merchantRoomEntity.getType());
+            shareOrderDTO.setRoomName(merchantRoomEntity.getName());
             return shareOrderDTO;
         }else {
             List<MasterOrderEntity>  masterOrderEntities =  baseDao.selectSharePorderid(orderId);
@@ -2080,6 +2081,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(orderEntity.getRoomId());
                     shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
                     shareOrderDTO.setRoomType(merchantRoomEntity.getType());
+                    shareOrderDTO.setRoomName(merchantRoomEntity.getName());
                 }
                 return shareOrderDTO;
             }

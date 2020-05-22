@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.BannerDao;
 import io.treasure.dto.BannerDto;
-import io.treasure.entity.AppVersionEntity;
 import io.treasure.entity.BannerEntity;
 import io.treasure.service.BannerService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -72,5 +70,4 @@ public class BannerServiceImpl extends CrudServiceImpl<BannerDao, BannerEntity, 
         obj.setSort(dto.getSort());
         return baseDao.insert(obj);
     }
-
 }

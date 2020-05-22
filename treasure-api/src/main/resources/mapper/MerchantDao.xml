@@ -118,4 +118,7 @@
         from  ct_merchant merchant
         where id = #{marId}
     </select>
+    <select id="selectOfficialMobile" resultType="java.lang.String">
+        select param_value from sys_params where id=15604548127
+    </select>
 </mapper>

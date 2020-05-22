@@ -203,6 +203,50 @@ public class SendSMSUtil {
     }
 
     /**
+     * 商家入驻通知平台管理员
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean MerchantsSettlement(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_190791855", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+    /**
+     * 商家申请提现通知平台
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean MerchantsWithdrawal(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_190791860", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+
+
+    /**
      * 获取验证码
      * @param phoneNumber
      * @param request
