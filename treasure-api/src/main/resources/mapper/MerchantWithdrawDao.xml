@@ -151,6 +151,9 @@ select param_value from sys_params where id=1144988823431553026
         <if test="mobile != null and mobile!='' ">
             and  cm.mobile like  CONCAT('%',${mobile},'%')
         </if>
+        <if test="verifyState != null and verifyState!='' ">
+            and  cm.verify_state = ${verifyState}
+        </if>
         <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
             and mw.create_date BETWEEN #{createDateTop} AND #{createDateDown}
         </if>

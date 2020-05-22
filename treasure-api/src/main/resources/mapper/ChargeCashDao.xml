@@ -32,6 +32,9 @@
         <if test="phone != null and phone!='' ">
             and  ccu.mobile like  CONCAT('%',${phone},'%')
         </if>
+        <if test="status != null and status!='' ">
+            and  ccc.status = #{status}
+        </if>
         <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
             and ccc.create_date BETWEEN #{createDateTop} AND #{createDateDown}
         </if>

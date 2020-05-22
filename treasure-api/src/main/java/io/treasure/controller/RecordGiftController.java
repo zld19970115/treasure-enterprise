@@ -101,6 +101,7 @@ public class RecordGiftController {
             @ApiImplicitParam(name = "transferredMobile", value = "手机号", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "status", value = "状态类型", paramType = "query", dataType="int"),
     })
     public Result<PageData<RecordGiftDTO>> getRecordGiftByUserId(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<RecordGiftDTO> page = recordGiftService.getRecordGiftByUserId(params);

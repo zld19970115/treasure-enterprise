@@ -435,6 +435,7 @@ public class MerchantWithdrawController {
             @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "verifyState", value = "状态类型", paramType = "query", dataType="int"),
     })
     public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawByMerchantId(params);

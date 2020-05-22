@@ -36,6 +36,9 @@
         <if test="transferredMobile != null and transferredMobile!='' ">
             and crg.transferred_mobile like  CONCAT('%',${transferredMobile},'%')
         </if>
+        <if test="status != null and status!='' ">
+            and crg.status = status
+        </if>
         <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
             and crg.create_date BETWEEN #{createDateTop} AND #{createDateDown}
         </if>

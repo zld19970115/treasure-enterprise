@@ -85,13 +85,13 @@ public class ChargeCashDTO implements Serializable {
      * 用户充值账号，手机号
      */
     @ApiModelProperty(value = "充值账号")
-    private String accound;
+    private String mobile;
 
     /**
      * 账户余额
      */
     @ApiModelProperty(value = "账户余额")
-    private int amount;
+    private int balance;
     /**
      * 消费金额
      */
