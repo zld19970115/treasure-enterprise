@@ -230,13 +230,14 @@ public class SendSMSUtil {
      * @param smsConfig       配置
      * @return
      */
-    public static boolean MerchantsWithdrawal(String phoneNumber, String merchantName, SMSConfig smsConfig) {
+    public static boolean MerchantsWithdrawal(String phoneNumber,String money,String merchantName, SMSConfig smsConfig) {
         boolean ret=false;
         SMSSend send=new SMSSend(smsConfig);
         Map map=new HashMap();
         map.put("name",merchantName);
+        map.put("money",money);
         String template= JSON.toJSONString(map);
-        String data=send.send(phoneNumber, "聚宝科技", "SMS_190791860", template);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_190782287", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
