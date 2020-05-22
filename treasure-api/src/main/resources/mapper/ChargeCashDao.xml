@@ -35,8 +35,11 @@
         <if test="status != null and status!='' ">
             and  ccc.status = #{status}
         </if>
-        <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
-            and ccc.create_date BETWEEN #{createDateTop} AND #{createDateDown}
+        <if test="createDateTop != null and createDateTop.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+        </if>
+        <if test="createDateDown != null and createDateDown.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
         </if>
         and ccu.id = ccc.user_id
     </select>

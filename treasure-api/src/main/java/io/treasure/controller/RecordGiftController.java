@@ -15,10 +15,7 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.impl.MerchantServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
@@ -37,7 +34,7 @@ public class RecordGiftController {
     @Autowired
     private ClientUserService clientUserService;
 
-    @PostMapping("/insertRecordGiftAdmin")
+    @GetMapping("/insertRecordGiftAdmin")
     @ApiOperation("后台赠送代付金")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -76,7 +73,7 @@ public class RecordGiftController {
         return new Result().ok(page);
     }
 
-    @PostMapping("/getRecordUserAll")
+    @GetMapping("/getRecordUserAll")
     @ApiOperation("根据手机号模糊查询用户")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -91,7 +88,7 @@ public class RecordGiftController {
     }
 
 
-    @PostMapping("getRecordGiftByUserId")
+    @GetMapping("getRecordGiftByUserId")
     @ApiOperation("根据手机号/日期查询后台代付金充值记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,

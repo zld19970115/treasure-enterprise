@@ -78,7 +78,7 @@ public class ChargeCashController {
         return  new Result().ok(select);
     }
 
-    @PostMapping("/getChargeCashAll")
+    @GetMapping("/getChargeCashAll")
     @ApiOperation("全部充值记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -91,7 +91,7 @@ public class ChargeCashController {
         return new Result().ok(page);
     }
 
-    @PostMapping("/getChargeCashByCreateDate")
+    @GetMapping("/getChargeCashByCreateDate")
     @ApiOperation("根据手机号或者日期查询充值记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,

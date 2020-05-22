@@ -75,5 +75,5 @@ public class RecordGiftDTO  implements Serializable {
      * 修改者
      */
     @ApiModelProperty(value = "用户名")
-    private long userName;
+    private String userName;
 }

@@ -69,9 +69,9 @@
         UPDATE `ct_client_user` SET `unionid` = #{openId} where mobile=#{mobile}
     </update>
     <select id="getRecordUserAll" resultType="io.treasure.dto.ClientUserDTO">
-        select id,name,username,mobile,balance,gift, from ct_client_user where 1=1
+        select id,`name`,username,mobile,balance,gift from ct_client_user where `status` = 1
         <if test="mobile != null and mobile!='' ">
-            and mobile like  CONCAT('%',${mobile},'%')
+            and mobile like  CONCAT('%',#{mobile},'%')
         </if>
 
     </select>

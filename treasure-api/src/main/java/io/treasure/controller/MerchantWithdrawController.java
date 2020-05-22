@@ -412,7 +412,7 @@ public class MerchantWithdrawController {
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
 
-    @PostMapping("getMerchanWithDrawAll")
+    @GetMapping("getMerchanWithDrawAll")
     @ApiOperation("全部商户提现记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -425,7 +425,7 @@ public class MerchantWithdrawController {
         return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
     }
 
-    @PostMapping("getMerchanWithDrawByMerchantId")
+    @GetMapping("getMerchanWithDrawByMerchantId")
     @ApiOperation("根据手机号/日期查询商户提现记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
