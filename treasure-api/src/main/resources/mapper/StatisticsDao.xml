@@ -527,7 +527,7 @@
         GROUP BY
             ct.room_id
         ORDER BY
-	        ct.create_date
+	        ct.id
     </select>
 
     <select id="selectRoomAllByMid" resultType="io.treasure.vo.VisualizationRoomVo">
@@ -542,6 +542,7 @@
         from ct_merchant_room room
         where room.`status` != 9 and room.merchant_id = #{merchantId} and
         room.id not in (select DISTINCT ct.room_id from ct_merchant_room_params_set ct where ct.merchant_id = #{merchantId})
+        order by room.id
     </select>
 
     <select id="daysTogetherPage" resultType="io.treasure.dto.DaysTogetherPageDTO">
@@ -834,7 +835,19 @@
                             and ctso.`status` = 6),0)
                          as applyBackDishes
         FROM ct_master_order ctmo
-        where id = #{merchantId}
+        where ctmo.merchant_id = #{merchantId}
     </select>
 
+    <select id="pointsConfigInfo" resultType="io.treasure.dto.PointsConfigDto">
+        SELECT * FROM points_config;
+    </select>
+
+    <update id="updatePointsConfig">
+        update points_config
+        <set >
+            consumption_ratio = #{consumptionRatio},
+            subscription_ratio = #{subscriptionRatio}
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

@@ -1,6 +1,5 @@
 package io.treasure.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -16,16 +15,16 @@ import io.treasure.service.CategoryService;
 import io.treasure.service.StatisticsService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.*;
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -256,10 +255,22 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public List<VisualizationRoomVo> getVisualizationRoom(Map<String, Object> map) {
-        List list = baseDao.getVisualizationRoom(map);
+    public VisualizationRoomListVo getVisualizationRoom(Map<String, Object> map) {
+        VisualizationRoomListVo vo = new VisualizationRoomListVo();
+        List<VisualizationRoomVo> list = baseDao.getVisualizationRoom(map);
         list.addAll(baseDao.selectRoomAllByMid(map));
-        return list;
+        List<VisualizationRoomVo> roomList = Lists.newArrayList();
+        List<VisualizationRoomVo> descList = Lists.newArrayList();
+        for(VisualizationRoomVo obj : list) {
+            if(obj.getType() == 1) {
+                roomList.add(obj);
+            } else {
+                descList.add(obj);
+            }
+        }
+        vo.setRoomList(roomList);
+        vo.setDescList(descList);
+        return vo;
 
     }
 
@@ -437,6 +448,16 @@ public class StatisticsServiceImpl
     @Override
     public FmisHomeVo merchantPcHome(Map<String, Object> params) {
         return baseDao.fmisHome(params);
+    }
+
+    @Override
+    public PointsConfigDto pointsConfigInfo() {
+        return baseDao.pointsConfigInfo();
+    }
+
+    @Override
+    public void updatePointsConfig(Map<String, Object> params) {
+        baseDao.updatePointsConfig(params);
     }
 
 }

@@ -2335,7 +2335,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params) {
         //int count= baseDao.selectCount(getWrapper(params));
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
-        String status = params.get("status").toString();
+        String status = "2";
         if (StringUtils.isNotBlank(status)) {
             String[] str = status.split(",");
             params.put("statusStr", str);
