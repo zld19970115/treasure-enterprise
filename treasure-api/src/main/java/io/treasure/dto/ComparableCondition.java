@@ -13,12 +13,24 @@ public class ComparableCondition {
 
     BigDecimal fractionPart = new BigDecimal("0");
 
+    //单项在总体中的占比
+    BigDecimal overAllRatio;
+
+
     public enum SortRule{
         getFreeGold,//赠送金
         getDiscountsMoney,//优惠券
         getPlatformBrokerage,
         getMerchantProceeds,
         getFractionPart;
+    }
+
+    public BigDecimal getOverAllRatio() {
+        return overAllRatio;
+    }
+
+    public void setOverAllRatio(BigDecimal overAllRatio) {
+        this.overAllRatio = overAllRatio;
     }
 
     public BigDecimal getTotalItemDiscount() {

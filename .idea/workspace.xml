@@ -1,86 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d9e9580-10d5-4a80-b141-1be21b3d781f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/NewsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/NewsDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/BannerDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/NewsDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/NewsEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/NewsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/NewsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/EChartInfoVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/EChartOrderInfoVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/EChartOrderVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/EChartVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/FmisHomeVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/MerchantPageVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/PageTotalRowData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/StatSdayDetailPageVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/NewsDao.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/MybatisPlusConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/MybatisPlusConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAppVersionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAppVersionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserCollectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserCollectController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiMasterOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiMasterOrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXJSAPIPayController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXJSAPIPayController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/BannerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/BannerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/CashRefundController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/CashRefundController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ChargeCashController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ChargeCashController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/EvaluateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/EvaluateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/GoodCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/GoodCategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchanEvaluateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchanEvaluateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantRoomController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantRoomController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantUserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantUserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantWithdrawController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantWithdrawController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/StatisticsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/StatisticsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/StimmeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/StimmeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/SysOssController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/SysOssController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserIntegralController.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserIntegralController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MasterOrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MasterOrderDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MerchantDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MerchantDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/StatisticsDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/StatisticsDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/DaysTogetherPageDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/DaysTogetherPageDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MasterOrderDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MasterOrderDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantAccountDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantAccountDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantRoomDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/MerchantRoomDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/OrderDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/OrderDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MasterOrderEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MasterOrderEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MerchantEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MerchantEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MerchantRoomEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MerchantRoomEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/StatsDayDetailEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/StatsDayDetailEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/interceptor/AuthorizationInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/interceptor/AuthorizationInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/BannerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/BannerService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/ChargeCashService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/ChargeCashService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MasterOrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MasterOrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/StatisticsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/StatisticsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/BannerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/BannerServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ChargeCashServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ChargeCashServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/CtDaysTogetherServicelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/CtDaysTogetherServicelmpl.java" afterDir="false" />
+    <list default="true" id="3d9e9580-10d5-4a80-b141-1be21b3d781f" name="Default Changelist" comment="更新代码自GIT">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MerchantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MerchantServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MerchantUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MerchantUserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/StatisticsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/StatisticsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/StatsDayDetailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/StatsDayDetailServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/TokenServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/TokenServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/UserCardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/UserCardServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/DateUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/DateUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/SendSMSUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/SendSMSUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/PagePlus.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/PagePlus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MasterOrderDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MasterOrderDao.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantDao.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantRoomParamsSetDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantRoomParamsSetDao.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/RecordGiftDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/RecordGiftDao.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/StatisticsDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/StatisticsDao.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/treasure-api107-0523-debug.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/生成的jar包/treasure-api-107-v20200521-debug1.jar" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -116,95 +42,80 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAlipayController.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3564">
-              <caret line="155" selection-start-line="155" selection-end-line="155" />
+            <state relative-caret-position="549">
+              <caret line="1233" column="30" lean-forward="true" selection-start-line="1233" selection-start-column="30" selection-end-line="1233" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiAlipayF2FPayController.java">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXAppPayController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5577">
-              <caret line="195" column="35" selection-start-line="195" selection-start-column="35" selection-end-line="195" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXPayController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="111" column="4" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantUserService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="19" column="17" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1881">
-              <caret line="57" column="47" selection-start-line="57" selection-start-column="47" selection-end-line="57" selection-end-column="47" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1728">
-              <caret line="54" column="16" selection-start-line="54" selection-start-column="12" selection-end-line="54" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/CashRefundController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="33" column="38" selection-start-line="33" selection-start-column="38" selection-end-line="33" selection-end-column="38" />
+            <state relative-caret-position="297">
+              <caret line="26" selection-start-line="26" selection-end-line="26" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#549#550#0" expanded="true" />
+                <element signature="e#584#585#0" expanded="true" />
+                <element signature="e#644#645#0" expanded="true" />
+                <element signature="e#692#693#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/calculationAmountDTO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="428">
-              <caret line="35" column="11" selection-start-line="35" selection-start-column="11" selection-end-line="35" selection-end-column="11" />
+            <state relative-caret-position="123">
+              <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="666" column="20" selection-start-line="666" selection-start-column="20" selection-end-line="666" selection-end-column="20" />
+            <state relative-caret-position="477">
+              <caret line="100" column="67" selection-start-line="100" selection-start-column="67" selection-end-line="100" selection-end-column="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/UserCouponServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/DesignConditionsDTO.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="599">
+              <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/UserCouponDao.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="17" column="29" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/mapper/UserCouponDao.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="236">
+              <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -222,10 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>20161215</find>
-      <find>treasure-dynamic</find>
-      <find>lom</find>
-      <find>en</find>
       <find>cn</find>
       <find>退款</find>
       <find>gift</find>
@@ -252,6 +159,10 @@
       <find>updateById</find>
       <find>mybatis</find>
       <find>appid</find>
+      <find>mas</find>
+      <find>status</find>
+      <find>支付失败</find>
+      <find>client</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -261,10 +172,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MerchantLeaderDao.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantLeaderDao.xml" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/enm/WithdrawEnm.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/enm/CustomizeEnum.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/enm/WithDrawEnum.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/enm/EWithDrawGroupBy.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/RegularUtil.java" />
@@ -282,11 +189,8 @@
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/7c533305-1ea9-4155-87b2-36fc60a7aa0b/console.sql" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MasterOrderDao.xml" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/MasterOrderDao.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MasterOrderService.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/resources/application-test.yml" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/treasure-api/pom.xml" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXAppPayController.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/OrderUtilOther.java" />
@@ -299,8 +203,6 @@
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserController.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ClientUserServiceImpl.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/calculationAmountDTO.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/TomcatConfig.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/ApiApplication.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantController.java" />
@@ -309,9 +211,18 @@
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/IWXPay.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/TestService.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/IWXConfig.java" />
-        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/resources/application.yml" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MasterOrderService.java" />
         <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/CashRefundController.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java" />
+        <option value="$PROJECT_DIR$/treasure-api/pom.xml" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/PushPayloadConfig.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/JpushTest.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/calculationAmountDTO.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java" />
+        <option value="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" />
       </list>
     </option>
   </component>
@@ -352,10 +263,9 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="250" />
-    <option name="y" value="319" />
-    <option name="width" value="1424" />
-    <option name="height" value="730" />
+    <option name="x" value="470" />
+    <option name="width" value="1461" />
+    <option name="height" value="996" />
   </component>
   <component name="ProjectId" id="1WPeSRa7pQEkjOUnAWLt6Hq2rJ3" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -366,7 +276,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -374,10 +283,94 @@
               <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
               <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure" type="462c0819:PsiDirectoryNode" />
+              <item name="controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure" type="462c0819:PsiDirectoryNode" />
+              <item name="dto" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure" type="462c0819:PsiDirectoryNode" />
+              <item name="resolver" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="treasure-enterprise" type="b2602c69:ProjectViewProjectNode" />
+              <item name="treasure-enterprise" type="462c0819:PsiDirectoryNode" />
+              <item name="treasure-api" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -400,10 +393,10 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/treasure-api/src/main/resources" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.44942528" />
-    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.selected.configurable" value="File.Encoding" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -434,6 +427,54 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.ApiApplication">
+    <configuration name="JpushTest.demo" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="treasure-api" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.treasure.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.treasure.service" />
+      <option name="MAIN_CLASS_NAME" value="io.treasure.service.JpushTest" />
+      <option name="METHOD_NAME" value="demo" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JpushTest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="treasure-api" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.treasure.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.treasure.service" />
+      <option name="MAIN_CLASS_NAME" value="io.treasure.service.JpushTest" />
+      <option name="METHOD_NAME" value="test" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MasterOrderServiceImpl.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="treasure-api" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.treasure.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.treasure.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="io.treasure.service.impl.MasterOrderServiceImpl" />
+      <option name="METHOD_NAME" value="test" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="PayServiceImpl.testSignViaMD5" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="treasure-api" />
       <extension name="coverage">
@@ -466,6 +507,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.ApiApplication" />
+        <item itemvalue="JUnit.MasterOrderServiceImpl.test" />
+        <item itemvalue="JUnit.JpushTest.test" />
+        <item itemvalue="JUnit.JpushTest.demo" />
         <item itemvalue="JUnit.PayServiceImpl.testSignViaMD5" />
       </list>
     </recent_temporary>
@@ -580,14 +624,11 @@
       <workItem from="1589941844119" duration="19000" />
       <workItem from="1589942857690" duration="1000" />
       <workItem from="1589959523659" duration="807000" />
-      <workItem from="1590022309354" duration="1164000" />
-    </task>
-    <task id="LOCAL-00001" summary="获取退菜菜品调整">
-      <created>1576724918574</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1576724918574</updated>
+      <workItem from="1590022309354" duration="20179000" />
+      <workItem from="1590114685133" duration="17000" />
+      <workItem from="1590115564442" duration="454000" />
+      <workItem from="1590135843522" duration="1237000" />
+      <workItem from="1590365309428" duration="13858000" />
     </task>
     <task id="LOCAL-00002" summary="提现接口调整">
       <created>1576736545034</created>
@@ -918,25 +959,24 @@
       <option name="project" value="LOCAL" />
       <updated>1590023487216</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="更新代码自GIT">
+      <created>1590023672004</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1590023672004</updated>
+    </task>
+    <task id="LOCAL-00050" summary="更新代码自GIT">
+      <created>1590366620250</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1590366620250</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 13h 58m 51s.xml">
-      <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 00m 35s.xml">
-      <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 03m 47s.xml">
-      <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 04m 27s.xml">
-      <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 06m 02s.xml">
-      <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 06m 40s.xml">
       <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
     </history-entry>
@@ -952,14 +992,30 @@
     <history-entry file="PayServiceImpl_testSignViaMD5 - 2020.04.28 at 14h 33m 18s.xml">
       <configuration name="PayServiceImpl.testSignViaMD5" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="JpushTest_demo - 2020.05.21 at 16h 52m 07s.xml">
+      <configuration name="JpushTest.demo" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="JpushTest_test - 2020.05.22 at 10h 48m 00s.xml">
+      <configuration name="JpushTest.test" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="JpushTest_test - 2020.05.22 at 10h 51m 23s.xml">
+      <configuration name="JpushTest.test" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MasterOrderServiceImpl_test - 2020.05.25 at 12h 31m 41s.xml">
+      <configuration name="MasterOrderServiceImpl.test" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MasterOrderServiceImpl_test - 2020.05.25 at 13h 27m 32s.xml">
+      <configuration name="MasterOrderServiceImpl.test" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="141560000" />
+    <option name="totallyTimeSpent" value="176141000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17180851" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.044148937" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -969,7 +1025,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.328877" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.66" weight="0.30818966" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.66" visible="true" weight="0.44827586" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.67112297" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -980,22 +1036,22 @@
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.34" side_tool="true" weight="0.6791444" />
       <window_info anchor="bottom" id="Java Enterprise" order="11" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
-      <window_info anchor="bottom" id="Version Control" order="13" visible="true" weight="0.040948275" />
-      <window_info anchor="bottom" id="Messages" order="14" weight="0.92112297" />
+      <window_info anchor="bottom" id="Version Control" order="13" weight="0.118663594" />
+      <window_info anchor="bottom" id="Messages" order="14" weight="0.33189654" />
       <window_info anchor="bottom" id="Database Console" order="15" weight="0.3262032" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Maven" order="3" visible="true" weight="0.09255319" />
+      <window_info anchor="right" id="Maven" order="3" visible="true" weight="0.10585106" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="right" id="Database" order="6" weight="0.12856099" />
+      <window_info anchor="right" id="Database" order="6" weight="0.12787089" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
       <window_info anchor="right" id="Bean Validation" order="9" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20891161" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17180851" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1005,7 +1061,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.328877" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.66" visible="true" weight="0.23232323" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.66" visible="true" weight="0.44073275" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.67112297" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1016,13 +1072,13 @@
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.34" side_tool="true" weight="0.6791444" />
       <window_info anchor="bottom" id="Java Enterprise" order="11" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
-      <window_info anchor="bottom" id="Version Control" order="13" weight="0.04144385" />
-      <window_info anchor="bottom" id="Messages" order="14" weight="0.92112297" />
+      <window_info anchor="bottom" id="Version Control" order="13" weight="0.10021552" />
+      <window_info anchor="bottom" id="Messages" order="14" weight="0.41163793" />
       <window_info anchor="bottom" id="Database Console" order="15" weight="0.3262032" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Maven" order="3" visible="true" weight="0.12929146" />
+      <window_info anchor="right" id="Maven" order="3" weight="0.09255319" />
       <window_info anchor="right" id="Palette" order="4" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
       <window_info anchor="right" id="Database" order="6" weight="0.12856099" />
@@ -1080,7 +1136,8 @@
     <MESSAGE value="菜品排序，商家排序" />
     <MESSAGE value="调整" />
     <MESSAGE value="base" />
-    <option name="LAST_COMMIT_MESSAGE" value="base" />
+    <MESSAGE value="更新代码自GIT" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新代码自GIT" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="180" key="#Live_Templates" timestamp="1587094538404">
@@ -1223,224 +1280,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/org/omg/PortableInterceptor/Interceptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="14" column="76" lean-forward="true" selection-start-line="14" selection-start-column="76" selection-end-line="14" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/mybatisPlugs/TargetMysqlPlug.java" />
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/interceptor/AuthorizationInterceptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="31" column="14" lean-forward="true" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/utils/OrderUtilTwo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="19" column="62" lean-forward="true" selection-start-line="19" selection-start-column="62" selection-end-line="19" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/WxResponse.java" />
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/WxAppPayController.java" />
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/5.1.5.RELEASE/spring-web-5.1.5.RELEASE.jar!/org/springframework/web/client/RestTemplate.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="186" column="17" selection-start-line="186" selection-start-column="17" selection-end-line="186" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/SysOssController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="51" column="10" lean-forward="true" selection-start-line="51" selection-start-column="10" selection-end-line="51" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/SysOssServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/vo/PagePlus.java">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantWithdrawController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="61" column="51" selection-start-line="61" selection-start-column="51" selection-end-line="61" selection-end-column="51" />
-          <folding>
-            <element signature="e#17016#17040#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/GoodService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="35" column="23" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/mapper/ClientUserDao.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1675">
-          <caret line="67" column="127" selection-start-line="67" selection-start-column="127" selection-end-line="67" selection-end-column="127" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/mapper/MerchantWithdrawDao.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3175">
-          <caret line="127" column="59" selection-start-line="127" selection-start-column="50" selection-end-line="127" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/ClientUserDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="32" column="39" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/calculationAmountDTO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="104" column="11" selection-start-line="104" selection-start-column="11" selection-end-line="104" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-825">
-          <caret line="51" column="10" selection-start-line="51" selection-start-column="10" selection-end-line="51" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/GoodServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="143" column="7" selection-start-line="143" selection-start-column="7" selection-end-line="143" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserCollectController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-842">
-          <caret line="91" column="51" selection-start-line="91" selection-start-column="51" selection-end-line="91" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ClientUserServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3762">
-          <caret line="19" column="43" selection-start-line="19" selection-start-column="43" selection-end-line="19" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/treasure-api.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3301" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/ApiApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="32" column="9" lean-forward="true" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/baomidou/mybatis-plus-annotation/3.1.0/mybatis-plus-annotation-3.1.0.jar!/com/baomidou/mybatisplus/annotation/FieldFill.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="11" column="17" lean-forward="true" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/baomidou/mybatis-plus-annotation/3.1.0/mybatis-plus-annotation-3.1.0.jar!/com/baomidou/mybatisplus/annotation/TableField.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="29" column="9" lean-forward="true" selection-start-line="29" selection-start-column="9" selection-end-line="29" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/ClientUserEntity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="27" column="7" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/MerchantController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="436" column="8" selection-start-line="436" selection-start-column="8" selection-end-line="436" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="77" column="21" selection-start-line="77" selection-start-column="21" selection-end-line="77" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2061">
-          <caret line="150" column="34" selection-start-line="150" selection-start-column="25" selection-end-line="150" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/target/classes/io/treasure/vo/MerchantAccountVo.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="137" column="24" selection-start-line="137" selection-start-column="24" selection-end-line="137" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiClientUserController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="468" column="38" lean-forward="true" selection-start-line="468" selection-start-column="38" selection-end-line="468" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/TomcatConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-146">
-          <caret line="12" column="2" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application.properties" />
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/TestService.java" />
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/IWXPay.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="800">
-          <caret line="51" selection-start-line="51" selection-end-line="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/io/treasure/treasure-common/2.3.0/treasure-common-2.3.0.jar!/io/treasure/common/wx/WXConfig.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
@@ -1507,13 +1346,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantUserService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="19" column="17" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiWXPayController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
@@ -1521,41 +1353,291 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application.yml">
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/oss/cloud/QiniuCloudStorageService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1881">
-          <caret line="57" column="47" selection-start-line="57" selection-start-column="47" selection-end-line="57" selection-end-column="47" />
+        <state relative-caret-position="1089">
+          <caret line="76" column="49" selection-start-line="76" selection-start-column="49" selection-end-line="76" selection-end-column="49" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml">
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/entity/MasterOrderEntity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1728">
-          <caret line="54" column="16" selection-start-line="54" selection-start-column="12" selection-end-line="54" selection-end-column="30" />
+        <state relative-caret-position="218">
+          <caret line="65" column="23" selection-start-line="65" selection-start-column="23" selection-end-line="65" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/io/treasure/treasure-common/2.3.0/treasure-common-2.3.0.jar!/io/treasure/common/service/CrudService.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/io/treasure/treasure-common/2.3.0/treasure-common-2.3.0.jar!/io/treasure/common/service/impl/CrudServiceImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="39" column="13" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="22" column="11" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/ApiMasterOrderController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="530" column="82" selection-start-line="530" selection-start-column="82" selection-end-line="530" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/enm/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3828">
+          <caret line="129" column="11" selection-start-line="129" selection-start-column="11" selection-end-line="129" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application-dev.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/AgreementsServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/AppVersionServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/CategoryServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ChargeCashServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MerchantUserService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="22" column="30" selection-start-line="22" selection-start-column="30" selection-end-line="22" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MerchantUserServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2403">
+          <caret line="104" selection-start-line="104" selection-end-line="104" />
+          <folding>
+            <element signature="e#7113#7114#0" expanded="true" />
+            <element signature="e#7163#7164#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/BannerServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/MasterOrderService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="110" selection-start-line="110" selection-end-line="110" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/ApiGoodServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2805">
+          <caret line="85" column="25" selection-start-line="85" selection-start-column="25" selection-end-line="85" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/push/CIDResult.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/PushPayloadConfig.java" />
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/JpushTest.java" />
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jiguang-common/1.1.7/jiguang-common-1.1.7.jar!/cn/jiguang/common/resp/BaseResult.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/JPushClient.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3465">
+          <caret line="151" column="38" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/push/PushClient.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6237">
+          <caret line="220" column="5" selection-start-line="220" selection-start-column="5" selection-end-line="220" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/push/model/PushPayload.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1749">
+          <caret line="76" column="54" selection-start-line="76" selection-start-column="54" selection-end-line="76" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/config/MiniWXPay.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/push/model/Platform.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/CashRefundController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="33" column="38" selection-start-line="33" selection-start-column="38" selection-end-line="33" selection-end-column="38" />
+        <state relative-caret-position="462">
+          <caret line="14" column="22" lean-forward="true" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/PayService.java">
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application-prod.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="35" column="11" selection-start-line="35" selection-start-column="11" selection-end-line="35" selection-end-column="11" />
+        <state relative-caret-position="-1663">
+          <caret line="10" column="32" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/application.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/PayServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="666" column="20" selection-start-line="666" selection-start-column="20" selection-end-line="666" selection-end-column="20" />
+        <state relative-caret-position="4686">
+          <caret line="219" column="53" selection-start-line="219" selection-start-column="53" selection-end-line="219" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/cn/jpush/api/jpush-client/3.4.3/jpush-client-3.4.3.jar!/cn/jpush/api/push/model/SMS.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="115" column="31" selection-start-line="115" selection-start-column="31" selection-end-line="115" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/controller/UserCouponController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="477">
+          <caret line="100" column="67" selection-start-line="100" selection-start-column="67" selection-end-line="100" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dao/UserCouponDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="17" column="29" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/resources/mapper/UserCouponDao.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="236">
+          <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/DesignConditionsDTO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="599">
+          <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/calculationAmountDTO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/UserCouponServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+          <folding>
+            <element signature="e#549#550#0" expanded="true" />
+            <element signature="e#584#585#0" expanded="true" />
+            <element signature="e#644#645#0" expanded="true" />
+            <element signature="e#692#693#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12.jar!/org/junit/internal/builders/JUnit4Builder.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="549">
+          <caret line="1233" column="30" lean-forward="true" selection-start-line="1233" selection-start-column="30" selection-end-line="1233" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -1568,7 +1650,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.44942528" />
               </list>
             </option>
           </splitter-proportions>
@@ -1576,10 +1658,11 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
+          <last-edited>Spring</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.44942528" />
               </list>
             </option>
           </splitter-proportions>
@@ -1590,7 +1673,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.44942528" />
               </list>
             </option>
           </splitter-proportions>
@@ -1598,10 +1681,11 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.44942528" />
               </list>
             </option>
           </splitter-proportions>
