@@ -32,7 +32,7 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
     PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
-    List<VisualizationRoomVo> getVisualizationRoom(Map<String,Object> map);
+    VisualizationRoomListVo getVisualizationRoom(Map<String,Object> map);
     PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
     PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
@@ -43,4 +43,6 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     EChartOrderVo orderChart(Map<String, Object> params);
     RealTimeOrder realTimeOrder(Map<String, Object> params);
     FmisHomeVo merchantPcHome(Map<String, Object> params);
+    PointsConfigDto pointsConfigInfo();
+    void updatePointsConfig(Map<String, Object> params);
 }

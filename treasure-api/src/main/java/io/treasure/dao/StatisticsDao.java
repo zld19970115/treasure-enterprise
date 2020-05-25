@@ -1,10 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.dto.ConsumptionRankingDto;
-import io.treasure.dto.DaysTogetherPageDTO;
-import io.treasure.dto.MerchantAccountDto;
-import io.treasure.dto.TopSellersRankingDto;
+import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -50,4 +47,6 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<EChartOrderInfoVo> orderChartByDay(Map<String, Object> params);
     List<EChartOrderInfoVo> orderChartByYear(Map<String, Object> params);
     RealTimeOrder realTimeOrder(Map<String, Object> params);
+    PointsConfigDto pointsConfigInfo();
+    void updatePointsConfig(Map<String, Object> params);
 }

@@ -171,8 +171,8 @@ public class StatisticsController {
     @Login
     @GetMapping("getVisualizationRoom")
     @ApiOperation("商户端-可视化房间")
-    public Result<List<VisualizationRoomVo>> getVisualizationRoom(@RequestParam Map<String,Object> map){
-        return new Result<List<VisualizationRoomVo>>().ok(statisticsService.getVisualizationRoom(map));
+    public Result<VisualizationRoomListVo> getVisualizationRoom(@RequestParam Map<String,Object> map){
+        return new Result<VisualizationRoomListVo>().ok(statisticsService.getVisualizationRoom(map));
     }
 
     @Login
@@ -307,6 +307,24 @@ public class StatisticsController {
     })
     public RealTimeOrder realTimeOrder(@ApiIgnore @RequestParam Map<String, Object> params) {
         return statisticsService.realTimeOrder(params);
+    }
+
+    @Login
+    @GetMapping("pointsConfigInfo")
+    @ApiOperation("获取积分配置")
+    public PointsConfigDto pointsConfigInfo() {
+        return statisticsService.pointsConfigInfo();
+    }
+
+    @Login
+    @GetMapping("updatePointsConfig")
+    @ApiOperation("更新积分配置")@ApiImplicitParams({
+            @ApiImplicitParam(name = "consumptionRatio", value = "消费获得比例", paramType = "query",dataType="String"),
+            @ApiImplicitParam(name = "subscriptionRatio", value = "兑换代付金比例", paramType = "query",dataType="String")
+    })
+    public Result updatePointsConfig(@ApiIgnore @RequestParam Map<String, Object> params) {
+        statisticsService.updatePointsConfig(params);
+        return new Result<>().ok("");
     }
 
 }
