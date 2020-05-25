@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
+import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
@@ -21,6 +22,7 @@ import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.impl.MerchantServiceImpl;
+import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PagePlus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +53,8 @@ public class MerchantWithdrawController {
     private MerchantServiceImpl merchantService;
     @Autowired(required = false)
     private MerchantWithdrawDao merchantWithdrawDao;
+    @Autowired
+    private SMSConfig smsConfig;
     @CrossOrigin
     @Login
     @GetMapping("allPage")
@@ -161,6 +165,8 @@ public class MerchantWithdrawController {
         dto.setVerifyState(WithdrawEnm.STATUS_NO.getStatus());
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
         merchantWithdrawService. save(dto);
+        String mobile = merchantService.selectOfficialMobile();
+        SendSMSUtil.MerchantsWithdrawal(mobile,dto.getMoney().toString(), merchantEntity.getName(), smsConfig);
         return new Result();
     }
     @CrossOrigin
@@ -411,5 +417,37 @@ public class MerchantWithdrawController {
         return new Result().ok(merchantWithdrawEntityIPage);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
+
+    @GetMapping("getMerchanWithDrawAll")
+    @ApiOperation("全部商户提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+    })
+    public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawAll(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawAll(params);
+        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    }
+
+    @GetMapping("getMerchanWithDrawByMerchantId")
+    @ApiOperation("根据手机号/日期查询商户提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "verifyState", value = "状态类型", paramType = "query", dataType="int"),
+    })
+    public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawByMerchantId(params);
+        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    }
+
+
 
 }

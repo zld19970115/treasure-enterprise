@@ -36,4 +36,8 @@ public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
 
     List<MerchantWithdrawEntity> selectByObject(QueryWithdrawDto queryWithdrawDto);
     Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);
+
+    List<MerchantWithdrawDTO> getMerchanWithDrawAll(Map<String, Object> params);
+    List<MerchantWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params);
+
 }

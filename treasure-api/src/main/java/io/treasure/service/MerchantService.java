@@ -21,6 +21,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     //根据商户名称查询
     MerchantEntity  getByName(String name,int status);
     //闭店
+    String selectOfficialMobile();
     void closeShop(long id ,int status);
     List<MerchantDTO>  selectByMartId(Map<String, Object> params);
     PageData<MerchantDTO> queryPage(Map<String, Object> params);
@@ -34,4 +35,5 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     PageData<MerchantDTO>  merchantSortingPage (Map<String, Object> params);
     MerchantEntity getMerchantById(Long id);
     PageData<MerchantDTO>   martLike(Map<String, Object> params);
+    Integer AuditMerchantStatus(Long id);
 }

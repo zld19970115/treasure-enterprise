@@ -165,4 +165,32 @@ select param_value from sys_params where id=1144988823431553026
         </where>
     </select>
 
+    <select id="getMerchanWithDrawAll"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+                mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw , ct_merchant cm
+    </select>
+    <select id="getMerchanWithDrawByMerchantId"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+                mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw , ct_merchant cm
+        where 1=1
+        <if test="mobile != null and mobile!='' ">
+            and  cm.mobile like  CONCAT('%',${mobile},'%')
+        </if>
+        <if test="verifyState != null and verifyState!='' ">
+            and  mw.verify_state = ${verifyState}
+        </if>
+        <if test="createDateTop != null and createDateTop.trim() != ''">
+            <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+        </if>
+        <if test="createDateDown != null and createDateDown.trim() != ''">
+            <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+        </if>
+        <if test="merchantId != null and merchantId!='' ">
+            and  mw.merchant_id= cm.id
+        </if>
+
+
+    </select>
+
+
 </mapper>

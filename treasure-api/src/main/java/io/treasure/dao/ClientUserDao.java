@@ -1,12 +1,14 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户信息
@@ -32,5 +34,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
 
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
 
+    List<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
+    void addRecordGiftByUserid(String userId,String useGift);
 
 }

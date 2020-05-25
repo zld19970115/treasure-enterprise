@@ -26,6 +26,16 @@ public class ChargeCashDTO implements Serializable {
     @ApiModelProperty(value = "类型")
     private String cashOrderId;
     /**
+     * 用户真实姓名
+     */
+    @ApiModelProperty(value = "用户真实姓名")
+    private String name;
+    /**
+     * 用户名
+     */
+    @ApiModelProperty(value = "用户名")
+    private String userName;
+    /**
      * 用户ID
      */
     @ApiModelProperty(value = "用户ID")
@@ -71,4 +81,27 @@ public class ChargeCashDTO implements Serializable {
      */
     @ApiModelProperty(value = "修改者")
     private long updater;
+    /**
+     * 用户充值账号，手机号
+     */
+    @ApiModelProperty(value = "充值账号")
+    private String mobile;
+
+    /**
+     * 账户余额
+     */
+    @ApiModelProperty(value = "账户余额")
+    private int balance;
+    /**
+     * 消费金额
+     */
+    @ApiModelProperty(value = "消费金额")
+    private int ConsumptionAmount;
+
+    /**
+     * 消费时间
+     */
+    @ApiModelProperty(value = "消费时间")
+    private int ConsumptionAmountDate;
+
 }

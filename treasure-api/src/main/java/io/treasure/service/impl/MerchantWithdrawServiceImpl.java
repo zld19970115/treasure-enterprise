@@ -155,5 +155,23 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
         return merchantWithdrawDao.selectTotalByType(queryWithdrawDto);
     }
 
+    @Override
+    public PageData<MerchantWithdrawDTO> getMerchanWithDrawAll(Map<String, Object> params) {
+        //分页
+        IPage<MerchantWithdrawEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
+        //查询
+        List<MerchantWithdrawDTO> list = baseDao.getMerchanWithDrawAll(params);
+        return getPageData(list, page.getTotal(), MerchantWithdrawDTO.class);
+    }
+    @Override
+    public PageData<MerchantWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params) {
+        //分页
+        IPage<MerchantWithdrawEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
+        //查询
+        List<MerchantWithdrawDTO> list = baseDao.getMerchanWithDrawByMerchantId(params);
+        return getPageData(list, page.getTotal(), MerchantWithdrawDTO.class);
+    }
+
+
 
 }

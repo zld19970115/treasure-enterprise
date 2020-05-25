@@ -63,6 +63,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         return baseDao.getByName(name,status);
     }
 
+    @Override
+    public String selectOfficialMobile() {
+        return baseDao.selectOfficialMobile();
+    }
+
     /**
      * 闭店
      * @param id
@@ -162,6 +167,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         //查询
         List<MerchantDTO> list = baseDao.martLike(params);
         return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
+    public Integer AuditMerchantStatus(Long id) {
+        baseDao.updateAuditById(id,2);
+        return 1;
     }
 
     @Override

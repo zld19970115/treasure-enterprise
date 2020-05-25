@@ -23,6 +23,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据商户名查询
     MerchantEntity getByName(@Param("name") String name, @Param("status") int status);
     //根据id修改状态
+    String selectOfficialMobile();
     void updateStatusById(@Param("id") long id, @Param("status") int status);
     List<MerchantDTO>  selectByMartId(Map<String, Object> params);
     List<MerchantDTO> getMerchantList(Map<String, Object> params);
@@ -35,4 +36,5 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     void  updateWX(String martId);
     //根据商户id获取商家基本信息
     MerchantDTO selectBaseInfoByMartId(long marId);
+    void updateAuditById(@Param("id") long id, @Param("auditStatus") int  auditStatus);
 }

@@ -20,4 +20,27 @@
     <select id="selectByCashOrderId" resultType="io.treasure.dto.ChargeCashDTO">
         select * from ct_charge_cash where cash_order_id = #{cashOrderId}
     </select>
+    <select id="getChargeCashAll"  resultType="io.treasure.dto.ChargeCashDTO">
+        select ccu.name,ccu.username,ccu.mobile,ccc.cash_order_id,ccc.cash,ccc.change_gift,
+        ccc.save_time,ccc.status,ccc.create_date,ccc.creator from ct_charge_cash ccc , ct_client_user ccu
+    </select>
+
+    <select id="getChargeCashByCreateDate"  resultType="io.treasure.dto.ChargeCashDTO">
+        select ccu.name,ccu.username,ccu.mobile,ccc.cash_order_id,ccc.cash,ccc.change_gift,
+        ccc.save_time,ccc.status,ccc.create_date,ccc.creator from ct_charge_cash ccc , ct_client_user ccu
+        where 1=1
+        <if test="phone != null and phone!='' ">
+            and  ccu.mobile like  CONCAT('%',${phone},'%')
+        </if>
+        <if test="status != null and status!='' ">
+            and  ccc.status = #{status}
+        </if>
+        <if test="createDateTop != null and createDateTop.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+        </if>
+        <if test="createDateDown != null and createDateDown.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+        </if>
+        and ccu.id = ccc.user_id
+    </select>
 </mapper>

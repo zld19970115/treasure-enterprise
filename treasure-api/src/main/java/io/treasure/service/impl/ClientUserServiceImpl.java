@@ -10,9 +10,6 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.ClientUserDao;
-import io.treasure.dto.*;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
@@ -119,6 +116,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void addRecordGiftByUserid(String userId, String useGift) {
+        baseDao.addRecordGiftByUserid(userId,useGift);
+    }
+
+    @Override
     public void updateCID(String clientId, String mobile) {
         baseDao.updateCID(clientId,mobile);
     }
@@ -201,6 +203,17 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
         return clientUserDao.selectListByCondition(queryClientUserDto);
+    }
+
+    @Override
+    public PageData<ClientUserDTO> getRecordUserAll(Map<String, Object> params) {
+        //分页
+        IPage<ClientUserEntity> page = getPage(params, Constant.CREATE_DATE, false);
+
+        //查询
+        List<ClientUserDTO> list = baseDao.getRecordUserAll(params);
+
+        return getPageData(list, page.getTotal(), ClientUserDTO.class);
     }
 
 }

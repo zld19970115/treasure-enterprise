@@ -17,4 +17,33 @@
         select * from ct_record_gift where user_id = #{userId} and status = 3
     </select>
 
+    <insert id="insertRecordGiftAdmin">
+        insert into ct_record_gift (user_id,transferred_mobile,use_gift,status,create_date,creator )
+         VALUES
+        ( #{userId},#{transferredMobile},#{useGift},5,#{createDate},#{creator});
+    </insert>
+
+    <select id="getAllRecordGoht" resultType="io.treasure.dto.RecordGiftDTO">
+        select ccu.name,ccu,username,crg.transferred_mobile,
+                crg.use_gift,crg.balance_gift,crg.status,crg.create_date,
+                 crg.creator from ct_record_gift crg , ct_client_user ccu
+    </select>
+    <select id="getRecordGiftByUserId" resultType="io.treasure.dto.RecordGiftDTO">
+        select ccu.name,ccu.username,crg.transferred_mobile,
+                crg.use_gift,crg.balance_gift,crg.status,crg.create_date,
+                 crg.creator from ct_record_gift crg , ct_client_user ccu
+        where 1=1
+        <if test="transferredMobile != null and transferredMobile!='' ">
+            and crg.transferred_mobile like  CONCAT('%',#{transferredMobile},'%')
+        </if>
+        <if test="status != null and status!='' ">
+            and crg.status = #{status}
+        </if>
+        <if test="createDateTop != null  and createDateTop!='' and createDateTop != 'undefined' and createDateDown != null and createDateDown !='' and createDateDown!='undefined' ">
+            and crg.create_date BETWEEN #{createDateTop} AND #{createDateDown}
+        </if>
+            and ccu.id = crg.user_id
+    </select>
+
+
 </mapper>

@@ -88,4 +88,18 @@ public class NewsController {
         return new Result<String>().ok("ok");
     }
 
+    @Login
+    @GetMapping("privacyAgrre")
+    @ApiOperation("隐私协议")
+    public Result<NewsDto> privacyAgrre() {
+        return newsService.privacyAgrre();
+    }
+
+    @Login
+    @GetMapping("userAgrre")
+    @ApiOperation("用户协议")
+    public Result<NewsDto> userAgrre() {
+        return newsService.userAgrre();
+    }
+
 }

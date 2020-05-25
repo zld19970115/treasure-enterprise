@@ -102,6 +102,11 @@ public class MerchantController {
             }
             data.setCategoryTwoList(categoryService.getListById(cateTwoId));
         }
+//        MerchantQrCodeEntity merchantQrCodeEntity = merchantQrCodeService.getMerchantQrCodeByMerchantId(Long.parseLong(id));
+//        if(merchantQrCodeEntity!=null){
+//            data.setQrUrl(merchantQrCodeEntity.getQrUrl());
+//        }
+
 
         return new Result<MerchantDTO>().ok(data);
     }
@@ -129,6 +134,8 @@ public class MerchantController {
         String merchantId=user.getMerchantid();
         user.setMerchantid(String.valueOf(entity.getId()));
         merchantUserService.update(user);
+        String mobile = merchantService.selectOfficialMobile();
+        SendSMSUtil.MerchantsSettlement(mobile, dto.getName(), smsConfig);
         return new Result().ok(entity);
     }
     @CrossOrigin
@@ -514,4 +521,14 @@ public class MerchantController {
         return new Result().ok(merchantEntityIPage);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
+
+    @GetMapping("auditMerchantStatus")
+    @ApiOperation("商户审核")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true, dataType="long")
+    })
+    public Result<Integer> auditMerchantStatus(@ApiIgnore @RequestParam Long id){
+        return new Result<Integer>().ok(merchantService.AuditMerchantStatus(id));
+    }
+
 }

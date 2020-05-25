@@ -41,4 +41,6 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     EChartVo userChart(Map<String, Object> params);
     EChartVo merchantChart(Map<String, Object> params);
     EChartOrderVo orderChart(Map<String, Object> params);
+    RealTimeOrder realTimeOrder(Map<String, Object> params);
+    FmisHomeVo merchantPcHome(Map<String, Object> params);
 }

@@ -1,6 +1,9 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.ConvertUtils;
@@ -285,6 +288,35 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
+    }
+
+    /**
+     *查询全部充值记录
+     */
+    @Override
+    public PageData<ChargeCashDTO> getChargeCashAll(Map<String, Object> params) {
+        //分页
+        IPage<ChargeCashEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<ChargeCashDTO> list = baseDao.getChargeCashAll(params);
+
+        return getPageData(list, page.getTotal(), ChargeCashDTO.class);
+    }
+    /**
+     * 根据手机号
+     * 日期
+     * 查询用户充值记录
+     */
+    @Override
+    public PageData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params) {
+
+        //分页
+        IPage<ChargeCashEntity> page = getPage(params, Constant.CREATE_DATE, false);
+
+        //查询
+        List<ChargeCashDTO> list = baseDao.getChargeCashByCreateDate(params);
+
+        return getPageData(list, page.getTotal(), ChargeCashDTO.class);
     }
 
 }

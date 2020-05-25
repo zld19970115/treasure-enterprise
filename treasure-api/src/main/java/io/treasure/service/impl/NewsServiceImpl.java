@@ -1,13 +1,17 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.treasure.common.page.PageData;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.NewsDao;
 import io.treasure.dto.NewsDto;
+import io.treasure.entity.MessageEntity;
 import io.treasure.entity.NewsEntity;
 import io.treasure.service.NewsService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -128,5 +132,16 @@ public class NewsServiceImpl implements NewsService {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<NewsDto> page = (Page) newsDao.agreePage();
         return new PageData<NewsDto>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public Result<NewsDto> privacyAgrre() {
+        return new Result<NewsDto>().ok(newsDao.selectByStatus(2).get(0));
+    }
+
+
+    @Override
+    public Result<NewsDto> userAgrre() {
+        return new Result<NewsDto>().ok(newsDao.selectByStatus(3).get(0));
     }
 }
