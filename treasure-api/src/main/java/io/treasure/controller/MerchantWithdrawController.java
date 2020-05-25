@@ -166,7 +166,7 @@ public class MerchantWithdrawController {
         dto.setWay(WithdrawEnm.WAY_HAND.getStatus());
         merchantWithdrawService. save(dto);
         String mobile = merchantService.selectOfficialMobile();
-        SendSMSUtil.MerchantsWithdrawal(mobile, merchantEntity.getName(), smsConfig);
+        SendSMSUtil.MerchantsWithdrawal(mobile,dto.getMoney().toString(), merchantEntity.getName(), smsConfig);
         return new Result();
     }
     @CrossOrigin
