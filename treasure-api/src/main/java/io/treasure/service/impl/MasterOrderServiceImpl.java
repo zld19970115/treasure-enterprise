@@ -23,8 +23,10 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -399,6 +401,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return new Result().ok("订单翻台成功！");
     }
 
+    @Override
+    @Async
+    public Result orderRefundSuccess(String orderNo, int status){
+
+        MasterOrderEntity masterOrderEntity = masterOrderDao.selectByOrderId(orderNo);
+        masterOrderEntity.setStatus(status);
+        masterOrderEntity.setUpdateDate(new Date());
+        masterOrderDao.updateById(masterOrderEntity);
+        return new Result().ok(true);
+    }
     /**
      * 同意退单(反赠送金)
      *
@@ -1126,11 +1138,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             for(int i=0;i<patchValue;i++){
                 calculationAmountDTO item = slaveOrders.get(i);
 
-                item.setTotalMoney(item.getTotalMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN))       //优惠后的项总价
+                item.setTotalMoney(item.getTotalMoney().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN))       //优惠后的项总价
                         .setDiscountsMoney(item.getDiscountsMoney().add(patchStep).setScale(2,BigDecimal.ROUND_DOWN));   //优惠金额=(原项总价-优惠后的项总价)
 
                 if(item.getQuantity().compareTo(new BigDecimal("1"))==0){
                     item.setNewPrice(item.getNewPrice().subtract(patchStep).setScale(2,BigDecimal.ROUND_DOWN));           //优惠后的项单价
+                }else{
+                    item.setNewPrice(item.getNewPrice().subtract(patchStep.divide(item.getQuantity()).setScale(3)).setScale(3));
                 }
             }
 

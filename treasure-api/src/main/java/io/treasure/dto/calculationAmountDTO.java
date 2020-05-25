@@ -81,28 +81,6 @@ public class calculationAmountDTO extends ComparableCondition implements Compara
         }else{
             return 0;
         }
-        //return this.getFractionPart().compareTo(t.getFractionPart());
-        /*
-        try{
-            String methodName = this.getFieldName();
-            Method cMethod = this.getClass().getDeclaredMethod(methodName);
-            Method tMethod = t.getClass().getDeclaredMethod(methodName);
-
-            String tmpC = (cMethod.invoke(this)+"").trim().length()==0?"0":cMethod.invoke(this)+"";
-            String tmpT = (tMethod.invoke(t)+"").trim().length()==0?"0":tMethod.invoke(t)+"";
-
-            BigDecimal cValue = new BigDecimal(tmpC);
-            BigDecimal tValue = new BigDecimal(tmpT);
-            System.out.println("o1,o2"+cValue+","+tValue);
-            if(cValue.compareTo(tValue)<0){
-                return 1;
-            }else{
-                return -1;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            return res;
-        }*/
     }
 
     @Override
