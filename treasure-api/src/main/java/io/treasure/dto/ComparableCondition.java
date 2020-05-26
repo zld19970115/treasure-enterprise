@@ -9,7 +9,7 @@ public class ComparableCondition {
     @Getter
     String fieldName = "getMerchantProceeds";
 
-    BigDecimal totalItemDiscount = new BigDecimal("0");
+    BigDecimal totalItemx = new BigDecimal("0");
 
     BigDecimal fractionPart = new BigDecimal("0");
 
@@ -33,12 +33,12 @@ public class ComparableCondition {
         this.overAllRatio = overAllRatio;
     }
 
-    public BigDecimal getTotalItemDiscount() {
-        return totalItemDiscount;
+    public BigDecimal getTotalItemx() {
+        return totalItemx;
     }
 
-    public void setTotalItemDiscount(BigDecimal totalItemDiscount) {
-        this.totalItemDiscount = totalItemDiscount;
+    public void setTotalItemx(BigDecimal totalItemx) {
+        this.totalItemx = totalItemx;
     }
 
     public void setFieldName(SortRule sortRule){
