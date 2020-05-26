@@ -122,4 +122,8 @@ public class ClientUserEntity extends BaseEntity {
 	 * 个推客户id
 	 */
 	private String clientId;
+
+	public void setGiftAnotherWay(BigDecimal gift){
+		this.gift = gift;
+	}
 }

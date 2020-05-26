@@ -196,7 +196,7 @@ public class ApiGoodController {
 
     /**
      * 商家全部菜品
-     * @param martId
+     * @param
      * @return
      */
     @Login

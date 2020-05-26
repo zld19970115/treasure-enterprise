@@ -359,9 +359,5 @@ public class GoodController {
         return null;
     }
 
-//    public boolean checkMerchantId(String target){
-//        String str = "^\\d{20}";//商户id是多少位
-//        return Pattern.matches(str,target);
-//    }
 
 }

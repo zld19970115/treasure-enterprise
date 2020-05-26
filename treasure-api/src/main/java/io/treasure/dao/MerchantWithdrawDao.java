@@ -33,6 +33,7 @@ public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
     void verify(long id,long verify, int verifyState, String verifyReason, Date verifyDate);
     String selectWithStatus();
     List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long  martId);
+
     List<MerchantWithdrawEntity> selectByObject(QueryWithdrawDto queryWithdrawDto);
     Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);
 
