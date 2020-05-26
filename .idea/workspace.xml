@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="3d9e9580-10d5-4a80-b141-1be21b3d781f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/dto/ComparableCondition.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/src/main/java/io/treasure/service/impl/MasterOrderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/treasure-api/生成的jar包/treasure-api107-0525-chi.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/treasure-api/生成的jar包/treasure-api107-0525-chi.jar" beforeDir="false" afterPath="$PROJECT_DIR$/treasure-api/生成的jar包/treasure-api107-2020-0526-1.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/treasure-api/生成的jar包/treasure-api107-0525pm-modify.jar" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
@@ -638,14 +636,7 @@
       <workItem from="1590115564442" duration="454000" />
       <workItem from="1590135843522" duration="1237000" />
       <workItem from="1590365309428" duration="26936000" />
-      <workItem from="1590451336864" duration="9406000" />
-    </task>
-    <task id="LOCAL-00003" summary="提现接口调整">
-      <created>1576809109052</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1576809109052</updated>
+      <workItem from="1590451336864" duration="9511000" />
     </task>
     <task id="LOCAL-00004" summary="接口调整">
       <created>1576820636555</created>
@@ -983,7 +974,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590385606900</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="更新代码自GIT">
+      <created>1590464353908</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1590464353909</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1019,12 +1017,12 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="198625000" />
+    <option name="totallyTimeSpent" value="198730000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13989362" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13989362" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1034,7 +1032,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.328877" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.66" visible="true" weight="0.4827586" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.66" visible="true" weight="0.4827586" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.67112297" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
