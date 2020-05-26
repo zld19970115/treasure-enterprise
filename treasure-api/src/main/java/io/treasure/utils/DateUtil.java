@@ -165,4 +165,9 @@ public class DateUtil {
         return days;
     }
 
+    public static Date strToDate(String str) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月份是MM
+        return simpleDateFormat.parse(str);
+    }
+
 }
