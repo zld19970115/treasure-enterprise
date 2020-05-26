@@ -1260,9 +1260,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
     //
     //
-    //
-    //
-    //
     //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
     public DesignConditionsDTO itemsClculatex(DesignConditionsDTO target,DiscountType discountType){
         if(target == null)      return null;
@@ -1457,7 +1454,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal platformRatio    = new BigDecimal("0.15");           //商家扣点标准(总金额-赠送金，后的15%)
 
         for(int i = 0; i < slaveOrders.size(); i++) {
-            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
+            calculationAmountDTO slaveOrderItem = slaveOrders.get(i);       //这个值比较准确
             BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2,BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
             BigDecimal itemPriceFinal = itemSumPrice.subtract(slaveOrderItem.getFreeGold());
             //平台扣点
