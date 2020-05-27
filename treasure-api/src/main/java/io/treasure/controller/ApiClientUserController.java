@@ -495,6 +495,10 @@ public class ApiClientUserController {
         if (clientUserEntity == null) {
             return new Result().error("此用户不存在");
         }
+       List<ClientUserEntity> list = clientUserService.selectZhuXiao(clientUserEntity.getMobile()+"已注销");
+        if (list.size()!=0){
+            return new Result().error("此用户已经领取过");
+        }
         BigDecimal a = new BigDecimal("200");
         BigDecimal gift = clientUserEntity.getGift();
         BigDecimal newGift = a.add(gift);
