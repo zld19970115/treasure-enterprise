@@ -9,10 +9,12 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.ActivityDto;
+import io.treasure.dto.ActivityRartakeDto;
 import io.treasure.dto.NewsDto;
 import io.treasure.dto.ReceiveGiftDto;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.service.ActivityService;
+import io.treasure.vo.ActivityRartakeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -97,6 +99,14 @@ public class ActivityController {
     @ApiOperation("根据id查询")
     public ActivityDto selectById(Long id) {
         return activityService.selectById(id);
+    }
+
+
+    @Login
+    @PostMapping("activityRartake")
+    @ApiOperation("是否参加过活动")
+    public Result<ActivityRartakeVo> activityRartake(@RequestBody ActivityRartakeDto dto) {
+        return activityService.activityRartake(dto);
     }
 
 }

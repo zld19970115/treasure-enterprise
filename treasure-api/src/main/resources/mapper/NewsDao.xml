@@ -25,7 +25,7 @@
     </select>
 
     <select id="agreePage" resultType="io.treasure.dto.NewsDto">
-        select * from ct_news where `status` in (2,3)
+        select * from ct_news where `status` in (2,3,4)
     </select>
 
     <select id="selectByStatus" resultType="io.treasure.dto.NewsDto">
