@@ -203,8 +203,10 @@ public class ActivityServiceImpl implements ActivityService {
         }
         int count = activityDao.activityRartake(dto.getActivityId(),obj.getUserId());
         if(count == 0) {
+            vo.setState(0);
             return new Result<ActivityRartakeVo>().ok(vo);
         }
-        return new Result<ActivityRartakeVo>().error("已参加过本次活动");
+        vo.setState(1);
+        return new Result<ActivityRartakeVo>().ok(vo);
     }
 }
