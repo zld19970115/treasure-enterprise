@@ -82,6 +82,13 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.13</version>
         </dependency>
+
+        <!-- 极光client -->
+        <dependency>
+            <groupId>cn.jpush.api</groupId>
+            <artifactId>jpush-client</artifactId>
+            <version>3.4.3</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

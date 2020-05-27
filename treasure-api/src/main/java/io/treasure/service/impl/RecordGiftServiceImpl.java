@@ -33,6 +33,10 @@ public class RecordGiftServiceImpl  extends CrudServiceImpl<RecordGiftDao, Recor
         baseDao.insertRecordGift2(userId,date,balanceGift,useGift);
     }
 
+    @Override
+    public void insertRecordGift6(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift) {
+        baseDao.insertRecordGift6(userId,date,balanceGift,useGift);
+    }
 
 
     @Override

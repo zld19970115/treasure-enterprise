@@ -1,14 +1,11 @@
 package io.treasure.config;
 
-
-
 import io.treasure.common.constant.WXPayConstants;
 import io.treasure.common.wx.IWXPayDomain;
 import io.treasure.common.wx.WXConfig;
 import io.treasure.utils.PathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;

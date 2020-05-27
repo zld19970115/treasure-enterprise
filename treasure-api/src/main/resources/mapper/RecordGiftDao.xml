@@ -8,6 +8,12 @@
         ( default ,#{userId},#{useGift},#{balanceGift},0,#{date},#{userId});
     </insert>
 
+    <insert id="insertRecordGift6">
+        insert into ct_record_gift (id ,user_id,use_gift,balance_gift,status,create_date,creator )
+         VALUES
+        ( default ,#{userId},#{useGift},#{balanceGift},6,#{date},#{userId});
+    </insert>
+
     <insert id="insertRecordGift2">
         insert into ct_record_gift (id ,user_id,use_gift,balance_gift,status,create_date,creator )
          VALUES

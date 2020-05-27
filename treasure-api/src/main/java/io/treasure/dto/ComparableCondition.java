@@ -8,25 +8,34 @@ public class ComparableCondition {
 
     @Getter
     String fieldName = "getMerchantProceeds";
-
-    BigDecimal totalItemDiscount = new BigDecimal("0");
-
+    BigDecimal totalItemx = new BigDecimal("0");
     BigDecimal fractionPart = new BigDecimal("0");
+    //单项在总体中的占比
+    BigDecimal overAllRatio;
 
     public enum SortRule{
         getFreeGold,//赠送金
         getDiscountsMoney,//优惠券
         getPlatformBrokerage,
         getMerchantProceeds,
-        getFractionPart;
+        getFractionPart,
+        nothing;
     }
 
-    public BigDecimal getTotalItemDiscount() {
-        return totalItemDiscount;
+    public BigDecimal getOverAllRatio() {
+        return overAllRatio;
     }
 
-    public void setTotalItemDiscount(BigDecimal totalItemDiscount) {
-        this.totalItemDiscount = totalItemDiscount;
+    public void setOverAllRatio(BigDecimal overAllRatio) {
+        this.overAllRatio = overAllRatio;
+    }
+
+    public BigDecimal getTotalItemx() {
+        return totalItemx;
+    }
+
+    public void setTotalItemx(BigDecimal totalItemx) {
+        this.totalItemx = totalItemx;
     }
 
     public void setFieldName(SortRule sortRule){

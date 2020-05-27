@@ -31,6 +31,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result acceptUpdate(long id,int status, long verify, Date verify_date, String refundReason);
     //完成订单
     Result finishUpdate(long id,int status, long verify, Date verify_date, String refundReason);
+
     //同意退款
     Result refundYesUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     //拒绝退款订单
@@ -157,4 +158,5 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     boolean judgeEvaluate(String orderId);
 
     BigDecimal getPlatformBalance();
+    Result orderRefundSuccess(String orderNo, int status);
 }

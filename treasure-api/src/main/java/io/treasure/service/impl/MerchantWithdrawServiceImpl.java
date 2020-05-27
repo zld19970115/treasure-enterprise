@@ -138,7 +138,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     /**
-     * @param queryWithdrawDto (根据条件查询)
+     * @param queryWithdrawDto (根据条件查询chi)
      * @return
      */
     @Override
@@ -147,7 +147,7 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
     }
 
     /**
-     * @param queryWithdrawDto（根据条件汇总）
+     * @param queryWithdrawDto（根据条件汇总chi）
      * @return
      */
     @Override

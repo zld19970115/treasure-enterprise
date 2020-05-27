@@ -15,6 +15,7 @@ import java.util.Map;
 public interface RecordGiftDao extends BaseDao<RecordGiftEntity> {
    void insertRecordGift(@Param("userId") long userId,@Param("date") Date date,@Param("balanceGift") BigDecimal balanceGift,@Param("useGift") BigDecimal useGift);
    void insertRecordGift2(@Param("userId") long userId,@Param("date") Date date,@Param("balanceGift") BigDecimal balanceGift,@Param("useGift") BigDecimal useGift);
+   void insertRecordGift6(@Param("userId") long userId,@Param("date") Date date,@Param("balanceGift") BigDecimal balanceGift,@Param("useGift") BigDecimal useGift);
    List<RecordGiftDTO> selectByUserId(Map<String, Object> params);
    int insertRecordGiftAdmin(Map<String,Object> params);
    List<RecordGiftDTO> getAllRecordGoht(Map<String,Object> params);
