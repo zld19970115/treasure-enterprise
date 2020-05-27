@@ -42,7 +42,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     ClientUserEntity getClientUser(Long id);
     Result userGiftToUser(long userId, String mobile,BigDecimal giftMoney) ;
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator, String gift);
-
+    List<ClientUserEntity> selectZhuXiao(String mobile);
     PageData<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
 
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);

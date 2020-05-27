@@ -33,7 +33,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
                                          @Param("gift") String gift);
 
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
-
+    List<ClientUserEntity> selectZhuXiao(String mobile);
     List<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
     void addRecordGiftByUserid(String userId,String useGift);
 

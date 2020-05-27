@@ -305,7 +305,6 @@ public class ApiClientUserController {
     })
     public Result<Map<String, Object>> estimateOpenId(String openId, String mobile, String password, String clientId,String type) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobile);
-        System.out.println("typeasdasddddddddddddddddddddddsadsadas阿萨德"+type);
         if (type.equals("APP")){
             ClientUserEntity user = new ClientUserEntity();
             Map<String, Object> map = new HashMap<>();
@@ -495,6 +494,10 @@ public class ApiClientUserController {
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         if (clientUserEntity == null) {
             return new Result().error("此用户不存在");
+        }
+       List<ClientUserEntity> list = clientUserService.selectZhuXiao(clientUserEntity.getMobile()+"已注销");
+        if (list.size()!=0){
+            return new Result().error("此用户已经领取过");
         }
         BigDecimal a = new BigDecimal("200");
         BigDecimal gift = clientUserEntity.getGift();

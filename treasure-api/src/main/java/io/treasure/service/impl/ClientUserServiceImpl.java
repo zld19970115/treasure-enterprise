@@ -201,6 +201,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public List<ClientUserEntity> selectZhuXiao(String mobile) {
+        return baseDao.selectZhuXiao(mobile);
+    }
+
+    @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
         return clientUserDao.selectListByCondition(queryClientUserDto);
     }
