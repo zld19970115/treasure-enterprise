@@ -13,6 +13,7 @@ public interface RecordGiftService  extends CrudService<RecordGiftEntity, Record
 
     void insertRecordGift(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
     void insertRecordGift2(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
+    void insertRecordGift6(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
 
     PageData<RecordGiftDTO> selectByUserId(Map<String, Object> params);
 

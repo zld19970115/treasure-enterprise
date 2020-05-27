@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.ActivityDao">
+
+    <resultMap type="io.treasure.entity.ActivityEntity" id="activityMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="state" column="state"/>
+        <result property="statrDate" column="statr_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+
+    <select id="selectById" resultType="io.treasure.entity.ActivityEntity">
+        select id,name,type,state,
+        date_format(statr_date, '%Y-%m-%d %H:%i:%s') as statrDate,
+        date_format(end_date, '%Y-%m-%d %H:%i:%s') as endDate,
+        update_date as updateDate,create_date as createDate,creator,updater from ct_activity where id = #{id}
+    </select>
+
+    <select id="selectGiveById" resultType="io.treasure.entity.ActivityGiveEntity">
+        select * from ct_activity_give where activity_id = #{id}
+    </select>
+
+    <select id="activityPage" resultType="io.treasure.entity.ActivityEntity">
+        select * from ct_activity
+        where state != 9
+        <if test="statrDate != null and statrDate.trim() != ''">
+            and statr_date >= #{statrDate}
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[and end_date <= #{endDate}]]>
+        </if>
+    </select>
+
+    <update id="del">
+        update ct_activity set state = 9 where id = #{id}
+    </update>
+
+    <update id="update" parameterType="io.treasure.entity.ActivityEntity">
+        update ct_activity
+        <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="name != null and name.trim() != ''">
+                name = #{name},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="statrDate != null">
+                statr_date = #{statrDate},
+            </if>
+            <if test="endDate != null">
+                end_date = #{endDate},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="updater != null">
+                updater = #{updater},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insert" parameterType="io.treasure.entity.ActivityEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ct_activity
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="type != null">
+            type,
+        </if>
+        <if test="name != null and name.trim() != ''">
+            name,
+        </if>
+        <if test="state != null">
+            state,
+        </if>
+        <if test="statrDate != null">
+            statr_date,
+        </if>
+        <if test="endDate != null">
+            end_date,
+        </if>
+        <if test="updateDate != null">
+            update_date,
+        </if>
+        <if test="createDate != null">
+            create_date,
+        </if>
+        <if test="creator != null">
+            creator,
+        </if>
+        <if test="updater != null">
+            updater,
+        </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="type != null">
+            #{type},
+        </if>
+        <if test="name != null and name.trim() != ''">
+            #{name},
+        </if>
+        <if test="state != null">
+            #{state},
+        </if>
+        <if test="statrDate != null">
+            #{statrDate},
+        </if>
+        <if test="endDate != null">
+            #{endDate},
+        </if>
+        <if test="updateDate != null">
+            #{updateDate},
+        </if>
+        <if test="createDate != null">
+            #{createDate},
+        </if>
+        <if test="creator != null">
+            #{creator},
+        </if>
+        <if test="updater != null">
+            #{updater},
+        </if>
+        </trim>
+    </insert>
+
+    <insert id="insertGive" parameterType="io.treasure.entity.ActivityGiveEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ct_activity_give
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="type != null">
+                type,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="initNum != null">
+                init_num,
+            </if>
+            <if test="receiveNum != null">
+                receive_num,
+            </if>
+            <if test="totalCost != null">
+                total_cost,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="updater != null">
+                updater,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="activityId != null">
+                #{activityId},
+            </if>
+            <if test="initNum != null">
+                #{initNum},
+            </if>
+            <if test="receiveNum != null">
+                #{receiveNum},
+            </if>
+            <if test="totalCost != null">
+                #{totalCost},
+            </if>
+            <if test="cost != null">
+                #{cost},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="creator != null">
+                #{creator},
+            </if>
+            <if test="updater != null">
+                #{updater},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateGive" parameterType="io.treasure.entity.ActivityGiveEntity">
+        update ct_activity_give
+        <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId},
+            </if>
+            <if test="initNum != null">
+                init_num = #{initNum},
+            </if>
+            <if test="receiveNum != null">
+                receive_num = #{receiveNum},
+            </if>
+            <if test="totalCost != null">
+                total_cost = #{totalCost},
+            </if>
+            <if test="cost != null">
+                cost = #{cost},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="creator != null">
+                creator = #{creator},
+            </if>
+            <if test="updater != null">
+                updater = #{updater},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertGiveLog" parameterType="io.treasure.entity.ActivityGiveLogEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ct_activity_give_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="type != null">
+                type,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="giveId != null">
+                give_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="activityId != null">
+                #{activityId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="cost != null">
+                #{cost},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="giveId != null">
+                #{giveId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="receiveGift">
+        UPDATE ct_activity_give
+            SET receive_num = receive_num + 1
+        WHERE
+            state = 1
+            and activity_id = #{activityId}
+	        and init_num > receive_num
+	        and (select COUNT(0) from ct_activity_give_log log where log.activity_id = #{activityId} and log.user_id = #{userId}) = 0
+    </update>
+
+</mapper>

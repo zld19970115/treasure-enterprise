@@ -75,5 +75,8 @@
         </if>
 
     </select>
+    <select id="selectZhuXiao" resultType="io.treasure.entity.ClientUserEntity">
+         select * from ct_client_user where mobile=#{mobile}
+    </select>
 
 </mapper>
