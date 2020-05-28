@@ -45,4 +45,5 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
     void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
     List<MerchantUserDTO> listPage(Map<String,Object> params);
+    void frozen(@Param("id") long id, @Param("state") int state);
 }

@@ -7,6 +7,7 @@ import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.dao.MerchantUserDao;
 import io.treasure.dto.LoginDTO;
@@ -194,6 +195,12 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         }
         List<MerchantUserDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), MerchantUserDTO.class);
+    }
+
+    @Override
+    public Result delOrFrozen(Long id, Integer status) {
+        baseDao.frozen(id,status);
+        return new Result().ok("");
     }
 
 

@@ -92,6 +92,8 @@ public class ActivityController {
             return new Result<String>().error("活动以结束");
         } else if(code == 4) {
             return new Result<String>().error("奖品已经领取完了");
+        } else if(code == 5) {
+            return new Result<String>().error("您已参加过本次活动");
         }
         return new Result<String>().error("系统繁忙");
     }

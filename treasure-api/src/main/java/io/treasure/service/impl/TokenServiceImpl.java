@@ -9,6 +9,7 @@
 package io.treasure.service.impl;
 
 import io.treasure.common.service.impl.BaseServiceImpl;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.TokenDao;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.TokenService;

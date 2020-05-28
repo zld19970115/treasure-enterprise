@@ -130,6 +130,9 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+        if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            return 5;
+        }
         if(activityDao.receiveGift(dto.getActivityId(),obj.getUserId()) > 0) {
             ActivityGiveEntity activityGiveEntity = selectGiveByActivityId(dto.getActivityId());
             ActivityGiveLogEntity logObj = new ActivityGiveLogEntity();
@@ -201,8 +204,12 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
-        int count = activityDao.activityRartake(dto.getActivityId(),obj.getUserId());
         vo.setGift(selectGiveByActivityId(dto.getActivityId()).getCost());
+        if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            vo.setState(1);
+            return new Result<ActivityRartakeVo>().ok(vo);
+        }
+        int count = activityDao.activityRartake(dto.getActivityId(),obj.getUserId());
         if(count == 0) {
             vo.setState(0);
             return new Result<ActivityRartakeVo>().ok(vo);

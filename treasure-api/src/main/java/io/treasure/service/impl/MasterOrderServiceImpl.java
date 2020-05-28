@@ -1456,7 +1456,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         for(int i = 0; i < slaveOrders.size(); i++) {
             calculationAmountDTO slaveOrderItem = slaveOrders.get(i);       //这个值比较准确
             BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2,BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
-            BigDecimal itemPriceFinal = itemSumPrice.subtract(slaveOrderItem.getFreeGold());
+            BigDecimal itemPriceFinal = itemSumPrice.subtract(slaveOrderItem.getDiscountsMoney());
             //平台扣点
             BigDecimal itemIncomePlatform       = itemPriceFinal.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
             BigDecimal itemIncomeMerchant       = itemPriceFinal.subtract(itemIncomePlatform).setScale(2,BigDecimal.ROUND_DOWN);

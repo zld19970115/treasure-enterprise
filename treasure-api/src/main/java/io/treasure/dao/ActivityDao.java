@@ -35,4 +35,6 @@ public interface ActivityDao {
 
     int activityRartake(@Param("activityId") Long activityId,@Param("userId") Long userId);
 
+    int cancellationUser(@Param("activityId") Long activityId,@Param("mobile") String mobile);
+
 }
