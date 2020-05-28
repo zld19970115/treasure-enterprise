@@ -202,6 +202,7 @@ public class ActivityServiceImpl implements ActivityService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         int count = activityDao.activityRartake(dto.getActivityId(),obj.getUserId());
+        vo.setGift(selectGiveByActivityId(dto.getActivityId()).getCost());
         if(count == 0) {
             vo.setState(0);
             return new Result<ActivityRartakeVo>().ok(vo);

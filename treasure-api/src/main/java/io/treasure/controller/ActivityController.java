@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -76,7 +77,8 @@ public class ActivityController {
     @Login
     @PostMapping("receiveGift")
     @ApiOperation("活动奖励获取")
-    public Result<String> receiveGift(@RequestBody ReceiveGiftDto dto) {
+    public Result<String> receiveGift(@RequestBody ReceiveGiftDto dto, HttpServletRequest request) {
+        dto.setToken(request.getHeader("token"));
         int code = activityService.receiveGift(dto);
         if(code == 200) {
             return new Result<String>().ok("领取成功");
@@ -105,7 +107,8 @@ public class ActivityController {
     @Login
     @PostMapping("activityRartake")
     @ApiOperation("是否参加过活动")
-    public Result<ActivityRartakeVo> activityRartake(@RequestBody ActivityRartakeDto dto) {
+    public Result<ActivityRartakeVo> activityRartake(@RequestBody ActivityRartakeDto dto, HttpServletRequest request) {
+        dto.setToken(request.getHeader("token"));
         return activityService.activityRartake(dto);
     }
 
