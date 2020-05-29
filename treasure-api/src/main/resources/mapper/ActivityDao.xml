@@ -8,6 +8,7 @@
         <result property="name" column="name"/>
         <result property="type" column="type"/>
         <result property="state" column="state"/>
+        <result property="hot" column="hot"/>
         <result property="statrDate" column="statr_date"/>
         <result property="endDate" column="end_date"/>
         <result property="updateDate" column="update_date"/>
@@ -17,7 +18,7 @@
     </resultMap>
 
     <select id="selectById" resultType="io.treasure.entity.ActivityEntity">
-        select id,name,type,state,
+        select id,name,type,state,hot,
         date_format(statr_date, '%Y-%m-%d %H:%i:%s') as statrDate,
         date_format(end_date, '%Y-%m-%d %H:%i:%s') as endDate,
         update_date as updateDate,create_date as createDate,creator,updater from ct_activity where id = #{id}
@@ -76,6 +77,9 @@
             <if test="updater != null">
                 updater = #{updater},
             </if>
+            <if test="hot != null">
+                hot = #{hot},
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -110,6 +114,9 @@
         <if test="updater != null">
             updater,
         </if>
+        <if test="hot != null">
+            hot,
+        </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
         <if test="type != null">
@@ -138,6 +145,9 @@
         </if>
         <if test="updater != null">
             #{updater},
+        </if>
+        <if test="hot != null">
+            #{hot},
         </if>
         </trim>
     </insert>
@@ -306,6 +316,10 @@
         where
         log.user_id in ( select id from ct_client_user u where u.mobile like concat('%', #{mobile}, '%') )
         and log.activity_id = #{activityId}
+    </select>
+
+    <select id="getHotActivity" resultType="io.treasure.entity.ActivityEntity">
+        select * from ct_activity where hot = 1
     </select>
 
 </mapper>
