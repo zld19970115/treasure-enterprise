@@ -1327,10 +1327,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if(target.getTotalMoney().compareTo(moneyBd)<0){
                         discountValue = new BigDecimal("0");
                     }else{
-                        if(merchantCouponDTO.getDisType() == 1 && moneyBd.compareTo(discountCardNumBd)>=0){
+                        if(merchantCouponDTO.getDisType() == 1){
                             //更新优惠券面值：1-金额类型
-                            discountValue = discountCardNumBd;
-
+                            if(moneyBd.compareTo(discountCardNumBd)>=0){
+                                discountValue = discountCardNumBd;
+                            }else{
+                                if(target.getTotalMoney().compareTo(discountCardNumBd)<0){
+                                    discountValue = target.getTotalMoney();
+                                }
+                            }
                         }else{
                             //折扣：且达到折扣条件9.5代表95折
                             //更新优惠券面值：2-折扣类型：折扣量(总价X（折扣比例x面值）)
