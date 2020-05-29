@@ -71,7 +71,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name="merchantId",value="商户编号",required = true,paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantUserDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("status",Common.STATUS_ON.getStatus()+"");
+        //params.put("status",Common.STATUS_ON.getStatus()+"");
         PageData<MerchantUserDTO> page = merchantUserService.listPage(params);
         return new Result<PageData<MerchantUserDTO>>().ok(page);
     }
@@ -591,5 +591,16 @@ public class MerchantUserController {
         map.put("token",byUserId.getToken());
         map.put("auditstatus",merchantEntity.getAuditstatus());
         return new Result().ok(map);
+    }
+
+    @GetMapping("delOrFrozen")
+    @ApiOperation("删除或冻结")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true, paramType = "query", dataType = "long"),
+            @ApiImplicitParam(name = "status", value = "状态", required = true, paramType = "query", dataType = "int")
+    })
+    public Result delOrFrozen(@RequestParam Long id, @RequestParam Integer status) {
+        merchantUserService.delOrFrozen(id,status);
+        return new Result().ok(null);
     }
 }

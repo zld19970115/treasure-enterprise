@@ -9,14 +9,17 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.ActivityDto;
+import io.treasure.dto.ActivityRartakeDto;
 import io.treasure.dto.NewsDto;
 import io.treasure.dto.ReceiveGiftDto;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.service.ActivityService;
+import io.treasure.vo.ActivityRartakeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -74,7 +77,8 @@ public class ActivityController {
     @Login
     @PostMapping("receiveGift")
     @ApiOperation("活动奖励获取")
-    public Result<String> receiveGift(@RequestBody ReceiveGiftDto dto) {
+    public Result<String> receiveGift(@RequestBody ReceiveGiftDto dto, HttpServletRequest request) {
+        dto.setToken(request.getHeader("token"));
         int code = activityService.receiveGift(dto);
         if(code == 200) {
             return new Result<String>().ok("领取成功");
@@ -88,6 +92,8 @@ public class ActivityController {
             return new Result<String>().error("活动以结束");
         } else if(code == 4) {
             return new Result<String>().error("奖品已经领取完了");
+        } else if(code == 5) {
+            return new Result<String>().error("您已参加过本次活动");
         }
         return new Result<String>().error("系统繁忙");
     }
@@ -97,6 +103,15 @@ public class ActivityController {
     @ApiOperation("根据id查询")
     public ActivityDto selectById(Long id) {
         return activityService.selectById(id);
+    }
+
+
+    @Login
+    @PostMapping("activityRartake")
+    @ApiOperation("是否参加过活动")
+    public Result<ActivityRartakeVo> activityRartake(@RequestBody ActivityRartakeDto dto, HttpServletRequest request) {
+        dto.setToken(request.getHeader("token"));
+        return activityService.activityRartake(dto);
     }
 
 }

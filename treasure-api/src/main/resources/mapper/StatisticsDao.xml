@@ -683,14 +683,13 @@
             </where>
             ) as merchantCount,
             (select IFNULL(COUNT(0),0) from ct_client_user ccu
-            <where>
+            where ccu.status != 9
             <if test="startDate != null and startDate.trim() != ''">
                 <![CDATA[ and date_format(ccu.create_date, '%Y-%m-%d') >= #{startDate} ]]>
             </if>
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(ccu.create_date, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
-            </where>
             ) as userCount,
         </if>
         IFNULL(SUM( case when `status` = 10 and p_order_id = '0' then 1 else 0 end ),0) as pOrderCount,

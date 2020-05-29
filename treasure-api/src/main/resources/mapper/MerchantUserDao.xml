@@ -48,15 +48,18 @@
         select users.*,merchant.name merchantName
         from ct_merchant_user users
         left join ct_merchant merchant on find_in_set(merchant.id,users.merchantId)
-        where 1=1
-        <if test="status != null">
-            and users.status = #{status}
-        </if>
+        where users.status in (1,0)
         <if test="mobile != null">
             and users.mobile like  CONCAT('%',#{mobile},'%')
         </if>
         <if test="name != null">
             and users.name like  CONCAT('%',#{name},'%')
+        </if>
+        <if test="startDate != null and startDate != ''" >
+            and date_format(users.create_date, '%Y-%m-%d') &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''" >
+            and date_format(users.create_date, '%Y-%m-%d') &lt;= #{endDate}
         </if>
         <if test="mart_id != null">
             and users.merchantId in
@@ -78,6 +81,9 @@
     </update>
     <update id="remove" parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set status=9 where id=#{id}
+    </update>
+    <update id="frozen">
+        update ct_merchant_user set status= #{status} where id=#{id}
     </update>
     <update id="updateMerchant"   parameterType="io.treasure.entity.MerchantUserEntity">
         update ct_merchant_user set merchantid=#{merchantid} where id=#{id}

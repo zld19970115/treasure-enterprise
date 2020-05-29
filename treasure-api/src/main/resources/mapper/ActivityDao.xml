@@ -27,6 +27,10 @@
         select * from ct_activity_give where activity_id = #{id}
     </select>
 
+    <select id="activityRartake" resultType="java.lang.Integer">
+        select COUNT(0) from ct_activity_give_log where activity_id = #{activityId} and user_id = #{userId}
+    </select>
+
     <select id="activityPage" resultType="io.treasure.entity.ActivityEntity">
         select * from ct_activity
         where state != 9
@@ -291,10 +295,17 @@
         UPDATE ct_activity_give
             SET receive_num = receive_num + 1
         WHERE
-            state = 1
+            (select state from ct_activity ct where ct.id = #{activityId}) = 1
             and activity_id = #{activityId}
 	        and init_num > receive_num
 	        and (select COUNT(0) from ct_activity_give_log log where log.activity_id = #{activityId} and log.user_id = #{userId}) = 0
     </update>
+
+    <select id="cancellationUser" resultType="java.lang.Integer">
+        select count(0) from ct_activity_give_log log
+        where
+        log.user_id in ( select id from ct_client_user u where u.mobile like concat('%', #{mobile}, '%') )
+        and log.activity_id = #{activityId}
+    </select>
 
 </mapper>

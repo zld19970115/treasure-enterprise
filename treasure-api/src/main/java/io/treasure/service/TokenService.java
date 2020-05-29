@@ -9,11 +9,13 @@
 package io.treasure.service;
 
 import io.treasure.common.service.BaseService;
+import io.treasure.common.utils.Result;
 import io.treasure.entity.TokenEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户Token
- * 
+ *
  * @author Super 63600679@qq.com
  */
 public interface TokenService extends BaseService<TokenEntity> {

@@ -3,8 +3,10 @@ package io.treasure.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.treasure.common.page.PageData;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.ActivityDao;
 import io.treasure.dto.ActivityDto;
+import io.treasure.dto.ActivityRartakeDto;
 import io.treasure.dto.ReceiveGiftDto;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ActivityGiveEntity;
@@ -15,6 +17,7 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.DateUtil;
+import io.treasure.vo.ActivityRartakeVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -127,6 +130,9 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+        if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            return 5;
+        }
         if(activityDao.receiveGift(dto.getActivityId(),obj.getUserId()) > 0) {
             ActivityGiveEntity activityGiveEntity = selectGiveByActivityId(dto.getActivityId());
             ActivityGiveLogEntity logObj = new ActivityGiveLogEntity();
@@ -169,5 +175,46 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityGiveEntity selectGiveByActivityId(Long activityId) {
         return activityDao.selectGiveById(activityId);
+    }
+
+    @Override
+    public Result<ActivityRartakeVo> activityRartake(ActivityRartakeDto dto) {
+        ActivityRartakeVo vo = new ActivityRartakeVo();
+        if(dto.getToken() == null) {
+            return new Result<ActivityRartakeVo>().error("请登录");
+        }
+        if(dto.getActivityId() == null) {
+            return new Result<ActivityRartakeVo>().error("活动无效");
+        }
+        TokenEntity obj = tokenService.getByToken(dto.getToken());
+        if(obj == null || obj.getUserId() == null) {
+            return new Result<ActivityRartakeVo>().error("token失效");
+        }
+        ActivityDto activityDto = selectById(dto.getActivityId());
+        if(activityDto == null) {
+            return new Result<ActivityRartakeVo>().error("活动无效");
+        }
+        try {
+            if(activityDto.getState() == 0 || (DateUtil.strToDate(activityDto.getStatrDate()).getTime() > new Date().getTime())) {
+                return new Result<ActivityRartakeVo>().error("活动未开始");
+            }
+            if(DateUtil.strToDate(activityDto.getEndDate()).getTime() < new Date().getTime()) {
+                return new Result<ActivityRartakeVo>().error("活动以结束");
+            }
+        } catch (ParseException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        vo.setGift(selectGiveByActivityId(dto.getActivityId()).getCost());
+        if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            vo.setState(1);
+            return new Result<ActivityRartakeVo>().ok(vo);
+        }
+        int count = activityDao.activityRartake(dto.getActivityId(),obj.getUserId());
+        if(count == 0) {
+            vo.setState(0);
+            return new Result<ActivityRartakeVo>().ok(vo);
+        }
+        vo.setState(1);
+        return new Result<ActivityRartakeVo>().ok(vo);
     }
 }
