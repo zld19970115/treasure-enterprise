@@ -1394,10 +1394,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             case 2://仅赠送金方式
                 /************************************************************************/
                 //获取用户信息
-
                 //BigDecimal giftValue= new BigDecimal("0");
                 ClientUserDTO clientUserDTO = clientUserService.get(target.getUserId());
-                if(clientUserDTO != null){
+                if(clientUserDTO != null && priceAfterDiscount.compareTo(new BigDecimal("0"))>0){
                     BigDecimal userOwnerGiftValue = clientUserDTO.getGift();
 
                     //更新赠送金量======
