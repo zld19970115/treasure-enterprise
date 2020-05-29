@@ -59,14 +59,11 @@ public class RenExceptionHandler {
 		return new Result().error();
 	}
 
-//	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-//	public void notSupportRequestMethod(HttpRequestMethodNotSupportedException ex){
-//        //System.out.println("HTTP调用异常，不支持使用："+ex.getMethod()+"方法，请使用"+ex.getSupportedHttpMethods()+"重新发送请求");
-//        //System.out.println("当前支持的方法："+ex.getSupportedMethods());
-//
-//
-//
-//    }
+	//@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	//public void notSupportRequestMethod(HttpRequestMethodNotSupportedException ex){
+        //System.out.println("HTTP调用异常，不支持使用："+ex.getMethod()+"方法，请使用"+ex.getSupportedHttpMethods()+"重新发送请求");
+        //System.out.println("当前支持的方法："+ex.getSupportedMethods());
+    //}
 	//新增：json数据格式异常
 //	@ExceptionHandler({HttpMessageNotReadableException.class})
 //	@ResponseBody
