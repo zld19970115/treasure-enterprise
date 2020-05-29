@@ -8,6 +8,7 @@ import io.treasure.dao.ActivityDao;
 import io.treasure.dto.ActivityDto;
 import io.treasure.dto.ActivityRartakeDto;
 import io.treasure.dto.ReceiveGiftDto;
+import io.treasure.dto.UpdateHotDto;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ActivityGiveEntity;
 import io.treasure.entity.ActivityGiveLogEntity;
@@ -217,4 +218,59 @@ public class ActivityServiceImpl implements ActivityService {
         vo.setState(1);
         return new Result<ActivityRartakeVo>().ok(vo);
     }
+
+    @Override
+    public Result<ActivityRartakeVo> hot(String token) {
+        ActivityRartakeVo vo = new ActivityRartakeVo();
+        if (token == null) {
+            return new Result<ActivityRartakeVo>().error("请登录");
+        }
+        ActivityEntity dto = activityDao.getHotActivity();
+        if (dto.getId() == null) {
+            return new Result<ActivityRartakeVo>().error("活动无效");
+        }
+        vo.setId(dto.getId());
+        TokenEntity obj = tokenService.getByToken(token);
+        if (obj == null || obj.getUserId() == null) {
+            return new Result<ActivityRartakeVo>().error("token失效");
+        }
+        try {
+            if (dto.getState() == 0 || (DateUtil.strToDate(dto.getStatrDate()).getTime() > new Date().getTime())) {
+                return new Result<ActivityRartakeVo>().error("活动未开始");
+            }
+            if (DateUtil.strToDate(dto.getEndDate()).getTime() < new Date().getTime()) {
+                return new Result<ActivityRartakeVo>().error("活动以结束");
+            }
+        } catch (ParseException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        vo.setGift(selectGiveByActivityId(dto.getId()).getCost());
+        if(activityDao.cancellationUser(dto.getId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            vo.setState(1);
+            return new Result<ActivityRartakeVo>().ok(vo);
+        }
+        int count = activityDao.activityRartake(dto.getId(),obj.getUserId());
+        if(count == 0) {
+            vo.setState(0);
+            return new Result<ActivityRartakeVo>().ok(vo);
+        }
+        vo.setState(1);
+        return new Result<ActivityRartakeVo>().ok(vo);
+    }
+
+    @Override
+    public Result<String> updateHot(UpdateHotDto dto) {
+        ActivityEntity obj = activityDao.getHotActivity();
+        ActivityDto e = new ActivityDto();
+        e.setHot(dto.getHot());
+        e.setId(dto.getId());
+        update(e);
+        if(obj != null && obj.getId() != dto.getId()) {
+            e.setHot(0);
+            e.setId(obj.getId());
+            update(e);
+        }
+        return new Result<String>().ok("");
+    }
+
 }

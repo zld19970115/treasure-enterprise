@@ -5,6 +5,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.ActivityDto;
 import io.treasure.dto.ActivityRartakeDto;
 import io.treasure.dto.ReceiveGiftDto;
+import io.treasure.dto.UpdateHotDto;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ActivityGiveEntity;
 import io.treasure.entity.ActivityGiveLogEntity;
@@ -36,5 +37,9 @@ public interface ActivityService {
     ActivityGiveEntity selectGiveByActivityId(Long activityId);
 
     Result<ActivityRartakeVo> activityRartake(ActivityRartakeDto dto);
+
+    Result<ActivityRartakeVo> hot(String token);
+
+    Result<String> updateHot(UpdateHotDto dto);
 
 }

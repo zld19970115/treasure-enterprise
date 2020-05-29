@@ -33,4 +33,6 @@ public class ActivityEntity extends BaseEntity {
 
     private Long updater;
 
+    private Integer hot;
+
 }

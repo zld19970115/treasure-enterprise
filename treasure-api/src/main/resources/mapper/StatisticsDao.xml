@@ -839,9 +839,9 @@
     <select id="realTimeOrder" resultType="io.treasure.vo.RealTimeOrder">
         SELECT
             IFNULL(SUM(case when STATUS = 4 then 1 else 0 end),0) as completeOrder,
-            IFNULL(SUM(case when STATUS = 2 then 1 else 0 end),0) as conductOrder,
+            IFNULL(SUM(case when STATUS = 2 and p_order_id = '0' then 1 else 0 end),0) as conductOrder,
             IFNULL(SUM(case when STATUS = 6 then 1 else 0 end),0) as applyRefundOrder,
-            IFNULL((select
+            sum((select
                             COUNT(0)
                         from
                             ct_slave_order ctso
@@ -849,7 +849,7 @@
                             ctso.order_id = ctmo.order_id
                             and ctmo.merchant_id = #{merchantId}
                             and ctmo.`status` = 2
-                            and ctso.`status` = 6),0)
+                            and ctso.`status` = 6))
                          as applyBackDishes
         FROM ct_master_order ctmo
         where ctmo.merchant_id = #{merchantId}
