@@ -1537,18 +1537,120 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public List<calculationAmountDTO> calculateIncomex(List<calculationAmountDTO> slaveOrders){
         BigDecimal platformRatio    = new BigDecimal("0.15");           //商家扣点标准(总金额-赠送金，后的15%)
 
+        //收入总额(商家收入+平台收入的总额)
+        BigDecimal incomeTotal = new BigDecimal("0");
+        //平台应收入总额
+        BigDecimal platformTotal = new BigDecimal("0");
+
+        //平台实际收入总金额
+        BigDecimal platformTotalReal = new BigDecimal("0");
+
+        List<PatchDto> patchDtos = new ArrayList<>();
         for(int i = 0; i < slaveOrders.size(); i++) {
             calculationAmountDTO slaveOrderItem = slaveOrders.get(i);       //这个值比较准确
             BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2,BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
             BigDecimal itemPriceFinal = itemSumPrice.subtract(slaveOrderItem.getDiscountsMoney());//这里是减优惠券
+
             //平台扣点
-            BigDecimal itemIncomePlatform       = itemPriceFinal.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
-            BigDecimal itemIncomeMerchant       = itemPriceFinal.subtract(itemIncomePlatform).setScale(2,BigDecimal.ROUND_DOWN);
+            BigDecimal itemIncomePlatform       = itemPriceFinal.multiply(platformRatio).setScale(8,BigDecimal.ROUND_DOWN);
+            BigDecimal itemIncomeMerchant       = itemPriceFinal.subtract(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN)).setScale(2,BigDecimal.ROUND_DOWN);
             slaveOrderItem
                     .setMerchantProceeds(itemIncomeMerchant.setScale(2,BigDecimal.ROUND_DOWN))        //商家收入
                     .setPlatformBrokerage(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN));      //平台收入
             slaveOrders.set(i,slaveOrderItem);
+
+
+            //平台收入补偿
+            patchDtos.add(new PatchDto(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(itemIncomePlatform),i));//用于更正
+
+            //收入总金额累计
+            incomeTotal = incomeTotal.add(itemPriceFinal.setScale(2,BigDecimal.ROUND_DOWN));//以此为基准
+
+            //实际收入的钱平台
+            platformTotalReal = platformTotalReal.add(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN));//差值参考
+
         }
+
+    //=========================================================================================================================================================
+
+        //平台应收总金额
+        platformTotal = incomeTotal.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
+        //平台应收总金额扩大100倍并转成int值
+        int incomeTotalInt = Integer.parseInt(platformTotal.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN)+"");
+
+        //平台实际收入总金额
+        int platformIncomeRealTotalInt = Integer.parseInt(platformTotalReal.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN)+"");
+
+        if(incomeTotalInt>platformIncomeRealTotalInt){
+            //需要增加加平台扣点的值，余数尾数较大的先补
+
+            Collections.sort(patchDtos,Collections.reverseOrder());
+
+            int steps = incomeTotalInt - platformIncomeRealTotalInt;
+
+            for(int i=0;i<steps;i++){
+                int loopI = i%patchDtos.size();
+
+                BigDecimal tmp = patchDtos.get(loopI).getMainValue();//平台收入的值
+
+                int index = patchDtos.get(loopI).getId();
+
+                //取出
+                calculationAmountDTO cad = slaveOrders.get(index);
+
+                BigDecimal sourcePlatformBrokerage = cad.getPlatformBrokerage();
+                BigDecimal sourceMerchantProceeds = cad.getMerchantProceeds();
+
+                if(sourceMerchantProceeds.compareTo(new BigDecimal("0.01")) >= 0){
+
+                    //更新
+                    cad.setPlatformBrokerage(sourcePlatformBrokerage.add(new BigDecimal("0.01")))
+                            .setMerchantProceeds(sourceMerchantProceeds.subtract(new BigDecimal("0.01")));
+
+                    slaveOrders.set(index,cad);//送回
+                }else{
+                    steps++;
+                }
+
+            }
+
+        }else if(incomeTotalInt<platformIncomeRealTotalInt){
+            //需要要减少平台扣点的值，余数尾数较小的先补
+
+            Collections.sort(patchDtos);
+
+            int steps = platformIncomeRealTotalInt - incomeTotalInt;
+
+            for(int i=0;i<steps;i++){
+                int loopI =  i%patchDtos.size();
+
+                BigDecimal tmp = patchDtos.get(loopI).getMainValue();
+
+                int index = patchDtos.get(loopI).getId();
+
+                //取出
+                calculationAmountDTO cad = slaveOrders.get(index);
+
+                BigDecimal sourcePlatformBrokerage = cad.getPlatformBrokerage();
+                BigDecimal sourceMerchantProceeds = cad.getMerchantProceeds();
+
+                if(sourcePlatformBrokerage.compareTo(new BigDecimal("0.01"))>=0){
+
+                    //更新
+                    cad
+                            .setPlatformBrokerage(sourcePlatformBrokerage.subtract(new BigDecimal("0.01")))
+                            .setMerchantProceeds(sourceMerchantProceeds.add(new BigDecimal("0.01")));
+
+                    //送回
+                    slaveOrders.set(index,cad);
+                }else{
+                    steps++;
+                }
+
+            }
+        }
+    //=========================================================================================================================================================
+
         return slaveOrders;
     }
     //==================================================================================

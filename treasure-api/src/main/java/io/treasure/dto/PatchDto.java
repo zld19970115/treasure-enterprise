@@ -15,7 +15,12 @@ public class PatchDto implements Comparable<PatchDto>{
 
     BigDecimal mainValue;       //在分数记录列表
     Integer truncatedDecimal;   //小数参数值
+    Integer id;
 
+    public PatchDto(BigDecimal mainValue, Integer truncatedDecimal) {
+        this.mainValue = mainValue;
+        this.truncatedDecimal = truncatedDecimal;
+    }
 
     @Override
     public int compareTo(PatchDto o) {
@@ -25,4 +30,6 @@ public class PatchDto implements Comparable<PatchDto>{
             return -1;
         return 0;
     }
+
+
 }
