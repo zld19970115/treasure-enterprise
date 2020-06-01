@@ -425,6 +425,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     public Result refundYesUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+        BigDecimal nu=new BigDecimal("0");
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
@@ -477,7 +478,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
-                BigDecimal nu=new BigDecimal("0");
+
                 if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
                     //退款
                     Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
