@@ -2022,10 +2022,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
         BigDecimal d=new BigDecimal("0");
+        BigDecimal a=new BigDecimal("0");
         for (SlaveOrderEntity og : orderGoods) {
             og.setGoodInfo(goodService.getByid(og.getGoodId()));
             d=d.add(og.getDiscountsMoney());
+            BigDecimal price = og.getPrice();
+            BigDecimal quantity = og.getQuantity();
+            BigDecimal multiply = price.multiply(quantity);
+            a= a.add(multiply);
         }
+        order.setAccountPaymoney(a);
         order.setSlaveOrder(orderGoods);
         order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
         if (order.getRoomId() != null) {
@@ -2040,6 +2046,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
         order.setDiscountsMoney(d);
+
         return order;
 
     }
