@@ -1319,7 +1319,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     Double discountCardNum = merchantCouponDTO.getDiscount();
                     BigDecimal discountCardNumBd = new BigDecimal(merchantCouponDTO.getDiscount()).setScale(2,BigDecimal.ROUND_DOWN);
                     BigDecimal moneyBd = new BigDecimal(merchantCouponDTO.getMoney()).setScale(2,BigDecimal.ROUND_DOWN);
-                    discountValue  = discountCardNumBd;
+                    //discountValue  = discountCardNumBd;
 
                     //discountValue = merchantCouponService.getDiscountCount(target.getTotalMoney(),target.getId());
                     //======================================================================
@@ -1327,7 +1327,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     if(target.getTotalMoney().compareTo(moneyBd)<0){
                         discountValue = new BigDecimal("0");
                     }else{
-                        if(merchantCouponDTO.getDisType() == 1 && moneyBd.compareTo(discountCardNumBd)>=0){
+                        if(merchantCouponDTO.getDisType() == 1){
                             //更新优惠券面值：1-金额类型
                             discountValue = discountCardNumBd;
 
