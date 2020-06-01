@@ -1178,6 +1178,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal(),ix));
                 }else{
                     sumInt++;//下次循环再改
+                    resultList.set(ix,new PatchDto(resultList.get(ix).getMainValue(),resultList.get(ix).getTruncatedDecimal(),ix));
                 }
             }
         }
@@ -1222,6 +1223,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal(),ix));
                 }else{
                     percentInt++;//下次循环再改
+
+                    patchDtos.set(ix,new PatchDto(patchDtos.get(ix).getMainValue(),patchDtos.get(ix).getTruncatedDecimal(),ix));
                 }
 
             }
