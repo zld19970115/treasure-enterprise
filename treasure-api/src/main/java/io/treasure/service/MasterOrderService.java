@@ -8,6 +8,7 @@ import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.vo.BackDishesVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -159,4 +160,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     BigDecimal getPlatformBalance();
     Result orderRefundSuccess(String orderNo, int status);
+
+    PageData<BackDishesVo> backDishesPage(Map params);
 }

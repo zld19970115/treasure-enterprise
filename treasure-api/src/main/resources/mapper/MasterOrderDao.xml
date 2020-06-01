@@ -240,4 +240,23 @@
     <update id="updateOrderDeletedById">
         update  ct_master_order SET deleted = 1 where id = #{id}
     </update>
+
+    <select id="backDishesPage" resultType="io.treasure.vo.BackDishesVo">
+        select
+            cso.order_id as orderId
+            ,cso.good_id as goodId
+            ,( select good.`name` from ct_good good where good.id = cso.good_id ) as goodName
+            ,ctmo.contacts
+            ,ctmo.contact_number as contactNumber
+            ,( SELECT room.`name` from ct_merchant_room room where room.id = ctmo.room_id ) as roomName
+            ,cso.pay_money as payMoney
+            ,cso.description
+            ,ctmo.eat_time as eatTime
+        from ct_slave_order cso
+        LEFT JOIN ct_master_order ctmo on ctmo.order_id = cso.order_id and ctmo.`status` = 2
+        where cso.`status` = 6
+        <if test="orderId != null  and orderId != '' ">
+            and cso.order_id = #{orderId}
+        </if>
+    </select>
 </mapper>

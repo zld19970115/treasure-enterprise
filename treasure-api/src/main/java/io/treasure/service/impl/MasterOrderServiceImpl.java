@@ -5,6 +5,8 @@ import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -22,6 +24,8 @@ import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -411,6 +415,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderDao.updateById(masterOrderEntity);
         return new Result().ok(true);
     }
+
     /**
      * 同意退单(反赠送金)
      *
@@ -425,6 +430,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     public Result refundYesUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+        BigDecimal nu=new BigDecimal("0");
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
@@ -477,7 +483,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                     }
                 }
-                BigDecimal nu=new BigDecimal("0");
+
                 if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
                     //退款
                     Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
@@ -2123,10 +2129,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
         BigDecimal d=new BigDecimal("0");
+        BigDecimal a=new BigDecimal("0");
         for (SlaveOrderEntity og : orderGoods) {
             og.setGoodInfo(goodService.getByid(og.getGoodId()));
             d=d.add(og.getDiscountsMoney());
+            BigDecimal price = og.getPrice();
+            BigDecimal quantity = og.getQuantity();
+            BigDecimal multiply = price.multiply(quantity);
+            a= a.add(multiply);
         }
+        order.setAccountPaymoney(a);
         order.setSlaveOrder(orderGoods);
         order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
         if (order.getRoomId() != null) {
@@ -2141,6 +2153,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         order.setMerchantInfo(merchantService.getMerchantById(order.getMerchantId()));
         order.setDiscountsMoney(d);
+
         return order;
 
     }
@@ -2637,6 +2650,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public BigDecimal getPlatformBalance() {
         return baseDao.getPlatformBalance();
+    }
+
+    @Override
+    public PageData<BackDishesVo> backDishesPage(Map map) {
+        PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
+        Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
+        return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
+
     }
 }
 
