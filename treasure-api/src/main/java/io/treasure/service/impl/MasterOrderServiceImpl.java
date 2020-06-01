@@ -1145,9 +1145,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         for(int i=0;i<percent.size();i++){
             BigDecimal res = percent.get(i).multiply(target).setScale(8,BigDecimal.ROUND_HALF_DOWN);
-            System.out.println("原始值："+res);
-            resultList.add(new PatchDto(res.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(res)));
-            System.out.println("第一次计算："+resultList.get(resultList.size()-1).toString());
+            //System.out.println("原始值："+res);
+            resultList.add(new PatchDto(res.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(res),i));//增加位置标识符
+            //System.out.println("第一次计算："+resultList.get(resultList.size()-1).toString());
             sum=sum.add(res.setScale(2,BigDecimal.ROUND_DOWN));
         }
 
@@ -1156,13 +1156,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(targetInt > sumInt) {
             //说明比目标值小,需要增加
             Collections.sort(resultList,Collections.reverseOrder());
-            System.out.println("均分量不足");
+            //System.out.println("均分量不足");
 
             for(int i=0;i<(targetInt-sumInt);i++){
                 int ix =i%resultList.size();
                 System.out.println("补偿前-"+ix+":"+resultList.get(ix).toString());
                 BigDecimal patchValue = resultList.get(ix).getMainValue().add(new BigDecimal("0.01"));
-                resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal()));
+                resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal(),ix));
 
                 System.out.println("补偿编号-"+ix+":"+resultList.get(ix).toString());
             }
@@ -1175,7 +1175,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
                 if(resultList.get(ix).getMainValue().compareTo(new BigDecimal("0.01"))>0){
                     BigDecimal patchValue = resultList.get(ix).getMainValue().subtract(new BigDecimal("0.01"));
-                    resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal()));
+                    resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal(),ix));
                 }else{
                     sumInt++;//下次循环再改
                 }
@@ -1184,7 +1184,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<BigDecimal> res = new ArrayList<>();
         for(int i=0;i<resultList.size();i++){
             res.add(resultList.get(i).getMainValue());
-            System.out.println("最后值:"+resultList.get(i).getMainValue());
+            //System.out.println("最后值:"+resultList.get(i).getMainValue());
+        }
+        for(int i=0;i<resultList.size();i++){
+            res.set(resultList.get(i).getId(),resultList.get(i).getMainValue());
         }
 
         return res;
@@ -1203,7 +1206,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         for(int i=0;i<target.size();i++){
             BigDecimal percentItem = target.get(i).divide(sum,10,BigDecimal.ROUND_HALF_DOWN);
 
-            patchDtos.add(new PatchDto(percentItem.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(percentItem)));
+            patchDtos.add(new PatchDto(percentItem.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(percentItem),i));
             percentSum = percentSum.add(percentItem.setScale(2,BigDecimal.ROUND_DOWN));
         }
 
@@ -1216,7 +1219,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
                 if(patchDtos.get(ix).getMainValue().compareTo(new BigDecimal("0.01"))>0){
                     BigDecimal patchValue = patchDtos.get(ix).getMainValue().subtract(new BigDecimal("0.01"));
-                    patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal()));
+                    patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal(),ix));
                 }else{
                     percentInt++;//下次循环再改
                 }
@@ -1232,7 +1235,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 int ix =i%patchDtos.size();
 
                 BigDecimal patchValue = patchDtos.get(ix).getMainValue().add(new BigDecimal("0.01"));
-                patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal()));
+                patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal(),ix));
 
                 System.out.println("补偿编号-"+ix+":"+patchDtos.get(ix).toString());
 
@@ -1247,6 +1250,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<BigDecimal> res = new ArrayList<>();
         for(int i=0;i<patchDtos.size();i++){
             res.add(patchDtos.get(i).getMainValue());
+        }
+
+        for(int i=0;i<patchDtos.size();i++){
+            res.set(patchDtos.get(i).getId(),patchDtos.get(i).getMainValue());
         }
 
         return res;
@@ -1402,6 +1409,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //查询商户优惠券信息（优惠类型：1-金额；2-折扣）
                 MerchantCouponDTO merchantCouponDTO = merchantCouponService.get(target.getId());//检查昌否使用了优惠券
                 BigDecimal discountValue= new BigDecimal("0");
+                /*
                 if(merchantCouponDTO != null){
                     Double discountCardNum = merchantCouponDTO.getDiscount();
                     BigDecimal discountCardNumBd = new BigDecimal(merchantCouponDTO.getDiscount()).setScale(2,BigDecimal.ROUND_DOWN);
@@ -1440,7 +1448,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     //更新优惠后的总金额
                     priceAfterDiscount = priceTotal.subtract(discountValue).setScale(2,BigDecimal.ROUND_HALF_DOWN);
 
-                }
+                }*/
                 BigDecimal disValue = discountValue;
                 /*************************/
                 //优惠 金额分摊计算=========================================
@@ -1577,7 +1585,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         }
 
-    //=========================================================================================================================================================
+    //===========================================================////////////////////////////
 
         //平台应收总金额
         platformTotal = incomeTotal.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
@@ -1655,7 +1663,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
             }
         }
-    //=========================================================================================================================================================
+    //============================================================================///////////////////////////
 
         return slaveOrders;
     }
