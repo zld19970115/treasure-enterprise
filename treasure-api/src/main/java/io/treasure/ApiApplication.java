@@ -19,12 +19,14 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * treasure-api
  *
  * @author Super 63600679@qq.com
  */
+//@EnableAspectJAutoProxy(exposeProxy=true,proxyTargetClass=true)
 @SpringBootApplication
 @ServletComponentScan
 public class ApiApplication extends SpringBootServletInitializer {

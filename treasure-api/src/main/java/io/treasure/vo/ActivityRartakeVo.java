@@ -11,4 +11,6 @@ public class ActivityRartakeVo {
 
     private BigDecimal gift;
 
+    private Long id;
+
 }

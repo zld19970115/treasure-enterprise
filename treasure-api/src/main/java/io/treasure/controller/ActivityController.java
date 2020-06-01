@@ -8,10 +8,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dto.ActivityDto;
-import io.treasure.dto.ActivityRartakeDto;
-import io.treasure.dto.NewsDto;
-import io.treasure.dto.ReceiveGiftDto;
+import io.treasure.dto.*;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.service.ActivityService;
 import io.treasure.vo.ActivityRartakeVo;
@@ -112,6 +109,20 @@ public class ActivityController {
     public Result<ActivityRartakeVo> activityRartake(@RequestBody ActivityRartakeDto dto, HttpServletRequest request) {
         dto.setToken(request.getHeader("token"));
         return activityService.activityRartake(dto);
+    }
+
+    @Login
+    @GetMapping("hot")
+    @ApiOperation("获取热推活动")
+    public Result<ActivityRartakeVo> hot(HttpServletRequest request) {
+        return activityService.hot(request.getHeader("token"));
+    }
+
+    @Login
+    @PostMapping("updateHot")
+    @ApiOperation("更新热推活动")
+    public Result<String> updateHot(@RequestBody UpdateHotDto dto) {
+        return activityService.updateHot(dto);
     }
 
 }

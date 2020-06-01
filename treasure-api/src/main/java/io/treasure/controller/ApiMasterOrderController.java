@@ -119,6 +119,25 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("ongPagePc")
+    @ApiOperation("商户端-进行中列表(已接受订单)PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> ongPagePc(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", "2");
+        params.put("ispOrderId", "1");
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
     @CrossOrigin
     @Login
     @GetMapping("finishPage")

@@ -128,4 +128,21 @@ public class MerchantCouponServiceImpl extends CrudServiceImpl<MerchantCouponDao
         List<MerchantCouponDTO> list=baseDao.listPage(param);
         return getPageData(list,pages.getTotal(), MerchantCouponDTO.class);
     }
+
+    @Override
+    public BigDecimal getDiscountCount(Double orderTotalPrice,int merchantCouponId){
+        MerchantCouponEntity merchantCouponEntity = baseDao.selectById(merchantCouponId);
+        if(merchantCouponEntity.getMoney()>orderTotalPrice)
+                return new BigDecimal("0");             //case1:消费金额未达到优惠限额
+        if(merchantCouponEntity.getDisType()==1)            //case2:固定金额
+            return new BigDecimal(merchantCouponEntity.getDiscount()+"");//
+
+        //折扣类型
+        if(merchantCouponEntity.getDiscount()<0 || merchantCouponEntity.getDiscount()>10)
+            return new BigDecimal("0");//case3:折扣类型，折扣值超出范围
+        //折扣类型
+        BigDecimal discountValue = new BigDecimal(merchantCouponEntity.getDiscount()+"").multiply(new BigDecimal("0.1")).setScale(6,BigDecimal.ROUND_DOWN);
+        discountValue = new BigDecimal("1").subtract(discountValue).setScale(6,BigDecimal.ROUND_DOWN);
+        return discountValue.multiply(new BigDecimal(orderTotalPrice+"")).setScale(2,BigDecimal.ROUND_DOWN);
+    }
 }
