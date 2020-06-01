@@ -37,4 +37,6 @@ public interface ActivityDao {
 
     int cancellationUser(@Param("activityId") Long activityId,@Param("mobile") String mobile);
 
+    ActivityEntity getHotActivity();
+
 }

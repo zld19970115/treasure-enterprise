@@ -23,4 +23,6 @@ public class ActivityDto {
 
     private Integer initNum;
 
+    private Integer hot;
+
 }

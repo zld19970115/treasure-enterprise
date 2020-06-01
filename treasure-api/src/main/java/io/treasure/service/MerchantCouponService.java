@@ -24,4 +24,5 @@ public interface MerchantCouponService extends CrudService<MerchantCouponEntity,
     List<MerchantCouponDTO> getMoneyOffByMerchantId(long merchantId,long userId);
     Result getDifference(long merchantId, BigDecimal totalMoney,long userId);
     PageData<MerchantCouponDTO> listPage(Map<String,Object> param);
+    BigDecimal getDiscountCount(Double orderTotalPrice,int merchantCouponId);
 }
