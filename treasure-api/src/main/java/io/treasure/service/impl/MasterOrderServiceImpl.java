@@ -5,6 +5,8 @@ import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -22,6 +24,8 @@ import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -411,6 +415,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderDao.updateById(masterOrderEntity);
         return new Result().ok(true);
     }
+
     /**
      * 同意退单(反赠送金)
      *
@@ -2535,6 +2540,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public BigDecimal getPlatformBalance() {
         return baseDao.getPlatformBalance();
+    }
+
+    @Override
+    public PageData<BackDishesVo> backDishesPage(Map map) {
+        PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
+        Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
+        return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
+
     }
 }
 

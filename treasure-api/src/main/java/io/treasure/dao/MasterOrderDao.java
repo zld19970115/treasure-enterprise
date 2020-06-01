@@ -4,6 +4,7 @@ import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.vo.BackDishesVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -72,5 +73,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     void  updateOrderDeletedById(long id);
 //       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
     MasterOrderEntity selectMOById(String orderId);
+
+    List<BackDishesVo> backDishesPage(Map params);
 
 }

@@ -22,6 +22,8 @@ import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -686,4 +688,12 @@ public class ApiMasterOrderController {
         ShareOrderDTO shareOrder =  masterOrderService.shareOrder(orderId);
         return new Result().ok(shareOrder);
     }
+
+    @GetMapping("backDishesPage")
+    @ApiOperation("退菜列表PC")
+    public Result<PageData<BackDishesVo>> backDishesPage(@RequestParam Map map) {
+        return new Result<PageData<BackDishesVo>>().ok(masterOrderService.backDishesPage(map));
+    }
+
+
 }
