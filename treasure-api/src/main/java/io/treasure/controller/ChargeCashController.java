@@ -14,6 +14,7 @@ import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.dto.ChargeCashDTO;
 import io.treasure.dto.ChargeCashSetDTO;
+import io.treasure.entity.ChargeCashSetEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
@@ -109,7 +110,47 @@ public class ChargeCashController {
         return new Result().ok(page);
     }
 
+    @Login
+    @GetMapping("cashSetPageList")
+    @ApiOperation("充值配置项分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData<ChargeCashSetDTO>> cashSetPageList(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<ChargeCashSetDTO>>().ok(chargeCashSetService.cashSetPageList(params));
+    }
 
 
+    @Login
+    @GetMapping("cashSetDel")
+    @ApiOperation("删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="Integer") ,
+    })
+    public Result<Integer> cashSetDel(@ApiIgnore @RequestParam Long id) {
+        return new Result<Integer>().ok(chargeCashSetService.cashSetDel(id));
+    }
+
+    @Login
+    @PostMapping("cashSetUpdate")
+    @ApiOperation("更新")
+    public Result<Integer> cashSetUpdate(@RequestBody ChargeCashSetDTO dto) {
+        return new Result<Integer>().ok(chargeCashSetService.cashSetUpdate(dto));
+    }
+
+    @Login
+    @PostMapping("cashSetAdd")
+    @ApiOperation("新增")
+    public Result<Integer> cashSetAdd(@RequestBody ChargeCashSetDTO dto) {
+        return new Result<Integer>().ok(chargeCashSetService.cashSetAdd(dto));
+    }
+
+    @Login
+    @GetMapping("cashSetById")
+    @ApiOperation("查看")
+    public Result<ChargeCashSetEntity> cashSetById(@RequestParam Long id) {
+        return  new Result<ChargeCashSetEntity>().ok(chargeCashSetService.cashSetById(id));
+    }
 
 }
