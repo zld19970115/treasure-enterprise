@@ -45,7 +45,10 @@ public class TakeoutOrdersDetailDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date odOrderTime;
+
     @ApiModelProperty(value = "自动：修改时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date odModifyTime;
 
 }
