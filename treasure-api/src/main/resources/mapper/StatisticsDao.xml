@@ -546,7 +546,7 @@
     </select>
 
     <select id="daysTogetherPage" resultType="io.treasure.dto.DaysTogetherPageDTO">
-        SELECT coalesce(ctdt.id,9999) id,ctdt.pay_date as payDate,ctdt.merchant_id as merchantId,ctdt.pay_type as payType,sum(ctdt.order_total) as orderTotal,
+        SELECT ctdt.pay_date as payDate,ctdt.merchant_id as merchantId,ctdt.pay_type as payType,sum(ctdt.order_total) as orderTotal,
         sum(ctdt.service_chanrge) as serviceChanrge,sum(ctdt.merchant_proceeds) as merchantProceeds,sum(ctdt.platform_brokerage) as platformBrokerage,
         sum(ctdt.reality_money) as realityMoney,sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,sum(ctdt.gift_money) as giftMoney
         , ctm.`name`,
@@ -556,16 +556,16 @@
          left join ct_merchant ctm on ctm.id = ctdt.merchant_id
          <where>
             <if test="startDate != null and startDate.trim() != ''">
-                and ctdt.pay_date >= #{startDate}
+                and date_format(ctdt.pay_date, '%Y-%m-%d') &gt;= #{startDate}
             </if>
             <if test="endDate != null and endDate.trim() != ''">
-                <![CDATA[and ctdt.pay_date <= #{endDate}]]>
+                and date_format(ctdt.pay_date, '%Y-%m-%d') &lt;= #{endDate}
             </if>
             <if test="payType != null and payType.trim() != ''">
                 and ctdt.pay_type = #{payType}
             </if>
          </where>
-        group by ctdt.id WITH ROLLUP
+        group by ctdt.id
     </select>
 
     <select id="daysTogetherStat" resultType="io.treasure.vo.DaysTogetherStatisticsVo">
