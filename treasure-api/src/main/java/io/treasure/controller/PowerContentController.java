@@ -49,7 +49,6 @@ public class PowerContentController {
     @Autowired
     private PowerContentService powerContentService;
 
-
     @PostMapping("userPowerRegister")
     @ApiOperation("助力用户注册")
     @ApiImplicitParams({
