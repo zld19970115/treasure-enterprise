@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.treasure.dao.PowerContentDao">
+
+
+    <insert id="insertPowerContent">
+        insert into ct_power_content (user_id,subjoin_content,power_type)
+         VALUES
+        ( #{user_id},#{subjoin_content},1);
+    </insert>
+
+    <select id="getPowerContentByUserId" resultType="io.treasure.dto.PowerContentDTO">
+        select * from ct_power_content where user_id = #{userId}
+    </select>
+</mapper>
