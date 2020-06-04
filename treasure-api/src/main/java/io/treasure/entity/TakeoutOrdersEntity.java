@@ -27,16 +27,12 @@ public class TakeoutOrdersEntity {
     private Integer discountId;
     private Integer discountAmount;
     private Integer giftAmount;
+    private Integer shippingAmount;     //派送费用
     private Integer actualPayment;
     private Integer paymentTime;
     private Integer paymentMethod;
-
     private Date enjoyTime;
-    private Integer shippingMethod;         //派送方式
-    private String courierId;           //派送员id
     private Date confirmTime;
-    private Long addressId;
-
     private Date modifyTime;            //数据库自动更新
     private Integer deleted;
     private Integer version;

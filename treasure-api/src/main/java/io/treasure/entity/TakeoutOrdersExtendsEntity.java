@@ -18,6 +18,11 @@ public class TakeoutOrdersExtendsEntity {
 
     @TableId
     private String orderId;         //订单id
+
+    private Integer shippingMethod;         //派送方式
+    private String courierId;           //派送员id
+    private Long addressId;
+
     private String refundId;
     private Date refundTime;
     private String consumerComment;

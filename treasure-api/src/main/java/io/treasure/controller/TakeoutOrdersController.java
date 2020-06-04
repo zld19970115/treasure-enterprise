@@ -1,6 +1,8 @@
 package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,6 +12,7 @@ import io.treasure.dao.TakeoutOrdersDao;
 import io.treasure.dao.TakeoutOrdersDetailDao;
 import io.treasure.dto.*;
 import io.treasure.entity.*;
+import io.treasure.vo.PagePlus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -83,13 +86,12 @@ public class TakeoutOrdersController {
         return ymd.parse(ymd.format(date)+" 00:00:00");
     }
 
-    @GetMapping("/list")
+    @GetMapping("/orders")
     @ApiOperation("查询外卖订单列表")
     @ApiImplicitParams({
-
             @ApiImplicitParam(name ="mch_id",value = "商户id",dataType = "long",paramType = "query",required = false),
-            @ApiImplicitParam(name ="consumer_mobile",value = "商户id",dataType = "long",paramType = "query",required = false),
-            @ApiImplicitParam(name ="courier_id",value = "商户id",dataType = "long",paramType = "query",required = false),
+            @ApiImplicitParam(name ="consumer_mobile",value = "用户手机",dataType = "long",paramType = "query",required = false),
+            @ApiImplicitParam(name ="courier_id",value = "骑手id",dataType = "String",paramType = "query",required = false),
             @ApiImplicitParam(name = "startTime",value="开始时间",dataType = "date",paramType = "query",required = false),
             @ApiImplicitParam(name ="stopTime",value = "结束时间",dataType = "date",paramType = "query",required = false),
             @ApiImplicitParam(name="timeMode",value = "默认精确;1精度(天)",dataType = "int",paramType = "query",required=false),
@@ -100,7 +102,7 @@ public class TakeoutOrdersController {
 
     public Result requireOrders(@RequestParam(name = "mch_id", required = false)Long mchId,
                                                    @RequestParam(name = "consumer_mobile", required = false)String cMobile,
-                                                   @RequestParam(name = "courier_id",required=false)Long courierId,
+                                                   @RequestParam(name = "courier_id",required=false)String courierId,
                                                    @RequestParam(name = "startTime",required = false)Date startTime,
                                                    @RequestParam(name ="stopTime",required = false)Date stopTime,
                                                    @RequestParam(name="timeMode",defaultValue = "1",required=false)Integer timeMode,
@@ -125,10 +127,10 @@ public class TakeoutOrdersController {
 
         if(timeMode == 1){
             if(startTime != null)
-                startTime = paseYMD(startTime);//ymdt转ymd
+                startTime = paseYMD(startTime);     //ymdt转ymd
 
             if(stopTime != null)
-                stopTime = paseYMD(stopTime);//ymdt转ymd
+                stopTime = paseYMD(stopTime);       //ymdt转ymd
 
         }
 
@@ -141,23 +143,118 @@ public class TakeoutOrdersController {
 
         if(stopTime == null){
             if(startTime != null){
-                toeWrapper.lt(timeColumn,startTime);
+                toeWrapper.ge(timeColumn,startTime);
             }else{
-                toeWrapper.lt(timeColumn,new Date());
+                toeWrapper.ge(timeColumn,new Date());
             }
         }else{
             if(startTime != null){
                 toeWrapper.between(timeColumn,startTime,stopTime);
             }else{
-                toeWrapper.ge(timeColumn,stopTime);
+                toeWrapper.le(timeColumn,stopTime);
             }
         }
 
 
+        PagePlus<TakeoutOrdersEntity> map = new PagePlus<TakeoutOrdersEntity>(index,itemNum);
+        map.setCurrent(index);
+        map.setSize(itemNum);
+        IPage<TakeoutOrdersEntity> takeoutOrdersEntityIPage = takeoutOrdersDao.selectPage(map,toeWrapper);
 
-
-        return null;
+        return new Result().ok(takeoutOrdersEntityIPage);
     }
+
+
+    @GetMapping("/detail")
+    @ApiOperation("查询外卖订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="user_type",value = "1商,2用,3骑",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name ="mch_id",value = "商户id",dataType = "long",paramType = "query",required = false),
+            @ApiImplicitParam(name ="consumer_mobile",value = "用户手机",dataType = "long",paramType = "query",required = false),
+            @ApiImplicitParam(name ="courier_id",value = "骑手id",dataType = "string",paramType = "query",required = false),
+            @ApiImplicitParam(name = "startTime",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="stopTime",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name="timeMode",value = "默认精确;1精度(天)",dataType = "int",paramType = "query",required=false),
+            @ApiImplicitParam(name ="preferenceTimeNo",value="1payment，2enjoy，3confirm",dataType = "int",defaultValue = "1",paramType = "query",required = false),
+            @ApiImplicitParam(name="index",value = "页码",dataType = "int",defaultValue = "1",paramType = "query",required = false),
+            @ApiImplicitParam(name="itemNum",value = "页数",dataType = "int",defaultValue = "10",paramType = "query",required = false)
+    })
+    public Result requireOrdersDetail(@RequestParam(name = "user_type", required = false)Integer user_type,
+                                @RequestParam(name = "mch_id", required = false)Long mchId,
+                                @RequestParam(name = "consumer_mobile", required = false)String cMobile,
+                                @RequestParam(name = "courier_id",required=false)String courierId,
+                                @RequestParam(name = "startTime",required = false)Date startTime,
+                                @RequestParam(name ="stopTime",required = false)Date stopTime,
+                                @RequestParam(name="timeMode",defaultValue = "1",required=false)Integer timeMode,
+                                @RequestParam(name ="preferenceTimeNo",required = false)int timeNo,
+                                @RequestParam(name="index",required = false)Integer index,
+                                @RequestParam(name="itemNum",required = false)Integer itemNum
+
+    ) throws ParseException {
+
+        if(mchId == null && cMobile == null && courierId == null)
+            return new Result().error();
+
+        //Object data = requireOrders(mchId, cMobile, courierId, startTime, stopTime, timeMode, timeNo, index, itemNum).getData();
+        if(mchId == null && cMobile == null && courierId == null)
+            return new Result().error();
+
+        QueryWrapper<TakeoutOrdersEntity> toeWrapper = new QueryWrapper<>();
+
+        //查单对象条件
+        if(mchId != null)
+            toeWrapper.eq("mch_id",mchId);
+        if(cMobile != null)
+            toeWrapper.eq("consumer_mobile",cMobile);
+        if(courierId != null)
+            toeWrapper.eq("courier_id",courierId);
+
+        if(timeMode == 1){
+            if(startTime != null)
+                startTime = paseYMD(startTime);     //ymdt转ymd
+
+            if(stopTime != null)
+                stopTime = paseYMD(stopTime);       //ymdt转ymd
+
+        }
+
+        String timeColumn = "payment_time";
+        if(timeNo == 2){
+            timeColumn = "enjoy_time";
+        }else if(timeNo == 3){
+            timeColumn = "confirm_time";
+        }
+
+        if(stopTime == null){
+            if(startTime != null){
+                toeWrapper.ge(timeColumn,startTime);
+            }else{
+                toeWrapper.ge(timeColumn,new Date());
+            }
+        }else{
+            if(startTime != null){
+                toeWrapper.between(timeColumn,startTime,stopTime);
+            }else{
+                toeWrapper.le(timeColumn,stopTime);
+            }
+        }
+
+        PagePlus<TakeoutOrdersEntity> map = new PagePlus<TakeoutOrdersEntity>(index,itemNum);
+        map.setCurrent(index);
+        map.setSize(itemNum);
+        IPage<TakeoutOrdersEntity> takeoutOrdersEntityIPage = takeoutOrdersDao.selectPage(map,toeWrapper);
+
+        QueryWrapper<TakeoutOrdersDetailEntity> todeWrapper = new QueryWrapper<>();
+
+        //todeWrapper.c
+
+
+        //List<TakeoutOrdersDetailEntity> takeoutOrdersDetailEntities = takeoutOrdersDetailDao.selectList();
+
+
+        return new Result().ok(takeoutOrdersEntityIPage);
+    }
+
 
  /*
         @GetMapping("/order")
