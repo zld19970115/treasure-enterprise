@@ -704,12 +704,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user,int payMode) throws ParseException {
+    public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException {
         Result result = new Result();
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
-         baseDao.insertPayMode(orderId,payMode);
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
             Long merchantId = merchantRoomParamsSetEntity.getMerchantId();

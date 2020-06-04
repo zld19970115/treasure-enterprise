@@ -241,7 +241,7 @@
         update  ct_master_order SET deleted = 1 where id = #{id}
     </update>
     <insert id="insertPayMode">
-        insert into ct_order_paymode(order_id,paymode)value(#{orderId},#{payMode});
+        insert into ct_order_paymode(order_id,paymode)value(#{orderId},#{payfs})
     </insert>
 
     <select id="backDishesPage" resultType="io.treasure.vo.BackDishesVo">

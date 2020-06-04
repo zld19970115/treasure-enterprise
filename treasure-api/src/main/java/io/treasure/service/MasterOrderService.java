@@ -41,7 +41,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Integer  selectByPayMode(String orderId);
     OrderDTO getOrder(String orderId);
     MasterOrderEntity selectByOrderId(String orderId);
-    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user,int payMode) throws ParseException;
+    Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException;
     Result saveOrder(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user);
     PageData<OrderDTO> listPage(Map<String, Object> params);
     //商户端订单列表
