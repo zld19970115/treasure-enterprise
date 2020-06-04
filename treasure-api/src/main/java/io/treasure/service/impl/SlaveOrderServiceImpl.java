@@ -224,7 +224,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             if (StringUtils.isNotBlank(clientId)) {
                 AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
             }
-            SendSMSUtil.sendApplyRefusal(merchantDTO.getMobile(), smsConfig);
+            SendSMSUtil.sendApplyRefusal(merchantUserDTO.getMobile(), smsConfig);
 
 
         }

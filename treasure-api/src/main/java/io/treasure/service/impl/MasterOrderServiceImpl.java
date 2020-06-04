@@ -789,8 +789,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
-            MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantDTO.getMobile(), smsConfig);
+            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -904,7 +904,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //          List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //          boolean b=slaveOrderService.insertBatch(dtoList);
             MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantDTO.getMobile(), smsConfig);
+            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         return result.ok(orderId);
     }
@@ -1108,7 +1109,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if (StringUtils.isNotBlank(clientId)) {
                     AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
                 }
-                SendSMSUtil.sendApplyRefund(merchantDTO.getMobile(), smsConfig);
+                SendSMSUtil.sendApplyRefund(merchantUserDTO.getMobile(), smsConfig);
                 result.ok(true);
             } else {
                 return result.error(-1, "申请退款失败！");
