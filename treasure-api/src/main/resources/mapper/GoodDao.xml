@@ -49,7 +49,7 @@
             and goods.mart_id in
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
-            </foreach>  and outside in (1,2)
+            </foreach>  and goods.outside in (1,2)
         </if>
     </select>
 
