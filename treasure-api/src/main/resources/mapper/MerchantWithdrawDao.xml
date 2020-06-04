@@ -188,7 +188,9 @@ select param_value from sys_params where id=1144988823431553026
         <if test="merchantId != null and merchantId!='' ">
             and  mw.merchant_id= cm.id
         </if>
-
+        <if test="type != null and type!='' ">
+            and  mw.type = #{type}
+        </if>
 
     </select>
 

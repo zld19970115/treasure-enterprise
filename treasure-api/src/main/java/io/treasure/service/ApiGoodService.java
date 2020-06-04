@@ -28,10 +28,10 @@ public interface ApiGoodService extends CrudService<GoodEntity, GoodDTO> {
 
     //通过商户ID查询此商户所有菜品
     List getGoodsByMartId( Map<String, Object> params);
-
+    List getoutsideGoodsByMartId( Map<String, Object> params);
     //通过商户ID与菜品分类ID查询此分类的所有菜
     List getGoodsByGoodCategoryId(long martId, long goodCategoryId);
-
+    List getoutsideGoodsByGoodCategoryId(long martId, long goodCategoryId);
     //根据商户ID查询热销菜品
     List<GoodDTO> getShowInHotbyMartId(long martId);
 }

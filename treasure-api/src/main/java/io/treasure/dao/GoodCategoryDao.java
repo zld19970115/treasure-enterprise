@@ -23,6 +23,7 @@ public interface GoodCategoryDao extends BaseDao<GoodCategoryEntity> {
     //根据分类名称和商户Id
     List getByNameAndMerchantId(String name, long merchantId);
     List getAllByMerchantIds(Map<String,Object> params);
+    List getAllByMerchantIdsByOutside(Map<String,Object> params);
     //根据商户显示分类信息
     List getAllByMerchantId(long merchantId);
     //列表显示同时显示店铺名称

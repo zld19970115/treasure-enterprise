@@ -81,15 +81,14 @@ public class ApiClientUserController {
         return new Result<PageData<ClientUserDTO>>().ok(page);
     }
 
+
     @Login
     @GetMapping("{id}")
     @ApiOperation("信息")
     public Result<ClientUserDTO> get(@PathVariable("id") Long id) {
         ClientUserDTO data = clientUserService.get(id);
-
         return new Result<ClientUserDTO>().ok(data);
     }
-
     @Login
     @PostMapping
     @ApiOperation("保存")

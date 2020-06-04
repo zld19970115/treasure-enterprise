@@ -450,57 +450,64 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
+            if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
+                //退款
+                Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
+                if (result1.success()) {
+                    boolean b = (boolean) result1.getData();
+                    if (!b) {
+                        return new Result().error("退款失败！");
+                    } else {
 
-            if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
-                OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
-                BigDecimal giftMoney = order.getGiftMoney();
-                BigDecimal num=new BigDecimal("0");
-                if(giftMoney.compareTo(num)==1){
+
+                        OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                        BigDecimal giftMoney = order.getGiftMoney();
+                        BigDecimal num=new BigDecimal("0");
+                        if(giftMoney.compareTo(num)==1){
 //                    BigDecimal gift = clientUserDTO.getGift();
 //                    clientUserDTO.setGift(giftMoney.add(gift));
 //                    clientUserService.update(clientUserDTO);
-                    BigDecimal gift =clientUserDTO.getGift();
-                    BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
-                    clientUserDTO.setGift(abc);
-                    clientUserService.update(clientUserDTO);
-                }
-                if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
-                    List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
-                    for (MasterOrderEntity s : orderByPOrderId) {
-                        if (s.getPOrderId().equals(dto.getOrderId()) && s.getReservationType() == 2) {
-                            merchantRoomParamsSetService.updateStatus(s.getReservationId(), 0);
+                            BigDecimal gift =clientUserDTO.getGift();
+                            BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
+                            clientUserDTO.setGift(abc);
+                            clientUserService.update(clientUserDTO);
                         }
-                    }
-                }
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
-                if (null != dto.getReservationId() && dto.getReservationId() > 0) {
-                    //同时将包房或者桌设置成未使用状态
-                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-                }
-                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-                for (SlaveOrderEntity s : slaveOrderEntities) {
-                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
-                    }
-                }
-
-                if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
-                    //退款
-                    Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-                    if (result1.success()) {
-                        boolean b = (boolean) result1.getData();
-                        if (!b) {
-                            return new Result().error("退款失败！");
-                        } else {
-
+                        if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
+                            List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
+                            for (MasterOrderEntity s : orderByPOrderId) {
+                                if (s.getPOrderId().equals(dto.getOrderId()) && s.getReservationType() == 2) {
+                                    merchantRoomParamsSetService.updateStatus(s.getReservationId(), 0);
+                                }
+                            }
                         }
-                    } else {
-                        return new Result().error(result1.getMsg());
+                        baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                        if (null != dto.getReservationId() && dto.getReservationId() > 0) {
+                            //同时将包房或者桌设置成未使用状态
+                            merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                        }
+                        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                        for (SlaveOrderEntity s : slaveOrderEntities) {
+                            if (s.getRefundId() == null || s.getRefundId().length() == 0) {
+                                slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
+                            }
+                        }
+
                     }
+                } else {
+                    return new Result().error(result1.getMsg());
                 }
-            } else {
-                return new Result().error("无法退款！");
             }
+//
+//
+//
+//
+//
+//
+//
+//            if (dto.getStatus() != Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
+//                return new Result().error("无法退款！");
+//            }
+
         } else {
             return new Result().error("无法获取订单！");
         }
@@ -549,6 +556,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().error("无法获取订单！");
         }
         return new Result().ok("拒绝退款成功！");
+    }
+
+    @Override
+    public Integer selectByPayMode(String orderId) {
+        return baseDao.selectByPayMode(orderId);
     }
 
 //    @Override
@@ -697,7 +709,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
-
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
             Long merchantId = merchantRoomParamsSetEntity.getMerchantId();

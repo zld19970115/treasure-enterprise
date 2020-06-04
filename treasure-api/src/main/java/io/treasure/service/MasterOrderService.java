@@ -38,7 +38,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     //拒绝退款订单
     Result refundNoUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     //Object updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
-
+    Integer  selectByPayMode(String orderId);
     OrderDTO getOrder(String orderId);
     MasterOrderEntity selectByOrderId(String orderId);
     Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException;

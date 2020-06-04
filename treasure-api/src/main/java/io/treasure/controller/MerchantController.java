@@ -530,5 +530,30 @@ public class MerchantController {
     public Result<Integer> auditMerchantStatus(@ApiIgnore @RequestParam Long id){
         return new Result<Integer>().ok(merchantService.AuditMerchantStatus(id));
     }
+    @GetMapping("selectByUserlongitudeandlatitude")
+    @ApiOperation("通过用户经纬度查询可外卖商家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
+    })
+    public Result<PageData<MerchantDTO>> selectByUserlongitudeandlatitude(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.selectByUserlongitudeandlatitude(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
 
+    @GetMapping("getOutside")
+    @ApiOperation("开启外卖功能")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "deliveryArea", value = "配送范围(单位米)", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "distribution", value = "配送方式 0 ----商家配送 1 ---由平台配送", paramType = "query",required=true, dataType="int"),
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "long")
+    })
+    public Result getOutside(@RequestParam String deliveryArea ,@RequestParam int distribution,@RequestParam long martId){
+
+        return new Result().ok(merchantService.getOutside(deliveryArea,distribution,martId));
+    }
 }

@@ -25,6 +25,7 @@ public interface GoodCategoryService extends CrudService<GoodCategoryEntity, Goo
     //根据商户显示分类
     List getAllByMerchantId (long merchantId);
     List<GoodCategoryDTO> getAllByMerchantIds(Map<String,Object> params);
+    List<GoodCategoryDTO>  getAllByMerchantIdsByOutside(Map<String,Object> params);
     //删除
     void remove(Long id,int status);
     //列表查询，显示店铺名称

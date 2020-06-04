@@ -56,10 +56,14 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "头像")
 	@NotBlank(message = "头像不能为空")
 	private String headurl;
-
 	@ApiModelProperty(value = "评分")
 	private Double score;
-
+	@ApiModelProperty(value = "是否外卖 0 --仅外卖 1 ---即可外卖又可堂食 2---仅堂食")
+	private Integer	outside;
+	@ApiModelProperty(value = " 配送方式 0 ----商家配送 1 ---由平台配送")
+	private Integer distribution;
+	@ApiModelProperty(value = "配送范围")
+	private String delivery_area;
 	@ApiModelProperty(value = "经度")
 	@NotBlank(message = "精度不能为空")
 	private String log;
