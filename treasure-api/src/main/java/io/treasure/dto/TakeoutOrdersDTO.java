@@ -37,6 +37,10 @@ public class TakeoutOrdersDTO {
     private Integer discountAmount;
     @ApiModelProperty(value = "代付金")
     private Integer giftAmount;
+
+    @ApiModelProperty(value ="派送费用")
+    private Integer shippingAmount;     //派送费用
+
     @ApiModelProperty(value = "实付款")
     private Integer actualPayment;
 
@@ -54,18 +58,14 @@ public class TakeoutOrdersDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date enjoyTime;
 
-    @ApiModelProperty(value = "派送方式")
-    private Integer shippingMethod;         //派送方式
-    @ApiModelProperty(value = "派送员id")
-    private String courierId;           //派送员id
+
 
     @ApiModelProperty(value = "确认收货时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date confirmTime;
 
-    @ApiModelProperty(value = "收货地址")
-    private Long addressId;
+
 
 
     @ApiModelProperty(value = "自动：修改时间")

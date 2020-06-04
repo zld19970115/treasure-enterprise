@@ -22,6 +22,15 @@ public class TakeoutOrdersExtendsDTO {
 
     @ApiModelProperty(value = "订单号")
     private String orderId;         //订单id
+
+    @ApiModelProperty(value = "派送方式")
+    private Integer shippingMethod;         //派送方式
+    @ApiModelProperty(value = "派送员id")
+    private String courierId;               //派送员id
+
+    @ApiModelProperty(value = "收货地址")
+    private Long addressId;
+
     @ApiModelProperty(value = "退单号")
     private String refundId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
