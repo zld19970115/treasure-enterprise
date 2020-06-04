@@ -42,6 +42,15 @@
         and status=1
         order by sort desc
     </select>
+
+    <select id="getAllByMerchantIdsByOutside" resultType="io.treasure.dto.GoodCategoryDTO" parameterType="java.util.Map">
+        select * from ct_good_category
+        where id in (select good_category_id from ct_good where outside in (0,1)  <if test=" merchantId != null and merchantId.trim() != ''">
+        and find_in_set(mart_id,#{merchantId} group by good_category_id)
+    </if>)
+        and status=1
+        order by ct_good_category.sort desc
+    </select>
     <select id="listPage" resultType="io.treasure.dto.GoodCategoryDTO">
         select cate.*,m.name merchantName from ct_good_category cate
         left join  ct_merchant m on cate.merchant_id=m.id

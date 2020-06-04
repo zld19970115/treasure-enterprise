@@ -16,6 +16,7 @@ import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
 import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.AdressIPUtil;
+import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +78,7 @@ public class ApiWXAppPayController {
     public Result wxpay(HttpServletRequest request,String total_fee, String orderNo, String description) throws Exception {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
 //        // 防止微信支付失败重新支付失败
 //        String tmpOrderId =generalGrowUpOrderId(orderNo);
 //        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
@@ -92,6 +94,12 @@ public class ApiWXAppPayController {
 
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
+        }
+        Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
+        if (payMode!=1){
+            orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
+            masterOrderEntity.setOrderId(orderDTO.getOrderId());
+            masterOrderService.updateById(masterOrderEntity);
         }
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);

@@ -257,7 +257,22 @@ public class GoodCategoryController {
         List list= goodCategoryService.getAllByMerchantIds(params);
         return new Result().ok(list);
     }
-
+    /**
+     * 根据商户Id显示商户分类
+     * @param
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("getAllByMerchantIdsByOutside")
+    @ApiOperation("显示商户对应有外卖的分类")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query", required = true, dataType = "String")
+    })
+    public Result<List> getAllByMerchantIdsByOutside(@RequestParam  Map<String,Object> params){
+        List list= goodCategoryService.getAllByMerchantIdsByOutside(params);
+        return new Result().ok(list);
+    }
     @CrossOrigin
     @PostMapping("exportGoods")
     @ApiOperation("导入")

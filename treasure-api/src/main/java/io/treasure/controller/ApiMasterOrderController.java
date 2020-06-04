@@ -236,10 +236,10 @@ public class ApiMasterOrderController {
     @Login
     @PostMapping("generateOrder")
     @ApiOperation("生成订单")
-    public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user) throws ParseException {
+    public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user,int payMode) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
-        return  masterOrderService.orderSave(dto,dtoList,user);
+        return  masterOrderService.orderSave(dto,dtoList,user,payMode);
     }
     @Login
     @PostMapping("generatePorder")

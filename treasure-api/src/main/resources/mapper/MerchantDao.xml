@@ -73,6 +73,21 @@
             and categoryId = #{categoryId}
         </if>
     </select>
+    <select id="selectByUserlongitudeandlatitude" resultType="io.treasure.dto.MerchantDTO">
+        select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance FROM ct_merchant having status=1 and outside in (0 ,1)
+        <if test="recommend != null and recommend != ''">
+            and recommend = #{recommend}
+        </if>
+        <if test="distance == null and distance == ''">
+            and distance &lt;= ct_merchant.delivery_area
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            and categoryId = #{categoryId}
+        </if>
+
+    </select>
+
     <select id="getMerchantById" parameterType="io.treasure.entity.MerchantEntity"
             resultType="io.treasure.entity.MerchantEntity">
         select * from ct_merchant where id=#{id}

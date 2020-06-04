@@ -208,7 +208,20 @@ public class ApiGoodController {
     public Result<List> getGoodsByMartId(@ApiIgnore @RequestParam Map<String, Object> params) {
         return new Result<List>().ok(apigoodService.getGoodsByMartId(params));
     }
-
+    /**
+     * 商家全部外卖菜品
+     * @param
+     * @return
+     */
+    @Login
+    @GetMapping("getoutsideGoodsByMartId")
+    @ApiOperation("根据商户ID显示此商户外卖菜品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户ID", paramType = "query", required = true, dataType = "String")
+    })
+    public Result<List> getoutsideGoodsByMartId(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<List>().ok(apigoodService.getoutsideGoodsByMartId(params));
+    }
     /**
      * 显示指定商户菜品分类中的菜品
      * @param martId,goodCategoryId
@@ -219,6 +232,12 @@ public class ApiGoodController {
     @ApiOperation("根据商户ID显示此商户菜品")
     public Result<List> getGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
         return new Result<List>().ok(apigoodService.getGoodsByGoodCategoryId(martId,goodCategoryId));
+    }
+    @Login
+    @GetMapping("getoutsideGoodsByGoodCategoryId")
+    @ApiOperation("根据商户ID显示此商户外卖菜品")
+    public Result<List> getoutsideGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
+        return new Result<List>().ok(apigoodService.getoutsideGoodsByGoodCategoryId(martId,goodCategoryId));
     }
 
 

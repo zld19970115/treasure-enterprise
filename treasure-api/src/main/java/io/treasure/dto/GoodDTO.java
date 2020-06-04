@@ -76,7 +76,10 @@ public class GoodDTO implements Serializable {
 	@ApiModelProperty(value = "创建者")
 	@NotNull(message = "更新者不能为空",groups = AddGroup.class)
 	private Long creator;
-
+	@ApiModelProperty(value = "是否外卖 0 --仅外卖 1 ---即可外卖又可堂食 2---仅堂食")
+	private Integer	outside;
+	@ApiModelProperty(value = "外卖价格")
+	private BigDecimal	outPrice;
 	@ApiModelProperty(value = "创建时间")
 	private Date createDate;
 	@ApiModelProperty(value = "更新者")

@@ -59,7 +59,20 @@ public class MerchantEntity implements Serializable {
      * 头像
      */
 	private String headurl;
-    /**
+	/**
+	 * 是否外卖 0 --仅外卖 1 ---即可外卖又可堂食 2---仅堂食
+	 */
+	private Integer	outside;
+	/**
+	 * 配送方式 0 ----商家配送 1 ---由平台配送
+	 */
+	private Integer distribution;
+	/**
+	 * 配送范围
+	 */
+
+	private String deliveryArea;
+	/**
      * 评分
      */
 	private Double score;

@@ -2,8 +2,10 @@ package io.treasure.service;
 
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
+import io.treasure.common.utils.Result;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,8 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     PageData<MerchantDTO> queryPage(Map<String, Object> params);
     void updateWX(String martId);
     PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
-
+    PageData<MerchantDTO> selectByUserlongitudeandlatitude(Map<String, Object> params);
+    Result getOutside(String deliveryArea , int distribution, long martId);
     PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);
     PageData<MerchantDTO> getMerchantByCategoryId(Map<String, Object> params);
     PageData<MerchantDTO> getLikeMerchant(Map<String, Object> params);

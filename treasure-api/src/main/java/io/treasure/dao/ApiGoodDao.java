@@ -30,9 +30,9 @@ public interface ApiGoodDao extends BaseDao<GoodEntity> {
 
     //通过商户ID查询此商户所有菜品
     List<GoodEntity> getGoodsByMartId(Map<String, Object> params);
-
+    List<GoodEntity> getoutsideGoodsByMartId(Map<String, Object> params);
     //通过商户ID与菜品分类ID查询此分类的所有菜
     List<GoodEntity> getGoodsByGoodCategoryId(@Param("martId") long martId, @Param("goodCategoryId") long goodCategoryId);
-
+    List<GoodEntity>  getoutsideGoodsByGoodCategoryId(@Param("martId") long martId, @Param("goodCategoryId") long goodCategoryId);
     List<GoodDTO> getShowInHotbyMartId(long martId);
 }

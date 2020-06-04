@@ -122,6 +122,12 @@ public class GoodController {
        if(dto.getRank()!=null){
            dto.setRank(dto.getRank());
        }
+        if(dto.getOutside()!=null){
+            dto.setOutside(dto.getOutside());
+        }
+        if(dto.getOutPrice()!=null){
+            dto.setPrice(dto.getOutPrice());
+        }
         goodService.save(dto);
         return new Result();
     }
@@ -151,6 +157,12 @@ public class GoodController {
         }
         if(dto.getRank()!=null){
             dto.setRank(dto.getRank());
+        }
+        if(dto.getOutside()!=null){
+            dto.setOutside(dto.getOutside());
+        }
+        if(dto.getOutPrice()!=null){
+            dto.setPrice(dto.getOutPrice());
         }
         dto.setUpdateDate(new Date());
         goodService.update(dto);
