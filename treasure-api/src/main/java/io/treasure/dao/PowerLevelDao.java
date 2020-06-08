@@ -5,6 +5,7 @@ import io.treasure.dto.PowerLevelDTO;
 import io.treasure.entity.PowerLevelEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,16 +29,25 @@ public interface PowerLevelDao extends BaseDao<PowerLevelEntity> {
      */
     PowerLevelDTO getPowerLevelByUserId(Long userId);
 
-    /**
-     * 根据用户id更新助力代付金
-     */
-    int updatePowerGiftByUserId(Long userId,int gift);
 
 
     /**
      * 根据用户id更新助力人数
      */
     int updatePowerSumByUserId(Long userId);
+    /**
+     * 根据用户id更新获奖次数
+     */
+    int updatePowerGainByUserId(Long userId);
+    /**
+     * 根据用户id更新是否完成状态
+     */
+    int updatePowerFinishByUserId(Long userId);
+
+    /**
+     * 根据用户id更新完成活动时间
+     */
+    int updatePowerAbortDateByUserId(Long userId,Date powerAbortDate);
 
 
 }

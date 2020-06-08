@@ -25,7 +25,7 @@ public interface PowerContentDao extends BaseDao<PowerContentEntity> {
     /**
      * 根据分享人id查询助力信息
      */
-    List<PowerContentDTO> getPowerContentByUserId(Long userId);
+    PowerContentDTO getPowerContentByUserId(Long powerlevelId);
 
 
 }

@@ -52,13 +52,14 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
         //从header中获取token
         String token = request.getHeader("token");
+
         //如果header中不存在token，则从参数中获取token
         if(StringUtils.isBlank(token)){
             token = request.getParameter("token");
         }
-
         //token为空
         if(StringUtils.isBlank(token)){
+            System.out.println("当前token值：为空");
             throw new RenException(ErrorCode.TOKEN_NOT_EMPTY);
         }
 

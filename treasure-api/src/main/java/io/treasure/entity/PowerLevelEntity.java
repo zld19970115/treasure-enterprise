@@ -1,10 +1,12 @@
 package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author user
@@ -19,7 +21,7 @@ import java.math.BigDecimal;
 public class PowerLevelEntity {
 
     /**
-     * id
+     * 助力id
      */
     private int id;
 
@@ -27,28 +29,37 @@ public class PowerLevelEntity {
      * 助力id
      */
     private int powerlevelId;
-
     /**
      * 用户id
      */
     private long userId;
-
     /**
-     * 助力级别（1-一级助力，2-二级助力）
+     * 助力奖励类别（1-代付金，2-商品，3-菜品）
      */
-    private String powerlevel;
-
+    private String powerType;
     /**
-     * 助力获得的代付金
+     * 获得助力奖励次数
      */
-    private BigDecimal powerGift;
-
+    private int powerGain;
     /**
      * 助力人数
      */
     private int powerSum;
-
-
-
+    /**
+     * 助力状态（1-助力完成，0-助力中）
+     */
+    private int powerFinish;
+    /**
+     * 助力完成时间
+     */
+    private Date powerAbortDate;
+    /**
+     * 助力开始时间
+     */
+    private Date powerOpenDate;
+    /**
+     * 助力随机数
+     */
+    private String ramdomNumber;
 
 }

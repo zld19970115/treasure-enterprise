@@ -20,6 +20,9 @@ import io.treasure.service.TokenService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.ActivityRartakeVo;
 import io.treasure.vo.ActivityRewardVo;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

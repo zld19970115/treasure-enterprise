@@ -6,6 +6,7 @@ import io.treasure.dao.PowerContentDao;
 import io.treasure.dto.PowerContentDTO;
 import io.treasure.entity.PowerContentEntity;
 import io.treasure.service.PowerContentService;
+import io.treasure.utils.RandomUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +30,18 @@ public class PowerContentServiceImpl extends CrudServiceImpl<PowerContentDao, Po
 
     @Override
     public int insertPowerContent(Map<String, Object> params) {
+        if (params.get("merchandiseId") == null){
+            params.put("merchandiseId",1);
+        }else if (params.get("goodId") == null){
+            params.put("goodId",1);
+        }
+        Long powerlevelId = Long.valueOf(RandomUtil.random8());
+        params.put("powerlevelId",powerlevelId);
         return baseDao.insertPowerContent(params);
     }
 
     @Override
-    public List<PowerContentDTO> getPowerContentByUserId(Long userId) {
-        return baseDao.getPowerContentByUserId(userId);
+    public PowerContentDTO getPowerContentByUserId(Long powerlevelId) {
+        return baseDao.getPowerContentByUserId(powerlevelId);
     }
 }
