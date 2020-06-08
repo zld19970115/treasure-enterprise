@@ -188,6 +188,7 @@ public class MerchantRoomController {
     @CrossOrigin
     @Login
     @GetMapping("getById")
+
     @ApiOperation("详细信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
@@ -250,9 +251,9 @@ public class MerchantRoomController {
             //根据商户和名称判断是否存在
             List roomList=merchantRoomService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId(),dto.getType());
             if(null!=roomList && roomList.size()>0){
-                return new Result().error("名称已经存在！");
-            }
+            return new Result().error("名称已经存在！");
         }
+    }
         dto.setUpdateDate(new Date());
         merchantRoomService.update(dto);
         return new Result();

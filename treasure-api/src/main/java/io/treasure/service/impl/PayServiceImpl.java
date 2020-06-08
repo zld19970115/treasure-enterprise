@@ -356,7 +356,10 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
             if(payMoney.compareTo(refundAmount)!=0){
@@ -577,7 +580,10 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
             if(payMoney.compareTo(refundAmount)!=0){
@@ -686,7 +692,10 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
             if(payMoney.compareTo(refundAmount)!=0){

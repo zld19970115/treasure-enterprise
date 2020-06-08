@@ -30,6 +30,7 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
     //设置店铺
     void updateMerchant(String merchantid,long id);
+    MerchantUserEntity selectByMerchantId(long martId);
     //删除
     void remove(long id);
     //根据会员id查询商户信息

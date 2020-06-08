@@ -25,6 +25,9 @@
     <select id="getByMobile" resultType="io.treasure.entity.MerchantUserEntity">
         select * from ct_merchant_user where mobile = #{value} and status=1
     </select>
+    <select id="selectByMerchantId" resultType="io.treasure.entity.MerchantUserEntity">
+        select * from ct_merchant_user where merchantid = #{martId}
+    </select>
 
     <select id="getByMobiles" resultType="io.treasure.entity.MerchantUserEntity">
         select * from ct_merchant_user where mobile = #{value}
