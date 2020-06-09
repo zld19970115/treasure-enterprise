@@ -25,15 +25,16 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.ReturnDishesPageVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2623,6 +2624,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
         return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
 
+    }
+
+    @Override
+    public PageTotalRowData<OrderVo> pagePC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<OrderVo> page = (Page) baseDao.pagePC(params);
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            OrderVo vo = baseDao.pagePCTotalRow(params);
+            if(vo != null) {
+                map.put("totalMoney",vo.getTotalMoney());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("payMoney",vo.getPayMoney());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 }
 

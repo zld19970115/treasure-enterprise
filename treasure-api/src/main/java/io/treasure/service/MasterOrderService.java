@@ -9,6 +9,8 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -162,4 +164,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderRefundSuccess(String orderNo, int status);
 
     PageData<BackDishesVo> backDishesPage(Map params);
+
+    PageTotalRowData<OrderVo> pagePC(Map<String, Object> params);
 }

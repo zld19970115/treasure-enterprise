@@ -2,6 +2,8 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
@@ -208,6 +210,13 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
         return clientUserDao.selectListByCondition(queryClientUserDto);
+    }
+
+    @Override
+    public PageData<ClientUserDTO> pagePC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<ClientUserDTO> page = (Page) clientUserDao.pagePC(params);
+        return new PageData<>(page.getResult(),page.getTotal());
     }
 
     @Override

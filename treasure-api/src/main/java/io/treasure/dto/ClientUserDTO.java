@@ -94,6 +94,9 @@ public class ClientUserDTO implements Serializable {
 	@ApiModelProperty(value = "创建时间")
 	private Date createDate;
 
+	@ApiModelProperty(value = "创建时间")
+	private String createTime;
+
 	@ApiModelProperty(value = "创建者")
 	private Long creator;
 

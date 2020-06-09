@@ -505,4 +505,18 @@ public class ApiClientUserController {
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("领取成功");
     }
+
+    @GetMapping("pagePC")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="endDate",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String")
+    })
+    public Result<PageData<ClientUserDTO>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<ClientUserDTO>>().ok(clientUserService.pagePC(params));
+    }
+
 }

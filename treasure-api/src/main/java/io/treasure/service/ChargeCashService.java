@@ -6,6 +6,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.ChargeCashDTO;
 import io.treasure.entity.ChargeCashEntity;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.vo.PageTotalRowData;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -30,6 +31,6 @@ public interface ChargeCashService extends CrudService<ChargeCashEntity, ChargeC
     /**
      * 查询根据日期或者用户id查询充值记录
      */
-    PageData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params);
+    PageTotalRowData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params);
 
 }

@@ -157,7 +157,7 @@ public class StatisticsController {
 
     @PostMapping("getMerchantAccount")
     @ApiOperation("查询商户收支明细")
-    public Result<PageData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+    public Result<PageTotalRowData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
     }
 
@@ -184,8 +184,8 @@ public class StatisticsController {
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
             @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
     })
-    public Result<PageData<DaysTogetherPageDTO>> daysTogetherPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        return new Result<PageData<DaysTogetherPageDTO>>().ok(statisticsService.daysTogetherPage(params));
+    public Result<PageTotalRowData<DaysTogetherPageDTO>> daysTogetherPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<PageTotalRowData<DaysTogetherPageDTO>>().ok(statisticsService.daysTogetherPage(params));
     }
 
     @Login

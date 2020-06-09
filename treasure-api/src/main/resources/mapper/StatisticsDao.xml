@@ -388,6 +388,62 @@
         ctm.total_cash desc
     </select>
 
+    <select id="getMerchantAccountPageTotalRow" parameterType="io.treasure.dto.MerchantAccountDto" resultType="io.treasure.vo.MerchantAccountVo">
+        select
+        sum(ctm.total_cash) as totalCash,
+        sum(ctm.already_cash) as alreadyCash,
+        sum(ctm.not_cash) as notCash,
+        sum(ctm.wart_cash) as wartCash,
+        sum(ctm.point_money) as pointMoney,
+        sum(IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 1
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0))
+        AS wxTotal,
+        sum(IFNULL((
+        SELECT
+        sum(ctmw.money)
+        FROM
+        ct_merchant_withdraw ctmw
+        WHERE
+        ctmw.merchant_id = ctm.id
+        AND ctmw.type = 2
+        AND ctmw.`status`=1 and ctmw.verify_state = 2
+        ),0)) AS aliTotald,
+        sum((
+        SELECT
+        COUNT(ctmo.id)
+        from
+        ct_master_order ctmo
+        where
+        ctm.id = ctmo.merchant_id
+        and ctmo.`status` = 10
+        and date_format(ctmo.eat_time, '%Y-%m') in
+        <foreach collection="dateList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        )) as count
+        from
+        ct_merchant ctm
+        <where>
+            <if test="name != null and name!=''" >
+                and ctm.`name` like concat('%', #{name}, '%')
+            </if>
+            <if test="mobile != null and mobile!=''" >
+                and ctm.mobile like concat('%', #{mobile}, '%')
+            </if>
+            <if test="id != null and id!=''" >
+                and ctm.id = #{id}
+            </if>
+        </where>
+    </select>
+
     <select id="getCompletaOrder" resultType="java.math.BigDecimal">
         SELECT count(0) FROM `ct_master_order`
         where merchant_id = #{merchantId}
@@ -568,6 +624,31 @@
         group by ctdt.id
     </select>
 
+    <select id="daysTogetherPageTotalRow" resultType="io.treasure.dto.DaysTogetherPageDTO">
+        SELECT
+        sum(ctdt.order_total) as orderTotal,
+        sum(ctdt.service_chanrge) as serviceChanrge,
+        sum(ctdt.merchant_proceeds) as merchantProceeds,
+        sum(ctdt.platform_brokerage) as platformBrokerage,
+        sum(ctdt.reality_money) as realityMoney,
+        sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,
+        sum(ctdt.gift_money) as giftMoney,
+        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney
+        from ct_days_together ctdt
+        left join ct_merchant ctm on ctm.id = ctdt.merchant_id
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                and date_format(ctdt.pay_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                and date_format(ctdt.pay_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="payType != null and payType.trim() != ''">
+                and ctdt.pay_type = #{payType}
+            </if>
+        </where>
+    </select>
+
     <select id="daysTogetherStat" resultType="io.treasure.vo.DaysTogetherStatisticsVo">
         SELECT
         sum(case pay_type when 1 then 1 else 0 end) as banalceCount,
@@ -647,12 +728,16 @@
         IFNULL(SUM(CASE when sdd.wx_paymoney>0 then sdd.wx_paymoney else 0 end),0) as wxPaymoney,
         IFNULL(SUM(CASE when sdd.ali_paymoney>0 then sdd.ali_paymoney else 0 end),0) as aliPaymoney,
         IFNULL(SUM(CASE when sdd.service_charge>0 then sdd.service_charge else 0 end),0) as serviceCharge
-            FROM
-                stats_day_detail sdd
-            where sdd.id in
-            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
-                #{item}
-            </foreach>
+        FROM
+            stats_day_detail sdd
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
     </select>
 
     <select id="fmisHome" resultType="io.treasure.vo.FmisHomeVo">
