@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
@@ -92,6 +93,30 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
 
         return getPageData(page, MerchantDTO.class);
     }
+
+    @Override
+    public PageData<MerchantDTO> selectByUserlongitudeandlatitude(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<MerchantDTO> list = baseDao.selectByUserlongitudeandlatitude(params);
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
+    public Result getOutside(String deliveryArea, int distribution, long martId) {
+        MerchantEntity merchantEntity = baseDao.selectById(martId);
+        if (merchantEntity==null){
+            return new Result().error("请稍后再试");
+        }
+        if (deliveryArea!=null){
+            merchantEntity.setDeliveryArea(deliveryArea);
+        }
+        merchantEntity.setDistribution(distribution);
+        baseDao.updateById(merchantEntity);
+        return new Result().ok("成功");
+    }
+
 
     @Override
     public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) {

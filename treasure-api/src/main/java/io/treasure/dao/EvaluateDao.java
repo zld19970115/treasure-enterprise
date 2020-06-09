@@ -31,7 +31,7 @@ public interface EvaluateDao extends BaseDao<EvaluateEntity> {
     Double selectAvgFlavor(Map<String, Object> params);
     Double selectAvgAllScore(Map<String, Object> params);
     Double selectAvgAllScore2(long merchantId);
-    EvaluateEntity selectByUserIdAndOid(@Param("userId") long userId ,@Param("merchantOrderId")  String merchantOrderId );
+    EvaluateEntity selectByUserIdAndOid(@Param("userId") long userId, @Param("merchantOrderId") String merchantOrderId);
     List<EvaluateDTO> selectEvaluateDTO(Map<String, Object> params);
     MerchantEntity selectMerchantEntity(long martId);
     List<EvaluateDTO> selectPage1(Map<String, Object> params);

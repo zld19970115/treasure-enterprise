@@ -12,7 +12,7 @@ import java.util.Map;
 public interface JahresabschlussService extends CrudService<GoodEntity, GoodDTO> {
     List<GoodCategoryDTO> selectCategory(Map<String, Object> params);
 
-    List<SlaveOrderDTO>  selectBYgoodID(long id, String startTime1,String endTime1 );
+    List<SlaveOrderDTO>  selectBYgoodID(long id, String startTime1, String endTime1);
     List<GoodDTO> selectByCategoeyid(long categoeyId);
     List<MerchantOrderDTO> selectBymerchantId(Map<String, Object> params);
     List<MerchantWithdrawDTO> selectBymerchantId2(Map<String, Object> params);

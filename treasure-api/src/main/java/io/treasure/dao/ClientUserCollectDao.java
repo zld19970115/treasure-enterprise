@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Mapper
 public interface ClientUserCollectDao extends BaseDao<ClientUserCollectEntity> {
-    ClientUserCollectDTO selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
-    void changeStatus(@Param("userId")Long userId, @Param("martId")Long martId);
+    ClientUserCollectDTO selectByUidAndMid(@Param("userId") Long userId, @Param("martId") Long martId);
+    void changeStatus(@Param("userId") Long userId, @Param("martId") Long martId);
     List<ClientUserCollectDTO> getCollectMerchantByUserId(Map params);
 }

@@ -18,17 +18,17 @@ import java.util.Map;
  */
 public interface MerchantRoomService extends CrudService<MerchantRoomEntity, MerchantRoomDTO> {
     //删除
-    void remove(long id,int status);
+    void remove(long id, int status);
     //根据名称和商户id查询
-    List getByNameAndMerchantId(@Param("name") String name, @Param("merchantId")long merchantId, @Param("type")int type);
+    List getByNameAndMerchantId(@Param("name") String name, @Param("merchantId") long merchantId, @Param("type") int type);
     //根据商户编号查询包房信息
-    List getByMerchantId(long merchantId,int status);
-    PageData<MerchantRoomDTO> listPage(Map<String,Object> params);
+    List getByMerchantId(long merchantId, int status);
+    PageData<MerchantRoomDTO> listPage(Map<String, Object> params);
 
     PageData<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
     PageData<MerchantRoomParamsSetDTO> selectRoomByTime(Map<String, Object> params);
     List selectRoomByTimeVis(Map<String, Object> params);
-    PageData<MerchantRoomParamsSetDTO> selectRoomDate(Map<String,Object> params);
+    PageData<MerchantRoomParamsSetDTO> selectRoomDate(Map<String, Object> params);
     MerchantRoomEntity getmerchantroom(long merchantId);
 
     Integer selectCountRoom(long merhcnatId);

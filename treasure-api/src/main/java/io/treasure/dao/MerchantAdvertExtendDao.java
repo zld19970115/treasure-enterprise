@@ -17,5 +17,5 @@ import java.util.Map;
  */
 @Mapper
 public interface MerchantAdvertExtendDao extends BaseDao<MerchantAdvertExtendEntity> {
-    List<MerchantAdvertExtendDTO> listPage(Map<String,Object> params);
+    List<MerchantAdvertExtendDTO> listPage(Map<String, Object> params);
 }

@@ -21,19 +21,19 @@ import java.util.Map;
  */
 public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEntity, MerchantWithdrawDTO> {
     //修改状态
-    void updateStatusById(long id,int status);
+    void updateStatusById(long id, int status);
 
-    BigDecimal selectTotalCath(long  martId);
-    BigDecimal selectPointMoney(long  martId);
-    Double selectByMartId(long  martId);
-    Double  selectWaitByMartId(long  martId);
-    List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);
-    Double selectAlreadyCash(long  martId);
-    PageData<MerchantWithdrawDTO> listPage(Map<String,Object> params);
-    List<MasterOrderEntity> selectOrderByMartID(Long  martId);
-    List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long  martId);
+    BigDecimal selectTotalCath(long martId);
+    BigDecimal selectPointMoney(long martId);
+    Double selectByMartId(long martId);
+    Double  selectWaitByMartId(long martId);
+    List<MerchantWithdrawEntity>  selectPoByMartID(long martId);
+    Double selectAlreadyCash(long martId);
+    PageData<MerchantWithdrawDTO> listPage(Map<String, Object> params);
+    List<MasterOrderEntity> selectOrderByMartID(Long martId);
+    List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long martId);
      //提现操作
-    void verify(long id,long verify, int verifyStatus, String verifyReason, Date verifyDate);
+    void verify(long id, long verify, int verifyStatus, String verifyReason, Date verifyDate);
     String selectWithStatus();
 
     //查询增补

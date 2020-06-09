@@ -68,6 +68,11 @@ public class GoodCategoryServiceImpl extends CrudServiceImpl<GoodCategoryDao, Go
         return baseDao.getAllByMerchantIds(params);
     }
 
+    @Override
+    public List<GoodCategoryDTO> getAllByMerchantIdsByOutside(Map<String, Object> params) {
+        return baseDao.getAllByMerchantIdsByOutside(params);
+    }
+
     /**
      * 删除
      * @param id

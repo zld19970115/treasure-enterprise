@@ -23,13 +23,14 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     MerchantUserEntity getByMobile(String mobile);
     MerchantUserEntity getByMobiles(String mobile);
     //修改密码
-    void updatePassword(String password,long id);
+    void updatePassword(String password, long id);
     //修改手机号码
-    void updateMobile(String password,long id);
+    void updateMobile(String password, long id);
     //帮定微信
-    void updateWeixin(String openid,String weixinName,String weixinUrl,long id);
+    void updateWeixin(String openid, String weixinName, String weixinUrl, long id);
     //设置店铺
-    void updateMerchant(String merchantid,long id);
+    void updateMerchant(String merchantid, long id);
+    MerchantUserEntity selectByMerchantId(long martId);
     //删除
     void remove(long id);
     //根据会员id查询商户信息
@@ -37,13 +38,13 @@ public interface MerchantUserDao extends BaseDao<MerchantUserEntity> {
     //根据手机号码查询会员商户信息
     List getMerchantByMobile(String mobile);
     //更新用户手机号
-    void updateOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
-    void updateMiniOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
+    void updateOpenid(@Param("openId") String openId, @Param("mobile") String mobile);
+    void updateMiniOpenid(@Param("openId") String openId, @Param("mobile") String mobile);
     //通过手机号查询商户信息
     MerchantUserEntity getUserByPhone(@Param("mobile") String mobile);
     //通过openid查询商户管理员信息
     MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
-    void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
-    List<MerchantUserDTO> listPage(Map<String,Object> params);
+    void updateCID(@Param("clientId") String clientId, @Param("mobile") String mobile);
+    List<MerchantUserDTO> listPage(Map<String, Object> params);
     void frozen(@Param("id") long id, @Param("state") int state);
 }

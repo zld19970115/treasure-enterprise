@@ -31,8 +31,8 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     BigDecimal getTotalCash(Map<String, Object> params);
     PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto);
     BigDecimal getCompletaOrder(Map<String, Object> params);
-    PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String,Object> map);
-    VisualizationRoomListVo getVisualizationRoom(Map<String,Object> map);
+    PageData<ReturnDishesPageVo> getReturnDishesPage(Map<String, Object> map);
+    VisualizationRoomListVo getVisualizationRoom(Map<String, Object> map);
     PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
     PageTotalRowData<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);

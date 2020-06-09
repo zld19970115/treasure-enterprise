@@ -15,5 +15,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AppVersionDao extends BaseDao<AppVersionEntity> {
 
-    String getMaxVersion(@Param("appId")String appId);
+    String getMaxVersion(@Param("appId") String appId);
 }

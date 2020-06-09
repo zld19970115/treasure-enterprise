@@ -41,7 +41,10 @@
         select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
         left join ct_merchant_room room on masterOrder.room_id=room.id
         left join ct_client_user cuser on masterOrder.creator=cuser.id
-        where masterOrder.p_order_id = '0'
+        <where>
+        <if test="ispOrderId != null">
+            and masterOrder.p_order_id = '0'
+        </if>
         <if test="status != null">
             and masterOrder.status in
             <foreach item="item" index="index" collection="statusStr" open="(" separator="," close=")">
@@ -57,6 +60,7 @@
         <if test="orderId != null  and orderId.trim() != '' ">
             and masterOrder.order_id like CONCAT('%',#{orderId},'%')
         </if>
+        </where>
     </select>
     <select id="selectPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} or order_id  = #{orderId}
@@ -229,6 +233,9 @@
     <select id="selectSharePorderid" resultType="io.treasure.entity.MasterOrderEntity">
         select * from  ct_master_order where p_order_id =#{orderId} and reservation_type = 2 and status in (2,7)
     </select>
+    <select id="selectByPayMode" resultType="java.lang.Integer">
+        select paymode from  ct_order_paymode where order_id =#{orderId}
+    </select>
     <update id="updatePayStatus">
         update ct_master_order SET status=#{status},pay_mode=#{payMode},pay_date=#{payDate}
         where order_id=#{orderId}
@@ -236,4 +243,26 @@
     <update id="updateOrderDeletedById">
         update  ct_master_order SET deleted = 1 where id = #{id}
     </update>
+    <insert id="insertPayMode">
+        insert into ct_order_paymode(order_id,paymode)value(#{orderId},#{payfs})
+    </insert>
+
+    <select id="backDishesPage" resultType="io.treasure.vo.BackDishesVo">
+        select
+            cso.order_id as orderId
+            ,cso.good_id as goodId
+            ,( select good.`name` from ct_good good where good.id = cso.good_id ) as goodName
+            ,ctmo.contacts
+            ,ctmo.contact_number as contactNumber
+            ,( SELECT room.`name` from ct_merchant_room room where room.id = ctmo.room_id ) as roomName
+            ,cso.pay_money as payMoney
+            ,cso.description
+            ,ctmo.eat_time as eatTime
+        from ct_slave_order cso
+        LEFT JOIN ct_master_order ctmo on ctmo.order_id = cso.order_id and ctmo.`status` = 2
+        where cso.`status` = 6
+        <if test="orderId != null  and orderId != '' ">
+            and cso.order_id = #{orderId}
+        </if>
+    </select>
 </mapper>

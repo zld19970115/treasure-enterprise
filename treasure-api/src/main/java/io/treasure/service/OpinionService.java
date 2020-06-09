@@ -7,5 +7,5 @@ import io.treasure.entity.OpinionEntity;
 import java.util.Map;
 
 public interface OpinionService extends CrudService<OpinionEntity, OpinionDTO> {
-    void insertOpinion( Map<String, Object> params);
+    void insertOpinion(Map<String, Object> params);
 }

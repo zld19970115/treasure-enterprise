@@ -12,10 +12,12 @@ import io.treasure.config.MiniWXPay;
 import io.treasure.dto.ChargeCashDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
 import io.treasure.utils.AdressIPUtil;
+import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,12 +66,19 @@ public class ApiWXJSAPIPayController {
     public Result wxpay(HttpServletRequest request, String total_fee,String openid, String orderNo, String description) throws Exception {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
+        Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
+        if (payMode!=2){
+            orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
+            masterOrderEntity.setOrderId(orderDTO.getOrderId());
+            masterOrderService.updateById(masterOrderEntity);
+        }
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
-        data.put("out_trade_no", orderNo);
+        data.put("out_trade_no", orderDTO.getOrderId());
 //        data.put("device_info", "");//调用接口提交的终端设备号
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换

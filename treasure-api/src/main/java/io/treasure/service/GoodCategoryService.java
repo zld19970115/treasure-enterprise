@@ -17,16 +17,17 @@ import java.util.Map;
  */
 public interface GoodCategoryService extends CrudService<GoodCategoryEntity, GoodCategoryDTO> {
     //显示数据
-    void on(Long id,int status);
+    void on(Long id, int status);
     //隐藏数据
-    void off(Long id,int status);
+    void off(Long id, int status);
     //根据分类名称和商户Id查询数据
-    List getByNameAndMerchantId(String name,long merchantId);
+    List getByNameAndMerchantId(String name, long merchantId);
     //根据商户显示分类
-    List getAllByMerchantId (long merchantId);
-    List<GoodCategoryDTO> getAllByMerchantIds(Map<String,Object> params);
+    List getAllByMerchantId(long merchantId);
+    List<GoodCategoryDTO> getAllByMerchantIds(Map<String, Object> params);
+    List<GoodCategoryDTO>  getAllByMerchantIdsByOutside(Map<String, Object> params);
     //删除
-    void remove(Long id,int status);
+    void remove(Long id, int status);
     //列表查询，显示店铺名称
     PageData<GoodCategoryDTO> selectPage(Map<String, Object> params);
 }

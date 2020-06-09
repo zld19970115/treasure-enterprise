@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.treasure.dao.PowerLevelDao">
+
+
+    <insert id="insertPowerLevel">
+        insert into ct_power_level (powerlevel_id,user_id,power_type,power_gain,power_sum,power_finish,power_open_date,ramdom_number)
+         VALUES
+        (#{powerlevelId},#{userId},1,0,0,0,#{powerOpenDate},#{ramdomNumber});
+    </insert>
+
+    <select id="getPowerLevelByUserId" resultType="io.treasure.dto.PowerLevelDTO">
+        select * from ct_power_level where user_id = #{userId}
+    </select>
+    <update id="updatePowerSumByUserId" parameterType="io.treasure.entity.PowerLevelEntity">
+        update ct_power_level
+        set power_sum= power_sum + 1
+        where user_id=#{userId}
+    </update>
+    <update id="updatePowerGainByUserId" parameterType="io.treasure.entity.PowerLevelEntity">
+        update ct_power_level
+        set power_gain= power_gain + 1
+        where user_id=#{userId}
+    </update>
+    <update id="updatePowerAbortDateByUserId" parameterType="io.treasure.entity.PowerLevelEntity">
+        update ct_power_level
+        set power_abort_date= #{powerAbortDate}
+        where user_id=#{userId}
+    </update>
+    <update id="updatePowerFinishByUserId" parameterType="io.treasure.entity.PowerLevelEntity">
+        update ct_power_level
+        set power_finish= 1
+        where user_id=#{userId}
+    </update>
+
+</mapper>

@@ -6,5 +6,5 @@ import io.treasure.dto.CardInfoDTO;
 import io.treasure.entity.CardInfoEntity;
 
 public interface UserCardService extends CrudService<CardInfoEntity, CardInfoDTO> {
-    Result selectByIdAndPassword(long id , String password,long userId);
+    Result selectByIdAndPassword(long id, String password, long userId);
 }

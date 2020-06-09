@@ -22,6 +22,8 @@ import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.ReturnDishesPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -116,6 +118,25 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<MerchantOrderDTO>> ongPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("ongPagePc")
+    @ApiOperation("商户端-进行中列表(已接受订单)PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> ongPagePc(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", "2");
+        params.put("ispOrderId", "1");
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
@@ -667,4 +688,12 @@ public class ApiMasterOrderController {
         ShareOrderDTO shareOrder =  masterOrderService.shareOrder(orderId);
         return new Result().ok(shareOrder);
     }
+
+    @GetMapping("backDishesPage")
+    @ApiOperation("退菜列表PC")
+    public Result<PageData<BackDishesVo>> backDishesPage(@RequestParam Map map) {
+        return new Result<PageData<BackDishesVo>>().ok(masterOrderService.backDishesPage(map));
+    }
+
+
 }

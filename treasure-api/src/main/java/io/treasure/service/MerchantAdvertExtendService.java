@@ -15,5 +15,5 @@ import java.util.Map;
  * @since 1.0.0 2019-08-23
  */
 public interface MerchantAdvertExtendService extends CrudService<MerchantAdvertExtendEntity, MerchantAdvertExtendDTO> {
-    PageData<MerchantAdvertExtendDTO> listPage(Map<String,Object> params);
+    PageData<MerchantAdvertExtendDTO> listPage(Map<String, Object> params);
 }

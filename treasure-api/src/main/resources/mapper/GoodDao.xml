@@ -49,7 +49,7 @@
             and goods.mart_id in
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
-            </foreach>
+            </foreach>  and goods.outside in (1,2)
         </if>
     </select>
 
@@ -76,7 +76,7 @@
     <select id="sortingPage" resultType="io.treasure.dto.GoodDTO">
      select goods.* from ct_good  goods
      left join ct_merchant merchant on merchant.id=goods.mart_id
-     where goods.status=1 and merchant.status = 1
+     where goods.status=1 and merchant.status = 1  and goods.outside in (1,2)
     </select>
 
     <!--        替换以上查询方法，用于加菜及查询商家商品（仅限于用户使用）    -->
@@ -84,6 +84,6 @@
         select id,name,description,price,introduce,show_in_hot,units,good_category_id,sales,icon,favorable_price,favorable_price
         from ct_good
         where status = 1
-        and mart_id =#{merchantId}
+        and mart_id =#{merchantId}  and outside in (1,2)
     </select>
 </mapper>

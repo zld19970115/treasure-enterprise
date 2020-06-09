@@ -33,7 +33,8 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = " ")
 	private Long roomId;
-
+	@ApiModelProperty(value = "重新支付支付方式")
+	private Integer payfs;
 	@ApiModelProperty(value = "预订类型：1、正常预订；2、只预订包房/散台，3、只预订菜品")
 	private Integer reservationType;
 
@@ -109,6 +110,8 @@ public class OrderDTO implements Serializable {
 	private  String pOrderId;
 	@ApiModelProperty(value = "总支付金额")
 	private  BigDecimal allPaymoney;
+	@ApiModelProperty(value = "总支付金额")
+	private  BigDecimal accountPaymoney;
 	@ApiModelProperty(value = "加菜支付金额")
 	private  BigDecimal Ppaymoney;
 	@ApiModelProperty(value = "订单菜品")

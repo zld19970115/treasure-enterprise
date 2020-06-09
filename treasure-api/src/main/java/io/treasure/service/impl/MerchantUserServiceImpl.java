@@ -92,6 +92,11 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.updateMobile(mobile,id);
     }
 
+    @Override
+    public MerchantUserEntity selectByMerchantId(long martId) {
+        return baseDao.selectByMerchantId(martId);
+    }
+
     /**
      * 帮定微信
      * @param openid

@@ -4,6 +4,7 @@ import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.vo.BackDishesVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,8 +22,8 @@ import java.util.Map;
 @Mapper
 public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     //refundReason
-    int updateStatusAndReason(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason")  String refundReason);
-    int updateStatusById(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason")  String refundReason);
+    int updateStatusAndReason(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason") String refundReason);
+    int updateStatusById(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason") String refundReason);
     //商户端查询
     List<MerchantOrderDTO> listMerchant(Map params);
     List<MerchantOrderDTO> listMerchant2(Map params);
@@ -36,10 +37,10 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<OrderDTO> selectPOrderIdAndS(String orderId);
     List<OrderDTO> selectOrder(String orderId);
     MasterOrderDTO getOrderByOrderId(String orderId);
-    void updateOrderStatus(@Param("status") int status,@Param("orderId") String orderId);
-    void updatePayMode(@Param("payMode") String payMode,@Param("orderId") String orderId);
+    void updateOrderStatus(@Param("status") int status, @Param("orderId") String orderId);
+    void updatePayMode(@Param("payMode") String payMode, @Param("orderId") String orderId);
     MasterOrderDTO getOrderById(long id);
-    void updatePayMoney(@Param("PayMoney") BigDecimal PayMoney,@Param("orderId") String orderId);
+    void updatePayMoney(@Param("PayMoney") BigDecimal PayMoney, @Param("orderId") String orderId);
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
     List<OrderDTO> getOrderDTOByPorderId(String orderId);
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
@@ -49,6 +50,8 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity> getStatus4Order(Map<String, Object> params);
     OrderDTO getMasterOrder(String orderId);
     OrderDTO getOrder(String orderId);
+    Integer selectByPayMode(String orderId);
+    void insertPayMode(String orderId, int payfs);
     List<OrderDTO> getOrder1(String orderId);
     List<MasterOrderEntity> getOrder2(String orderId);
     List<MasterOrderEntity>  selectNodelOrders(String orderId);
@@ -57,20 +60,22 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity> selectSharePorderid(String orderId);
     List<OrderDTO> getPayOrder(Map params);
     List<OrderDTO> getPayOrders(Map params);
-    List<MasterOrderEntity>getAuxiliaryPayOrder(@Param("orderId")  String orderId,@Param("status") int status);
+    List<MasterOrderEntity>getAuxiliaryPayOrder(@Param("orderId") String orderId, @Param("status") int status);
     List<MasterOrderEntity>getAuxiliaryPayOrders(String orderId);
     List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
-    void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp,@Param("pb")BigDecimal pb,@Param("orderId") String orderId);
+    void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp, @Param("pb") BigDecimal pb, @Param("orderId") String orderId);
     MasterOrderEntity getOrderByReservationId(long reservationId);
     List<OrderDTO> getAffiliateOrde(String orderId);
     BigDecimal getPlatformBalance();
     List<MasterOrderDTO> getOrderByFinance(String orderId);
     MasterOrderEntity selectUnPayOrderByOrderId(String orderId);
     //String orderid,int支付方式，date支付日期,支付状态由1变为4
-    void updatePayStatus(@Param("orderId")  String orderId,@Param("payMode")int payMode,
-                         @Param("payDate")Date payDate,@Param("status") int status);
+    void updatePayStatus(@Param("orderId") String orderId, @Param("payMode") int payMode,
+                         @Param("payDate") Date payDate, @Param("status") int status);
     void  updateOrderDeletedById(long id);
 //       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
     MasterOrderEntity selectMOById(String orderId);
+
+    List<BackDishesVo> backDishesPage(Map params);
 
 }

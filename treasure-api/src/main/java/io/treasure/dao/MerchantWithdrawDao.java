@@ -21,18 +21,18 @@ import java.util.Map;
  */
 @Mapper
 public interface MerchantWithdrawDao extends BaseDao<MerchantWithdrawEntity> {
-    void updateStatusById(long id,int status);
-    BigDecimal selectTotalCath(long  martId);
-    BigDecimal selectPointMoney(long  martId);
-    Double selectAlreadyCash(long  martId);
-    Double selectByMartId(long  martId);
-    Double  selectWaitByMartId(long  martId);
-    List<MerchantWithdrawEntity>  selectPoByMartID(long  martId);
-    List<MasterOrderEntity>  selectOrderByMartID(Long  merchantId);
-    List<MerchantWithdrawDTO> listPage(Map<String,Object> params);
-    void verify(long id,long verify, int verifyState, String verifyReason, Date verifyDate);
+    void updateStatusById(long id, int status);
+    BigDecimal selectTotalCath(long martId);
+    BigDecimal selectPointMoney(long martId);
+    Double selectAlreadyCash(long martId);
+    Double selectByMartId(long martId);
+    Double  selectWaitByMartId(long martId);
+    List<MerchantWithdrawEntity>  selectPoByMartID(long martId);
+    List<MasterOrderEntity>  selectOrderByMartID(Long merchantId);
+    List<MerchantWithdrawDTO> listPage(Map<String, Object> params);
+    void verify(long id, long verify, int verifyState, String verifyReason, Date verifyDate);
     String selectWithStatus();
-    List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long  martId);
+    List<MerchantWithdrawDTO>  selectByMartIdAndStasus(Long martId);
 
     List<MerchantWithdrawEntity> selectByObject(QueryWithdrawDto queryWithdrawDto);
     Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);

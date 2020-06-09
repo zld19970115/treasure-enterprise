@@ -94,7 +94,7 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
 
     /**
      * 根据商户ID 查询商户下所有菜品
-     * @param martId
+     * @param
      * @return
      */
     @Override
@@ -111,6 +111,20 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
         return goodsByMartId;
     }
 
+    @Override
+    public List getoutsideGoodsByMartId(Map<String, Object> params) {
+        String martId=(String)params.get("martId");
+        if (StringUtils.isNotBlank(martId) && StringUtils.isNotEmpty(martId)) {
+            String[] str = martId.split(",");
+            params.put("merchantIdStr", str);
+        }else{
+            params.put("martId",null);
+        }
+
+        List goodsByMartId = baseDao.getoutsideGoodsByMartId(params);
+        return goodsByMartId;
+    }
+
     /**
      * 通过商户ID与菜品分类ID查询此分类的所有菜
      * @param martId
@@ -120,6 +134,12 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
     @Override
     public List getGoodsByGoodCategoryId(long martId,long goodCategoryId){
         List goodsByGoodCategoryId = baseDao.getGoodsByGoodCategoryId(martId, goodCategoryId);
+        return goodsByGoodCategoryId;
+    }
+
+    @Override
+    public List getoutsideGoodsByGoodCategoryId(long martId, long goodCategoryId) {
+        List goodsByGoodCategoryId = baseDao.getoutsideGoodsByGoodCategoryId(martId, goodCategoryId);
         return goodsByGoodCategoryId;
     }
 

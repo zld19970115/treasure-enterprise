@@ -16,10 +16,10 @@ import java.util.Map;
  * @since 1.0.0 2019-08-12
  */
 public interface MerchantRoomParamsService extends CrudService<MerchantRoomParamsEntity, MerchantRoomParamsDTO> {
-    PageData<MerchantRoomParamsDTO> listPage(Map<String,Object> params);
-    void remove(Long id,int status);
+    PageData<MerchantRoomParamsDTO> listPage(Map<String, Object> params);
+    void remove(Long id, int status);
     //根据商户编号和参数内容查询
-    List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId, String content,int status);
+    List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId, String content, int status);
     //根据状态获取预约参数
     List<MerchantRoomParamsEntity> getAllByStatus(int status);
 }

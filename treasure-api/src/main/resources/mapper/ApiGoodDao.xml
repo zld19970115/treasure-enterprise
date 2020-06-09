@@ -34,7 +34,7 @@
         <result property="rank" column="rank"/>
     </resultMap>
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
+        select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc and outside in (1,2)
     </select>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}  order by rank asc
@@ -49,13 +49,29 @@
             <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
                 #{item}
             </foreach>
-        </if> and `status`=1
+        </if> and `status`=1  and outside in (1,2)
          order by rank asc
     </select>
+    <select id="getoutsideGoodsByMartId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
+        select * FROM ct_good where 1=1
+        <if test="martId != null">
+            and mart_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if> and `status`=1   and ouside in (0,1)
+        order by rank asc
+    </select>
     <select id="getGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
-       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1  order by rank asc
+       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1 and outside in (1,2)
+
+        order by rank asc
+    </select>
+    <select id="getoutsideGoodsByGoodCategoryId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.entity.GoodEntity">
+       select * FROM ct_good where mart_id=#{martId}  and good_category_id=#{goodCategoryId} and `status`=1 and outside in (0,1)
+        order by rank asc
     </select>
     <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
-        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1  order by rank asc
+        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1  order by rank asc and outside in (1,2)
     </select>
 </mapper>

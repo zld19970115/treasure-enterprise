@@ -17,6 +17,6 @@ import java.util.Map;
 @Mapper
 public interface MerchantActivityDao extends BaseDao<MerchantActivityEntity> {
     //删除
-    void updateStatusById(Long id,int status);
-    List<MerchantActivityDTO> listPage(Map<String,Object> params);
+    void updateStatusById(Long id, int status);
+    List<MerchantActivityDTO> listPage(Map<String, Object> params);
 }

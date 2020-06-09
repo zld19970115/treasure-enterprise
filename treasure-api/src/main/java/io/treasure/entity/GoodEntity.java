@@ -48,6 +48,16 @@ public class GoodEntity extends BaseEntity {
      * 单位
      */
 	private String units;
+
+	/**
+	 * 是否外卖 0 --仅外卖 1 ---即可外卖又可堂食 2---仅堂食
+	 */
+	private Integer	outside;
+	/**
+	 * 外卖价格
+	 */
+	private BigDecimal	outPrice;
+
     /**
      * 备注信息
      */

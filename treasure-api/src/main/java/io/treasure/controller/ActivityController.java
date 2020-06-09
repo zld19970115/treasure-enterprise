@@ -12,6 +12,7 @@ import io.treasure.dto.*;
 import io.treasure.entity.ActivityEntity;
 import io.treasure.service.ActivityService;
 import io.treasure.vo.ActivityRartakeVo;
+import io.treasure.vo.ActivityRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -78,7 +79,34 @@ public class ActivityController {
         dto.setToken(request.getHeader("token"));
         int code = activityService.receiveGift(dto);
         if(code == 200) {
-            return new Result<String>().ok("领取成功");
+            return new Result<String>().ok("领取成功");//显示领取了多少
+        } else if(code == 0) {
+            return new Result<String>().error("参数错误");
+        } else if(code == 1) {
+            return new Result<String>().error("请登录");
+        } else if(code == 2) {
+            return new Result<String>().error("活动暂未开始");
+        } else if(code == 3) {
+            return new Result<String>().error("活动以结束");
+        } else if(code == 4) {
+            return new Result<String>().error("奖品已经领取完了");
+        } else if(code == 5) {
+            return new Result<String>().error("您已参加过本次活动");
+        }
+        return new Result<String>().error("系统繁忙");
+    }
+
+    //尽量保持原接口不动，所以重新copy了一份新的接口
+    //@Login
+    @PostMapping("receiveGiftCopy")
+    @ApiOperation("活动奖励获取copy")
+    public Result<String> receiveGiftCopy(@RequestBody ReceiveGiftDto dto, HttpServletRequest request) {
+        dto.setToken(request.getHeader("token"));
+        ActivityRewardVo activityRewardVo = activityService.receiveGiftCopy(dto);
+
+        int code = activityRewardVo.getCode();
+        if(code == 200) {
+            return new Result<String>().ok("成功领取代付金"+activityRewardVo.getReward()+"元");//显示领取了多少
         } else if(code == 0) {
             return new Result<String>().error("参数错误");
         } else if(code == 1) {

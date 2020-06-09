@@ -10,6 +10,6 @@ import java.util.Date;
 
 @Mapper
 public interface UserCardDao  extends BaseDao<CardInfoEntity> {
-    CardInfoEntity  selectByIdAndPassword(@Param("id") long id , @Param("password")String password);
+    CardInfoEntity  selectByIdAndPassword(@Param("id") long id, @Param("password") String password);
 
 }
