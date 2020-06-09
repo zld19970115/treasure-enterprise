@@ -19,6 +19,7 @@ import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.DateUtil;
 import io.treasure.vo.ActivityRartakeVo;
+import io.treasure.vo.ActivityRewardVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,14 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
 
-    @Autowired
+    @Autowired(required = false)
     private ActivityDao activityDao;
 
     @Autowired
@@ -143,6 +146,8 @@ public class ActivityServiceImpl implements ActivityService {
             logObj.setType(activityDto.getType());
             logObj.setCost(activityGiveEntity.getCost());
             logObj.setCreateDate(new Date());
+
+
             if(activityDao.insertGiveLog(logObj) > 0) {
                 BigDecimal gift = clientUserService.getClientUser(obj.getUserId()).getGift();
                 clientUserService.addRecordGiftByUserid(obj.getUserId().toString(),activityGiveEntity.getCost().toString());
@@ -150,11 +155,70 @@ public class ActivityServiceImpl implements ActivityService {
             } else {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
+
             return 200;
+
         } else {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return 4;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ActivityRewardVo receiveGiftCopy(ReceiveGiftDto dto) {
+
+        if(dto.getActivityId() == null || dto.getToken() == null) {
+
+            return new ActivityRewardVo(0,null);
+        }
+        TokenEntity obj = tokenService.getByToken(dto.getToken());
+        if(obj == null || obj.getUserId() == null) {
+            return  new ActivityRewardVo(1,null);
+        }
+        ActivityDto activityDto = selectById(dto.getActivityId());
+        if(activityDto == null) {
+            return  new ActivityRewardVo(0,null);
+        }
+        try {
+            if(activityDto.getState() == 0 || (DateUtil.strToDate(activityDto.getStatrDate()).getTime() > new Date().getTime())) {
+
+                return  new ActivityRewardVo(2,null);
+            }
+            if(DateUtil.strToDate(activityDto.getEndDate()).getTime() < new Date().getTime()) {
+                return  new ActivityRewardVo(3,null);
+            }
+        } catch (ParseException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+            return  new ActivityRewardVo(5,null);
+        }
+        if(activityDao.receiveGift(dto.getActivityId(),obj.getUserId()) > 0) {
+            ActivityGiveEntity activityGiveEntity = selectGiveByActivityId(dto.getActivityId());
+            ActivityGiveLogEntity logObj = new ActivityGiveLogEntity();
+            logObj.setActivityId(dto.getActivityId());
+            logObj.setGiveId(activityGiveEntity.getId());
+            logObj.setUserId(obj.getUserId());
+            logObj.setType(activityDto.getType());
+            logObj.setCost(activityGiveEntity.getCost());
+            logObj.setCreateDate(new Date());
+
+
+            if(activityDao.insertGiveLog(logObj) > 0) {
+                BigDecimal gift = clientUserService.getClientUser(obj.getUserId()).getGift();
+                clientUserService.addRecordGiftByUserid(obj.getUserId().toString(),activityGiveEntity.getCost().toString());
+                recordGiftService.insertRecordGift6(obj.getUserId(), new Date(),gift.add(activityGiveEntity.getCost()) , activityGiveEntity.getCost());
+            } else {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            }
+
+            return  new ActivityRewardVo(200,activityGiveEntity.getCost());//返回一份的数量
+
+        } else {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+        return  new ActivityRewardVo(4,null);
     }
 
     @Override
