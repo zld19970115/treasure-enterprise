@@ -55,6 +55,24 @@
          order by create_date desc
     </select>
 
+    <select id="pagePCTotalRow" resultType="io.treasure.dto.ClientUserDTO">
+        select
+            IFNULL(sum(integral),0) as integral,
+            IFNULL(sum(balance),0) as balance,
+            IFNULL(sum(gift),0) as gift
+        from ct_client_user
+        where `status` != 9
+        <if test="mobile != null and mobile != ''">
+            and mobile like CONCAT('%',#{mobile},'%')
+        </if>
+        <if test="startDate != null and startDate.trim() != ''">
+            <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+        </if>
+    </select>
+
     <select id="getUserByOpenId"  parameterType="io.treasure.entity.ClientUserEntity" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where openid=#{openid} or  unionid=#{openid}
     </select>

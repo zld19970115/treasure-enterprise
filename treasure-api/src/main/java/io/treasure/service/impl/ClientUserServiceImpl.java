@@ -21,6 +21,8 @@ import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
+import io.treasure.vo.MerchantAccountVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,10 +215,19 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
-    public PageData<ClientUserDTO> pagePC(Map<String, Object> params) {
+    public PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params) {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<ClientUserDTO> page = (Page) clientUserDao.pagePC(params);
-        return new PageData<>(page.getResult(),page.getTotal());
+        Map map = new HashMap();
+        if(page != null && page.getResult().size() > 0) {
+            ClientUserDTO vo = baseDao.pagePCTotalRow(params);
+            if(vo != null) {
+                map.put("integral",vo.getIntegral());
+                map.put("balance",vo.getBalance());
+                map.put("gift",vo.getGift());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
     @Override

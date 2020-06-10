@@ -7,6 +7,7 @@ import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -45,5 +46,5 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
 
-    PageData<ClientUserDTO> pagePC(Map<String, Object> params);
+    PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params);
 }
