@@ -37,4 +37,8 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     List<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
     void addRecordGiftByUserid(String userId,String useGift);
 
+    List<ClientUserDTO> pagePC(Map<String,Object> params);
+
+    ClientUserDTO pagePCTotalRow(Map<String,Object> params);
+
 }

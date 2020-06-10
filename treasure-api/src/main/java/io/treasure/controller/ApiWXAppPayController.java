@@ -12,6 +12,7 @@ import io.treasure.config.IWXPay;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
 import io.treasure.service.SlaveOrderService;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -90,7 +92,7 @@ public class ApiWXAppPayController {
 //
 //        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
 //        masterOrderEntity.setOrderId(tmpOrderId);
-//        masterOrderService.updateById(masterOrderEntity);
+//        masterOrderService.updateById(masterOrderEntity);-
 
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
@@ -98,6 +100,11 @@ public class ApiWXAppPayController {
         Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
         if (payMode!=1){
             orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
+            for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+                slaveOrderEntity.setOrderId(orderDTO.getOrderId());
+            slaveOrderService.updateById(slaveOrderEntity);
+        }
             masterOrderEntity.setOrderId(orderDTO.getOrderId());
             masterOrderService.updateById(masterOrderEntity);
         }
@@ -122,7 +129,6 @@ public class ApiWXAppPayController {
         boolean rtn = orderInfo.get("return_code").equals(WXPayConstants.SUCCESS) && orderInfo.get("result_code").equals(WXPayConstants.SUCCESS);
 
         if(rtn) {
-
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("appid", wxPayConfig.getAppID());
             params.put("partnerid", wxPayConfig.getMchID());

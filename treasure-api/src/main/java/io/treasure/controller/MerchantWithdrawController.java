@@ -24,6 +24,7 @@ import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PagePlus;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -443,9 +444,9 @@ public class MerchantWithdrawController {
             @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "verifyState", value = "状态类型", paramType = "query", dataType="int"),
     })
-    public Result<PageData<MerchantWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawByMerchantId(params);
-        return new Result<PageData<MerchantWithdrawDTO>>().ok(page);
+    public Result<PageTotalRowData<MerchantWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageTotalRowData<MerchantWithdrawDTO> page = merchantWithdrawService.getMerchanWithDrawByMerchantId(params);
+        return new Result<PageTotalRowData<MerchantWithdrawDTO>>().ok(page);
     }
 
 

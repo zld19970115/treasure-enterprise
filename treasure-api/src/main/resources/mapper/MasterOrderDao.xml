@@ -265,4 +265,100 @@
             and cso.order_id = #{orderId}
         </if>
     </select>
+
+    <select id="pagePC" resultType="io.treasure.vo.OrderVo">
+        select
+            ctmo.id,
+            ctmo.order_id as orderId,
+            cm.`name` as merchantName,
+            (select room.`name` from ct_merchant_room room where room.id = ctmo.room_id) as roomName,
+            (select ctrp.content from ct_merchant_room_params ctrp where ctrp.id =
+            (select ctrps.room_params_id from ct_merchant_room_params_set ctrps where ctrps.id = ctmo.reservation_id)
+            ) as reservationName,
+            ctmo.reservation_type as reservationType,
+            ctmo.preferential_type as preferentialType,
+            ctmo.discount_id as discountId,
+            date_format(ctmo.eat_time, '%Y-%m-%d %H') as eatTime,
+            ctmo.total_money as totalMoney,
+            ctmo.gift_money as giftMoney,
+            ctmo.pay_money as payMoney,
+            ctmo.`status`,
+            ctmo.pay_mode as payMode,
+            ctmo.invoice,
+            ctmo.description,
+            date_format(ctmo.pay_date, '%Y-%m-%d %H:%i:%S') as payDate,
+            ctmo.contacts,
+            ctmo.contact_number as contactNumber,
+            ctmo.check_status as checkStatus,
+            ctmo.check_mode as checkMode,
+            ctmo.refund_id as refundId,
+            ctmo.refund_reason as refundReason,
+            date_format(ctmo.refund_date, '%Y-%m-%d %H:%i:%S') as refundDate,
+            date_format(ctmo.create_date, '%Y-%m-%d %H:%i:%S') as createDate,
+            ctmo.p_order_id as porderId,
+            ctmo.merchant_proceeds as merchantProceeds,
+            ctmo.platform_brokerage as platformBrokerage,
+            u.mobile
+        from ct_master_order ctmo
+        LEFT JOIN ct_merchant cm on cm.id = ctmo.merchant_id
+        LEFT JOIN ct_client_user u on u.id = ctmo.creator
+        where ctmo.`status` != 9
+        <if test="startDate != null and startDate.trim() != ''">
+            <![CDATA[ and date_format(ctmo.create_date, '%Y-%m-%d') >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(ctmo.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+        </if>
+        <if test="orderId != null and orderId.trim() != ''">
+            and ctmo.order_id like CONCAT('%',#{orderId},'%')
+        </if>
+        <if test="merchantName != null and merchantName.trim() != ''">
+            and cm.`name` like CONCAT('%',#{merchantName},'%')
+        </if>
+        <if test="status != null">
+            and ctmo.`status` = #{status}
+        </if>
+        <if test="payMode != null">
+            and ctmo.pay_mode = #{payMode}
+        </if>
+        <if test="mobile != null and mobile.trim() != ''">
+            and u.mobile like CONCAT('%',#{mobile},'%')
+        </if>
+        order by ctmo.create_date desc
+    </select>
+
+    <select id="pagePCTotalRow" resultType="io.treasure.vo.OrderVo">
+        select
+        IFNULL(sum(ctmo.total_money),0) as totalMoney,
+        IFNULL(sum(ctmo.gift_money),0) as giftMoney,
+        IFNULL(sum(ctmo.pay_money),0) as payMoney,
+        IFNULL(sum(ctmo.merchant_proceeds),0) as merchantProceeds,
+        IFNULL(sum(ctmo.platform_brokerage),0) as platformBrokerage
+        from ct_master_order ctmo
+        LEFT JOIN ct_merchant cm on cm.id = ctmo.merchant_id
+        LEFT JOIN ct_client_user u on u.id = ctmo.creator
+        where ctmo.`status` != 9
+        <if test="startDate != null and startDate.trim() != ''">
+            <![CDATA[ and date_format(ctmo.create_date, '%Y-%m-%d') >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(ctmo.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+        </if>
+        <if test="orderId != null and orderId.trim() != ''">
+            and ctmo.order_id like CONCAT('%',#{orderId},'%')
+        </if>
+        <if test="merchantName != null and merchantName.trim() != ''">
+            and cm.`name` like CONCAT('%',#{merchantName},'%')
+        </if>
+        <if test="status != null">
+            and ctmo.`status` = #{status}
+        </if>
+        <if test="payMode != null">
+            and ctmo.pay_mode = #{payMode}
+        </if>
+        <if test="mobile != null and mobile.trim() != ''">
+            and u.mobile like CONCAT('%',#{mobile},'%')
+        </if>
+        order by ctmo.create_date desc
+    </select>
 </mapper>

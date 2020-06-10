@@ -19,6 +19,7 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
 import io.treasure.utils.OrderUtil;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -106,7 +107,7 @@ public class ChargeCashController {
 
     })
     public Result getChargeCashByCreateDate(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<ChargeCashDTO> page = chargeCashService.getChargeCashByCreateDate(params);
+        PageTotalRowData<ChargeCashDTO> page = chargeCashService.getChargeCashByCreateDate(params);
         return new Result().ok(page);
     }
 

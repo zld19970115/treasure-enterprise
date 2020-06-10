@@ -42,5 +42,27 @@
             <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
         </if>
         and ccu.id = ccc.user_id
+        order by ccc.create_date desc
+    </select>
+
+    <select id="getChargeCashByCreateDateTotalRow"  resultType="io.treasure.dto.ChargeCashDTO">
+        select
+        sum(ccc.cash) as cash,
+        sum(ccc.change_gift) as changeGift
+        from ct_charge_cash ccc , ct_client_user ccu
+        where
+        ccu.id = ccc.user_id
+        <if test="phone != null and phone!='' ">
+            and  ccu.mobile like  CONCAT('%',${phone},'%')
+        </if>
+        <if test="status != null and status!='' ">
+            and  ccc.status = #{status}
+        </if>
+        <if test="createDateTop != null and createDateTop.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+        </if>
+        <if test="createDateDown != null and createDateDown.trim() != ''">
+            <![CDATA[ and date_format(ccc.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+        </if>
     </select>
 </mapper>

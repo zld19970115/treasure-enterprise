@@ -10,6 +10,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.*;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.service.UserTransactionDetailsService;
 import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.service.impl.StatisticsServiceImpl;
 import io.treasure.utils.DateUtil;
@@ -35,6 +36,8 @@ public class StatisticsController {
     private StatisticsServiceImpl statisticsService;
     @Autowired
     private MerchantServiceImpl merchantService;
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
     @GetMapping("/sta")
     @ApiOperation("统计")
     @ApiImplicitParams({
@@ -157,8 +160,14 @@ public class StatisticsController {
 
     @PostMapping("getMerchantAccount")
     @ApiOperation("查询商户收支明细")
-    public Result<PageData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
+    public Result<PageTotalRowData<MerchantAccountVo>> getMerchantAccount(@RequestBody MerchantAccountDto dto) {
         return new Result().ok(statisticsService.getMerchantAccount(dto));
+    }
+
+    @GetMapping("userTransactionDetailsPage")
+    @ApiOperation("查询用户收支明细")
+    public Result<PageTotalRowData<UserTransactionDetailsDto>> userTransactionDetailsPage(@RequestParam Map<String,Object> map) {
+        return new Result().ok(userTransactionDetailsService.pageList(map));
     }
 
     @Login
@@ -184,8 +193,8 @@ public class StatisticsController {
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
             @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
     })
-    public Result<PageData<DaysTogetherPageDTO>> daysTogetherPage(@ApiIgnore @RequestParam Map<String, Object> params){
-        return new Result<PageData<DaysTogetherPageDTO>>().ok(statisticsService.daysTogetherPage(params));
+    public Result<PageTotalRowData<DaysTogetherPageDTO>> daysTogetherPage(@ApiIgnore @RequestParam Map<String, Object> params){
+        return new Result<PageTotalRowData<DaysTogetherPageDTO>>().ok(statisticsService.daysTogetherPage(params));
     }
 
     @Login

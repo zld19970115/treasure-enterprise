@@ -13,9 +13,11 @@ import io.treasure.dto.ChargeCashDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Constants;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.PayService;
+import io.treasure.service.SlaveOrderService;
 import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.OrderUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -47,7 +50,8 @@ public class ApiWXJSAPIPayController {
 
     @Autowired
     private MasterOrderService masterOrderService;
-
+    @Autowired
+    private SlaveOrderService slaveOrderService;
     /**
      * @param total_fee    支付金额
      * @param description    描述
@@ -73,6 +77,11 @@ public class ApiWXJSAPIPayController {
         Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
         if (payMode!=2){
             orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
+            for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+                slaveOrderEntity.setOrderId(orderDTO.getOrderId());
+                slaveOrderService.updateById(slaveOrderEntity);
+            }
             masterOrderEntity.setOrderId(orderDTO.getOrderId());
             masterOrderService.updateById(masterOrderEntity);
         }

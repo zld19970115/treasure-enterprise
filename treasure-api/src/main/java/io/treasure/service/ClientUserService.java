@@ -6,10 +6,9 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
-import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -46,4 +45,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     PageData<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
 
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
+
+    PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params);
 }

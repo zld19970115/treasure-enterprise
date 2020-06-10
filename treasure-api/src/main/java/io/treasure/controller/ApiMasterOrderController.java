@@ -23,7 +23,8 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.ReturnDishesPageVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -695,5 +696,16 @@ public class ApiMasterOrderController {
         return new Result<PageData<BackDishesVo>>().ok(masterOrderService.backDishesPage(map));
     }
 
+    @GetMapping("pagePC")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="endDate",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+    })
+    public Result<PageTotalRowData<OrderVo>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageTotalRowData<OrderVo>>().ok(masterOrderService.pagePC(params));
+    }
 
 }

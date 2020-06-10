@@ -191,8 +191,30 @@ select param_value from sys_params where id=1144988823431553026
         <if test="type != null and type!='' ">
             and  mw.type = #{type}
         </if>
-
+        order by mw.create_date desc
     </select>
 
-
+    <select id="getMerchanWithDrawByMerchantIdTotalRow"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select IFNULL(sum(mw.money),0) as money from ct_merchant_withdraw mw , ct_merchant cm
+       <where>
+        <if test="mobile != null and mobile!='' ">
+            and  cm.mobile like  CONCAT('%',${mobile},'%')
+        </if>
+        <if test="verifyState != null and verifyState!='' ">
+            and  mw.verify_state = ${verifyState}
+        </if>
+        <if test="createDateTop != null and createDateTop.trim() != ''">
+            <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+        </if>
+        <if test="createDateDown != null and createDateDown.trim() != ''">
+            <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+        </if>
+        <if test="merchantId != null and merchantId!='' ">
+            and  mw.merchant_id= cm.id
+        </if>
+        <if test="type != null and type!='' ">
+            and  mw.type = #{type}
+        </if>
+       </where>
+    </select>
 </mapper>

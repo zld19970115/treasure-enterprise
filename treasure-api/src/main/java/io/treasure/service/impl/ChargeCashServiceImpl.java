@@ -2,6 +2,8 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -13,6 +15,7 @@ import io.treasure.config.IWXPay;
 import io.treasure.dao.ChargeCashDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.ChargeCashDTO;
+import io.treasure.dto.DaysTogetherPageDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Constants;
@@ -22,6 +25,7 @@ import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -308,15 +312,16 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
      * 查询用户充值记录
      */
     @Override
-    public PageData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params) {
-
-        //分页
-        IPage<ChargeCashEntity> page = getPage(params, Constant.CREATE_DATE, false);
-
-        //查询
-        List<ChargeCashDTO> list = baseDao.getChargeCashByCreateDate(params);
-
-        return getPageData(list, page.getTotal(), ChargeCashDTO.class);
+    public PageTotalRowData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<DaysTogetherPageDTO> page = (Page) baseDao.getChargeCashByCreateDate(params);
+        Map map = new HashMap();
+        if(page.getResult().size() > 0) {
+            ChargeCashDTO vo = baseDao.getChargeCashByCreateDateTotalRow(params);
+            map.put("cash",vo.getCash());
+            map.put("changeGift",vo.getChangeGift());
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
 }

@@ -1,10 +1,12 @@
 package io.treasure.dao;
+
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.OrderVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -77,5 +79,9 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderEntity selectMOById(String orderId);
 
     List<BackDishesVo> backDishesPage(Map params);
+
+    List<OrderVo> pagePC(Map<String,Object> params);
+
+    OrderVo pagePCTotalRow(Map<String,Object> params);
 
 }

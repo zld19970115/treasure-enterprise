@@ -25,15 +25,16 @@ import io.treasure.service.*;
 import io.treasure.utils.OrderUtil;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.ReturnDishesPageVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -93,6 +94,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private CtDaysTogetherService ctDaysTogetherService;
+
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
 
 
     @Override
@@ -224,6 +228,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+
+        if(dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
+            ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
+            UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+            entiry.setCreateDate(new Date());
+            entiry.setMobile(clientUserEntity.getMobile());
+            entiry.setMoney(dto.getPayMoney());
+            entiry.setPayMode(1);
+            entiry.setType(2);
+            entiry.setBalance(clientUserEntity.getBalance().subtract(dto.getPayMoney()));
+            entiry.setUserId(clientUserEntity.getId());
+            userTransactionDetailsService.insert(entiry);
+        }
+
         statsDayDetailService.insertFinishUpdate(dto);
         List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
         for (MasterOrderDTO mod:orderByFinance) {
@@ -2623,6 +2641,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
         return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
 
+    }
+
+    @Override
+    public PageTotalRowData<OrderVo> pagePC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<OrderVo> page = (Page) baseDao.pagePC(params);
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            OrderVo vo = baseDao.pagePCTotalRow(params);
+            if(vo != null) {
+                map.put("totalMoney",vo.getTotalMoney());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("payMoney",vo.getPayMoney());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 }
 

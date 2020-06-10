@@ -2,11 +2,11 @@ package io.treasure.service;
 
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
-import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.QueryWithdrawDto;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
+import io.treasure.vo.PageTotalRowData;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -42,6 +42,6 @@ public interface MerchantWithdrawService extends CrudService<MerchantWithdrawEnt
     Double selectTotalByType(QueryWithdrawDto queryWithdrawDto);
 
     PageData<MerchantWithdrawDTO>  getMerchanWithDrawAll(Map<String, Object> params);
-    PageData<MerchantWithdrawDTO>  getMerchanWithDrawByMerchantId(Map<String, Object> params);
+    PageTotalRowData<MerchantWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params);
 
 }
