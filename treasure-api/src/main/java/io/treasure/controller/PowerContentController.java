@@ -170,7 +170,6 @@ public class PowerContentController {
             map.put("msg","注册成功");
         }
 
-
         return new Result().ok(map);
 
     }

@@ -13,6 +13,8 @@ import java.io.IOException;
 
 
 public class AppPushUtil {
+
+
     // STEP1：获取应用基本信息
     private static String url = "http://sdk.open.api.igexin.com/apiex.htm";
     public static void main(String[] args) throws IOException {
