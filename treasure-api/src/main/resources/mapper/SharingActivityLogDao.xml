@@ -3,6 +3,10 @@
 
 <mapper namespace="io.treasure.dao.SharingActivityLogDao">
 
-
+<select id="getSum" resultType="integer">
+    SELECT sum(helper_value) FROM sharing_activity_log
+    where activity_id =#{saId}
+    and initiator_id = #{initiatorId}
+</select>
 
 </mapper>

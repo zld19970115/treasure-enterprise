@@ -24,7 +24,7 @@ public interface SharingActivityLogService {
      * @param helperMobile
      * @return
      */
-    Integer isHelpedCount(Long intitiatorId,Integer activityId,String helperMobile);
+    Integer getHelpedCount(Long intitiatorId, Integer activityId, String helperMobile);
 
 
     /**
@@ -33,4 +33,6 @@ public interface SharingActivityLogService {
      * @return
      */
     boolean insertOne(SharingActivityLogEntity sharingActivityLogEntity);
+
+    Integer getSum(Long intitiatorId, Integer activityId);
 }

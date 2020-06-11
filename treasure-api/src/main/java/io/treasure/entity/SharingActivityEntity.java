@@ -16,7 +16,8 @@ public class SharingActivityEntity {
       private String subject;// char(30) NOT NULL COMMENT '主题',
       private Integer memberHelper;// int(2) DEFAULT '0' COMMENT '活动协助者：0仅新用户，2新旧用户均可',
       private String successMsg;// char(50) DEFAULT NULL COMMENT '成功短消息',
-      private Date repeatableTimes;// int(2) DEFAULT '0' COMMENT '重复参与活动次数',
+      private Integer proposeTimes;//可重复发起活动的次数
+      private Integer repeatableTimes;// int(2) DEFAULT '0' COMMENT '重复参与活动次数',
       private Integer sharingMethod;// int(2) DEFAULT '1' COMMENT '1-人数方式，2-，3-',
       private Integer rewardType;// int(2) DEFAULT '1' COMMENT '奖励类型1-代付金，2-商品，3-菜品',
       private Integer helpersNum;// int(10) DEFAULT '0' COMMENT '协助者人数',

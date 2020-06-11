@@ -64,6 +64,17 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         return sharingInitiatorDao.selectOne(sieqw);
     }
 
+    public List<SharingInitiatorEntity> getList(Long intitiatorId,Integer saId){
+
+        QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
+
+        sieqw.eq("initiator_id",intitiatorId);
+        if(saId != null)
+            sieqw.eq("sa_id",saId);
+
+        return sharingInitiatorDao.selectList(sieqw);
+    }
+
     /**
      * 取得订单位列表，根据活动有效性
      * @param result 1:只查已经成功的,0查询未成功的,null查询所有
@@ -120,5 +131,25 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         return true;//成功参加了本活动
     }
 
+    /**
+     * 取得用户发起活动相同活动的数量
+     * @param intitiatorId
+     * @param saId
+     * @return
+     */
+    public Integer getCount(Long intitiatorId,Integer saId,Integer status){
+        QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
+        System.out.println("intitiatorId,saId,status"+intitiatorId+","+saId+","+status.toString());
+        sieqw.eq("initiator_id",intitiatorId);
+        if(saId != null)
+            sieqw.eq("sa_id",saId);
+       if(status != null)
+            sieqw.eq("status",status);
+
+        Integer res = sharingInitiatorDao.selectCount(sieqw);
+        if(res != null)
+            return res;
+        return 0;
+    }
 
 }

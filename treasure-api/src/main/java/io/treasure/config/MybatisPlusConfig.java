@@ -44,7 +44,7 @@ public class MybatisPlusConfig {
     @Profile({"dev","test","prod"})//开启本功能的环境
     public PerformanceInterceptor performanceInterceptor() {
         PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();
-        performanceInterceptor.setMaxTime(300);//ms，超过此处设置的ms则sql不执行
+        performanceInterceptor.setMaxTime(1000);//ms，超过此处设置的ms则sql不执行
         performanceInterceptor.setFormat(true);
         return performanceInterceptor;
     }

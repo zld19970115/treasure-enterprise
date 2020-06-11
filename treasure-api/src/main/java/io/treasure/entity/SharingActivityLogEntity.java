@@ -14,7 +14,6 @@ public class SharingActivityLogEntity {
         private Long salId;
         private int activityId;
         private Long initiatorId;
-        private Integer rewardAmount;
         private String helperMobile;
         private Integer helperValue;
         private Date createPmt;

@@ -44,8 +44,8 @@ public class SharingActivityServiceImpl implements SharingActivityService {
         saeqw.eq("sa_id",said);
         if (enableOnly) {
             Date now = new Date();
-            saeqw.gt("open_date", now);
-            saeqw.lt("close_date", now);
+            saeqw.lt("open_date", now);
+            saeqw.gt("close_date", now);
         }
         return sharingActivityDao.selectOne(saeqw);
     }
@@ -61,8 +61,8 @@ public class SharingActivityServiceImpl implements SharingActivityService {
 
         if (enableOnly) {
             Date now = new Date();
-            saeqw.gt("open_date", now);
-            saeqw.lt("close_date", now);
+            saeqw.lt("open_date", now);
+            saeqw.gt("close_date", now);
         }
         return sharingActivityDao.selectList(saeqw);
     }

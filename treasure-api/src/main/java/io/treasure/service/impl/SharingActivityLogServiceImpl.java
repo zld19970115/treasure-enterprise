@@ -8,6 +8,7 @@ import io.treasure.dao.SharingInitiatorDao;
 import io.treasure.entity.SharingActivityEntity;
 import io.treasure.entity.SharingActivityLogEntity;
 import io.treasure.entity.SharingInitiatorEntity;
+import io.treasure.service.SharingActivityLogService;
 import io.treasure.service.SharingActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class SharingActivityLogServiceImpl {
+public class SharingActivityLogServiceImpl implements SharingActivityLogService {
 
     @Autowired(required = false)
     private SharingActivityLogDao sharingActivityLogDao;
@@ -38,19 +39,24 @@ public class SharingActivityLogServiceImpl {
 
 
     /**
-     * 取得指定用户参加的次数
+     * 取得指定用户参加的次数,及助力的次数
      * @param intitiatorId
      * @param activityId
      * @return
      */
+    @Override
     public Integer getCount(Long intitiatorId, Integer activityId){
+
         QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
-        sieqw.eq("initiator_id",intitiatorId);
         sieqw.eq("activity_id",activityId);
+        sieqw.eq("initiator_id",intitiatorId);
 
-        return sharingActivityLogDao.selectCount(sieqw);
-
+        Integer count = sharingActivityLogDao.selectCount(sieqw);
+        if(count == null)
+            return 0;
+        return count;
     }
+
 
 
     /**
@@ -60,14 +66,18 @@ public class SharingActivityLogServiceImpl {
      * @param helperMobile
      * @return
      */
-    public Integer isHelpedCount(Long intitiatorId,Integer activityId,String helperMobile){
+    @Override
+    public Integer getHelpedCount(Long intitiatorId,Integer activityId,String helperMobile){
 
         QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
         sieqw.eq("initiator_id",intitiatorId);
         sieqw.eq("activity_id",activityId);
         sieqw.eq("helper_mobile",helperMobile);
 
-        return sharingActivityLogDao.selectCount(sieqw);
+        Integer res = sharingActivityLogDao.selectCount(sieqw);
+        if(res == null)
+            return 0;
+        return res;
     }
 
 
@@ -84,7 +94,13 @@ public class SharingActivityLogServiceImpl {
         return true;
     }
 
+    public Integer getSum(Long intitiatorId, Integer activityId){
 
+        Integer res = sharingActivityLogDao.getSum(intitiatorId,activityId);
+        if(res == null)
+            return 0;
+        return res;
+    }
 
 
 }
