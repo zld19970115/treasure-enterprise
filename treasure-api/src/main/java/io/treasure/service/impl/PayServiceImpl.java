@@ -86,6 +86,9 @@ public class PayServiceImpl implements PayService {
     @Autowired
     private SMSConfig smsConfig;
 
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
@@ -320,6 +323,16 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
+
+        UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+        entiry.setCreateDate(new Date());
+        entiry.setMobile(clientUserEntity.getMobile());
+        entiry.setMoney(total_amount);
+        entiry.setPayMode(3);
+        entiry.setType(1);
+        entiry.setBalance(balance);
+        entiry.setUserId(clientUserEntity.getId());
+        userTransactionDetailsService.insert(entiry);
         return mapRtn;
     }
 
@@ -953,6 +966,16 @@ public class PayServiceImpl implements PayService {
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
+
+        UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+        entiry.setCreateDate(new Date());
+        entiry.setMobile(clientUserEntity.getMobile());
+        entiry.setMoney(total_amount);
+        entiry.setPayMode(2);
+        entiry.setType(1);
+        entiry.setBalance(balance);
+        entiry.setUserId(clientUserEntity.getId());
+        userTransactionDetailsService.insert(entiry);
         return mapRtn;
 
     }

@@ -24,7 +24,7 @@ public interface PowerContentService extends CrudService<PowerContentEntity, Pow
     /**
      * 根据分享人id查询助力信息
      */
-    List<PowerContentDTO> getPowerContentByUserId(Long userId);
+    PowerContentDTO getPowerContentByUserId(Long powerlevelId);
 
 
 }

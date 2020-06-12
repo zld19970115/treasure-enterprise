@@ -95,6 +95,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private CtDaysTogetherService ctDaysTogetherService;
 
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
+
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -225,6 +228,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+
+        if(dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
+            ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
+            UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+            entiry.setCreateDate(new Date());
+            entiry.setMobile(clientUserEntity.getMobile());
+            entiry.setMoney(dto.getPayMoney());
+            entiry.setPayMode(1);
+            entiry.setType(2);
+            entiry.setBalance(clientUserEntity.getBalance().subtract(dto.getPayMoney()));
+            entiry.setUserId(clientUserEntity.getId());
+            userTransactionDetailsService.insert(entiry);
+        }
+
         statsDayDetailService.insertFinishUpdate(dto);
         List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
         for (MasterOrderDTO mod:orderByFinance) {

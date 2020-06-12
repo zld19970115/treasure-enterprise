@@ -32,6 +32,7 @@ import io.treasure.service.MasterOrderService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -515,8 +516,8 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String")
     })
-    public Result<PageData<ClientUserDTO>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
-        return new Result<PageData<ClientUserDTO>>().ok(clientUserService.pagePC(params));
+    public Result<PageTotalRowData<ClientUserDTO>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageTotalRowData<ClientUserDTO>>().ok(clientUserService.pagePC(params));
     }
 
 }

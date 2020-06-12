@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author user
@@ -23,15 +24,26 @@ public class PowerLevelDTO {
     @ApiModelProperty(value = "用户id")
     private long userId;
 
-    @ApiModelProperty(value = "助力级别（1-一级助力，2-二级助力）")
-    private String powerlevel;
+    @ApiModelProperty(value = "助力奖励类别（1-代付金，2-商品，3-菜品）")
+    private String powerType;
 
-    @ApiModelProperty(value = "助力获得的代付金")
-    private BigDecimal powerGift;
+    @ApiModelProperty(value = "获得助力奖励次数")
+    private int powerGain;
 
     @ApiModelProperty(value = "助力人数")
     private int powerSum;
 
+    @ApiModelProperty(value = "助力状态（1-助力完成，0-助力中）")
+    private int powerFinish;
+
+    @ApiModelProperty(value = "助力完成时间")
+    private Date powerAbortDate;
+
+    @ApiModelProperty(value = "助力开始时间")
+    private Date powerOpenDate;
+
+    @ApiModelProperty(value = "助力随机数")
+    private String ramdomNumber;
 
 
 

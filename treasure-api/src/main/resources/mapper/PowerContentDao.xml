@@ -4,12 +4,13 @@
 
 
     <insert id="insertPowerContent">
-        insert into ct_power_content (user_id,subjoin_content,power_type)
+        insert into ct_power_content (powerlevel_id,power_name,power_type,power_sum,power_people_sum,subjoin_content,good_id,merchandise_id,activity_open_date,activity_abort_date)
          VALUES
-        ( #{user_id},#{subjoin_content},1);
+        ( #{powerlevelId},#{powerName},#{powerType},#{powerSum},#{powerPeopleSum},#{subjoinContent},#{goodId},#{merchandiseId},#{activityOpenDate},#{activityAbortDate});
     </insert>
 
     <select id="getPowerContentByUserId" resultType="io.treasure.dto.PowerContentDTO">
-        select * from ct_power_content where user_id = #{userId}
+        select * from ct_power_content where powerlevel_id = #{powerlevelId}
     </select>
+
 </mapper>
