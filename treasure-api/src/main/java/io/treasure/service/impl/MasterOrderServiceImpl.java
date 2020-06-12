@@ -871,6 +871,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
             BigDecimal gift = clientUserEntity.getGift();
@@ -1946,6 +1949,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         Integer reservationType = dto.getReservationType();
 
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {

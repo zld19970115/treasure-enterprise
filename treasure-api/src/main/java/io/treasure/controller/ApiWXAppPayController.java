@@ -98,6 +98,7 @@ public class ApiWXAppPayController {
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
         Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
+        if (payMode!=null){
         if (payMode!=1){
             orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
@@ -107,7 +108,7 @@ public class ApiWXAppPayController {
         }
             masterOrderEntity.setOrderId(orderDTO.getOrderId());
             masterOrderService.updateById(masterOrderEntity);
-        }
+        }}
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
         data.put("out_trade_no",orderDTO.getOrderId()); //更改为新订单号
