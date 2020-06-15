@@ -93,7 +93,7 @@ public class GoodCategoryController {
     @ApiOperation("保存")
     public Result save(@RequestBody GoodCategoryDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto);
+      //  ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
         List cate= goodCategoryService.getByNameAndMerchantId(dto.getName(),dto.getMerchantId());
         if(null!=cate && cate.size()>0){
@@ -117,7 +117,7 @@ public class GoodCategoryController {
     @ApiOperation("修改")
     public Result update(@RequestBody GoodCategoryDTO dto){
         //效验数据
-        ValidatorUtils.validateEntity(dto);
+     //   ValidatorUtils.validateEntity(dto);
         //同一个商户，分类不能同名
         GoodCategoryDTO cate= goodCategoryService.get(dto.getId());
         if(null==cate){

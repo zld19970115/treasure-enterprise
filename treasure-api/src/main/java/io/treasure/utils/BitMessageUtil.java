@@ -1,11 +1,12 @@
 package io.treasure.utils;
 
 import org.junit.Test;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BitMessageUtil {
 
     private int messageCode;
-
 
 
     private int convertCode(EMsgCode eMsgCode){
