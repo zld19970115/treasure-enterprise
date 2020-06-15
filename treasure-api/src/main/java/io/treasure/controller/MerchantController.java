@@ -530,6 +530,19 @@ public class MerchantController {
     public Result<Integer> auditMerchantStatus(@ApiIgnore @RequestParam Long id){
         return new Result<Integer>().ok(merchantService.AuditMerchantStatus(id));
     }
+    @GetMapping("selectMerchantStatus")
+    @ApiOperation("查询商户开闭店状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "商户id", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<Integer> selectMerchantStatus(@ApiIgnore @RequestParam Long martId){
+        MerchantEntity merchantEntity = merchantService.selectById(martId);
+        if (merchantEntity!=null){
+            return new Result<Integer>().ok(merchantEntity.getStatus());
+        }else {
+        return new Result<Integer>().error("此商户不存在");
+        }
+    }
     @GetMapping("selectByUserlongitudeandlatitude")
     @ApiOperation("通过用户经纬度查询可外卖商家")
     @ApiImplicitParams({

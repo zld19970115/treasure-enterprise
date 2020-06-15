@@ -34,7 +34,7 @@
         <result property="rank" column="rank"/>
     </resultMap>
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="java.util.Map">
-        select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc and outside in (1,2)
+        select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9   and outside in (1,2) order by id desc
     </select>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_good set status=#{status} where id=#{id}  order by rank asc
@@ -72,6 +72,6 @@
         order by rank asc
     </select>
     <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
-        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1  order by rank asc and outside in (1,2)
+        select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1 and outside in (1,2) order by rank asc
     </select>
 </mapper>

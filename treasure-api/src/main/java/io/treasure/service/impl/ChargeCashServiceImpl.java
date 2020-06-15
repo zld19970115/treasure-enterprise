@@ -286,8 +286,9 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
 
-        if(null != merchantDto.getMobile()){
-            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");

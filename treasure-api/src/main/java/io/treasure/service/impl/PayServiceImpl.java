@@ -254,9 +254,9 @@ public class PayServiceImpl implements PayService {
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
-
-        if(null != merchantDto.getMobile()){
-            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
@@ -369,12 +369,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -593,12 +593,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -705,12 +705,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
                 return result.error("不是退款订单,无法退款！");
             }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -895,7 +895,11 @@ public class PayServiceImpl implements PayService {
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
 
- */
+ */     MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+ if(merchantUserEntity!=null){
+     SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+ }
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -959,6 +963,7 @@ public class PayServiceImpl implements PayService {
         clientUserEntity.setGift(gift);
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
 

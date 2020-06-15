@@ -75,16 +75,19 @@ public class ApiWXJSAPIPayController {
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }
         Integer payMode = masterOrderService.selectByPayMode(orderDTO.getOrderId());
-        if (payMode!=2){
-            orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
-            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
-            for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
-                slaveOrderEntity.setOrderId(orderDTO.getOrderId());
-                slaveOrderService.updateById(slaveOrderEntity);
+        if (payMode!=null){
+            if (payMode!=2){
+                orderDTO.setOrderId(OrderUtil.getOrderIdByTime(orderDTO.getCreator()));
+                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
+                for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+                    slaveOrderEntity.setOrderId(orderDTO.getOrderId());
+                    slaveOrderService.updateById(slaveOrderEntity);
+                }
+                masterOrderEntity.setOrderId(orderDTO.getOrderId());
+                masterOrderService.updateById(masterOrderEntity);
             }
-            masterOrderEntity.setOrderId(orderDTO.getOrderId());
-            masterOrderService.updateById(masterOrderEntity);
         }
+
         HashMap<String, String> data = new HashMap<>();
         data.put("body", description);
         data.put("out_trade_no", orderDTO.getOrderId());
