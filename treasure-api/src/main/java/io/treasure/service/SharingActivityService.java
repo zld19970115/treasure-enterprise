@@ -29,4 +29,5 @@ public interface SharingActivityService {
      */
     List<SharingActivityEntity> getList(boolean enableOnly);
     void insertOne(SharingActivityEntity sharingActivityEntity);
+    void updateOne(SharingActivityEntity sharingActivityEntity);
 }

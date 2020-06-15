@@ -1,19 +1,17 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.dao.ClientUserDao;
-import io.treasure.dao.SharingActivityDao;
 import io.treasure.dao.SharingActivityLogDao;
-import io.treasure.dao.SharingInitiatorDao;
+import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.SharingActivityEntity;
 import io.treasure.entity.SharingActivityLogEntity;
 import io.treasure.entity.SharingInitiatorEntity;
 import io.treasure.service.SharingActivityLogService;
 import io.treasure.service.SharingActivityService;
+import io.treasure.service.SharingInitiatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Service
@@ -21,6 +19,10 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
 
     @Autowired(required = false)
     private SharingActivityLogDao sharingActivityLogDao;
+    @Autowired
+    private SharingActivityService sharingActivityService;
+    @Autowired
+    private SharingInitiatorService sharingInitiatorService;
 
     /**
      * 取得本活动参加助力的详情，指定用户
@@ -28,11 +30,15 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
      * @param activityId
      * @return
      */
-    public List<SharingActivityLogEntity> getList(Long intitiatorId, Integer activityId){
+    @Override
+    public List<SharingActivityLogEntity> getList(long intitiatorId, Integer activityId,Integer proposeSequeueNo){
 
             QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
             sieqw.eq("initiator_id",intitiatorId);
-            sieqw.eq("activity_id",activityId);
+            if(activityId != null)
+                sieqw.eq("activity_id",activityId);
+            if(proposeSequeueNo != null)
+                sieqw.eq("propose_sequeue_no",proposeSequeueNo);
 
             return sharingActivityLogDao.selectList(sieqw);
     }
@@ -45,39 +51,13 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
      * @return
      */
     @Override
-    public Integer getCount(Long intitiatorId, Integer activityId){
+    public Integer getCount(long intitiatorId, Integer activityId,Integer proposeSequeueNo){
 
-        QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
-        sieqw.eq("activity_id",activityId);
-        sieqw.eq("initiator_id",intitiatorId);
+        Integer helpCount = sharingActivityLogDao.getHelpCount(intitiatorId, activityId, proposeSequeueNo);
 
-        Integer count = sharingActivityLogDao.selectCount(sieqw);
-        if(count == null)
+        if(helpCount == null)
             return 0;
-        return count;
-    }
-
-
-
-    /**
-     * 检查用户助力的次数，非新用户才有效时可用
-     * @param intitiatorId
-     * @param activityId
-     * @param helperMobile
-     * @return
-     */
-    @Override
-    public Integer getHelpedCount(Long intitiatorId,Integer activityId,String helperMobile){
-
-        QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
-        sieqw.eq("initiator_id",intitiatorId);
-        sieqw.eq("activity_id",activityId);
-        sieqw.eq("helper_mobile",helperMobile);
-
-        Integer res = sharingActivityLogDao.selectCount(sieqw);
-        if(res == null)
-            return 0;
-        return res;
+        return helpCount;
     }
 
 
@@ -86,17 +66,39 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
      * @param
      * @return
      */
-    public boolean insertOne(SharingActivityLogEntity sharingActivityLogEntity){
-        /*   预留
-        if(isHelpedCount(sharingActivityLogEntity.getInitiatorId(),sharingActivityLogEntity.getActivityId(),sharingActivityLogEntity.getHelperMobile())==0)
-        */
-        sharingActivityLogDao.insert(sharingActivityLogEntity);
-        return true;
+    @Override
+    public boolean insertOne(@NotEmpty SharingActivityLogEntity sharingActivityLogEntity){
+        Integer allowHelpersNum = 0;
+        Integer completeCount = 0;
+        SharingActivityEntity sharingActivityEntity = sharingActivityService.getOneById(sharingActivityLogEntity.getActivityId(), true);
+
+        if(sharingActivityEntity != null){
+            allowHelpersNum = sharingActivityEntity.getHelpersNum();
+        }
+
+        SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorService.getOne(
+                sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(), ESharingInitiator.IN_PROCESSING.getCode());
+
+        if(sharingInitiatorEntity.getProposeId() != null){
+            completeCount = getCount(sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(),sharingInitiatorEntity.getProposeId());
+            if(completeCount < allowHelpersNum){
+                sharingActivityLogDao.insert(sharingActivityLogEntity);
+                System.out.println("助力完成001");
+                return true;//助力完成
+            }else{
+                System.out.println("错误：助力已结束");
+                return false;//错误：助力已结束
+            }
+        }else{
+            System.out.println("错误：助力活动不存在");
+            return false;//错误：活动不存在
+        }
     }
 
-    public Integer getSum(Long intitiatorId, Integer activityId){
+    @Override
+    public Integer getRewardSum(long intitiatorId, int activityId,int proposeSequeueNo){
 
-        Integer res = sharingActivityLogDao.getSum(intitiatorId,activityId);
+        Integer res = sharingActivityLogDao.getSum(intitiatorId,activityId,proposeSequeueNo);
         if(res == null)
             return 0;
         return res;

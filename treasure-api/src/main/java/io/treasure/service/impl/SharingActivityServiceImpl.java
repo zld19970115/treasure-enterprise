@@ -23,6 +23,7 @@ public class SharingActivityServiceImpl implements SharingActivityService {
      * 检查活动是否有效，不存在或过期均无效
      * @return
      */
+    @Override
     public boolean isEnableActivityById(Integer said){
 
         SharingActivityEntity saEntity = getOneById(said,true);
@@ -37,6 +38,7 @@ public class SharingActivityServiceImpl implements SharingActivityService {
      * @param enableOnly
      * @return
      */
+    @Override
     public SharingActivityEntity getOneById(Integer said,boolean enableOnly){
 
         QueryWrapper<SharingActivityEntity> saeqw = new QueryWrapper<>();
@@ -51,10 +53,11 @@ public class SharingActivityServiceImpl implements SharingActivityService {
     }
 
     /**
-     * 取得订单位列表，根据活动有效性
+     * 取得列表，根据活动有效性
      * @param enableOnly
      * @return
      */
+    @Override
     public List<SharingActivityEntity> getList(boolean enableOnly){
 
         QueryWrapper<SharingActivityEntity> saeqw = new QueryWrapper<>();
@@ -67,10 +70,14 @@ public class SharingActivityServiceImpl implements SharingActivityService {
         return sharingActivityDao.selectList(saeqw);
     }
 
+    @Override
     public void insertOne(SharingActivityEntity sharingActivityEntity){
-
         sharingActivityDao.insert(sharingActivityEntity);
     }
+    @Override
+    public void updateOne(SharingActivityEntity sharingActivityEntity){
 
+        sharingActivityDao.updateById(sharingActivityEntity);
+    }
 
 }

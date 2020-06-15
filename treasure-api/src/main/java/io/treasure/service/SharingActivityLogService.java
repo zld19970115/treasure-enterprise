@@ -1,38 +1,34 @@
 package io.treasure.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.entity.SharingActivityLogEntity;
-
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 public interface SharingActivityLogService {
 
-    List<SharingActivityLogEntity> getList(Long intitiatorId, Integer activityId);
 
     /**
-     * 取得指定用户参加的次数
+     * 取得本活动参加助力的详情，指定用户
      * @param intitiatorId
      * @param activityId
      * @return
      */
-    Integer getCount(Long intitiatorId, Integer activityId);
+    List<SharingActivityLogEntity> getList(long intitiatorId, Integer activityId,Integer proposeSequeueNo);
 
     /**
-     * 检查用户助力的次数，非新用户才有效时可用
+     * 取得指定用户参加的次数,及助力的次数
      * @param intitiatorId
      * @param activityId
-     * @param helperMobile
      * @return
      */
-    Integer getHelpedCount(Long intitiatorId, Integer activityId, String helperMobile);
-
+    Integer getCount(long intitiatorId, Integer activityId,Integer proposeSequeueNo);
 
     /**
      * 插入新记录，向助力日志中
      * @param
      * @return
      */
-    boolean insertOne(SharingActivityLogEntity sharingActivityLogEntity);
+    boolean insertOne(@NotEmpty SharingActivityLogEntity sharingActivityLogEntity);
 
-    Integer getSum(Long intitiatorId, Integer activityId);
+    Integer getRewardSum(long intitiatorId, int activityId,int proposeSequeueNo);
 }
