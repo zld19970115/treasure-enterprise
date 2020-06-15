@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.*;
@@ -33,6 +34,8 @@ public class SharingActivityController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
 
     @Autowired
     private SharingActivityService sharingActivityService;
@@ -88,6 +91,8 @@ public class SharingActivityController {
         boolean newUserOnly = true;//仅新用户有效
         Result result = new Result();
         result.setCode(501);
+        Map map = new HashMap();
+        ClientUserEntity newClient = null;
 
         TokenEntity helperTokenEntity = null;
         String helperClientId = null;
@@ -98,10 +103,10 @@ public class SharingActivityController {
         String mobile = vo.getMobile();
         String password = vo.getPassword();
         String unionid = vo.getUnionid();
-        String clientId = vo.getClientId();
+        //String clientId = vo.getClientId();
 
         System.out.println("initiator_id,sa_id,mobile,password:"+initiatorId+","+saId+","+mobile+","+password);
-        System.out.println("unionid,clientId:"+unionid+","+clientId);
+        //System.out.println("unionid,clientId:"+unionid+","+clientId);
 
         if(mobile == null || password == null || initiatorId == null || saId == null){
             return result.error("错误：参数有误！！");
@@ -133,23 +138,43 @@ public class SharingActivityController {
                 //user.setUnionid(unionid);
                 //user.setClientId(clientId);
                 clientUserService.insert(user);
+
+                newClient = clientUserService.getUserByPhone(mobile);
+                System.out.println("userByPhone1:"+newClient.toString());
+                tokenService.createToken(newClient.getId());
+                helperTokenEntity = tokenService.getByUserId(newClient.getId());
+
+
             }else{
-                result.setMsg("仅新用户有效，不能重复助力！");
+
+                map.put("msg","仅新用户有效，不能重复助力！");
+                result.setData(map);
                 return result;
             }
-            ClientUserEntity newClient = clientUserService.getUserByPhone(mobile);
-            System.out.println("userByPhone1:"+newClient.toString());
-            tokenService.createToken(newClient.getId());
-            helperTokenEntity = tokenService.getByUserId(newClient.getId());
+
         }
+
+        if(newClient != null){
+            map.put("helper_id",newClient.getId());
+        }else{
+            System.out.println("得到手机号："+mobile);
+            ClientUserEntity userByMobile = clientUserDao.getUserByMobile(mobile);
+            map.put("helper_id",userByMobile.getId());
+        }
+
+        map.put("helper_token",helperTokenEntity.getToken());
+
+        map.put("helper_mobile",mobile);
         //------新用户创建完毕-----
 
         //3、检查活动
         SharingActivityEntity saItem = sharingActivityService.getOneById(saId, true);
         if(saItem == null){
 
+
             System.out.println("p0-活动是否存在或有效-saItem:"+saItem.toString());
-            result.setMsg("感谢参与,活动已结束！");
+            map.put("msg","感谢参与,活动已结束！");
+            result.setData(map);
             return result;
         }
         //4、检查用户发起活动是不否存在
@@ -159,36 +184,42 @@ public class SharingActivityController {
             List<SharingInitiatorEntity> uActivitys = sharingInitiatorService.getList(initiatorId,saId,null);
 
             if(uActivitys.size()==0){
+                result.setData(map);
                 System.out.println("p1-用户未发起活动");
-                result.setMsg("用户还未发起本活动！！");
+                map.put("msg","用户尚未发起本活动！");
+
                 return result;
             }else{
                 //默认排序，检查最后一个状态，是成功还是失败
                 SharingInitiatorEntity sharingInitiatorEntity = uActivitys.get(uActivitys.size());
                 if(sharingInitiatorEntity.getStatus() == ESharingInitiator.COMPLETE_SUCCESS.getCode()){
                     System.out.println("p2-活动已经完成");
+
                     result.setCode(200);
-                    result.ok("本次活动已经完成，感谢参与！！");
+                    map.put("msg","本次活动已经完成，感谢参与！！");
+                    result.setData(map);
                     return result;
                 }else{
                     System.out.println("p3-活动超时失败");
-                    result.ok("活动超时失败，请重新发起！！");
+
+                    map.put("msg","活动超时失败，请重新发起！！");
+                    result.setData(map);
                     return result;
                 }
             }
         }
 
-        if(!newUserOnly){
-            //4、检查用户助力次数
-
-        }
+//        if(!newUserOnly){
+//            //4、检查用户助力次数
+//
+//        }
         //5、检查发起者完成的助力次数
         int allowHelpersNum = saItem.getHelpersNum();
         Integer completeCount = sharingActivityLogService.getCount(initiatorId, saId, inProcessActivity.getProposeId());
 
 
         //======================符合助力条件======================================
-        Map map = new HashMap();
+
         //5、检查当前助力信息（是否最后一次）生成随机助力值（非最后一次）插入助力记录
         if((completeCount+1) < allowHelpersNum){
             //更新助力记录获得还需助力的费用值
@@ -221,13 +252,11 @@ public class SharingActivityController {
 
             prizes(saItem,initiatorId);//给用户增加代付金(目前仅有代付金)
         }
+        ClientUserEntity byMobile = clientUserService.getByMobile(mobile);
 
         System.out.println("006");
         //6、更新被助力用户助力活动信息及token
-        map.put("helper_id",vo.getClientId());
-        map.put("helper_mobile",mobile);
 
-        map.put("helper_token",helperTokenEntity.getToken());
         result.setCode(200);
         result.setData(map);
 
