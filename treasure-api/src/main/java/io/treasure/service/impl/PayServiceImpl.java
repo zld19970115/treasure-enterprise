@@ -149,6 +149,7 @@ public class PayServiceImpl implements PayService {
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+        masterOrderEntity.setResponseStatus(1);//排序提前
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         Long creator = masterOrderEntity.getCreator();
@@ -785,6 +786,7 @@ public class PayServiceImpl implements PayService {
             //masterOrderDao.updatePayStatus(out_trade_no,2,new Date(),Constants.OrderStatus.PAYORDER.getValue());
             masterOrderEntity.setOrderId(out_trade_no);
             masterOrderEntity.setPayMode("2");
+            masterOrderEntity.setResponseStatus(1);
             masterOrderEntity.setPayDate(new Date());
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             masterOrderDao.updateById(masterOrderEntity);

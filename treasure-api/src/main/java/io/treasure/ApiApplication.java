@@ -8,7 +8,8 @@
  */
 
 package io.treasure;
-
+import com.alipay.api.java_websocket.WebSocketImpl;
+import io.treasure.utils.MyWebScoket;
 import org.apache.catalina.connector.Connector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -51,5 +52,16 @@ public class ApiApplication extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(ApiApplication.class);
+	}
+	/**
+	 * 启动websocket
+	 */
+	@Bean
+	public void startWebsocketInstantMsg() {
+		//WebSocketImpl..DEBUG = false;
+		MyWebScoket s;
+		s = new MyWebScoket(8888);
+		s.start();
+		System.out.println("websocket启动成功");
 	}
 }
