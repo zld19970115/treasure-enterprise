@@ -18,7 +18,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class SharingInitiatorDTO {
 
-  private Long id;
+  private Integer proposeId;//发起助力顺序号
   @ApiModelProperty(value = "client_user_id")
   private Long initiatorId;// bigint(20) unsigned NOT NULL COMMENT 'ct_client_user/id',
   private Integer saId;// int(10) NOT NULL COMMENT '活动编号',
@@ -33,5 +33,18 @@ public class SharingInitiatorDTO {
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date finishedTime;// datetime DEFAULT NULL COMMENT '活动截止日期',
+
+  //insert前校验
+  public boolean notNullValidate(){
+    if(this.initiatorId == null
+            ||this.saId == null
+            ||rewardType == null
+            ||rewardValue == null
+    ){
+      System.out.println("SharingInitiatorDto/notNullValidate failure ...");
+      return false;
+    }
+    return true;
+  }
 
 }

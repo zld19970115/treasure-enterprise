@@ -1,6 +1,8 @@
 package io.treasure.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +15,8 @@ import java.util.Date;
 @TableName("sharing_initiator")
 public class SharingInitiatorEntity {
 
-  private Long id;
+  @TableId(value = "propose_id",type = IdType.AUTO)
+  private Integer proposeId;//发起助力顺序号
   private Long initiatorId;// bigint(20) unsigned NOT NULL COMMENT 'ct_client_user/id',
   private Integer saId;// int(10) NOT NULL COMMENT '活动编号',
   private Integer rewardType;// int(2) DEFAULT '1' COMMENT '奖励类型1-代付金，2-商品，3-菜品',

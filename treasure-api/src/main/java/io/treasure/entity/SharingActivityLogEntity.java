@@ -1,6 +1,6 @@
 package io.treasure.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,11 +11,15 @@ import java.util.Date;
 @TableName("sharing_activity_log")
 public class SharingActivityLogEntity {
 
+        @TableId(value="sal_id",type = IdType.INPUT)
         private Long salId;
-        private int activityId;
+        private Integer activityId;
         private Long initiatorId;
+        private Integer proposeSequeueNo;//发起助力顺序号
         private String helperMobile;
         private Integer helperValue;
+
+        @TableField(fill = FieldFill.INSERT)
         private Date createPmt;
 
 }

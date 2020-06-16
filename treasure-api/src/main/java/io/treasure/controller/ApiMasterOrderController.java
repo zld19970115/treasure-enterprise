@@ -18,9 +18,11 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MasterOrderSimpleEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
@@ -54,8 +56,8 @@ public class ApiMasterOrderController {
     //会员
     @Autowired
     private ClientUserService clientUserService;
-
-
+    @Autowired
+    private MasterOrderSimpleService masterOrderSimpleService;
 
     @Login
     @GetMapping("page")
@@ -241,6 +243,8 @@ public class ApiMasterOrderController {
     @ApiOperation("生成订单")
     public Result generateOrder(@RequestBody OrderDTO dto, @LoginUser ClientUserEntity user) throws ParseException {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
+
+
         List<SlaveOrderEntity> dtoList=dto.getSlaveOrder();
         return  masterOrderService.orderSave(dto,dtoList,user);
     }
@@ -706,6 +710,40 @@ public class ApiMasterOrderController {
     })
     public Result<PageTotalRowData<OrderVo>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
         return new Result<PageTotalRowData<OrderVo>>().ok(masterOrderService.pagePC(params));
+    }
+
+    @Login
+    @GetMapping("simplePage")
+    @ApiOperation("分页")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户id号", paramType = "query", required = true, dataType="long") ,
+            @ApiImplicitParam(name = "positionId", value = "启始编号", paramType = "query", required = false, dataType="long") ,
+            @ApiImplicitParam(name = "status", value = " 1待接,2进行,3退单,4退菜,其它:全部除进行中", paramType = "query",required = false, dataType="int") ,
+            @ApiImplicitParam(name = "checkStatus", value = "0未结帐，1已结帐", paramType = "query",required = false,dataType="int") ,
+
+            @ApiImplicitParam(name = "index", value = "页码", paramType = "query",required = false, dataType="int"),
+            @ApiImplicitParam(name = "pageNumber", value = "页数", paramType = "query", required = false,dataType="int")
+    })
+    //public Result getSimpleOrders(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result getSimpleOrders(@RequestParam  Long merchantId,Long  positionId,Integer status, Integer checkStatus, Integer index, Integer pageNumber){
+//        for(Map.Entry<String,Object> tmp : params.entrySet()){
+//            System.out.println("map:"+tmp.getKey()+","+tmp.getValue());
+//        }
+//        Long merchantId = Long.parseLong((String)params.get("merchantId"));
+//        Integer status =Integer.parseInt((String)params.get("status")) ;
+//        Integer checkStatus =Integer.parseInt((String)params.get("checkStatus"));
+//        Integer index =Integer.parseInt((String)params.get("index"));
+//        Integer pageNumber =Integer.parseInt((String)params.get("pageNumber"));
+
+        System.out.println("xx"+merchantId+","+positionId+","+status+","+checkStatus+","+index+","+pageNumber);
+        if(index == null)
+            index = 0;
+        if(pageNumber == null)
+            pageNumber = 10;
+
+        Result orderList = masterOrderSimpleService.getOrderList(merchantId,positionId, status, checkStatus, index, pageNumber);
+
+        return orderList;
     }
 
 }

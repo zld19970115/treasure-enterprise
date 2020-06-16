@@ -8,6 +8,7 @@ import io.treasure.entity.ChargeCashEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.vo.PageTotalRowData;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
 public interface ChargeCashService extends CrudService<ChargeCashEntity, ChargeCashDTO> {
     Result orderSave(ChargeCashDTO dto, ClientUserEntity user) throws ParseException;
     ChargeCashDTO selectByCashOrderId(String cashOrderId);
-    Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no);
+    Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) throws IOException;
 
     /**
      * 查询全部用户充值记录

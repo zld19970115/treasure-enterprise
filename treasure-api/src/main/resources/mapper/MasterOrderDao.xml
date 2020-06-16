@@ -21,6 +21,7 @@
         <result property="description" column="description"/>
         <result property="payDate" column="pay_date"/>
         <result property="contacts" column="contacts"/>
+        <result property="responseStatus" column="response_status"/>
         <result property="contactNumber" column="contact_number"/>
         <result property="checkStatus" column="check_status"/>
         <result property="checkMode" column="check_mode"/>
@@ -361,4 +362,6 @@
         </if>
         order by ctmo.create_date desc
     </select>
+
+
 </mapper>

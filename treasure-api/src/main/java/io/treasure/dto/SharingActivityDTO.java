@@ -1,16 +1,12 @@
 package io.treasure.dto;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
-
 
 @Data
 @ApiModel(value = "助力活动管理表")
@@ -34,11 +30,30 @@ public class SharingActivityDTO {
       private String rewardUnit;// char(5) DEFAULT NULL COMMENT '奖品单位',
       private String helperSuccess;// char(20) DEFAULT NULL COMMENT '协助成功话话',
       private String winningWords;// char(20) DEFAULT NULL COMMENT '奖品成功话束',
+
+      private Integer hours;//相对时间长度，
       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       private Date openDate;// datetime DEFAULT NULL COMMENT '活动开始时间',
       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
       private Date closeDate;// datetime DEFAULT NULL COMMENT '活动截止日期',
+
+      //insert前校验
+      public boolean notNullValidate(){
+            if(this.subject == null
+                    ||this.successMsg == null
+                    ||rewardAmount == null
+                    ||helperSuccess == null
+                    ||winningWords == null
+                    ||openDate == null
+                    ||closeDate == null
+            ){
+                  System.out.println("SharingActivityDto/notNullValidate failure ...");
+                  return false;
+            }
+
+            return true;
+      }
 
 }

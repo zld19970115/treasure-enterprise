@@ -1,5 +1,7 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +14,7 @@ import java.util.Date;
 @TableName("sharing_activity")
 public class SharingActivityEntity {
 
+      @TableId(value = "sa_id",type = IdType.AUTO)
       private Integer saId;//int(10) NOT NULL AUTO_INCREMENT COMMENT '活动编号',
       private String subject;// char(30) NOT NULL COMMENT '主题',
       private Integer memberHelper;// int(2) DEFAULT '0' COMMENT '活动协助者：0仅新用户，2新旧用户均可',
@@ -28,7 +31,9 @@ public class SharingActivityEntity {
       private String rewardUnit;// char(5) DEFAULT NULL COMMENT '奖品单位',
       private String helperSuccess;// char(20) DEFAULT NULL COMMENT '协助成功话话',
       private String winningWords;// char(20) DEFAULT NULL COMMENT '奖品成功话束',
+      private Integer hours;//相对时间长度，
       private Date openDate;// datetime DEFAULT NULL COMMENT '活动开始时间',
       private Date closeDate;// datetime DEFAULT NULL COMMENT '活动截止日期',
+
 
 }
