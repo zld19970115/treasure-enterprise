@@ -59,8 +59,10 @@ public class ApiMasterOrderController {
     @Autowired
     private ClientUserService clientUserService;
 
-
-
+    @Autowired
+    private BitMessageUtil bitMessageUtil;
+    @Autowired
+    private MasterOrderSimpleService masterOrderSimpleService;
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
