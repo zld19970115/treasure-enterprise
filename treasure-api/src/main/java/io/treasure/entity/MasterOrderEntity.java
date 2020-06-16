@@ -136,6 +136,7 @@ public class MasterOrderEntity extends BaseEntity {
 	@TableField(exist=false)
 	private List<SlaveOrderEntity> slaveOrder;
 
+	private Integer responseStatus;
 	/**
 	 * 扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用
 	 */
@@ -154,6 +155,9 @@ public class MasterOrderEntity extends BaseEntity {
 	 * 商户实际所得金额（扣除平台扣点不包含赠送金）
 	 */
 	private BigDecimal merchantProceeds;
+
+
+
 
 
 }
