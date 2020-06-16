@@ -72,7 +72,7 @@ public class UserCardController {
 
     @GetMapping("/openCard")
     @ApiOperation("开卡")
-    public Result openCard(@RequestParam List<Long> ids) {
+    public Result openCard(@RequestParam List<String> ids) {
         return new Result().ok(userCardService.openCard(ids));
     }
 

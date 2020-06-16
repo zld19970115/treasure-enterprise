@@ -154,7 +154,7 @@ public class GoodCategoryController {
     public Result delete(@ApiIgnore @RequestParam  Long id){
         //判断商户是否关闭店铺
         GoodCategoryDTO categortyDto=goodCategoryService.get(id);
-        if(categortyDto!=null){
+        if(categortyDto == null){
             return new Result().error("没有获取到分类");
         }
         long merchantId=categortyDto.getMerchantId();
