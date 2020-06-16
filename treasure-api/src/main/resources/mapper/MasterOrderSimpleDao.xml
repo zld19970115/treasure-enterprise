@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MasterOrderSimpleDao">
+
+    <resultMap type="io.treasure.entity.MasterOrderSimpleEntity" id="masterOrderMap">
+
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="roomId" column="room_id"/>
+        <result property="reservationType" column="reservation_type"/>
+        <result property="reservationId" column="reservation_id"/>
+        <result property="discountId" column="discount_id"/>
+        <result property="eatTime" column="eat_time"/>
+        <result property="totalMoney" column="total_money"/>
+        <result property="payMoney" column="pay_money"/>
+        <result property="status" column="status"/>
+        <result property="payMode" column="pay_mode"/>
+        <result property="invoice" column="invoice"/>
+        <result property="description" column="description"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="contacts" column="contacts"/>
+        <result property="contactNumber" column="contact_number"/>
+        <result property="checkStatus" column="check_status"/>
+        <result property="checkMode" column="check_mode"/>
+        <result property="refundReason" column="refund_reason"/>
+        <result property="refundId" column="refund_id"/>
+        <result property="refundDate" column="refund_date"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+        <result property="platformBrokerage" column="platform_brokerage"/>
+        <result property="merchantProceeds" column="merchant_proceeds"/>
+    </resultMap>
+
+
+    <select id = "queryByOrder" resultType="io.treasure.entity.MasterOrderSimpleEntity">
+        select order_id,room_id,description,contact_number,total_money,pay_money,update_date from ct_master_order
+        where merchant_id = #{merchantId}
+
+        <choose>
+            <when test="status != null and status != ''">
+                and status = #{status}
+                order by create_date
+            </when>
+
+            <otherwise>
+                order by status,create_date
+            </otherwise>
+
+        </choose>
+    </select>
+
+</mapper>

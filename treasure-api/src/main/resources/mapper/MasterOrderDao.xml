@@ -21,6 +21,7 @@
         <result property="description" column="description"/>
         <result property="payDate" column="pay_date"/>
         <result property="contacts" column="contacts"/>
+        <result property="responseStatus" column="response_status"/>
         <result property="contactNumber" column="contact_number"/>
         <result property="checkStatus" column="check_status"/>
         <result property="checkMode" column="check_mode"/>
@@ -69,6 +70,12 @@
         update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
         refund_date=#{refundDate} where id=#{id}
     </update>
+
+    <update id="updateStatusAndReasonPlus" parameterType="io.treasure.entity.MerchantEntity">
+        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},response_status=#{responseStatus}
+        refund_date=#{refundDate} where id=#{id}
+    </update>
+
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
         refund_date=#{refundDate},check_status=1 where id=#{id}
@@ -365,4 +372,6 @@
         </if>
         order by ctmo.create_date desc
     </select>
+
+
 </mapper>
