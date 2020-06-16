@@ -20,7 +20,7 @@ public interface CardMakeDao extends BaseDao<CardMakeEntity> {
 
     List<CardMakeDTO> pageList(Map map);
 
-    @Select("select max(card_batch)+1 from ct_card_make")
+    @Select("select IFNULL(max(card_batch),0)+1 from ct_card_make")
     int queryMax();
 
 }

@@ -54,7 +54,7 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
         int batch = dao.queryMax();
         dto.setCreateDate(new Date());
         dto.setCardBatch(batch);
-        if(dao.insert(dto) > 1) {
+        if(dao.insert(dto) > 0) {
             List<CardInfoEntity> list =new ArrayList<>();
             for(int n = 0;n < dto.getCardNum();n++){
                 CardInfoEntity info = new CardInfoEntity();

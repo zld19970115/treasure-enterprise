@@ -83,8 +83,8 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     }
 
     @Override
-    public Result openCard(List<String> ids) {
-        return new Result().ok(userCardDao.openCard(ids));
+    public Result openCard(List<Long> ids,Long userId) {
+        return new Result().ok(userCardDao.openCard(ids,userId));
     }
 
 }

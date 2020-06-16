@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -72,8 +73,8 @@ public class UserCardController {
 
     @GetMapping("/openCard")
     @ApiOperation("开卡")
-    public Result openCard(@RequestParam List<String> ids) {
-        return new Result().ok(userCardService.openCard(ids));
+    public Result openCard(@RequestParam String ids,@RequestParam Long userId) {
+        return new Result().ok(userCardService.openCard(JSON.parseArray(ids).toJavaList(Long.class),userId));
     }
 
 }

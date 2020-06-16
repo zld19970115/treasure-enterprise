@@ -50,7 +50,11 @@
     </select>
 
     <update id="openCard">
-        update ct_card_info set status = 2 where status = 1 and id in
+        update ct_card_info set
+        status = 2,
+        open_card_date = NOW(),
+        open_card_user = #{userId}
+        where status = 1 and id in
         <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
