@@ -185,7 +185,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //==========================================================================更新排序分类:002
+                baseDao.updateStatusAndReasonPlus(id,status, verify, verify_date,refundReason,2);
+
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s : slaveOrderEntities) {
                     if (s.getRefundId() == null || s.getRefundId().length() == 0) {
@@ -457,6 +460,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    //003===============更新排序状态
+                    orderDTO.setResponseStatus(2);//1表示商家已响应
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                     BigDecimal giftMoney = orderDTO.getGiftMoney();
                     BigDecimal num=new BigDecimal("0");
@@ -554,7 +559,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //更新排序004 ----1表示商家已处理
+                baseDao.updateStatusAndReasonPlus(id, status, verify, verify_date, refundReason,2);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
 //                for (SlaveOrderEntity s : slaveOrderEntities) {
 //                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
@@ -906,6 +913,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
+        masterOrderEntity.setResponseStatus(1);  //排序提前
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
@@ -1125,6 +1133,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (StringUtils.isNotBlank(refundReason)) {
                 masterOrderEntity.setRefundReason(refundReason);
             }
+            masterOrderEntity.setResponseStatus(1);  //排序提前
             int i = baseDao.updateById(masterOrderEntity);
             if (i > 0) {
                 if (StringUtils.isNotBlank(clientId)) {
@@ -1717,7 +1726,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().ok("成功取消订单");
         } else if (status == Constants.OrderStatus.PAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
-            baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
+            //baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
+
+            //==========================================================================更新排序分类:001
+            baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason,2);
+
+
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             BigDecimal gif = new BigDecimal("0");
             for (SlaveOrderEntity s : slaveOrderEntities) {
@@ -1905,6 +1919,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
+        masterOrderEntity.setResponseStatus(1);//排序提前1
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
@@ -1981,6 +1996,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setEatTime(order.getEatTime());
         masterOrderEntity.setContacts(order.getContacts());
         masterOrderEntity.setContactNumber(order.getContactNumber());
+        masterOrderEntity.setResponseStatus(1); //排序提前
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");

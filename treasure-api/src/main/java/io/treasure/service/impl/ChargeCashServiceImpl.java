@@ -180,6 +180,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             return mapRtn;
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+        masterOrderEntity.setResponseStatus(1);//提升排序
         masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
