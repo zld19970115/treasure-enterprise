@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
@@ -47,7 +48,7 @@ public class ChargeCashController {
             @ApiImplicitParam(name = "orderNo", value = "订单编号", required = true, paramType = "query"),
             @ApiImplicitParam(name = "total_fee", value = "订单总金额(元)", required = true, paramType = "query")
     })
-    public Result chargrCash(String total_fee, String orderNo) {
+    public Result chargrCash(String total_fee, String orderNo) throws IOException {
 
         // 调用业务
         String out_trade_no = orderNo;

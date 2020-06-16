@@ -23,8 +23,7 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -63,9 +63,12 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     ClientUserServiceImpl clientUserService;
     @Autowired
     MerchantServiceImpl merchantService;
-
+    @Autowired
+    WebSocketServer webSocketServer;
     @Autowired
     private IWXPay wxPay;
+    @Autowired
+    BitMessageUtil bitMessageUtil;
 
     @Autowired
     MerchantUserService merchantUserService;
@@ -113,7 +116,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) {
+    public Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) throws IOException {
         Map<String, String> mapRtn = new HashMap<>(2);
 
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
@@ -290,6 +293,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         if(merchantUserEntity!=null){
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        webSocketServer.sendtoUser(i+"",masterOrderEntity.getMerchantId().toString());
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
