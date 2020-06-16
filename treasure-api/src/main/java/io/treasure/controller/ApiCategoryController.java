@@ -1,8 +1,12 @@
 package io.treasure.controller;
 
 import io.treasure.annotation.Login;
+import io.treasure.dto.ActivityDto;
 import io.treasure.dto.CategoryDTO;
+import io.treasure.dto.CategoryPageDto;
 import io.treasure.enm.Common;
+import io.treasure.entity.ActivityEntity;
+import io.treasure.entity.CategoryEntity;
 import io.treasure.service.CategoryService;
 
 
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -163,4 +168,47 @@ public class ApiCategoryController {
         PageData<CategoryDTO> page = categoryService.page(params);
         return new Result<PageData<CategoryDTO>>().ok(page);
     }
+
+    @GetMapping("pageList")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<CategoryPageDto>> pageList(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<CategoryPageDto>>().ok(categoryService.pageList(params));
+    }
+
+    @PostMapping("updatePC")
+    @ApiOperation("更新PC")
+    public Result<Integer> updatePC(@RequestBody CategoryDTO dto) {
+        dto.setCreateDate(categoryService.selectById(dto.getId()).getCreateDate());
+        dto.setUpdateDate(new Date());
+        categoryService.update(dto);
+        return new Result();
+    }
+
+    @PostMapping("insertPC")
+    @ApiOperation("新增PC")
+    public Result<Integer> insertPC(@RequestBody CategoryDTO dto) {
+        dto.setCreateDate(new Date());
+        categoryService.save(dto);
+        return new Result();
+    }
+
+    @GetMapping("selectById")
+    @ApiOperation("查询PC")
+    public Result<CategoryEntity> selectById(@RequestParam Long id) {
+        return new Result().ok(categoryService.selectById(id));
+    }
+
+    @GetMapping("delPC")
+    @ApiOperation("删除PC")
+    public Result delPC(@RequestParam Long id){
+        categoryService.deleteById(id);
+        return new Result();
+    }
+
 }

@@ -40,7 +40,7 @@ public class MybatisPlusConfig {
 
 
 
-    @Bean
+    //@Bean
     @Profile({"dev","test","prod"})//开启本功能的环境
     public PerformanceInterceptor performanceInterceptor() {
         PerformanceInterceptor performanceInterceptor = new PerformanceInterceptor();

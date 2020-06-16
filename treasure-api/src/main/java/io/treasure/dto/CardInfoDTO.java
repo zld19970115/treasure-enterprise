@@ -1,10 +1,12 @@
 package io.treasure.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Data
 public class CardInfoDTO {
     private static final long serialVersionUID = 1L;
     /**
@@ -44,38 +46,31 @@ public class CardInfoDTO {
      * 开卡时间
      */
     @ApiModelProperty(value = "分类ID")
-    private Date openCardDate;
+    private String openCardDate;
     /**
      * 开卡人
      */
     @ApiModelProperty(value = "分类ID")
     private long openCardUser;
+
+    private String openCardUserName;
     /**
      * 绑定时间
      */
     @ApiModelProperty(value = "分类ID")
-    private Date bindCardDate;
+    private String bindCardDate;
     /**
      * 绑定人
      */
 
     private long bindCardUser;
 
-    /**
-     * 修改时间
-     */
-    private Date updateDate;
+    private String bindCardUserName;
+
     /**
      * 创建时间
      */
-    private Date createDate;
+    private String createDate;
 
-    /**
-     * 创建者
-     */
-    private long creator;
-    /**
-     * 修改者
-     */
-    private long updater;
+
 }

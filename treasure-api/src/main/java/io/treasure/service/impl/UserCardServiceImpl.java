@@ -1,6 +1,9 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.UserCardDao;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,6 +26,8 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     private ClientUserServiceImpl clientUserService;
     @Autowired
     private RecordGiftServiceImpl recordGiftService;
+    @Autowired
+    private UserCardDao userCardDao;
     @Override
     public QueryWrapper<CardInfoEntity> getWrapper(Map<String, Object> params) {
         return null;
@@ -68,4 +74,17 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
 
         return new Result().ok("充值成功");
     }
+
+    @Override
+    public PageData<CardInfoDTO> pageList(Map params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<CardInfoDTO> page = (Page) userCardDao.pageList(params);
+        return new PageData<>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public Result openCard(List<Long> ids) {
+        return new Result().ok(userCardDao.openCard(ids));
+    }
+
 }
