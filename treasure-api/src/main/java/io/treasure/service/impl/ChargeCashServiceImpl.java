@@ -1,5 +1,6 @@
 package io.treasure.service.impl;
 
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.Page;
@@ -64,11 +65,11 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     @Autowired
     MerchantServiceImpl merchantService;
     @Autowired
-    WebSocketServer webSocketServer;
-    @Autowired
     private IWXPay wxPay;
     @Autowired
     BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
 
     @Autowired
     MerchantUserService merchantUserService;
@@ -294,7 +295,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-        webSocketServer.sendtoUser(i+"",masterOrderEntity.getMerchantId().toString());
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        wsPool.sendMessageToUser(wsByUser, i+"");
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;

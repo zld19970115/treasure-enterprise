@@ -2656,6 +2656,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public List<MasterOrderEntity> selectByMasterIdAndStatus(long martId) {
+        return baseDao.selectByMasterIdAndStatus(martId);
+    }
+
+    @Override
     public PageTotalRowData<OrderVo> pagePC(Map<String, Object> params) {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<OrderVo> page = (Page) baseDao.pagePC(params);

@@ -22,6 +22,8 @@ import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.utils.BitMessageUtil;
+import io.treasure.utils.EMsgCode;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
@@ -54,8 +56,8 @@ public class ApiMasterOrderController {
     //会员
     @Autowired
     private ClientUserService clientUserService;
-
-
+    @Autowired
+    BitMessageUtil bitMessageUtil;
 
     @Login
     @GetMapping("page")
@@ -707,5 +709,15 @@ public class ApiMasterOrderController {
     public Result<PageTotalRowData<OrderVo>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
         return new Result<PageTotalRowData<OrderVo>>().ok(masterOrderService.pagePC(params));
     }
-
+    @GetMapping("goDeachmsg")
+    @ApiOperation("接单拒单后调用deachmsg方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "主订单编号", paramType = "query", required = true, dataType="long")
+    })
+    public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
+        List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
+        if (masterOrderEntities.size()==0){
+            bitMessageUtil.deatchMsg(EMsgCode.ADD_DISHES);
+        }
+    }
 }

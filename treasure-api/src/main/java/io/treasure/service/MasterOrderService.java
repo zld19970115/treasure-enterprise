@@ -164,6 +164,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderRefundSuccess(String orderNo, int status);
 
     PageData<BackDishesVo> backDishesPage(Map params);
-
+    List<MasterOrderEntity> selectByMasterIdAndStatus(long martId);
     PageTotalRowData<OrderVo> pagePC(Map<String, Object> params);
 }

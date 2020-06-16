@@ -79,7 +79,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderEntity selectMOById(String orderId);
 
     List<BackDishesVo> backDishesPage(Map params);
-
+    List<MasterOrderEntity> selectByMasterIdAndStatus(long martId);
     List<OrderVo> pagePC(Map<String,Object> params);
 
     OrderVo pagePCTotalRow(Map<String,Object> params);

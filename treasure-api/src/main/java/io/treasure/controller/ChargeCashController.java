@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.alipay.api.java_websocket.WebSocket;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +20,7 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
 import io.treasure.utils.OrderUtil;
+import io.treasure.utils.WsPool;
 import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +44,8 @@ public class ChargeCashController {
     private ChargeCashSetService chargeCashSetService;
     @Autowired
     private ChargeCashService chargeCashService;
+    @Autowired
+    WsPool wsPool;
     @GetMapping("chargrCash")
     @ApiOperation("现金支付回调业务")
     @ApiImplicitParams({
