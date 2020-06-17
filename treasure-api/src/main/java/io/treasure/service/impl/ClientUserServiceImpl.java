@@ -242,9 +242,9 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Override
     public int getLogOffCount(String mobile){
         int res = 0;
-        Integer integer = clientUserDao.selectLogOffCount(mobile+"已注销");
-        if (integer != null)
-            res = integer;
+        Integer tmp = clientUserDao.selectLogOffCount(mobile+"已注销");
+        if (tmp != null)
+            res = tmp;
         return res;
     }
 
