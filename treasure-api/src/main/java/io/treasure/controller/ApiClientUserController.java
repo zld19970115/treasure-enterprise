@@ -140,7 +140,24 @@ public class ApiClientUserController {
         boolean b = clientUserService.isRegister(tel);
         return new Result().ok(b);
     }
+    @GetMapping("isToken")
+    @ApiOperation("验证token是否可用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "query")
+    })
+    public Result isToken(String token) {
+        TokenEntity byToken = tokenService.getByToken(token);
+        if (byToken==null){
+            return new Result().ok(false);
+        }else {
+            if (byToken.getExpireDate().before(new Date())) {
+                return new Result().ok(true);
+            }else {
+                return new Result().ok(false);
+            }
+        }
 
+    }
     @GetMapping("userRegisterCode")
     @ApiOperation("用户注册验证码")
     @ApiImplicitParams({
