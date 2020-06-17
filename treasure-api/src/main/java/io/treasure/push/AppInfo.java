@@ -20,9 +20,12 @@ public class AppInfo {
     public static final  String APPKEY_CLIENT = "EKiSOBoqsu8Nfdv1tgVDo8";
     public static final  String MASTERSECRET_CLIENT = "Y33UqarEgZ6HitTfxvkM54";
     //商户端
-    public static final String APPID_MERCHANT = "dCKau0urWf5eJW6AujqTy3";
-    public static final  String APPKEY_MERCHANT = "zrC5d4dLdb5Lqcp5UD3KK5";
-    public static final  String MASTERSECRET_MERCHANT = "u2GDCUoe5B7tUjYKqYv0P2";
+    public static final String APPID_MERCHANT = "WiyZ1dM2NO9KmuJ0sbUeB9";
+    public static final  String APPKEY_MERCHANT = "IuSXRLEljk7HfSl6jW8Fe8";
+    public static final  String MASTERSECRET_MERCHANT = "hJoDTCXZTJAdkPmV7iLZZ1";
+//    public static final String APPID_DEMO = "sECeFCm31t7dnla0LkdJO4";
+//    public static final  String APPKEY_DEMO = "oZx8tQvD94AucFjOtIWwe7";
+//    public static final  String MASTERSECRET_DEMO = "5412WeCxz187jINhpRMo07";
     public static final String CID = "";
     public static final String CID_2 = "";
 
