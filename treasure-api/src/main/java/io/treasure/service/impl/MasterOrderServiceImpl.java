@@ -818,6 +818,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+            System.out.println("i+++++++++++++++++++++++++++++:"+i
+            );
+            WebSocket wsByUser = wsPool.getWsByUser(dto.getMerchantId().toString());
+            System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+            );
+            wsPool.sendMessageToUser(wsByUser, i+"");
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");

@@ -3,6 +3,7 @@ package io.treasure.service.impl;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.java_websocket.WebSocket;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import io.treasure.common.constant.WXPayConstants;
@@ -19,8 +20,7 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,10 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
-
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
     @Autowired
     private SMSConfig smsConfig;
 
@@ -173,6 +176,13 @@ public class PayServiceImpl implements PayService {
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
         //至此
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             //System.out.println("position 2 : "+slaveOrderEntitys);
@@ -901,7 +911,13 @@ public class PayServiceImpl implements PayService {
  if(merchantUserEntity!=null){
      SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
  }
-
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
