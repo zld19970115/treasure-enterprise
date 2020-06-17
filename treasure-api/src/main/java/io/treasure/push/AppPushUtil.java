@@ -94,6 +94,7 @@ public class AppPushUtil {
         target.setClientId(clientId);
 //        target.setAlias(ALIAS); //别名需要提前绑定
         IPushResult ret = null;
+
         try {
             ret = push.pushMessageToSingle(message, target);
         } catch (RequestException e) {

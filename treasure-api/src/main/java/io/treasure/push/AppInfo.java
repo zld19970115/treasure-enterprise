@@ -19,7 +19,7 @@ public class AppInfo {
     public static final String APPID_CLIENT = "rYyK8qk3nw79tCGSjhjU2";
     public static final  String APPKEY_CLIENT = "EKiSOBoqsu8Nfdv1tgVDo8";
     public static final  String MASTERSECRET_CLIENT = "Y33UqarEgZ6HitTfxvkM54";
-    //商户端
+    //uniPush商户端
     public static final String APPID_MERCHANT = "WiyZ1dM2NO9KmuJ0sbUeB9";
     public static final  String APPKEY_MERCHANT = "IuSXRLEljk7HfSl6jW8Fe8";
     public static final  String MASTERSECRET_MERCHANT = "hJoDTCXZTJAdkPmV7iLZZ1";
