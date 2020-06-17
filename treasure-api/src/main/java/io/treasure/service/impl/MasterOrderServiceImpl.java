@@ -878,8 +878,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //            boolean b=slaveOrderService.insertBatch(dtoList);
-            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+//            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
+//            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         return result.ok(orderId);
     }

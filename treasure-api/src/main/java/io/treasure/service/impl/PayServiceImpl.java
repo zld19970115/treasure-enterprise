@@ -179,6 +179,11 @@ public class PayServiceImpl implements PayService {
       //  int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
 //        System.out.println("i+++++++++++++++++++++++++++++:"+i
 //        );
+
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+        }
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
         );
@@ -265,10 +270,6 @@ public class PayServiceImpl implements PayService {
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
-        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
-        if(merchantUserEntity!=null){
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
-        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
