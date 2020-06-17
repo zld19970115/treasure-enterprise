@@ -2,6 +2,7 @@
 package io.treasure.service.impl;
 
 import cn.hutool.core.convert.Convert;
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,8 +23,7 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
@@ -98,7 +98,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private UserTransactionDetailsService userTransactionDetailsService;
 
-
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -1773,6 +1776,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                 SendSMSUtil.sendMerchantRefusal(userDto.getMobile(), merchantDTO.getName(), smsConfig);
+
+                int i = bitMessageUtil.attachMessage(EMsgCode.NEW_ORDER);
+                System.out.println("i+++++++++++++++++++++++++++++:"+i
+                );
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                );
+                wsPool.sendMessageToUser(wsByUser, i+"");
             }
 
 
