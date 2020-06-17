@@ -207,6 +207,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                     SendSMSUtil.sendMerchantReceipt(userDto.getMobile(), merchantDTO.getName(), smsConfig);
+                    WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                    System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                    );
+                    wsPool.sendMessageToUser(wsByUser, 1+"");
                 }
             } else {
                 return new Result().error("无法接受订单！");
@@ -323,7 +327,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //        clientUserEntity.setIntegral(integral);
 //        clientUserService.updateById(clientUserEntity);
 //        String orderId = dto.getOrderId();
-
+        WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
@@ -541,6 +548,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         SendSMSUtil.sendAgreeRefund(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
+        WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
         return new Result();
     }
 
@@ -576,6 +587,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
                 SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                );
+                wsPool.sendMessageToUser(wsByUser, 1+"");
             } else {
                 return new Result().error("无法退款！");
             }
@@ -818,13 +833,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
-            int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-            System.out.println("i+++++++++++++++++++++++++++++:"+i
-            );
+         //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+//            System.out.println("i+++++++++++++++++++++++++++++:"+i
+//            );
             WebSocket wsByUser = wsPool.getWsByUser(dto.getMerchantId().toString());
             System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
             );
-            wsPool.sendMessageToUser(wsByUser, i+"");
+            wsPool.sendMessageToUser(wsByUser, 2+"");
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -866,8 +881,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
 //        List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //            boolean b=slaveOrderService.insertBatch(dtoList);
-            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+//            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
+//            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         return result.ok(orderId);
     }
@@ -1784,13 +1799,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                 SendSMSUtil.sendMerchantRefusal(userDto.getMobile(), merchantDTO.getName(), smsConfig);
 
-                int i = bitMessageUtil.attachMessage(EMsgCode.NEW_ORDER);
-                System.out.println("i+++++++++++++++++++++++++++++:"+i
-                );
+//                int i = bitMessageUtil.attachMessage(EMsgCode.NEW_ORDER);
+//                System.out.println("i+++++++++++++++++++++++++++++:"+i
+//                );
                 WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
                 System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
                 );
-                wsPool.sendMessageToUser(wsByUser, i+"");
+                wsPool.sendMessageToUser(wsByUser, 1+"");
             }
 
 

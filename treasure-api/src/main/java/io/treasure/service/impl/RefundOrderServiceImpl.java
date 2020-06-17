@@ -1,5 +1,6 @@
 package io.treasure.service.impl;
 
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
@@ -19,7 +20,9 @@ import io.treasure.entity.RefundOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
+import io.treasure.utils.BitMessageUtil;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.WsPool;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +52,10 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
 
     @Autowired
     private MerchantService merchantService;
-
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
 
     @Override
     public QueryWrapper<RefundOrderEntity> getWrapper(Map<String, Object> params) {
@@ -209,6 +215,10 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
             if(StringUtils.isNotBlank(clientId)){
                 AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
             }
+        WebSocket wsByUser = wsPool.getWsByUser(order.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
             MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
             SendSMSUtil.sendMerchantAgreeRefusal(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
             List<OrderDTO> affiliateOrde = masterOrderService.getAffiliateOrde(orderId);
@@ -235,6 +245,10 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         }
         MerchantEntity merchantById = merchantService.getMerchantById(order.getMerchantId());
         SendSMSUtil.sendMerchantRefusalFood(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
+        WebSocket wsByUser = wsPool.getWsByUser(order.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
     }
 
 
