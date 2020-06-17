@@ -520,4 +520,16 @@ public class ApiClientUserController {
         return new Result<PageTotalRowData<ClientUserDTO>>().ok(clientUserService.pagePC(params));
     }
 
+
+    @ApiOperation("手机号")
+    @ApiImplicitParam(name = "mobile",value="手机号",dataType = "string",paramType = "query",required = false)
+    @GetMapping("logOffCount")
+    public Result getLogOffCount(String mobile){
+        int res = 0;
+        Integer integer = clientUserDao.selectLogOffCount(mobile+"已注销");
+        if (integer != null)
+            res = integer;
+        return new Result().ok("数量："+res);
+    }
+
 }

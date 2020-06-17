@@ -47,4 +47,6 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
 
     PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params);
+
+    int getLogOffCount(String mobile);
 }
