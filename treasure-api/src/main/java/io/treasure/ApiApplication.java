@@ -60,7 +60,7 @@ public class ApiApplication extends SpringBootServletInitializer {
 	public void startWebsocketInstantMsg() {
 		//WebSocketImpl..DEBUG = false;
 		MyWebScoket s;
-		s = new MyWebScoket(8888);
+		s = new MyWebScoket(8066);
 		s.start();
 		System.out.println("websocket启动成功");
 	}

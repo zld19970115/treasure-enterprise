@@ -205,7 +205,20 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         clientUserService.updateById(clientUserEntity1);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity1.getId(),date,gift,a);
+
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
+
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+        }
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
@@ -291,13 +304,6 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
 
-        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
-        if(merchantUserEntity!=null){
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
-        }
-        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
-        wsPool.sendMessageToUser(wsByUser, i+"");
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
