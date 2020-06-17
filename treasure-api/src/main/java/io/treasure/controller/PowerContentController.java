@@ -67,14 +67,12 @@ public class PowerContentController {
     @ApiOperation("助力用户注册")
     @ApiImplicitParams({
 
-            @ApiImplicitParam(name = "id", value = "用户手机号", paramType = "query",required = true, dataType="long"),
+            @ApiImplicitParam(name = "mobile", value = "用户手机号", paramType = "query",required = false, dataType="long"),
             @ApiImplicitParam(name = "subjoinContent", value = "代付金数量", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "powerlevelId", value = "管理员id", paramType = "query",required = true, dataType="long"),
+            @ApiImplicitParam(name = "powerlevelId", value = "管理员id", paramType = "query",required = false, dataType="long"),
     })
     public Result userPowerRegister(@RequestBody ClientUserDTO dto,
-                                    @RequestParam Long id,
-                                    @RequestParam(name="subjoinContent",required = false) String subjoinContent,
-                                    @RequestParam Long powerlevelId) {
+                                    Long id,String subjoinContent,Long powerlevelId) {
         Long userId = id;
         Result result = new Result();
         String mobile = null;
