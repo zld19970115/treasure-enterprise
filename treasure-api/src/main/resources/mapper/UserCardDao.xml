@@ -1,8 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.treasure.dao.UserCardDao">
+
+    <resultMap type="io.treasure.entity.CardInfoEntity" id="cardInfoMap">
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="money" column="money"/>
+        <result property="batch" column="batch"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="openCardDate" column="open_card_date"/>
+        <result property="openCardUser" column="open_card_user"/>
+        <result property="bindCardDate" column="bind_card_date"/>
+        <result property="bindCardUser" column="bind_card_user"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
     <select id="selectByIdAndPassword" resultType="io.treasure.entity.CardInfoEntity">
 
         SELECT * FROM ct_card_info where id = #{id} and password = #{password}
     </select>
+
+    <select id="pageList" resultType="io.treasure.dto.CardInfoDTO">
+        SELECT
+        ct.id,
+        ct.password,
+        ct.money,
+        ct.batch,
+        ct.type,
+        ct.status,
+        date_format(ct.open_card_date, '%Y-%m-%d %H:%i:%S') as openCardDate,
+        (select s.username from sys_user s where s.id = ct.open_card_user) as openCardUserName,
+        date_format(ct.bind_card_date, '%Y-%m-%d %H:%i:%S') as bindCardDate,
+        (select s.username from ct_client_user s where s.id = ct.bind_card_user) as bindCardUserName,
+        date_format(ct.create_date, '%Y-%m-%d %H:%i:%S') as createDate
+         FROM ct_card_info ct
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        order by ct.create_date desc
+    </select>
+
+    <update id="openCard">
+        update ct_card_info set
+        status = 2,
+        open_card_date = NOW(),
+        open_card_user = #{userId}
+        where status = 1 and id in
+        <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

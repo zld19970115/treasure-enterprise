@@ -2,6 +2,7 @@
 package io.treasure.service.impl;
 
 import cn.hutool.core.convert.Convert;
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,18 +23,18 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
 import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.ReturnDishesPageVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,7 +95,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private CtDaysTogetherService ctDaysTogetherService;
 
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
 
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -181,7 +188,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderDTO dto = get(id);
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //==========================================================================更新排序分类:002
+                baseDao.updateStatusAndReasonPlus(id,status, verify, verify_date,refundReason,2);
+
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s : slaveOrderEntities) {
                     if (s.getRefundId() == null || s.getRefundId().length() == 0) {
@@ -224,6 +234,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
+
+        if(dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
+            ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
+            UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+            entiry.setCreateDate(new Date());
+            entiry.setMobile(clientUserEntity.getMobile());
+            entiry.setMoney(dto.getPayMoney());
+            entiry.setPayMode(1);
+            entiry.setType(2);
+            entiry.setBalance(clientUserEntity.getBalance().subtract(dto.getPayMoney()));
+            entiry.setUserId(clientUserEntity.getId());
+            userTransactionDetailsService.insert(entiry);
+        }
+
         statsDayDetailService.insertFinishUpdate(dto);
         List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
         for (MasterOrderDTO mod:orderByFinance) {
@@ -439,6 +463,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    //003===============更新排序状态
+                    orderDTO.setResponseStatus(2);//1表示商家已响应
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                     BigDecimal giftMoney = orderDTO.getGiftMoney();
                     BigDecimal num=new BigDecimal("0");
@@ -450,57 +476,63 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
+            if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
+                //退款
+                Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
 
-            if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
-                OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
-                BigDecimal giftMoney = order.getGiftMoney();
-                BigDecimal num=new BigDecimal("0");
-                if(giftMoney.compareTo(num)==1){
+                if (result1.success()) {
+                    boolean b = (boolean) result1.getData();
+                    if (!b) {
+                        return new Result().error("退款失败！");
+                    } else {
+                        OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                        BigDecimal giftMoney = order.getGiftMoney();
+                        BigDecimal num=new BigDecimal("0");
+                        if(giftMoney.compareTo(num)==1){
 //                    BigDecimal gift = clientUserDTO.getGift();
 //                    clientUserDTO.setGift(giftMoney.add(gift));
 //                    clientUserService.update(clientUserDTO);
-                    BigDecimal gift =clientUserDTO.getGift();
-                    BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
-                    clientUserDTO.setGift(abc);
-                    clientUserService.update(clientUserDTO);
-                }
-                if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
-                    List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
-                    for (MasterOrderEntity s : orderByPOrderId) {
-                        if (s.getPOrderId().equals(dto.getOrderId()) && s.getReservationType() == 2) {
-                            merchantRoomParamsSetService.updateStatus(s.getReservationId(), 0);
+                            BigDecimal gift =clientUserDTO.getGift();
+                            BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
+                            clientUserDTO.setGift(abc);
+                            clientUserService.update(clientUserDTO);
                         }
-                    }
-                }
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
-                if (null != dto.getReservationId() && dto.getReservationId() > 0) {
-                    //同时将包房或者桌设置成未使用状态
-                    merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
-                }
-                List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
-                for (SlaveOrderEntity s : slaveOrderEntities) {
-                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
-                        slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
-                    }
-                }
-
-                if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
-                    //退款
-                    Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
-                    if (result1.success()) {
-                        boolean b = (boolean) result1.getData();
-                        if (!b) {
-                            return new Result().error("退款失败！");
-                        } else {
-
+                        if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
+                            List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
+                            for (MasterOrderEntity s : orderByPOrderId) {
+                                if (s.getPOrderId().equals(dto.getOrderId()) && s.getReservationType() == 2) {
+                                    merchantRoomParamsSetService.updateStatus(s.getReservationId(), 0);
+                                }
+                            }
                         }
-                    } else {
-                        return new Result().error(result1.getMsg());
+                        baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                        if (null != dto.getReservationId() && dto.getReservationId() > 0) {
+                            //同时将包房或者桌设置成未使用状态
+                            merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
+                        }
+                        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
+                        for (SlaveOrderEntity s : slaveOrderEntities) {
+                            if (s.getRefundId() == null || s.getRefundId().length() == 0) {
+                                slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
+                            }
+                        }
+
                     }
+                } else {
+                    return new Result().error(result1.getMsg());
                 }
-            } else {
-                return new Result().error("无法退款！");
             }
+//
+//
+//
+//
+//
+//
+//
+//            if (dto.getStatus() != Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
+//                return new Result().error("无法退款！");
+//            }
+
         } else {
             return new Result().error("无法获取订单！");
         }
@@ -530,7 +562,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
-                baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
+                //更新排序004 ----1表示商家已处理
+                baseDao.updateStatusAndReasonPlus(id, status, verify, verify_date, refundReason,2);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
 //                for (SlaveOrderEntity s : slaveOrderEntities) {
 //                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
@@ -784,6 +818,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+            System.out.println("i+++++++++++++++++++++++++++++:"+i
+            );
+            WebSocket wsByUser = wsPool.getWsByUser(dto.getMerchantId().toString());
+            System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+            );
+            wsPool.sendMessageToUser(wsByUser, i+"");
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -847,6 +888,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
             BigDecimal gift = clientUserEntity.getGift();
@@ -879,6 +923,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         masterOrderEntity.setPlatformBrokerage(a);
         masterOrderEntity.setMerchantProceeds(b);
+        masterOrderEntity.setResponseStatus(1);  //排序提前
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
@@ -1098,6 +1143,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (StringUtils.isNotBlank(refundReason)) {
                 masterOrderEntity.setRefundReason(refundReason);
             }
+            masterOrderEntity.setResponseStatus(1);  //排序提前
             int i = baseDao.updateById(masterOrderEntity);
             if (i > 0) {
                 if (StringUtils.isNotBlank(clientId)) {
@@ -1690,7 +1736,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().ok("成功取消订单");
         } else if (status == Constants.OrderStatus.PAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
-            baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
+            //baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
+
+            //==========================================================================更新排序分类:001
+            baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason,2);
+
+
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             BigDecimal gif = new BigDecimal("0");
             for (SlaveOrderEntity s : slaveOrderEntities) {
@@ -1732,6 +1783,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                 SendSMSUtil.sendMerchantRefusal(userDto.getMobile(), merchantDTO.getName(), smsConfig);
+
+                int i = bitMessageUtil.attachMessage(EMsgCode.NEW_ORDER);
+                System.out.println("i+++++++++++++++++++++++++++++:"+i
+                );
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                );
+                wsPool.sendMessageToUser(wsByUser, i+"");
             }
 
 
@@ -1878,6 +1937,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Date d = new Date();
         //保存主订单
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
+        masterOrderEntity.setResponseStatus(1);//排序提前1
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         if (reservationType == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
@@ -1922,6 +1982,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
+        if (dto.getPayfs()!= null){
+            baseDao.insertPayMode(orderId,dto.getPayfs());
+        }
         Integer reservationType = dto.getReservationType();
 
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
@@ -1951,6 +2014,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setEatTime(order.getEatTime());
         masterOrderEntity.setContacts(order.getContacts());
         masterOrderEntity.setContactNumber(order.getContactNumber());
+        masterOrderEntity.setResponseStatus(1); //排序提前
         int i = baseDao.insert(masterOrderEntity);
         if (i <= 0) {
             return result.error(-2, "没有订单数据！");
@@ -2623,6 +2687,29 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
         return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
 
+    }
+
+    @Override
+    public List<MasterOrderEntity> selectByMasterIdAndStatus(long martId) {
+        return baseDao.selectByMasterIdAndStatus(martId);
+    }
+
+    @Override
+    public PageTotalRowData<OrderVo> pagePC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<OrderVo> page = (Page) baseDao.pagePC(params);
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            OrderVo vo = baseDao.pagePCTotalRow(params);
+            if(vo != null) {
+                map.put("totalMoney",vo.getTotalMoney());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("payMoney",vo.getPayMoney());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 }
 

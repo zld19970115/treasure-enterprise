@@ -44,11 +44,4 @@ public class PowerContentServiceImpl extends CrudServiceImpl<PowerContentDao, Po
     public PowerContentDTO getPowerContentByUserId(Long powerlevelId) {
         return baseDao.getPowerContentByUserId(powerlevelId);
     }
-
-    @Override
-    public PowerContentEntity getPowerContentByPowerLevelId(Long powerlevelId) {
-        QueryWrapper<PowerContentEntity> powerContentEntityQueryWrapper = new QueryWrapper<>();
-        powerContentEntityQueryWrapper.eq("powerlevel_id",powerlevelId);
-        return baseDao.selectOne(powerContentEntityQueryWrapper);
-    }
 }

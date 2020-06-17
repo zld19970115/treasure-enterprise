@@ -17,6 +17,11 @@
             <version>2.3.0</version>
         </dependency>
         <dependency>
+            <groupId>com.alipay</groupId>
+            <artifactId>alipay-trade-sdk</artifactId>
+            <version>20161215</version>
+        </dependency>
+        <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
             <version>4.8.56.ALL</version>
@@ -110,7 +115,7 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-<!--            打包补丁-->
+            <!-- 打包补丁-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -123,7 +128,7 @@
                     </archive>
                 </configuration>
             </plugin>
-<!--打包补丁-->
+            <!--打包补丁-->
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>

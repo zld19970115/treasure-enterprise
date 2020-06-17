@@ -22,7 +22,7 @@ public interface PowerLevelDao extends BaseDao<PowerLevelEntity> {
     /**
      * 添加助力信息
      */
-    int insertPowerLevel(Map<String, Object> params);
+    int insertPowerLevel(Map<String,Object> params);
 
     /**
      * 根据用户id查询助力级别
@@ -47,7 +47,7 @@ public interface PowerLevelDao extends BaseDao<PowerLevelEntity> {
     /**
      * 根据用户id更新完成活动时间
      */
-    int updatePowerAbortDateByUserId(Long userId, Date powerAbortDate);
+    int updatePowerAbortDateByUserId(Long userId,Date powerAbortDate);
 
 
 }

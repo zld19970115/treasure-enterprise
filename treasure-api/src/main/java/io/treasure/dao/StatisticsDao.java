@@ -37,7 +37,8 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     List<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params);
     DaysTogetherStatisticsVo daysTogetherStat(Map<String, Object> params);
     List<StatSdayDetailPageVo> statSdayDetailPage(Map<String, Object> params);
-    StatSdayDetailPageVo statSdayDetailPageTotalRow(@Param("ids") List<Long> ids);
+    StatSdayDetailPageVo statSdayDetailPageTotalRow(Map<String, Object> params);
+    MerchantAccountVo getMerchantAccountPageTotalRow(MerchantAccountDto dto);
     FmisHomeVo fmisHome(Map<String, Object> params);
     List<MerchantPageVo> merchantPage(Map<String, Object> params);
     List<EChartInfoVo> userChartByDay(Map<String, Object> params);
@@ -49,4 +50,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     RealTimeOrder realTimeOrder(Map<String, Object> params);
     PointsConfigDto pointsConfigInfo();
     void updatePointsConfig(Map<String, Object> params);
+    DaysTogetherPageDTO daysTogetherPageTotalRow(Map<String, Object> params);
 }

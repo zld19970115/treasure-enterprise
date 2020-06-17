@@ -2,10 +2,13 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MerchantWithdrawDao;
+import io.treasure.dto.DaysTogetherPageDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.QueryWithdrawDto;
@@ -14,12 +17,14 @@ import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.StatsDayDetailService;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -164,14 +169,16 @@ public class MerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWithdra
         return getPageData(list, page.getTotal(), MerchantWithdrawDTO.class);
     }
     @Override
-    public PageData<MerchantWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params) {
-        //分页
-        IPage<MerchantWithdrawEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
-        //查询
+    public PageTotalRowData<MerchantWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<MerchantWithdrawDTO> page = (Page) baseDao.getMerchanWithDrawByMerchantId(params);
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            MerchantWithdrawDTO vo = baseDao.getMerchanWithDrawByMerchantIdTotalRow(params);
+            map.put("money",vo.getMoney());
+        }
         List<MerchantWithdrawDTO> list = baseDao.getMerchanWithDrawByMerchantId(params);
-        return getPageData(list, page.getTotal(), MerchantWithdrawDTO.class);
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
-
-
 
 }

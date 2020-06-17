@@ -1,6 +1,5 @@
 package io.treasure.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -9,15 +8,11 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.dao.PowerContentDao;
-import io.treasure.dao.PowerLevelDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.PowerContentDTO;
 import io.treasure.dto.PowerLevelDTO;
 import io.treasure.dto.ReceiveGiftDto;
 import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.PowerContentEntity;
-import io.treasure.entity.PowerLevelEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.PowerContentService;
@@ -28,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,36 +50,20 @@ public class PowerContentController {
     @Autowired
     private PowerContentService powerContentService;
 
-    @Autowired(required=false)
-    private PowerLevelDao powerLevelDao;
-
-    @Autowired(required = false)
-    private PowerContentDao powerContentDao;
-
 
     @PostMapping("userPowerRegister")
     @ApiOperation("助力用户注册")
     @ApiImplicitParams({
 
-            @ApiImplicitParam(name = "mobile", value = "用户手机号", paramType = "query",required = false, dataType="long"),
+            @ApiImplicitParam(name = "id", value = "用户手机号", paramType = "query",required = true, dataType="String"),
             @ApiImplicitParam(name = "subjoinContent", value = "代付金数量", paramType = "query", dataType="String"),
-            @ApiImplicitParam(name = "powerlevelId", value = "管理员id", paramType = "query",required = false, dataType="long"),
+            @ApiImplicitParam(name = "powerlevelId", value = "管理员id", paramType = "query",required = true, dataType="String"),
     })
-    public Result userPowerRegister(@RequestBody ClientUserDTO dto,
-                                    Long id,String subjoinContent,Long powerlevelId) {
+    public Result userPowerRegister(@RequestBody ClientUserDTO dto, Long id,String subjoinContent,Long powerlevelId) {
         Long userId = id;
-        Result result = new Result();
-        String mobile = null;
-        String amountTmp = null;
-        System.out.println("got clientUserDto:"+dto.toString());
         //表单校验
         ValidatorUtils.validateEntity(dto);
-        ClientUserEntity cue = clientUserService.getUserByPhone(dto.getMobile());
-        if(cue != null){
-            result.setCode(601);
-            result.setMsg("注册失败,本活动仅支持新注册用户！");
-            return result;
-        }
+        Map map = new HashMap();
         ClientUserEntity user = new ClientUserEntity();
         user.setMobile(dto.getMobile());
         user.setUsername(dto.getMobile());
@@ -94,82 +72,31 @@ public class PowerContentController {
         user.setUnionid(dto.getUnionid());
         user.setClientId(dto.getClientId());
         clientUserService.insert(user);
-
         ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(dto.getMobile());
-        TokenEntity token = tokenService.createToken(userByPhone1.getId());
+        tokenService.createToken(userByPhone1.getId());
         TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
-
-        Map map = new HashMap();
         map.put("token", byUserId.getToken());
         map.put("id", userByPhone1.getId());
         map.put("id", userId);
         map.put("mobile", userByPhone1.getMobile());
         map.put("userId", id);
-        System.out.println("powerlevelId:"+powerlevelId);
-        PowerContentDTO powerContentByUserId = powerContentService.getPowerContentByUserId(16516459L);
-        if(powerContentByUserId == null){
-            result.setCode(601);
-            result.setMsg("活动不存在！");
-            return result;
-        }
+        PowerContentDTO powerContentDTO =  powerContentService.getPowerContentByUserId(powerlevelId);
 
-        map.put("powerPeopleSum",powerContentByUserId.getPowerPeopleSum());
-        map.put("powerSum",powerContentByUserId.getPowerSum());
-        map.put("powerlevelId",powerContentByUserId.getPowerlevelId());
-
-        int img = powerLevelService.insertPowerLevel(map,powerContentByUserId);
+        map.put("powerPeopleSum",powerContentDTO.getPowerPeopleSum());
+        map.put("powerSum",powerContentDTO.getPowerSum());
+        map.put("powerlevelId",powerContentDTO.getPowerlevelId());
+        int img = powerLevelService.insertPowerLevel(map,powerContentDTO);
         if (img ==3 ){
-            amountTmp = String.valueOf(powerContentByUserId.getPowerSum());
-            clientUserService.addRecordGiftByUserid(String.valueOf(id),amountTmp);
-            ClientUserDTO clientUserDTO = clientUserService.get(id);
-            if (clientUserDTO != null)
-                mobile = clientUserDTO.getMobile();
-
-            Result<Map<String,String>> result1 = new Result<>();
-            //将token
-            map.put("client_id",dto.getClientId());
-            map.put("mobile",dto.getMobile());
-            map.put("token",token.getToken());
-            result1.setData(map);
-            result.setCode(200);
-            result.setMsg("助力成功，好友获得："+amountTmp+"代付金！");
-            return result;
+            clientUserService.addRecordGiftByUserid(String.valueOf(id), String.valueOf(powerContentDTO.getPowerSum()));
+            map.put("msg","助力完成");
         }else if (img == 2){
-
-            result.setCode(601);
-            result.setMsg("活动不存在！");
-            return result;
-        }else{// if (img == 1){
-            amountTmp = String.valueOf(powerContentByUserId.getPowerSum());
-            Result<Map<String,String>> result1 = new Result<>();
-            //将token
-            map.put("client_id",dto.getClientId());
-            map.put("mobile",dto.getMobile());
-            map.put("token",token.getToken());
-            result1.setCode(200);//
-            result1.setData(map);
-            //
-
-            QueryWrapper<PowerLevelEntity> peqw = new QueryWrapper<>();
-            peqw.eq("user_id",id);
-            PowerLevelEntity powerLevelEntity = powerLevelDao.selectOne(peqw);
-            String tmp = powerLevelEntity.getRamdomNumber();//得到所有随机数的值
-            String tmpArray[] = tmp.split(",");
-
-            int powerSum = powerLevelEntity.getPowerSum();
-            String targetValue = null;
-            if(tmpArray.length>powerSum){
-                targetValue = tmpArray[powerSum];
-            }
-
-            if(targetValue != null){
-                result1.setMsg("恭喜您成功为好友助力："+targetValue+"代付金！");
-            }else{
-                result1.setMsg("助力成功！");
-            }
-            return result1;
+            map.put("msg","注册失败");
+        }else if (img == 1){
+            map.put("msg","注册成功");
         }
-        //return new Result().ok("");
+
+
+        return new Result().ok(map);
     }
 
     @PostMapping("insertPowerContent")
@@ -193,17 +120,61 @@ public class PowerContentController {
        }else {
            return new Result().ok("添加失败");
        }
+
+
+    }
+
+    //, Long id,String subjoinContent,Long powerlevelId
+    @PostMapping("upr")
+    @ApiImplicitParams({
+
+            @ApiImplicitParam(name = "id", value = "用户手机号", paramType = "query",required = true, dataType="long"),
+            @ApiImplicitParam(name = "subjoinContent", value = "代付金数量", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "powerlevelId", value = "管理员id", paramType = "query",required = true, dataType="long"),
+    })
+    @ApiOperation("助力用户注册")
+    public Result<String> helperRegist(@RequestBody ClientUserDTO dto, Long id,String subjoinContent,Long powerlevelId) {
+
+        Long userId = id;
+        //表单校验
+        ValidatorUtils.validateEntity(dto);
+        Map map = new HashMap();
+        ClientUserEntity user = new ClientUserEntity();
+        user.setMobile(dto.getMobile());
+        user.setUsername(dto.getMobile());
+        user.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
+        user.setCreateDate(new Date());
+        user.setUnionid(dto.getUnionid());
+        user.setClientId(dto.getClientId());
+        clientUserService.insert(user);
+        ClientUserEntity userByPhone1 = clientUserService.getUserByPhone(dto.getMobile());
+        tokenService.createToken(userByPhone1.getId());
+        TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+        map.put("token", byUserId.getToken());
+        map.put("id", userByPhone1.getId());
+        map.put("id", userId);
+        map.put("mobile", userByPhone1.getMobile());
+        map.put("userId", id);
+        PowerContentDTO powerContentDTO =  powerContentService.getPowerContentByUserId(powerlevelId);
+
+        map.put("powerPeopleSum",powerContentDTO.getPowerPeopleSum());
+        map.put("powerSum",powerContentDTO.getPowerSum());
+        map.put("powerlevelId",powerContentDTO.getPowerlevelId());
+        int img = powerLevelService.insertPowerLevel(map,powerContentDTO);
+        if (img ==3 ){
+            clientUserService.addRecordGiftByUserid(String.valueOf(id), String.valueOf(powerContentDTO.getPowerSum()));
+            map.put("msg","助力完成");
+        }else if (img == 2){
+            map.put("msg","注册失败");
+        }else if (img == 1){
+            map.put("msg","注册成功");
+        }
+
+        return new Result().ok(map);
+
     }
 
 
-    @GetMapping("info")
-    @ApiOperation("基本信息")
-    @ApiImplicitParam(name ="powerLevelId", value = "powerLevelId", paramType = "query", dataType="long")
-    public Result requirePowerInfoByPowerLevelId(Long powerLevelId){
-        PowerContentDTO powerContentByUserId = powerContentService.getPowerContentByUserId(16516459L);
-        if(powerContentByUserId != null)
-            return new Result().ok(powerContentByUserId);
-        return new Result().ok("[]");
-    }
+
 
 }

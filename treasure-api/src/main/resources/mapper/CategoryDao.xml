@@ -30,4 +30,32 @@
         </if>
 
     </select>
+
+    <select id="pageList" resultType="io.treasure.dto.CategoryPageDto">
+        SELECT
+            ct.id,
+            (select c.`name` from ct_category c where c.id = ct.pid) as pidName,
+            ct.`name`,
+            ct.sort,
+            ct.`status`,
+            ct.show_in_commend,
+            ct.show_in_nav,
+            ct.icon,
+            ct.remarks,
+            date_format(ct.create_date, '%Y-%m-%d %H:%i:%S')
+        FROM
+            `ct_category` ct
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="pid != null" >
+                and ct.id != #{pid} and ct.pid = 0
+            </if>
+        </where>
+        ORDER BY sort asc
+    </select>
 </mapper>

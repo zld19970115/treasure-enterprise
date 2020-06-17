@@ -9,6 +9,8 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -27,16 +29,16 @@ import java.util.Map;
 public interface MasterOrderService extends CrudService<MasterOrderEntity, MasterOrderDTO> {
 
     //取消订单
-    Result caleclUpdate(long id, int status, long verify, Date verify_date, String refundReason) throws Exception;
+    Result caleclUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     //接受订单
-    Result acceptUpdate(long id, int status, long verify, Date verify_date, String refundReason);
+    Result acceptUpdate(long id,int status, long verify, Date verify_date, String refundReason);
     //完成订单
-    Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason);
+    Result finishUpdate(long id,int status, long verify, Date verify_date, String refundReason);
 
     //同意退款
-    Result refundYesUpdate(long id, int status, long verify, Date verify_date, String refundReason) throws Exception;
+    Result refundYesUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     //拒绝退款订单
-    Result refundNoUpdate(long id, int status, long verify, Date verify_date, String refundReason) throws Exception;
+    Result refundNoUpdate(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     //Object updateStatusAndReason(long id,int status, long verify, Date verify_date, String refundReason) throws Exception;
     Integer  selectByPayMode(String orderId);
     OrderDTO getOrder(String orderId);
@@ -82,16 +84,16 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     DesignConditionsDTO calculateGiftCoupon(DesignConditionsDTO dct);
     DesignConditionsDTO notDiscounts(DesignConditionsDTO dct);
 
-    void updateOrderStatus(int status, String orderId);
+    void updateOrderStatus(int status,  String orderId);
 
-    void updatePayMode(@Param("payMode") String payMode, @Param("orderId") String orderId);
+    void updatePayMode(@Param("payMode") String payMode,@Param("orderId") String orderId);
     MasterOrderDTO getOrderById(long id);
 
     Result caleclUpdate(long id, long verify, Date date, String verify_reason);
 
     Result cancelOrder(long id);
 
-    void updatePayMoney(BigDecimal PayMoney, String orderId);
+    void updatePayMoney( BigDecimal PayMoney, String orderId);
 
     /**
      *
@@ -103,11 +105,11 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
      * @param user: 用户信息
      * @Return:
      */
-    Result reserveRoom(OrderDTO dto, ClientUserEntity user, String orderId) throws ParseException;
+    Result reserveRoom(OrderDTO dto, ClientUserEntity user,String orderId) throws ParseException;
 
     MasterOrderEntity getRoomOrderByPorderId(String orderId);
 
-    Result orderFoodByRoom(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId);
+    Result orderFoodByRoom(OrderDTO dto,List<SlaveOrderEntity> dtoList, ClientUserEntity user, String mainOrderId);
 
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
 
@@ -131,7 +133,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     OrderDTO orderParticulars(String orderId);
     List<OrderDTO> orderParticulars1(String orderId);
     List<OrderDTO> getMartOrderInfo(String orderId);
-    List<OrderDTO> refundOrder(Map<String, Object> params);
+    List<OrderDTO> refundOrder( Map<String, Object> params);
     List<MasterOrderEntity>  selectPOrderIdHavePaid(String orderId);
     Result deleteOrder(String orderId);
     ShareOrderDTO shareOrder(String orderId);
@@ -145,16 +147,16 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     List<MasterOrderEntity>getAuxiliaryPayOrderss(String orderId);
 
-    void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId);
+    void updateSlaveOrderPointDeduction(BigDecimal mp,BigDecimal pb, String orderId);
 
     MasterOrderEntity getOrderByReservationId(long reservationId);
 
-    List<MasterOrderEntity>getAuxiliaryPayOrder(String orderId, int status);
+    List<MasterOrderEntity>getAuxiliaryPayOrder(String orderId,int status);
     //设置包房
-    Result setRoom(long id, long roomSetId);
+    Result setRoom(long id,long roomSetId);
     List<OrderDTO> getAffiliateOrde(String orderId);
 
-    boolean judgeRockover(String orderId, Date date);
+    boolean judgeRockover(String orderId,Date date);
 
     boolean judgeEvaluate(String orderId);
 
@@ -162,4 +164,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Result orderRefundSuccess(String orderNo, int status);
 
     PageData<BackDishesVo> backDishesPage(Map params);
+    List<MasterOrderEntity> selectByMasterIdAndStatus(long martId);
+    PageTotalRowData<OrderVo> pagePC(Map<String, Object> params);
 }

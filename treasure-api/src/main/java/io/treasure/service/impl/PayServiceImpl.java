@@ -3,6 +3,7 @@ package io.treasure.service.impl;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.java_websocket.WebSocket;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import io.treasure.common.constant.WXPayConstants;
@@ -19,8 +20,7 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,9 +82,15 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
-
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
     @Autowired
     private SMSConfig smsConfig;
+
+    @Autowired
+    private UserTransactionDetailsService userTransactionDetailsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -146,6 +152,7 @@ public class PayServiceImpl implements PayService {
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
+        masterOrderEntity.setResponseStatus(1);//排序提前
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
         Long creator = masterOrderEntity.getCreator();
@@ -169,6 +176,13 @@ public class PayServiceImpl implements PayService {
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
         //至此
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             //System.out.println("position 2 : "+slaveOrderEntitys);
@@ -251,9 +265,9 @@ public class PayServiceImpl implements PayService {
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
-
-        if(null != merchantDto.getMobile()){
-            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
@@ -320,6 +334,16 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
+
+        UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+        entiry.setCreateDate(new Date());
+        entiry.setMobile(clientUserEntity.getMobile());
+        entiry.setMoney(total_amount);
+        entiry.setPayMode(3);
+        entiry.setType(1);
+        entiry.setBalance(balance);
+        entiry.setUserId(clientUserEntity.getId());
+        userTransactionDetailsService.insert(entiry);
         return mapRtn;
     }
 
@@ -356,12 +380,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-                return result.error("不是退款订单,无法退款！");
-            }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -580,12 +604,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-                return result.error("不是退款订单,无法退款！");
-            }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -692,12 +716,12 @@ public class PayServiceImpl implements PayService {
             }
         }else{
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-                return result.error("不是退款订单,无法退款！");
-            }
+//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+//                return result.error("不是退款订单,无法退款！");
+//            }
             if(payMoney.compareTo(refundAmount)!=0){
                 return result.error("退款金额不一致，无法退款！");
             }
@@ -772,6 +796,7 @@ public class PayServiceImpl implements PayService {
             //masterOrderDao.updatePayStatus(out_trade_no,2,new Date(),Constants.OrderStatus.PAYORDER.getValue());
             masterOrderEntity.setOrderId(out_trade_no);
             masterOrderEntity.setPayMode("2");
+            masterOrderEntity.setResponseStatus(1);
             masterOrderEntity.setPayDate(new Date());
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             masterOrderDao.updateById(masterOrderEntity);
@@ -882,7 +907,17 @@ public class PayServiceImpl implements PayService {
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
 
- */
+ */     MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+ if(merchantUserEntity!=null){
+     SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+ }
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -946,8 +981,19 @@ public class PayServiceImpl implements PayService {
         clientUserEntity.setGift(gift);
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
+
+        UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
+        entiry.setCreateDate(new Date());
+        entiry.setMobile(clientUserEntity.getMobile());
+        entiry.setMoney(total_amount);
+        entiry.setPayMode(2);
+        entiry.setType(1);
+        entiry.setBalance(balance);
+        entiry.setUserId(clientUserEntity.getId());
+        userTransactionDetailsService.insert(entiry);
         return mapRtn;
 
     }

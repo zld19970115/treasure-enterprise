@@ -20,7 +20,7 @@ public interface PowerContentDao extends BaseDao<PowerContentEntity> {
     /**
      * 添加助力信息
      */
-    int insertPowerContent(Map<String, Object> params);
+    int insertPowerContent(Map<String,Object> params);
 
     /**
      * 根据分享人id查询助力信息

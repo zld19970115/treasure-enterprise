@@ -18,12 +18,17 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MasterOrderSimpleEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.utils.BitMessageUtil;
+import io.treasure.utils.EMsgCode;
 import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.ReturnDishesPageVo;
+import io.treasure.vo.OrderVo;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -54,8 +59,10 @@ public class ApiMasterOrderController {
     @Autowired
     private ClientUserService clientUserService;
 
-
-
+    @Autowired
+    private BitMessageUtil bitMessageUtil;
+    @Autowired
+    private MasterOrderSimpleService masterOrderSimpleService;
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -695,5 +702,61 @@ public class ApiMasterOrderController {
         return new Result<PageData<BackDishesVo>>().ok(masterOrderService.backDishesPage(map));
     }
 
+    @GetMapping("pagePC")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="endDate",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query", required = true, dataType = "int"),
+    })
+    public Result<PageTotalRowData<OrderVo>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageTotalRowData<OrderVo>>().ok(masterOrderService.pagePC(params));
+    }
 
+    @Login
+    @GetMapping("simplePage")
+    @ApiOperation("分页")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户id号", paramType = "query", required = true, dataType="long") ,
+            @ApiImplicitParam(name = "positionId", value = "启始编号", paramType = "query", required = false, dataType="long") ,
+            @ApiImplicitParam(name = "status", value = " 1待接,2进行,3退单,4退菜,其它:全部除进行中", paramType = "query",required = false, dataType="int") ,
+            @ApiImplicitParam(name = "checkStatus", value = "0未结帐，1已结帐", paramType = "query",required = false,dataType="int") ,
+
+            @ApiImplicitParam(name = "index", value = "页码", paramType = "query",required = false, dataType="int"),
+            @ApiImplicitParam(name = "pageNumber", value = "页数", paramType = "query", required = false,dataType="int")
+    })
+    //public Result getSimpleOrders(@ApiIgnore @RequestParam Map<String, Object> params){
+    public Result getSimpleOrders(@RequestParam  Long merchantId,Long  positionId,Integer status, Integer checkStatus, Integer index, Integer pageNumber){
+//        for(Map.Entry<String,Object> tmp : params.entrySet()){
+//            System.out.println("map:"+tmp.getKey()+","+tmp.getValue());
+//        }
+//        Long merchantId = Long.parseLong((String)params.get("merchantId"));
+//        Integer status =Integer.parseInt((String)params.get("status")) ;
+//        Integer checkStatus =Integer.parseInt((String)params.get("checkStatus"));
+//        Integer index =Integer.parseInt((String)params.get("index"));
+//        Integer pageNumber =Integer.parseInt((String)params.get("pageNumber"));
+
+        System.out.println("xx"+merchantId+","+positionId+","+status+","+checkStatus+","+index+","+pageNumber);
+        if(index == null)
+            index = 0;
+        if(pageNumber == null)
+            pageNumber = 10;
+
+        Result orderList = masterOrderSimpleService.getOrderList(merchantId,positionId, status, checkStatus, index, pageNumber);
+
+        return orderList;
+    }
+
+    @GetMapping("goDeachmsg")
+    @ApiOperation("接单拒单后调用deachmsg方法")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "主订单编号", paramType = "query", required = true, dataType="long")
+    })
+    public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
+        List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
+        if (masterOrderEntities.size()==0){
+            bitMessageUtil.deatchMsg(EMsgCode.ADD_DISHES);
+        }
+    }
 }

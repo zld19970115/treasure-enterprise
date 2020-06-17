@@ -1,4 +1,5 @@
 package io.treasure.dao;
+import io.treasure.dto.CategoryPageDto;
 import io.treasure.entity.CategoryEntity;
 
 import io.treasure.common.dao.BaseDao;
@@ -6,6 +7,7 @@ import io.treasure.common.dao.BaseDao;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 店铺类型分类表
@@ -15,5 +17,9 @@ import java.util.List;
  */
 @Mapper
 public interface CategoryDao extends BaseDao<CategoryEntity> {
+
     List<CategoryEntity> getListById(List<Long> id);
+
+    List<CategoryPageDto> pageList(Map<String, Object> params);
+
 }

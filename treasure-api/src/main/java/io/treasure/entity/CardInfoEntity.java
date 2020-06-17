@@ -1,5 +1,6 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class CardInfoEntity {
     /**
      * id
      */
+    @TableId
     private long id;
     /**
      * 密码

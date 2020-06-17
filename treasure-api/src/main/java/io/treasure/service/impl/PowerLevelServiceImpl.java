@@ -5,7 +5,6 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.PowerLevelDao;
 import io.treasure.dto.PowerContentDTO;
 import io.treasure.dto.PowerLevelDTO;
-import io.treasure.entity.PowerContentEntity;
 import io.treasure.entity.PowerLevelEntity;
 import io.treasure.service.PowerLevelService;
 import io.treasure.utils.RandomUtil;
@@ -59,35 +58,6 @@ public class PowerLevelServiceImpl extends CrudServiceImpl<PowerLevelDao, PowerL
         }
         return img;
     }
-    @Override
-    public int insertPowerLevelx(Map<String, Object> params, PowerContentEntity powerContentEntity) {
-        int img = 0;
-        Date date = new Date();
-        Long userId = (Long) params.get("userId");
-        int powerPeopleSum = (int)params.get("powerPeopleSum");
-        int gift = (int)params.get("powerSum");
-        params.put("powerOpenDate",date);
-        PowerLevelDTO powerLevelDTO = baseDao.getPowerLevelByUserId(userId);
-        if (powerLevelDTO == null){
-            String list = RandomUtil.randowPower(powerContentEntity.getPowerSum(),powerContentEntity.getPowerPeopleSum(),1);
-            params.put("ramdomNumber",list);
-            System.out.println("1");
-            img = baseDao.insertPowerLevel(params);
-            baseDao.updatePowerSumByUserId(userId);
-
-        } else if (powerLevelDTO != null && powerLevelDTO.getPowerSum()+1 <= powerPeopleSum) {
-            baseDao.updatePowerSumByUserId(userId);
-            if (powerLevelDTO.getPowerSum()+1 == powerPeopleSum && powerLevelDTO.getPowerFinish() == 0 ){
-                img = 3;
-                baseDao.updatePowerGainByUserId(userId);
-                baseDao.updatePowerFinishByUserId(userId);
-                params.put("powerAbortDate",date);
-                baseDao.updatePowerAbortDateByUserId(userId, date);
-            }
-        }
-        return img;
-    }
-
 
     @Override
     public PowerLevelDTO getPowerLevelByUserId(Long userId) {

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.UserTransactionDetailsDao">
+
+    <resultMap type="io.treasure.entity.UserTransactionDetailsEntity" id="userTransactionDetailsMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="payMode" column="pay_mode"/>
+        <result property="type" column="type"/>
+        <result property="mobile" column="mobile"/>
+        <result property="money" column="money"/>
+        <result property="balance" column="balance"/>
+        <result property="createDate" column="create_date"/>
+    </resultMap>
+
+    <select id="pageList" resultType="io.treasure.dto.UserTransactionDetailsDto">
+        SELECT
+            id,
+            user_id as userId,
+            pay_mode as payMode,
+            `type`,
+            mobile,
+            money,
+            balance,
+            date_format(create_date, '%Y-%m-%d %H:%i:%S') as createDate
+        FROM `ct_user_transaction_details`
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mobile like concat('%', #{mobile}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="pageTotalRow" resultType="io.treasure.dto.UserTransactionDetailsDto">
+        SELECT
+            IFNULL(sum(money),0) as money,
+            IFNULL(sum(balance),0) as balance
+        FROM `ct_user_transaction_details`
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="type != null">
+                and `type` = #{type}
+            </if>
+            <if test="mobile != nul and mobile.trim() != ''">
+                and  mobile like concat('%', #{mobile}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

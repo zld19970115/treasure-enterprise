@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.CardMakeDao">
+
+    <resultMap type="io.treasure.entity.CardMakeEntity" id="cardMakeMap">
+        <result property="id" column="id"/>
+        <result property="cardNum" column="card_num"/>
+        <result property="cardMoney" column="card_money"/>
+        <result property="cardBatch" column="card_batch"/>
+        <result property="cardType" column="card_type"/>
+        <result property="creator" column="creator"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updater" column="updater"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+    <select id="pageList" resultType="io.treasure.dto.CardMakeDTO">
+        select
+            ct.id,
+            ct.card_num as cardNum,
+            ct.card_money as cardMoney,
+            ct.card_batch as cardBatch,
+            ct.card_type as cardType,
+            (select s.username from sys_user s where s.id = ct.creator) as username,
+            date_format(ct.create_date, '%Y-%m-%d %H:%i:%S') as createDate
+        from ct_card_make ct
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(ct.create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        order by ct.create_date desc
+    </select>
+
+</mapper>

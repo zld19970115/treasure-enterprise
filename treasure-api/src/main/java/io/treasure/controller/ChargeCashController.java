@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.alipay.api.java_websocket.WebSocket;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,10 +20,13 @@ import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ChargeCashService;
 import io.treasure.service.ChargeCashSetService;
 import io.treasure.utils.OrderUtil;
+import io.treasure.utils.WsPool;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
@@ -40,13 +44,15 @@ public class ChargeCashController {
     private ChargeCashSetService chargeCashSetService;
     @Autowired
     private ChargeCashService chargeCashService;
+    @Autowired
+    WsPool wsPool;
     @GetMapping("chargrCash")
     @ApiOperation("现金支付回调业务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "orderNo", value = "订单编号", required = true, paramType = "query"),
             @ApiImplicitParam(name = "total_fee", value = "订单总金额(元)", required = true, paramType = "query")
     })
-    public Result chargrCash(String total_fee, String orderNo) {
+    public Result chargrCash(String total_fee, String orderNo) throws IOException {
 
         // 调用业务
         String out_trade_no = orderNo;
@@ -106,7 +112,7 @@ public class ChargeCashController {
 
     })
     public Result getChargeCashByCreateDate(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<ChargeCashDTO> page = chargeCashService.getChargeCashByCreateDate(params);
+        PageTotalRowData<ChargeCashDTO> page = chargeCashService.getChargeCashByCreateDate(params);
         return new Result().ok(page);
     }
 

@@ -231,7 +231,7 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public PageData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
+    public PageTotalRowData<MerchantAccountVo> getMerchantAccount(MerchantAccountDto dto) {
         List<String> list = Lists.newArrayList();
         list.add(DateUtil.lastMonthFormatYYYYMM(1));
         list.add(DateUtil.lastMonthFormatYYYYMM(2));
@@ -239,7 +239,21 @@ public class StatisticsServiceImpl
         dto.setDateList(list);
         PageHelper.startPage(dto.getPage(),dto.getLimit());
         Page<MerchantAccountVo> page = (Page) baseDao.getMerchantAccount(dto);
-        return new PageData<MerchantAccountVo>(page.getResult(),page.getTotal());
+        Map map = new HashMap();
+        if(list != null && list.size() > 0) {
+            MerchantAccountVo vo = baseDao.getMerchantAccountPageTotalRow(dto);
+            if(vo != null) {
+                map.put("totalCash",vo.getTotalCash());
+                map.put("alreadyCash",vo.getAlreadyCash());
+                map.put("notCash",vo.getNotCash());
+                map.put("wartCash",vo.getWartCash());
+                map.put("pointMoney",vo.getPointMoney());
+                map.put("wxTotal",vo.getWxTotal());
+                map.put("aliTotald",vo.getAliTotald());
+                map.put("count",vo.getCount());
+            }
+        }
+        return new PageTotalRowData<MerchantAccountVo>(page.getResult(),page.getTotal(),map);
     }
 
     @Override
@@ -275,10 +289,24 @@ public class StatisticsServiceImpl
     }
 
     @Override
-    public PageData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params) {
+    public PageTotalRowData<DaysTogetherPageDTO> daysTogetherPage(Map<String, Object> params) {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<DaysTogetherPageDTO> page = (Page) baseDao.daysTogetherPage(params);
-        return new PageData<DaysTogetherPageDTO>(page.getResult(),page.getTotal());
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            DaysTogetherPageDTO vo = baseDao.daysTogetherPageTotalRow(params);
+            if(vo != null) {
+                map.put("orderTotal",vo.getOrderTotal());
+                map.put("merchantDiscountAmount",vo.getMerchantDiscountAmount());
+                map.put("giftMoney",vo.getGiftMoney());
+                map.put("realityMoney",vo.getRealityMoney());
+                map.put("merchantProceeds",vo.getMerchantProceeds());
+                map.put("platformBrokerage",vo.getPlatformBrokerage());
+                map.put("serviceChanrge",vo.getServiceChanrge());
+                map.put("platformRealityMoney",vo.getPlatformRealityMoney());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
     @Override
@@ -293,8 +321,7 @@ public class StatisticsServiceImpl
         List<StatSdayDetailPageVo> list = page.getResult();
         Map map = new HashMap();
         if(list != null && list.size() > 0) {
-            List<Long> ids = list.stream().map(StatSdayDetailPageVo::getId).collect(Collectors.toList());
-            StatSdayDetailPageVo vo = baseDao.statSdayDetailPageTotalRow(ids);
+            StatSdayDetailPageVo vo = baseDao.statSdayDetailPageTotalRow(params);
             if(vo != null) {
                 map.put("orderTotal",vo.getOrderTotal());
                 map.put("merchantDiscountAmount",vo.getMerchantDiscountAmount());

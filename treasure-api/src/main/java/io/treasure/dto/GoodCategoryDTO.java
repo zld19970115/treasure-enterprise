@@ -39,10 +39,8 @@ public class GoodCategoryDTO implements Serializable {
 	@ApiModelProperty(value = "是否推荐（0：不推荐 1：推荐）")
 	private Integer showInCommend;
 	@ApiModelProperty(value = "分类小图标")
-	@NotBlank(message = "分类图片不能为空")
 	private String icon;
 	@ApiModelProperty(value = "分类简介")
-	@NotBlank(message = "分类简介不能为空")
 	private String brief;
 	@ApiModelProperty(value = "创建者")
 	@NotNull(message = "创建者不能为空",groups = AddGroup.class)

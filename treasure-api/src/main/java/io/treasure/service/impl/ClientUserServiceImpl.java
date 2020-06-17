@@ -2,6 +2,8 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.exception.RenException;
@@ -19,6 +21,8 @@ import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
+import io.treasure.vo.MerchantAccountVo;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,6 +212,22 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
         return null;
+    }
+
+    @Override
+    public PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<ClientUserDTO> page = (Page) clientUserDao.pagePC(params);
+        Map map = new HashMap();
+        if(page != null && page.getResult().size() > 0) {
+            ClientUserDTO vo = baseDao.pagePCTotalRow(params);
+            if(vo != null) {
+                map.put("integral",vo.getIntegral());
+                map.put("balance",vo.getBalance());
+                map.put("gift",vo.getGift());
+            }
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
     @Override

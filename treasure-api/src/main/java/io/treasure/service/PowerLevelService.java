@@ -4,7 +4,6 @@ import io.treasure.common.service.CrudService;
 import io.treasure.dto.PowerContentDTO;
 import io.treasure.dto.PowerLevelDTO;
 import io.treasure.dto.RecordGiftDTO;
-import io.treasure.entity.PowerContentEntity;
 import io.treasure.entity.PowerLevelEntity;
 import io.treasure.entity.RecordGiftEntity;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,8 @@ public interface PowerLevelService extends CrudService<PowerLevelEntity, PowerLe
     /**
      * 添加助力信息
      */
-    int insertPowerLevel(Map<String, Object> params, PowerContentDTO powerContentDTO);
+    int insertPowerLevel(Map<String,Object> params, PowerContentDTO powerContentDTO);
 
-    int insertPowerLevelx(Map<String, Object> params, PowerContentEntity powerContentEntity);
     /**
      * 根据用户id查询助力级别
      */

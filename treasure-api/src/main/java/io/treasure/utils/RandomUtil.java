@@ -16,20 +16,7 @@ import static jdk.nashorn.internal.objects.NativeMath.random;
  */
 public class RandomUtil {
 
-//    public String test(int target){
-//
-//        boolean theLast = false;
-//        if(theLast)
-//            return target+"";
-//        return randomDemo(200);
-//    }
-//
-//    public String randomDemo(int target){
-//        String s = Math.random()*(target*50)+"";
-//        return s.substring(0,s.indexOf("."));
-//
-//
-//    }
+
     public static String randowPower(double total, int num, double min) {
 
         StringBuffer buf=new StringBuffer();

@@ -27,4 +27,6 @@ public interface ChargeCashDao  extends BaseDao<ChargeCashEntity> {
      */
     List<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params);
 
+    ChargeCashDTO getChargeCashByCreateDateTotalRow(Map<String, Object> params);
+
 }

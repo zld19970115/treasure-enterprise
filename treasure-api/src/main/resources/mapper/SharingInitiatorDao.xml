@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.SharingInitiatorDao">
+
+
+    <select id ="getCount" resultType="integer">
+       SELECT count(1)
+       FROM sharing_initiator
+       <where>
+           initiator_id=#{intitiatorId}
+
+           <if test="saId != '' and saId != null">
+                and sa_id=#{saId}
+           </if>
+
+           <if test="status != '' and status != null">
+               and status=#{status}
+           </if>
+       </where>
+
+
+    </select>
+
+</mapper>

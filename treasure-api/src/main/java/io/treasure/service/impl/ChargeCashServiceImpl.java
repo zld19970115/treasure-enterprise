@@ -1,7 +1,10 @@
 package io.treasure.service.impl;
 
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -13,6 +16,7 @@ import io.treasure.config.IWXPay;
 import io.treasure.dao.ChargeCashDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.ChargeCashDTO;
+import io.treasure.dto.DaysTogetherPageDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Constants;
@@ -20,14 +24,15 @@ import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.OrderUtil;
-import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.*;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -59,9 +64,12 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     ClientUserServiceImpl clientUserService;
     @Autowired
     MerchantServiceImpl merchantService;
-
     @Autowired
     private IWXPay wxPay;
+    @Autowired
+    BitMessageUtil bitMessageUtil;
+    @Autowired
+    WsPool wsPool;
 
     @Autowired
     MerchantUserService merchantUserService;
@@ -109,7 +117,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     }
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) {
+    public Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) throws IOException {
         Map<String, String> mapRtn = new HashMap<>(2);
 
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
@@ -173,6 +181,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             return mapRtn;
         }
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+        masterOrderEntity.setResponseStatus(1);//提升排序
         masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
@@ -196,7 +205,20 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         clientUserService.updateById(clientUserEntity1);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity1.getId(),date,gift,a);
+
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
+
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+        }
+        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+        System.out.println("i+++++++++++++++++++++++++++++:"+i
+        );
+        WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, i+"");
         //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
@@ -282,9 +304,6 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
 
-        if(null != merchantDto.getMobile()){
-            SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
-        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -308,15 +327,16 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
      * 查询用户充值记录
      */
     @Override
-    public PageData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params) {
-
-        //分页
-        IPage<ChargeCashEntity> page = getPage(params, Constant.CREATE_DATE, false);
-
-        //查询
-        List<ChargeCashDTO> list = baseDao.getChargeCashByCreateDate(params);
-
-        return getPageData(list, page.getTotal(), ChargeCashDTO.class);
+    public PageTotalRowData<ChargeCashDTO> getChargeCashByCreateDate(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<DaysTogetherPageDTO> page = (Page) baseDao.getChargeCashByCreateDate(params);
+        Map map = new HashMap();
+        if(page.getResult().size() > 0) {
+            ChargeCashDTO vo = baseDao.getChargeCashByCreateDateTotalRow(params);
+            map.put("cash",vo.getCash());
+            map.put("changeGift",vo.getChangeGift());
+        }
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
 }

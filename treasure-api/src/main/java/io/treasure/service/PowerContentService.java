@@ -19,13 +19,12 @@ public interface PowerContentService extends CrudService<PowerContentEntity, Pow
     /**
      * 添加助力信息
      */
-    int insertPowerContent(Map<String, Object> params);
+    int insertPowerContent(Map<String,Object> params);
 
     /**
      * 根据分享人id查询助力信息
      */
     PowerContentDTO getPowerContentByUserId(Long powerlevelId);
-    PowerContentEntity getPowerContentByPowerLevelId(Long powerlevelId);
 
 
 }
