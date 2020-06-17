@@ -545,6 +545,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         SendSMSUtil.sendAgreeRefund(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
+        WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
         return new Result();
     }
 
@@ -580,6 +584,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
                 MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
                 SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                );
+                wsPool.sendMessageToUser(wsByUser, 1+"");
             } else {
                 return new Result().error("无法退款！");
             }
