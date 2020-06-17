@@ -327,7 +327,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //        clientUserEntity.setIntegral(integral);
 //        clientUserService.updateById(clientUserEntity);
 //        String orderId = dto.getOrderId();
-
+        WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        );
+        wsPool.sendMessageToUser(wsByUser, 1+"");
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
