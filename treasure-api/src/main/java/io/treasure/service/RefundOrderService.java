@@ -16,15 +16,15 @@ public interface RefundOrderService  extends CrudService<RefundOrderEntity, Refu
 
     void insertRefundOrder(RefundOrderEntity refundOrderDTO);
 
-    void updateRefundId(String refundId, String orderId,Long goodId);
+    void updateRefundId(String refundId, String orderId, Long goodId);
 
     PageData<RefundOrderDTO> getRefundOrderByMerchantId(Map<String, Object> params);
 
-    void updateDispose( int dispose,String orderId,Long goodId);
+    void updateDispose(int dispose, String orderId, Long goodId);
 
-    Result updateMasterOrderPayMoney(String orderId,Long goodId);
+    Result updateMasterOrderPayMoney(String orderId, Long goodId);
     //商户同意退款
-    Result agreeToARefund(String orderId,Long goodId);
+    Result agreeToARefund(String orderId, Long goodId);
     //商户拒绝退款
-    void DoNotAgreeToRefund(String orderId,Long goodId);
+    void DoNotAgreeToRefund(String orderId, Long goodId);
 }

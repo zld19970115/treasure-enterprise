@@ -31,11 +31,11 @@ public interface ActivityDao {
 
     ActivityGiveEntity selectGiveById(@Param("id") Long id);
 
-    int receiveGift(@Param("activityId") Long activityId,@Param("userId") Long userId);
+    int receiveGift(@Param("activityId") Long activityId, @Param("userId") Long userId);
 
-    int activityRartake(@Param("activityId") Long activityId,@Param("userId") Long userId);
+    int activityRartake(@Param("activityId") Long activityId, @Param("userId") Long userId);
 
-    int cancellationUser(@Param("activityId") Long activityId,@Param("mobile") String mobile);
+    int cancellationUser(@Param("activityId") Long activityId, @Param("mobile") String mobile);
 
     ActivityEntity getHotActivity();
 

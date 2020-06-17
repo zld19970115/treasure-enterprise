@@ -1,10 +1,13 @@
 package io.treasure.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -47,12 +50,16 @@ public class ClientUserDTO implements Serializable {
 	private Integer age;
 
 	@ApiModelProperty(value = "出生日期")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date birth;
 
 	@ApiModelProperty(value = "密码")
+	//@NotEmpty(message = "password is not null")
 	private String password;
 
 	@ApiModelProperty(value = "手机号")
+	@NotEmpty(message = "mobile is not null")
 	private String mobile;
 
 	@ApiModelProperty(value = "头像图片地址")
@@ -89,9 +96,13 @@ public class ClientUserDTO implements Serializable {
 	private String way;
 
 	@ApiModelProperty(value = "更新时间")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateDate;
 
 	@ApiModelProperty(value = "创建时间")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createDate;
 
 	@ApiModelProperty(value = "创建时间")

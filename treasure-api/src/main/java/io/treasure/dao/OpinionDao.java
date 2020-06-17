@@ -8,5 +8,5 @@ import java.util.Map;
 
 @Mapper
 public interface OpinionDao extends BaseDao<OpinionEntity> {
-   void insertOpinion( Map<String, Object> params);
+   void insertOpinion(Map<String, Object> params);
 }

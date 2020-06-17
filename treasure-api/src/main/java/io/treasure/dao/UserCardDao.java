@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Mapper
 public interface UserCardDao  extends BaseDao<CardInfoEntity> {
-    CardInfoEntity  selectByIdAndPassword(@Param("id") long id , @Param("password")String password);
+    CardInfoEntity  selectByIdAndPassword(@Param("id") long id, @Param("password") String password);
 
     List<CardInfoDTO> pageList(Map params);
 

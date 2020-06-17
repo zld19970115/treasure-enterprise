@@ -72,8 +72,9 @@
     </update>
 
     <update id="updateStatusAndReasonPlus" parameterType="io.treasure.entity.MerchantEntity">
-        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},response_status=#{responseStatus},
-        refund_date=#{refundDate} where id=#{id}
+        update ct_master_order set status=#{status},updater=#{updater},refund_reason=#{refundReason},
+        refund_date=#{refundDate},response_status=#{responseStatus}
+        where id=#{id}
     </update>
 
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">

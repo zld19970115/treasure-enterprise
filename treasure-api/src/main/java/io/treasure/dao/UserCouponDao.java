@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserCouponDao  extends BaseDao<UserCouponEntity> {
     List<MerchantCouponDTO> selectByUserId(@Param("userId") Long userId, @Param("martId") long martId, @Param("money") double money);
     BigDecimal selectGift(Long userId);
-    UserCouponEntity   selectByCouponId(@Param("couponId") long couponId,@Param("userId") long userId);
+    UserCouponEntity   selectByCouponId(@Param("couponId") long couponId, @Param("userId") long userId);
     List<MerchantCouponDTO>  selectMyCouponByUserId(long userId);
     List<MerchantCouponEntity>   selectMartCoupon(@Param("userId") Long userId, @Param("martId") long martId);
    List<MerchantCouponEntity> selectBymartId(long martId);

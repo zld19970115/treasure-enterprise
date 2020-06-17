@@ -59,8 +59,8 @@ public interface MerchantUserService extends CrudService<MerchantUserEntity, Mer
     //通过openid查询商户管理员信息
     MerchantUserEntity getUserByOpenId(@Param("openid") String openid);
 
-    void updateCID(String clientId,String mobile);
-    PageData<MerchantUserDTO> listPage(Map<String,Object> params);
+    void updateCID(String clientId, String mobile);
+    PageData<MerchantUserDTO> listPage(Map<String, Object> params);
 
     Result delOrFrozen(Long id, Integer status);
 

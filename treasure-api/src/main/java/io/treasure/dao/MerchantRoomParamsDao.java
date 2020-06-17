@@ -17,8 +17,8 @@ import java.util.Map;
  */
 @Mapper
 public interface MerchantRoomParamsDao extends BaseDao<MerchantRoomParamsEntity> {
-    void updateStatusById(Long id,int status);
-    List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId,String content,int status);
+    void updateStatusById(Long id, int status);
+    List<MerchantRoomParamsEntity> getByMerchantIdAndContent(Long merchantId, String content, int status);
     List<MerchantRoomParamsEntity> getAllByStatus(int status);
-    List<MerchantRoomParamsDTO> listPage(Map<String,Object> params);
+    List<MerchantRoomParamsDTO> listPage(Map<String, Object> params);
 }

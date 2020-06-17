@@ -21,16 +21,16 @@ import java.util.Map;
 @Mapper
 public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     //修改状态
-    void updateStatusById(@Param("id") long id,@Param("status") int status);
+    void updateStatusById(@Param("id") long id, @Param("status") int status);
     //根据名称和商户id查询
-    List getByNameAndMerchantId(@Param("name") String name,@Param("merchantId") long merchantId, @Param("type")int type);
+    List getByNameAndMerchantId(@Param("name") String name, @Param("merchantId") long merchantId, @Param("type") int type);
     //根据商户编号查询包房信息
-    List getByMerchantId(@Param("merchantId") long merchantId,@Param("status") int status);
-    List<MerchantRoomDTO> listPage(Map<String,Object> params);
+    List getByMerchantId(@Param("merchantId") long merchantId, @Param("status") int status);
+    List<MerchantRoomDTO> listPage(Map<String, Object> params);
     List<MerchantRoomParamsSetDTO> selectRoomAlreadyPage(Map<String, Object> params);
-    List<MerchantRoomParamsSetDTO>  selectRoomDate(Map<String,Object> params);
-    List<MerchantRoomParamsSetDTO> selectByDateAndMartId(Map<String,Object> params);
-    List<MerchantRoomParamsSetDTO> selectByDateAndMartId2(Map<String,Object> params);
+    List<MerchantRoomParamsSetDTO>  selectRoomDate(Map<String, Object> params);
+    List<MerchantRoomParamsSetDTO> selectByDateAndMartId(Map<String, Object> params);
+    List<MerchantRoomParamsSetDTO> selectByDateAndMartId2(Map<String, Object> params);
     MerchantRoomEntity getmerchantroom(long merchantId);
     List<MerchantRoomParamsSetDTO>  selectRoomByTime(Map<String, Object> params);
     List selectRoomByTimeVis(Map<String, Object> params);

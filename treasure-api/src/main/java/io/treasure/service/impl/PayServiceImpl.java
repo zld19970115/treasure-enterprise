@@ -176,13 +176,18 @@ public class PayServiceImpl implements PayService {
         recordGiftService.insertRecordGift2(clientUserEntity.getId(),date,gift,a);
         //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
         //至此
-        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-        System.out.println("i+++++++++++++++++++++++++++++:"+i
-        );
+      //  int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+//        System.out.println("i+++++++++++++++++++++++++++++:"+i
+//        );
+
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if(merchantUserEntity!=null){
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+        }
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
         );
-        wsPool.sendMessageToUser(wsByUser, i+"");
+        wsPool.sendMessageToUser(wsByUser, 2+"");
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
             //System.out.println("position 2 : "+slaveOrderEntitys);
@@ -265,10 +270,6 @@ public class PayServiceImpl implements PayService {
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
 
-        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
-        if(merchantUserEntity!=null){
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
-        }
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
@@ -911,13 +912,13 @@ public class PayServiceImpl implements PayService {
  if(merchantUserEntity!=null){
      SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
  }
-        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-        System.out.println("i+++++++++++++++++++++++++++++:"+i
-        );
+        //int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+//        System.out.println("i+++++++++++++++++++++++++++++:"+i
+////        );
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
         );
-        wsPool.sendMessageToUser(wsByUser, i+"");
+        wsPool.sendMessageToUser(wsByUser, 2+"");
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;

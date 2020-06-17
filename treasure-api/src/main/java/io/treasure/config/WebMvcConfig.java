@@ -39,8 +39,10 @@ import java.util.TimeZone;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
     @Autowired
     private AuthorizationInterceptor authorizationInterceptor;
+
     @Autowired
     private LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
 

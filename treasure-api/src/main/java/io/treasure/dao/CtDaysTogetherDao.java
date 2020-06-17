@@ -17,5 +17,5 @@ import java.util.List;
  */
 @Mapper
 public interface CtDaysTogetherDao extends BaseDao<CtDaysTogetherEntity> {
-    CtDaysTogetherEntity getDateAndMerid(@Param("date") Date date, @Param("merchantId") long merchantId,@Param("type") String type);
+    CtDaysTogetherEntity getDateAndMerid(@Param("date") Date date, @Param("merchantId") long merchantId, @Param("type") String type);
 }

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface CtDaysTogetherService extends CrudService<CtDaysTogetherEntity, CtDaysTogetherDTO> {
 
-    CtDaysTogetherEntity getDateAndMerid(Date date,long merchantId,String type);
+    CtDaysTogetherEntity getDateAndMerid(Date date, long merchantId, String type);
 
     int decideInsertOrUpdate(Date date, long merchantId, String type, StatsDayDetailEntity sdde);
 }

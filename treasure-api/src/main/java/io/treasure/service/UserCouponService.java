@@ -14,7 +14,7 @@ public interface UserCouponService extends CrudService<UserCouponEntity, UserCou
 
     List<MerchantCouponDTO> selectByUserId(Long userId, long martId, double money);
     BigDecimal selectGift(Long userId);
-    UserCouponEntity   selectByCouponId(long couponId,long userId);
+    UserCouponEntity   selectByCouponId(long couponId, long userId);
     List<MerchantCouponDTO>  selectMyCouponByUserId(long userId);
     List<MerchantCouponEntity>  selectMartCoupon(Long userId, long martId);
     List<MerchantCouponEntity> selectBymartId(long martId);

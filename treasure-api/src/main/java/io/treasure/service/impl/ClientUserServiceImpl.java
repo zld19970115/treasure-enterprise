@@ -211,7 +211,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
 
     @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
-        return clientUserDao.selectListByCondition(queryClientUserDto);
+        return null;
     }
 
     @Override

@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public interface MerchantActivityService extends CrudService<MerchantActivityEntity, MerchantActivityDTO> {
     //删除
-    void remove(Long id,int status);
-    PageData<MerchantActivityDTO> listPage(Map<String,Object> params);
+    void remove(Long id, int status);
+    PageData<MerchantActivityDTO> listPage(Map<String, Object> params);
 }
