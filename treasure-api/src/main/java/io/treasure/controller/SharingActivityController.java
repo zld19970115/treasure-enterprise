@@ -112,20 +112,11 @@ public class SharingActivityController {
             return result.error("错误：参数有误！！");
         }
 
-        /*
-            private Long initiator_id;      //发起助力者的：client_user/id
-            private Integer sa_id;          //活动编号
-
-            private String mobile;          //新注册：用户的手机号
-            private String password;        //新注册：密码
-            private String unionid;         //新注册：unionId
-            private String clientId;        //新注册：clientId
-         */
-
         //检查是否有token如果没有则插入（只针对新用户，所以完成注册）
+        ClientUserEntity clientUserEntityTmp = null;
         if(newUserOnly){
-            ClientUserEntity clientUserEntityTmp = clientUserService.getByMobile(mobile);
-            if(clientUserEntityTmp == null&&clientUserService.getLogOffCount(mobile)==0){
+            clientUserEntityTmp = clientUserService.getByMobile(mobile);
+            if(clientUserEntityTmp == null){
 
                 ClientUserEntity user = new ClientUserEntity();
                 user.setMobile(mobile);
@@ -147,6 +138,7 @@ public class SharingActivityController {
 
 
             }else{
+
                 if(clientUserEntityTmp != null){
                     map.put("helper_id",clientUserEntityTmp.getId());
                     helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
@@ -154,7 +146,6 @@ public class SharingActivityController {
                 }else{
                     map.put("helper_id",null);
                     map.put("helper_token",null);
-
                 }
 
                 map.put("helper_mobile",mobile);
@@ -165,6 +156,29 @@ public class SharingActivityController {
             }
 
         }
+
+        //////////////////////
+
+        //给用户助力过，则返回助力
+
+        if(sharingActivityLogService.getHelperCount(mobile) !=0 ){
+            if(clientUserEntityTmp != null){
+                map.put("helper_id",clientUserEntityTmp.getId());
+                helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
+                map.put("helper_token",helperTokenEntity.getToken());
+            }else{
+                map.put("helper_id",null);
+                map.put("helper_token",null);
+            }
+
+            map.put("helper_mobile",mobile);
+
+            map.put("msg","您助力过，不能重复助力！");
+            result.setData(map);
+            return result;
+        }
+
+        ///////////////////////
 
         if(newClient != null){
             map.put("helper_id",newClient.getId());
@@ -235,7 +249,6 @@ public class SharingActivityController {
         //5、检查当前助力信息（是否最后一次）生成随机助力值（非最后一次）插入助力记录
         if((completeCount+1) < allowHelpersNum){
             //更新助力记录获得还需助力的费用值
-//
             int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcessActivity.getProposeId());
 
             if(rewardSum < inProcessActivity.getRewardValue()){
