@@ -139,6 +139,7 @@ public class MerchantUserController {
         ValidatorUtils.validateEntity(dto);
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
+        System.out.println("clientid="+cid);
         merchantUserService.updateCID(cid,dto.getMobile());
        return new Result().ok(map);
     }
