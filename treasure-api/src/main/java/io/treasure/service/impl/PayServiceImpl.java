@@ -224,7 +224,10 @@ public class PayServiceImpl implements PayService {
 
         MerchantDTO merchantDto = merchantService.get(masterOrderEntity.getMerchantId());
         //System.out.println("position 3 : "+merchantDto.toString());
-        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
+        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantDto.getId());
+        if (list.size() == 0){
+            System.out.println("PayService 229");
+        }
         if (null != merchantDto) {
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
             if (null != userDto) {
@@ -879,6 +882,9 @@ public class PayServiceImpl implements PayService {
 
         } else {
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(userDto.getId());
+            if (list.size() == 0){
+                System.out.println("PayService 883");
+            }
             System.out.println("position==========14");
             //4-3、发消息给商户会员
             String cId = list.get(0).getClientId();
@@ -1071,7 +1077,10 @@ public class PayServiceImpl implements PayService {
         MerchantDTO merchantDto = merchantService.get(masterOrderEntity.getMerchantId());
         if (null != merchantDto) {
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantDto.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(userDto.getId());
+            if (list.size() == 0){
+                System.out.println("PayService 1076");
+            }
             if (null != userDto) {
                 String clientId = list.get(0).getClientId();
                 if (StringUtils.isNotBlank(clientId)) {
