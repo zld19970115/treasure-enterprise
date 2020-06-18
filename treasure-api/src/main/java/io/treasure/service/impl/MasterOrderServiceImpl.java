@@ -708,9 +708,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //        }
         //包房ID不为空并且订单状态为3（只预定菜）的时候
         //查询出是否存在与主单相关联的包房订单
-        MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
-        MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-        String clientId = merchantUserDTO.getClientId();
+
         if (masterOrderEntity.getRoomId() == null && masterOrderEntity.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
             //判断存在关联包房订单，并且包房状态为未支付
@@ -727,9 +725,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             orderDTO.setMerchantRoomEntity(merchantRoomEntity);
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(masterOrderEntity.getReservationId());
             orderDTO.setReservationInfo(merchantRoomParamsSetEntity);
-            if (StringUtils.isNotBlank(clientId)) {
-                AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
-            }
         }
 
         return orderDTO;
@@ -834,11 +829,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
         masterOrderEntity.setOrderId(orderId);
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
+        MerchantDTO merchantDTO1 = merchantService.get(masterOrderEntity.getMerchantId());
+        MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO1.getCreator());
+        String clientId = merchantUserDTO.getClientId();
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            if (StringUtils.isNotBlank(clientId)) {
+                AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",clientId);
+            }
          //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
 //            System.out.println("i+++++++++++++++++++++++++++++:"+i
 //            );
