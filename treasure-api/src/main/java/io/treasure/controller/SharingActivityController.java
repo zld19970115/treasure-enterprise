@@ -124,7 +124,8 @@ public class SharingActivityController {
 
         //检查是否有token如果没有则插入（只针对新用户，所以完成注册）
         if(newUserOnly){
-            if(clientUserService.getUserByPhone(mobile) == null){
+            ClientUserEntity clientUserEntityTmp = clientUserService.getByMobile(mobile);
+            if(clientUserEntityTmp == null&&clientUserService.getLogOffCount(mobile)==0){
 
                 ClientUserEntity user = new ClientUserEntity();
                 user.setMobile(mobile);
@@ -146,6 +147,17 @@ public class SharingActivityController {
 
 
             }else{
+                if(clientUserEntityTmp != null){
+                    map.put("helper_id",clientUserEntityTmp.getId());
+                    helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
+                    map.put("helper_token",helperTokenEntity.getToken());
+                }else{
+                    map.put("helper_id",null);
+                    map.put("helper_token",null);
+
+                }
+
+                map.put("helper_mobile",mobile);
 
                 map.put("msg","仅新用户有效，不能重复助力！");
                 result.setData(map);

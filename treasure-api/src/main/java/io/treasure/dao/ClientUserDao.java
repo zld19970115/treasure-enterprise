@@ -41,4 +41,6 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
 
     ClientUserDTO pagePCTotalRow(Map<String,Object> params);
 
+    Integer selectLogOffCount(String mobile);
+
 }
