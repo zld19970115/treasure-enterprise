@@ -38,7 +38,7 @@ public class MerchantClientServiceImpl extends CrudServiceImpl<MerchantClientDao
     public void insertMerchantUserClient(String mobile, String clientId) {
         MerchantUserEntity merchantUserEntity = merchantUserService.getByMobile(mobile);
         List<MerchantClientDTO> list = baseDao.getMerchantUserClientByClientId(clientId);
-        if (list == null){
+        if (list.size()==0){
             baseDao.insertMerchantUserClient(merchantUserEntity.getId(),clientId);
         }
     }
