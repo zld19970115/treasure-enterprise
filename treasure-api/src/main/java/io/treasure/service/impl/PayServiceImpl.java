@@ -234,7 +234,7 @@ public class PayServiceImpl implements PayService {
                 String clientId = list.get(0).getClientId();
                 if (StringUtils.isNotBlank(clientId)) {
                     for (int i = 0; i < list.size(); i++) {
-                        AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", list.get(i).getClientId());
+                        AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());
                     }
                     StimmeEntity stimmeEntity = new StimmeEntity();
                     Date date1 = new Date();
