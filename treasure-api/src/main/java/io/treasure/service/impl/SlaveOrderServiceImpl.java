@@ -220,7 +220,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             OrderDTO order = masterOrderService.getOrder(orderId);
             MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
             MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserDTO.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(Long.valueOf(merchantUserDTO.getMerchantid()));
             if (list.size() == 0){
                 System.out.println("SlaveOrder 225");
             }

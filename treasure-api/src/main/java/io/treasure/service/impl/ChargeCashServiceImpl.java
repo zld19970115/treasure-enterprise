@@ -258,7 +258,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         if(null!=merchantDto){
 
             MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(userDto.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
             if (list.size() == 0){
                 System.out.println("MasterOrder 263");
             }

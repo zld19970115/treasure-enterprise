@@ -224,7 +224,7 @@ public class PayServiceImpl implements PayService {
 
         MerchantDTO merchantDto = merchantService.get(masterOrderEntity.getMerchantId());
         //System.out.println("position 3 : "+merchantDto.toString());
-        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantDto.getId());
+        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
         if (list.size() == 0){
             System.out.println("PayService 229");
         }
@@ -881,7 +881,7 @@ public class PayServiceImpl implements PayService {
             }
 
         } else {
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(userDto.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
             if (list.size() == 0){
                 System.out.println("PayService 883");
             }
@@ -925,7 +925,6 @@ public class PayServiceImpl implements PayService {
         if(null != merchantDto.getMobile()){
             SendSMSUtil.sendNewOrder(merchantDto.getMobile(),smsConfig);
         }
-
  */
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
@@ -1077,7 +1076,7 @@ public class PayServiceImpl implements PayService {
         MerchantDTO merchantDto = merchantService.get(masterOrderEntity.getMerchantId());
         if (null != merchantDto) {
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(userDto.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
             if (list.size() == 0){
                 System.out.println("PayService 1076");
             }

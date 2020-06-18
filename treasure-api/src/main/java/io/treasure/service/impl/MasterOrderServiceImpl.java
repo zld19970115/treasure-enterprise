@@ -844,7 +844,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
-            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
             if (list.size() == 0){
                 System.out.println("MasterOrder 849");
             }
@@ -1174,7 +1174,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
         MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
 
-        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserDTO.getId());
+        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
         if (list.size() == 0){
             System.out.println("MasterOrder 1176");
         }
