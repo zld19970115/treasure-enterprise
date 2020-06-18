@@ -54,6 +54,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private MerchantService merchantService;
     @Autowired
+    private MerchantClientService merchantClientService;
+    @Autowired
     private SlaveOrderService slaveOrderService;
     @Autowired
     private MerchantRoomService merchantRoomService;
@@ -75,7 +77,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MasterOrderService masterOrderService;
     @Autowired
     private MerchantCouponService merchantCouponService;
-    @Autowired(required =  false)
+    @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
 
     @Autowired
@@ -102,6 +104,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     BitMessageUtil bitMessageUtil;
     @Autowired
     WsPool wsPool;
+
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -190,7 +193,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (dto.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
                 //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
                 //==========================================================================更新排序分类:002
-                baseDao.updateStatusAndReasonPlus(id,status, verify, verify_date,refundReason,2);
+                baseDao.updateStatusAndReasonPlus(id, status, verify, verify_date, refundReason, 2);
 
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
                 for (SlaveOrderEntity s : slaveOrderEntities) {
@@ -208,9 +211,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                     SendSMSUtil.sendMerchantReceipt(userDto.getMobile(), merchantDTO.getName(), smsConfig);
                     WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-                    System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                    System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
                     );
-                    wsPool.sendMessageToUser(wsByUser, 1+"");
+                    wsPool.sendMessageToUser(wsByUser, 1 + "");
                 }
             } else {
                 return new Result().error("无法接受订单！");
@@ -239,7 +242,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
 
-        if(dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
+        if (dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
             UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
             entiry.setCreateDate(new Date());
@@ -254,7 +257,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         statsDayDetailService.insertFinishUpdate(dto);
         List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
-        for (MasterOrderDTO mod:orderByFinance) {
+        for (MasterOrderDTO mod : orderByFinance) {
             statsDayDetailService.insertFinishUpdate(mod);
         }
         Date date = new Date();
@@ -328,9 +331,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //        clientUserService.updateById(clientUserEntity);
 //        String orderId = dto.getOrderId();
         WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
         );
-        wsPool.sendMessageToUser(wsByUser, 1+"");
+        wsPool.sendMessageToUser(wsByUser, 1 + "");
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
@@ -353,14 +356,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             byid.setSales(j);
             goodService.updateById(byid);
         }
-        List<MasterOrderEntity>  masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
+        List<MasterOrderEntity> masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
         MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
         Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
-        if (wartCash==null){
-            wartCash=0.00;
+        if (wartCash == null) {
+            wartCash = 0.00;
         }
-        if (masterOrderEntity==null){
-            if(null!=merchantEntity){
+        if (masterOrderEntity == null) {
+            if (null != merchantEntity) {
                 BigDecimal wartcashZore = new BigDecimal("0.00");
                 merchantEntity.setTotalCash(0.00);
                 merchantEntity.setAlreadyCash(0.00);
@@ -369,20 +372,22 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantEntity.setWartCash(wartcashZore);
                 merchantService.updateById(merchantEntity);
                 return new Result().ok("订单翻台成功！");
-            }else{
+            } else {
                 return new Result().error("无法获取店铺信息!");
             }
         }
         List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(dto.getMerchantId());
-        if (merchantWithdrawEntities.size()==0){
+        if (merchantWithdrawEntities.size() == 0) {
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());
 
             BigDecimal wartcashZore = new BigDecimal("0.00");
-            if (null==bigDecimal){
+            if (null == bigDecimal) {
                 bigDecimal = new BigDecimal("0.00");
-                if(null!=merchantEntity){
-                    if (bigDecimal1==null){  bigDecimal1 = new BigDecimal("0.00");}
+                if (null != merchantEntity) {
+                    if (bigDecimal1 == null) {
+                        bigDecimal1 = new BigDecimal("0.00");
+                    }
                     merchantEntity.setTotalCash(0.00);
                     merchantEntity.setAlreadyCash(0.00);
                     merchantEntity.setNotCash(0.00);
@@ -390,11 +395,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     merchantEntity.setWartCash(wartcashZore);
                     merchantService.updateById(merchantEntity);
                     return new Result().ok("订单翻台成功！");
-                }else{
+                } else {
                     return new Result().error("无法获取店铺信息!");
                 }
             }
-            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            BigDecimal totalCash = bigDecimal.add(bigDecimal1);
             merchantEntity.setTotalCash(totalCash.doubleValue());
             merchantEntity.setAlreadyCash(0.00);
             merchantEntity.setNotCash(bigDecimal.doubleValue());
@@ -407,24 +412,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
             BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());//查询总额
             BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());//查询扣点总额
-            if (bigDecimal1==null){
+            if (bigDecimal1 == null) {
                 bigDecimal1 = new BigDecimal("0.00");
             }
-            if (bigDecimal==null){
+            if (bigDecimal == null) {
                 bigDecimal = new BigDecimal("0.00");
             }
             Double aDouble = merchantWithdrawService.selectAlreadyCash(dto.getMerchantId()); //查询已提现总额
-            if (aDouble==null){
-                aDouble=0.00;
+            if (aDouble == null) {
+                aDouble = 0.00;
             }
             String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(dto.getMerchantId()));
             BigDecimal v = new BigDecimal(0);
-            if(allMoney!="null"){
+            if (allMoney != "null") {
                 v = new BigDecimal(allMoney);
             }
             BigDecimal a = bigDecimal.subtract(v);
             double c = a.doubleValue();
-            BigDecimal totalCash =  bigDecimal.add(bigDecimal1);
+            BigDecimal totalCash = bigDecimal.add(bigDecimal1);
             merchantEntity.setTotalCash(totalCash.doubleValue());
             merchantEntity.setAlreadyCash(aDouble);
             merchantEntity.setNotCash(c);
@@ -438,7 +443,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     @Async
-    public Result orderRefundSuccess(String orderNo, int status){
+    public Result orderRefundSuccess(String orderNo, int status) {
 
         MasterOrderEntity masterOrderEntity = masterOrderDao.selectByOrderId(orderNo);
         masterOrderEntity.setStatus(status);
@@ -461,29 +466,29 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     public Result refundYesUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
-        BigDecimal nu=new BigDecimal("0");
+        BigDecimal nu = new BigDecimal("0");
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
             List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
             for (OrderDTO orderDTO : affiliateOrde) {
-                if (affiliateOrde.size()==1 && orderDTO.getReservationType()==Constants.ReservationType.ONLYROOMRESERVATION.getValue() ){
+                if (affiliateOrde.size() == 1 && orderDTO.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
                     //003===============更新排序状态
                     orderDTO.setResponseStatus(2);//1表示商家已响应
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                     BigDecimal giftMoney = orderDTO.getGiftMoney();
-                    BigDecimal num=new BigDecimal("0");
-                    if(giftMoney.compareTo(num)==1){
-                        BigDecimal gift =clientUserDTO.getGift();
-                        BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
+                    BigDecimal num = new BigDecimal("0");
+                    if (giftMoney.compareTo(num) == 1) {
+                        BigDecimal gift = clientUserDTO.getGift();
+                        BigDecimal abc = giftMoney.add(gift).setScale(2, BigDecimal.ROUND_DOWN);
                         clientUserDTO.setGift(abc);
                         clientUserService.update(clientUserDTO);
                     }
                 }
             }
-            if(dto.getReservationType()!=2&&dto.getPayMoney().compareTo(nu)==1){
+            if (dto.getReservationType() != 2 && dto.getPayMoney().compareTo(nu) == 1) {
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
 
@@ -494,13 +499,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     } else {
                         OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
                         BigDecimal giftMoney = order.getGiftMoney();
-                        BigDecimal num=new BigDecimal("0");
-                        if(giftMoney.compareTo(num)==1){
+                        BigDecimal num = new BigDecimal("0");
+                        if (giftMoney.compareTo(num) == 1) {
 //                    BigDecimal gift = clientUserDTO.getGift();
 //                    clientUserDTO.setGift(giftMoney.add(gift));
 //                    clientUserService.update(clientUserDTO);
-                            BigDecimal gift =clientUserDTO.getGift();
-                            BigDecimal abc=giftMoney.add(gift).setScale(2,BigDecimal.ROUND_DOWN);
+                            BigDecimal gift = clientUserDTO.getGift();
+                            BigDecimal abc = giftMoney.add(gift).setScale(2, BigDecimal.ROUND_DOWN);
                             clientUserDTO.setGift(abc);
                             clientUserService.update(clientUserDTO);
                         }
@@ -549,9 +554,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         SendSMSUtil.sendAgreeRefund(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
         WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+        System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
         );
-        wsPool.sendMessageToUser(wsByUser, 1+"");
+        wsPool.sendMessageToUser(wsByUser, 1 + "");
         return new Result();
     }
 
@@ -575,7 +580,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (dto.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 //baseDao.updateStatusAndReason(id, status, verify, verify_date, refundReason);
                 //更新排序004 ----1表示商家已处理
-                baseDao.updateStatusAndReasonPlus(id, status, verify, verify_date, refundReason,2);
+                baseDao.updateStatusAndReasonPlus(id, status, verify, verify_date, refundReason, 2);
                 List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
 //                for (SlaveOrderEntity s : slaveOrderEntities) {
 //                    if (s.getRefundId() == null || s.getRefundId().length() == 0) {
@@ -588,9 +593,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
                 SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
                 WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
                 );
-                wsPool.sendMessageToUser(wsByUser, 1+"");
+                wsPool.sendMessageToUser(wsByUser, 1 + "");
             } else {
                 return new Result().error("无法退款！");
             }
@@ -735,16 +740,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return baseDao.selectByOrderId(orderId);
     }
 
-    public int paseIntViaTime(Date target){
+    public int paseIntViaTime(Date target) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String res[] = sdf.format(target).split(":");
-        return Integer.parseInt(res[0].trim())*60*60+Integer.parseInt(res[1].trim())*60+Integer.parseInt(res[2].trim());
+        return Integer.parseInt(res[0].trim()) * 60 * 60 + Integer.parseInt(res[1].trim()) * 60 + Integer.parseInt(res[2].trim());
     }
-    public boolean timeInRange(Date target,Date start,Date stop){
-        if(paseIntViaTime(target)>=paseIntViaTime(start) && paseIntViaTime(target)<=paseIntViaTime(stop))
+
+    public boolean timeInRange(Date target, Date start, Date stop) {
+        if (paseIntViaTime(target) >= paseIntViaTime(start) && paseIntViaTime(target) <= paseIntViaTime(stop))
             return true;
         return false;
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result orderSave(OrderDTO dto, List<SlaveOrderEntity> dtoList, ClientUserEntity user) throws ParseException {
@@ -752,14 +759,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         Integer reservationType = dto.getReservationType();
-        if (dto.getPayfs()!= null){
-            baseDao.insertPayMode(orderId,dto.getPayfs());
+        if (dto.getPayfs() != null) {
+            baseDao.insertPayMode(orderId, dto.getPayfs());
         }
         if (reservationType != Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
             Long merchantId = merchantRoomParamsSetEntity.getMerchantId();
             Long roomId = merchantRoomParamsSetEntity.getRoomId();
-            long roomSetId = 0 ;
+            long roomSetId = 0;
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date a1 = sdf.parse("05:00:00");
@@ -767,11 +774,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date a2 = sdf.parse("10:00:00");
             Date b2 = sdf.parse("14:59:00");
             Date a3 = sdf.parse("15:00:00");
-            Date b3 =sdf.parse("21:59:00");
+            Date b3 = sdf.parse("21:59:00");
             Date a4 = sdf.parse(" 22:00:00");
-            Date b4 =sdf.parse(" 23:59:00");
+            Date b4 = sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
-            Date b5 =sdf.parse(" 4:59:00");
+            Date b5 = sdf.parse(" 4:59:00");
             System.out.println(dto.getEatTime());
             System.out.println(a1);
             System.out.println(b1);
@@ -782,20 +789,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             boolean s5 = timeInRange(dto.getEatTime(), a5, b5);
 
 
-            if (s1==true){
-              roomSetId=1;
-          }
-            if (s2==true){
-                roomSetId=2;
+            if (s1 == true) {
+                roomSetId = 1;
             }
-            if (s3==true){
-                roomSetId=3;
+            if (s2 == true) {
+                roomSetId = 2;
             }
-            if (s4==true){
-                roomSetId=4;
+            if (s3 == true) {
+                roomSetId = 3;
             }
-            if (s5==true){
-                roomSetId=1;
+            if (s4 == true) {
+                roomSetId = 4;
+            }
+            if (s5 == true) {
+                roomSetId = 1;
             }
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity1 = merchantRoomParamsSetService.selectByMartIdAndRoomIdAndRoomId(merchantId, roomId, roomSetId, simpleDateFormat.format(dto.getEatTime()));
             if (merchantRoomParamsSetEntity1 == null) {
@@ -811,7 +818,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         }
         //是否使用优惠卷
-        if (dto.getDiscountId()!= null) {
+        if (dto.getDiscountId() != null) {
             userCouponService.updateStatus(dto.getDiscountId());
         }
         //是否使用赠送金
@@ -831,22 +838,27 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         masterOrderEntity.setStatus(Constants.OrderStatus.NOPAYORDER.getValue());
         MerchantDTO merchantDTO1 = merchantService.get(masterOrderEntity.getMerchantId());
         MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO1.getCreator());
-        String clientId = merchantUserDTO.getClientId();
+
         //如果包房押金未0，先房后菜情况下设置订单状态未已支付
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
             SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(dto.getMerchantId());
+            String clientId = list.get(0).getClientId();
             if (StringUtils.isNotBlank(clientId)) {
-                AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",clientId);
+                for (int i = 0; i < list.size(); i++) {
+                    AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());
+                }
+
             }
-         //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
+            //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
 //            System.out.println("i+++++++++++++++++++++++++++++:"+i
 //            );
             WebSocket wsByUser = wsPool.getWsByUser(dto.getMerchantId().toString());
-            System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+            System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
             );
-            wsPool.sendMessageToUser(wsByUser, 2+"");
+            wsPool.sendMessageToUser(wsByUser, 2 + "");
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -903,15 +915,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (Constants.ReservationType.ONLYROOMRESERVATION.getValue() == dto.getReservationType()) {
             return result.error(-11, "只预订包房不可以加菜！");
         }
-        if(masterOrderService.selectByOrderId(dto.getOrderId()).getCheckStatus()==1){
+        if (masterOrderService.selectByOrderId(dto.getOrderId()).getCheckStatus() == 1) {
             return result.error(-11, "已翻台订单不可以加菜！");
         }
 
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
         //是否使用赠送金
-        if (dto.getPayfs()!= null){
-            baseDao.insertPayMode(orderId,dto.getPayfs());
+        if (dto.getPayfs() != null) {
+            baseDao.insertPayMode(orderId, dto.getPayfs());
         }
         if (dto.getGiftMoney() != null && dto.getGiftMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(user.getId());
@@ -1027,7 +1039,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             params.put("merchantId", null);
         }
         List<MerchantOrderDTO> list = baseDao.listMerchant(params);
-        for (MerchantOrderDTO s:list) {
+        for (MerchantOrderDTO s : list) {
             BigDecimal payMoney = s.getPayMoney();
             BigDecimal giftMoney = s.getGiftMoney();
             s.setPayMoney(payMoney.add(giftMoney));
@@ -1049,6 +1061,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public List<MasterOrderEntity> selectBYPOrderId(String orderId) {
         return baseDao.selectBYPOrderId(orderId);
     }
+
     /**
      * 商户端订单预约列表查询
      *
@@ -1081,7 +1094,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
-    public  List<MasterOrderEntity> selectByUserId(long userId) {
+    public List<MasterOrderEntity> selectByUserId(long userId) {
         return baseDao.selectByUserId(userId);
     }
 
@@ -1142,22 +1155,24 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         Result result = new Result();
         MasterOrderEntity masterOrderEntity = baseDao.selectById(Convert.toLong(params.get("id")));
         List<SlaveOrderEntity> sod = slaveOrderService.getOrderGoods(masterOrderEntity.getOrderId());
-        for (SlaveOrderEntity s:sod) {
-            if(s.getStatus()==Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()){
+        for (SlaveOrderEntity s : sod) {
+            if (s.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                 return result.error(-1, "您有退菜申请未审核！");
             }
         }
-        if(masterOrderEntity.getPOrderId().equals("0")){
+        if (masterOrderEntity.getPOrderId().equals("0")) {
             List<OrderDTO> o = baseDao.selectPOrderIdAndS(masterOrderEntity.getOrderId());
-            for (OrderDTO oo:o) {
-                if(oo.getStatus()==4){
+            for (OrderDTO oo : o) {
+                if (oo.getStatus() == 4) {
                     return result.error(-1, "您有订单商户未接收！");
                 }
             }
         }
         MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
         MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-        String clientId = merchantUserDTO.getClientId();
+
+        List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserDTO.getId());
+        String clientId = list.get(0).getClientId();
         int s = masterOrderEntity.getStatus();
         if (s == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
             masterOrderEntity.setStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue());
@@ -1169,7 +1184,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             int i = baseDao.updateById(masterOrderEntity);
             if (i > 0) {
                 if (StringUtils.isNotBlank(clientId)) {
-                    AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
+                    for (int j = 0; j < list.size(); j++) {
+                        AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", list.get(j).getClientId());
+                    }
                 }
                 SendSMSUtil.sendApplyRefund(merchantUserDTO.getMobile(), smsConfig);
                 result.ok(true);
@@ -1221,153 +1238,153 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //    }
 
     //根据各项计算各单项的比值
-    public List<BigDecimal> comboPatch(List<BigDecimal> ls,BigDecimal target){
+    public List<BigDecimal> comboPatch(List<BigDecimal> ls, BigDecimal target) {
 
         List<PatchDto> resultList = new ArrayList<>();
         BigDecimal sum = new BigDecimal("0");
 
-        for(int i=0;i<ls.size();i++){
-            sum=sum.add(ls.get(i));     //累计总值
+        for (int i = 0; i < ls.size(); i++) {
+            sum = sum.add(ls.get(i));     //累计总值
         }
         BigDecimal patchDiff = new BigDecimal("0");
-        for(int i=0;i<ls.size();i++){
-            BigDecimal itemRes = target.multiply(ls.get(i)).divide(sum,8,BigDecimal.ROUND_DOWN);
+        for (int i = 0; i < ls.size(); i++) {
+            BigDecimal itemRes = target.multiply(ls.get(i)).divide(sum, 8, BigDecimal.ROUND_DOWN);
 
             //System.out.println("原始值："+res);
-            resultList.add(new PatchDto(itemRes.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(itemRes),i));//增加位置标识符
-            patchDiff = patchDiff.add(itemRes.setScale(2,BigDecimal.ROUND_DOWN));
+            resultList.add(new PatchDto(itemRes.setScale(2, BigDecimal.ROUND_DOWN), generateDecimalPart(itemRes), i));//增加位置标识符
+            patchDiff = patchDiff.add(itemRes.setScale(2, BigDecimal.ROUND_DOWN));
             //System.out.println("单项均值："+resultList.get(resultList.size()-1).toString());
         }
 
-        int sumInt = Integer.parseInt(patchDiff.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
-        int targetInt = Integer.parseInt(target.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
+        int sumInt = Integer.parseInt(patchDiff.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        int targetInt = Integer.parseInt(target.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_DOWN).toString());
         //System.out.println("一次计算后的值"+sumInt+","+targetInt);
 
-        if(targetInt > sumInt) {
+        if (targetInt > sumInt) {
             //说明比目标值小,需要增加
-            Collections.sort(resultList,Collections.reverseOrder());
+            Collections.sort(resultList, Collections.reverseOrder());
             System.out.println("均分量不足");
 
-            for(int i=0;i<(targetInt-sumInt);i++){
-                int ix =i%resultList.size();
-                System.out.println("补偿前-"+ix+":"+resultList.get(ix).toString());
+            for (int i = 0; i < (targetInt - sumInt); i++) {
+                int ix = i % resultList.size();
+                System.out.println("补偿前-" + ix + ":" + resultList.get(ix).toString());
                 BigDecimal patchValue = resultList.get(ix).getMainValue().add(new BigDecimal("0.01"));
-                resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal(),resultList.get(ix).getId()));
+                resultList.set(ix, new PatchDto(patchValue, resultList.get(ix).getTruncatedDecimal(), resultList.get(ix).getId()));
 
-                System.out.println("补偿编号-"+ix+":"+resultList.get(ix).toString());
+                System.out.println("补偿编号-" + ix + ":" + resultList.get(ix).toString());
             }
-        }else if(targetInt < sumInt){
+        } else if (targetInt < sumInt) {
             Collections.sort(resultList);
             System.out.println("均分量超限");
 
-            for(int i=0;i<(sumInt-targetInt);i++){
-                int ix =i%resultList.size();
+            for (int i = 0; i < (sumInt - targetInt); i++) {
+                int ix = i % resultList.size();
 
-                if(resultList.get(ix).getMainValue().compareTo(new BigDecimal("0.01"))>0){
-                    System.out.println("补偿前："+resultList.get(ix).toString());
+                if (resultList.get(ix).getMainValue().compareTo(new BigDecimal("0.01")) > 0) {
+                    System.out.println("补偿前：" + resultList.get(ix).toString());
                     BigDecimal patchValue = resultList.get(ix).getMainValue().subtract(new BigDecimal("0.01"));
-                    System.out.println("补偿后："+resultList.get(ix).toString());
-                    resultList.set(ix,new PatchDto(patchValue,resultList.get(ix).getTruncatedDecimal(),resultList.get(ix).getId()));
-                }else{
+                    System.out.println("补偿后：" + resultList.get(ix).toString());
+                    resultList.set(ix, new PatchDto(patchValue, resultList.get(ix).getTruncatedDecimal(), resultList.get(ix).getId()));
+                } else {
                     sumInt++;//下次循环再改
                 }
             }
-        }else{
+        } else {
             List<BigDecimal> res0 = new ArrayList<>();
-            for(int i=0;i<resultList.size();i++){
+            for (int i = 0; i < resultList.size(); i++) {
                 res0.add(resultList.get(i).getMainValue());
-                System.out.println("最后值:"+res0.get(i));
+                System.out.println("最后值:" + res0.get(i));
             }
             return res0;
         }
 
         List<BigDecimal> res = new ArrayList<>();
-        for(int i=0;i<resultList.size();i++){
-            for(int j=0;j<resultList.size();j++){
-                if(i == resultList.get(j).getId()){
+        for (int i = 0; i < resultList.size(); i++) {
+            for (int j = 0; j < resultList.size(); j++) {
+                if (i == resultList.get(j).getId()) {
                     res.add(resultList.get(j).getMainValue());
                 }
             }
-            System.out.println("最后值:"+res.get(i));
+            System.out.println("最后值:" + res.get(i));
         }
 
         return res;
     }
 
     //根据目标的相应的值得到其中的占比
-    public List<BigDecimal> calculatePercentViaPatch(List<BigDecimal> target){
+    public List<BigDecimal> calculatePercentViaPatch(List<BigDecimal> target) {
 
         BigDecimal sum = new BigDecimal("0");
         BigDecimal percentSum = new BigDecimal("0");        //计算结果百分数累计值
-        List<PatchDto> patchDtos  = new ArrayList<>();
+        List<PatchDto> patchDtos = new ArrayList<>();
 
-        for(int i=0;i<target.size();i++){
+        for (int i = 0; i < target.size(); i++) {
             sum = sum.add(target.get(i));
         }
-        for(int i=0;i<target.size();i++){
-            BigDecimal percentItem = target.get(i).divide(sum,10,BigDecimal.ROUND_HALF_DOWN);
+        for (int i = 0; i < target.size(); i++) {
+            BigDecimal percentItem = target.get(i).divide(sum, 10, BigDecimal.ROUND_HALF_DOWN);
 
-            patchDtos.add(new PatchDto(percentItem.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(percentItem),i));
-            percentSum = percentSum.add(percentItem.setScale(2,BigDecimal.ROUND_DOWN));
+            patchDtos.add(new PatchDto(percentItem.setScale(2, BigDecimal.ROUND_DOWN), generateDecimalPart(percentItem), i));
+            percentSum = percentSum.add(percentItem.setScale(2, BigDecimal.ROUND_DOWN));
         }
 
-        int percentInt = Integer.parseInt(percentSum.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
-       // System.out.println("一次计算后占比百分数percentInt:"+percentInt);
-        if(percentInt >100){
+        int percentInt = Integer.parseInt(percentSum.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        // System.out.println("一次计算后占比百分数percentInt:"+percentInt);
+        if (percentInt > 100) {
             Collections.sort(patchDtos);
-            for(int i=0;i<(percentInt-100);i++){
-                int ix =i%patchDtos.size();
+            for (int i = 0; i < (percentInt - 100); i++) {
+                int ix = i % patchDtos.size();
 
-                if(patchDtos.get(ix).getMainValue().compareTo(new BigDecimal("0.01"))>0){
+                if (patchDtos.get(ix).getMainValue().compareTo(new BigDecimal("0.01")) > 0) {
                     BigDecimal patchValue = patchDtos.get(ix).getMainValue().subtract(new BigDecimal("0.01"));
-                    patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal(),patchDtos.get(ix).getId()));
-                }else{
+                    patchDtos.set(ix, new PatchDto(patchValue, patchDtos.get(ix).getTruncatedDecimal(), patchDtos.get(ix).getId()));
+                } else {
                     percentInt++;//下次循环再改
                 }
 
             }
-        }else if(percentInt <100){
-            Collections.sort(patchDtos,Collections.reverseOrder());
+        } else if (percentInt < 100) {
+            Collections.sort(patchDtos, Collections.reverseOrder());
 
 //            for(int i=0;i<patchDtos.size();i++){
 //                System.out.println("补前"+patchDtos.get(i).toString());
 //            }
-            for(int i=0;i<(100-percentInt);i++){
-                int ix =i%patchDtos.size();
+            for (int i = 0; i < (100 - percentInt); i++) {
+                int ix = i % patchDtos.size();
 
                 BigDecimal patchValue = patchDtos.get(ix).getMainValue().add(new BigDecimal("0.01"));
-                patchDtos.set(ix,new PatchDto(patchValue,patchDtos.get(ix).getTruncatedDecimal(),patchDtos.get(ix).getId()));
+                patchDtos.set(ix, new PatchDto(patchValue, patchDtos.get(ix).getTruncatedDecimal(), patchDtos.get(ix).getId()));
 
-               // System.out.println("补偿编号-"+ix+":"+patchDtos.get(ix).toString());
+                // System.out.println("补偿编号-"+ix+":"+patchDtos.get(ix).toString());
 
             }
             BigDecimal xyz = new BigDecimal("0");
-            for(int i=0;i<patchDtos.size();i++){
-               // System.out.println("补偿后："+patchDtos.get(i).toString());
+            for (int i = 0; i < patchDtos.size(); i++) {
+                // System.out.println("补偿后："+patchDtos.get(i).toString());
                 xyz = xyz.add(patchDtos.get(i).getMainValue());
             }
             //System.out.println("最后得百分敉："+xyz);
         }
         List<BigDecimal> res = new ArrayList<>();
 
-        for(int i=0;i<patchDtos.size();i++){
-            for(int j=0;j<patchDtos.size();j++){
-                if(i == patchDtos.get(j).getId()){
+        for (int i = 0; i < patchDtos.size(); i++) {
+            for (int j = 0; j < patchDtos.size(); j++) {
+                if (i == patchDtos.get(j).getId()) {
                     res.add(patchDtos.get(j).getMainValue());
                 }
             }
-            System.out.println("result："+res.get(i).toString());
+            System.out.println("result：" + res.get(i).toString());
         }
 
         return res;
     }
 
     //chiguoqiang:生成主体部分与小数标记部分,作为字段排序的依据
-    public int generateDecimalPart(BigDecimal bd){
+    public int generateDecimalPart(BigDecimal bd) {
         String result = null;
-        String target = bd.setScale(8,BigDecimal.ROUND_DOWN)+"";
-        if(target.contains(".") && target.length()>(target.indexOf(".")+3))
-            return Integer.parseInt(target.substring(target.indexOf(".")+3));
+        String target = bd.setScale(8, BigDecimal.ROUND_DOWN) + "";
+        if (target.contains(".") && target.length() > (target.indexOf(".") + 3))
+            return Integer.parseInt(target.substring(target.indexOf(".") + 3));
         return 0;
     }
 
@@ -1375,23 +1392,23 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //
     //
     //chiguoqiang:优惠选算法（赠送金按项总价，优惠券也按项总价算，需要改时再改）
-    public DesignConditionsDTO itemsClculatex(DesignConditionsDTO target,DiscountType discountType){
-        if(target == null)      return null;
+    public DesignConditionsDTO itemsClculatex(DesignConditionsDTO target, DiscountType discountType) {
+        if (target == null) return null;
         List<calculationAmountDTO> slaveOrders = target.getSlaveOrder();
 
         //维护菜品详细表中赠送金字段，（原价-优惠后单价）*数量=此菜品共优惠多少钱
         BigDecimal priceTotal = target.getTotalMoney();        //原始总价
         BigDecimal priceOrigin = priceTotal;
-        BigDecimal priceAfterDiscount       = priceTotal;               //优惠后的价格
+        BigDecimal priceAfterDiscount = priceTotal;               //优惠后的价格
         //赠送金:假设一单为总价25元，5元的优惠券：优惠后的价格为20元，可用赠送金为20元的10%即2元
-        BigDecimal giftRatio        = new BigDecimal("0.1");         //赠送金可用比例
+        BigDecimal giftRatio = new BigDecimal("0.1");         //赠送金可用比例
 
         BigDecimal giftValue = new BigDecimal("0");
 
         BigDecimal oRatio = new BigDecimal("0");
         List<BigDecimal> tmp001 = new ArrayList<>();//f01
         //一次初始化基本参数
-        for(int i = 0; i < slaveOrders.size(); i++) {
+        for (int i = 0; i < slaveOrders.size(); i++) {
             //检查商品是否存在，存在则取回
             GoodDTO goodDTO = goodService.get(slaveOrders.get(i).getGoodId());
             calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
@@ -1401,7 +1418,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 slaveOrderItem.setName(goodDTO.getName()).setIcon(goodDTO.getIcon());//更新基本信息
 
             //项总价
-            BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2,BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
+            BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2, BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
 
             slaveOrderItem
                     .setNewPrice(slaveOrderItem.getPrice())//新项单价
@@ -1414,13 +1431,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             //项总价(用于计算项占比例)
             tmp001.add(itemSumPrice);//单项小计金额
         }
-            /*************************/
+        /*************************/
         //如果不好用需要直接使用值
         List<BigDecimal> ratios = calculatePercentViaPatch(tmp001);        //得到各分项占比
         /*************************/
         //分类处理业务
-        switch (discountType.ordinal())
-        {
+        switch (discountType.ordinal()) {
             /************************************************************************/
             case 0://优惠券方式和赠送金方式【留位】
             case 1://仅优惠券方式
@@ -1497,9 +1513,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                        slaveOrders.set(i,slaveOrderItem);
 //                    }
 //                }
-                if (discountType.ordinal()==1)
-                {
-                    System.out.println("xx当前赠送金的值--原总:"+priceOrigin);
+                if (discountType.ordinal() == 1) {
+                    System.out.println("xx当前赠送金的值--原总:" + priceOrigin);
                     slaveOrders = calculateIncomex(slaveOrders);
                     break;
                 }
@@ -1510,47 +1525,47 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //获取用户信息
                 //BigDecimal giftValue= new BigDecimal("0");
                 ClientUserDTO clientUserDTO = clientUserService.get(target.getUserId());
-                if(clientUserDTO != null){
+                if (clientUserDTO != null) {
                     BigDecimal userOwnerGiftValue = clientUserDTO.getGift();
 
                     //更新赠送金量======
-                    giftValue = priceAfterDiscount.multiply(giftRatio).setScale(2,BigDecimal.ROUND_DOWN);
+                    giftValue = priceAfterDiscount.multiply(giftRatio).setScale(2, BigDecimal.ROUND_DOWN);
                     //用户赠送金不足
-                    if (giftValue.compareTo(userOwnerGiftValue) >=0) {
-                        giftValue = userOwnerGiftValue.setScale(2,BigDecimal.ROUND_DOWN);
+                    if (giftValue.compareTo(userOwnerGiftValue) >= 0) {
+                        giftValue = userOwnerGiftValue.setScale(2, BigDecimal.ROUND_DOWN);
                     }
                     /**************************************/
                     //代付金 金额分摊计算=========================================
 
                     List<BigDecimal> totals = new ArrayList<>();
-                    for(int i=0;i<slaveOrders.size();i++){
+                    for (int i = 0; i < slaveOrders.size(); i++) {
                         totals.add(slaveOrders.get(i).getTotalMoney());
                     }
 
-                    List<BigDecimal> freeGolds=  comboPatch(totals,giftValue);//将此值分摊到各具体项中
+                    List<BigDecimal> freeGolds = comboPatch(totals, giftValue);//将此值分摊到各具体项中
                     /**************************************/
                     //更新项参数
-                    for(int i = 0; i < slaveOrders.size(); i++) {
+                    for (int i = 0; i < slaveOrders.size(); i++) {
 
                         calculationAmountDTO slaveOrderItem = slaveOrders.get(i);
 
                         //单项赠送金的值
                         BigDecimal itemGiftValue = freeGolds.get(i);//slaveOrderItem.getFreeGold();
                         //单项优惠赠送金优惠后的价格
-                        BigDecimal itemPriceTotalAfterGift = slaveOrderItem.getTotalMoney().subtract(itemGiftValue).setScale(2,BigDecimal.ROUND_DOWN);//.subtract(slaveOrderItem.getDiscountsMoney()).setScale(2,BigDecimal.ROUND_DOWN);
-                        BigDecimal newPriceAfterGift = itemPriceTotalAfterGift.divide(slaveOrderItem.getQuantity(),2,BigDecimal.ROUND_DOWN).setScale(2,BigDecimal.ROUND_DOWN);
+                        BigDecimal itemPriceTotalAfterGift = slaveOrderItem.getTotalMoney().subtract(itemGiftValue).setScale(2, BigDecimal.ROUND_DOWN);//.subtract(slaveOrderItem.getDiscountsMoney()).setScale(2,BigDecimal.ROUND_DOWN);
+                        BigDecimal newPriceAfterGift = itemPriceTotalAfterGift.divide(slaveOrderItem.getQuantity(), 2, BigDecimal.ROUND_DOWN).setScale(2, BigDecimal.ROUND_DOWN);
                         slaveOrderItem
-                                .setNewPrice(newPriceAfterGift.setScale(2,BigDecimal.ROUND_DOWN))//使用赠送金后的价格
-                                .setTotalMoney(itemPriceTotalAfterGift.setScale(2,BigDecimal.ROUND_DOWN))
-                                .setFreeGold(itemGiftValue.setScale(2,BigDecimal.ROUND_DOWN));    //项赠送金使用量
-                        slaveOrders.set(i,slaveOrderItem);
+                                .setNewPrice(newPriceAfterGift.setScale(2, BigDecimal.ROUND_DOWN))//使用赠送金后的价格
+                                .setTotalMoney(itemPriceTotalAfterGift.setScale(2, BigDecimal.ROUND_DOWN))
+                                .setFreeGold(itemGiftValue.setScale(2, BigDecimal.ROUND_DOWN));    //项赠送金使用量
+                        slaveOrders.set(i, slaveOrderItem);
                     }
                 }
 
                 /************************************************************************/
             case 3://默认不扣减方式
                 /************************************************************************/
-                System.out.println("xx当前赠送金的值--原总，赠送金:"+priceOrigin+","+giftValue);
+                System.out.println("xx当前赠送金的值--原总，赠送金:" + priceOrigin + "," + giftValue);
                 slaveOrders = calculateIncomex(slaveOrders);
 
                 /************************************************************************/
@@ -1562,7 +1577,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     //==================================================================================
 
     //chiguoqiang:获取减免金额类型("扣减金额类型：0默认未扣减、1赠送金扣减、2优惠卷扣减、3优惠卷与赠送金同时使用")
-    private enum DiscountType{
+    private enum DiscountType {
         DISCOUNT_AND_GIFT,  //赠送金和优惠券
         DISCOUNT_ONLY,      //优惠卷方式
         GIFT_ONLY,          //赠送金方式
@@ -1573,8 +1588,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @param slaveOrders
      * @param (-赠送金后的值)
      */
-    public List<calculationAmountDTO> calculateIncomex(List<calculationAmountDTO> slaveOrders){
-        BigDecimal platformRatio    = new BigDecimal("0.15");           //商家扣点标准(总金额-赠送金，后的15%)
+    public List<calculationAmountDTO> calculateIncomex(List<calculationAmountDTO> slaveOrders) {
+        BigDecimal platformRatio = new BigDecimal("0.15");           //商家扣点标准(总金额-赠送金，后的15%)
 
         //收入总额(商家收入+平台收入的总额)
         BigDecimal incomeTotal = new BigDecimal("0");
@@ -1585,50 +1600,50 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         BigDecimal platformTotalReal = new BigDecimal("0");
 
         List<PatchDto> patchDtos = new ArrayList<>();
-        for(int i = 0; i < slaveOrders.size(); i++) {
+        for (int i = 0; i < slaveOrders.size(); i++) {
             calculationAmountDTO slaveOrderItem = slaveOrders.get(i);       //这个值比较准确
-            BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2,BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
+            BigDecimal itemSumPrice = slaveOrderItem.getPrice().multiply(slaveOrderItem.getQuantity().setScale(2, BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
             BigDecimal itemPriceFinal = itemSumPrice.subtract(slaveOrderItem.getDiscountsMoney());//这里是减优惠券
 
             //平台扣点
-            BigDecimal itemIncomePlatform       = itemPriceFinal.multiply(platformRatio).setScale(8,BigDecimal.ROUND_DOWN);
-            BigDecimal itemIncomeMerchant       = itemPriceFinal.subtract(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN)).setScale(2,BigDecimal.ROUND_DOWN);
+            BigDecimal itemIncomePlatform = itemPriceFinal.multiply(platformRatio).setScale(8, BigDecimal.ROUND_DOWN);
+            BigDecimal itemIncomeMerchant = itemPriceFinal.subtract(itemIncomePlatform.setScale(2, BigDecimal.ROUND_DOWN)).setScale(2, BigDecimal.ROUND_DOWN);
             slaveOrderItem
-                    .setMerchantProceeds(itemIncomeMerchant.setScale(2,BigDecimal.ROUND_DOWN))        //商家收入
-                    .setPlatformBrokerage(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN));      //平台收入
-            slaveOrders.set(i,slaveOrderItem);
+                    .setMerchantProceeds(itemIncomeMerchant.setScale(2, BigDecimal.ROUND_DOWN))        //商家收入
+                    .setPlatformBrokerage(itemIncomePlatform.setScale(2, BigDecimal.ROUND_DOWN));      //平台收入
+            slaveOrders.set(i, slaveOrderItem);
 
 
             //平台收入补偿
-            patchDtos.add(new PatchDto(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN),generateDecimalPart(itemIncomePlatform),i));//用于更正
+            patchDtos.add(new PatchDto(itemIncomePlatform.setScale(2, BigDecimal.ROUND_DOWN), generateDecimalPart(itemIncomePlatform), i));//用于更正
 
             //收入总金额累计
-            incomeTotal = incomeTotal.add(itemPriceFinal.setScale(2,BigDecimal.ROUND_DOWN));//以此为基准
+            incomeTotal = incomeTotal.add(itemPriceFinal.setScale(2, BigDecimal.ROUND_DOWN));//以此为基准
 
             //实际收入的钱平台
-            platformTotalReal = platformTotalReal.add(itemIncomePlatform.setScale(2,BigDecimal.ROUND_DOWN));//差值参考
+            platformTotalReal = platformTotalReal.add(itemIncomePlatform.setScale(2, BigDecimal.ROUND_DOWN));//差值参考
 
         }
 
-    //===========================================================////////////////////////////
+        //===========================================================////////////////////////////
 
         //平台应收总金额
-        platformTotal = incomeTotal.multiply(platformRatio).setScale(2,BigDecimal.ROUND_DOWN);
+        platformTotal = incomeTotal.multiply(platformRatio).setScale(2, BigDecimal.ROUND_DOWN);
         //平台应收总金额扩大100倍并转成int值
-        int incomeTotalInt = Integer.parseInt(platformTotal.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN)+"");
+        int incomeTotalInt = Integer.parseInt(platformTotal.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_DOWN) + "");
 
         //平台实际收入总金额
-        int platformIncomeRealTotalInt = Integer.parseInt(platformTotalReal.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN)+"");
+        int platformIncomeRealTotalInt = Integer.parseInt(platformTotalReal.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_DOWN) + "");
 
-        if(incomeTotalInt>platformIncomeRealTotalInt){
+        if (incomeTotalInt > platformIncomeRealTotalInt) {
             //需要增加加平台扣点的值，余数尾数较大的先补
 
-            Collections.sort(patchDtos,Collections.reverseOrder());
+            Collections.sort(patchDtos, Collections.reverseOrder());
 
             int steps = incomeTotalInt - platformIncomeRealTotalInt;
 
-            for(int i=0;i<steps;i++){
-                int loopI = i%patchDtos.size();
+            for (int i = 0; i < steps; i++) {
+                int loopI = i % patchDtos.size();
 
                 BigDecimal tmp = patchDtos.get(loopI).getMainValue();//平台收入的值
 
@@ -1640,28 +1655,28 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal sourcePlatformBrokerage = cad.getPlatformBrokerage();
                 BigDecimal sourceMerchantProceeds = cad.getMerchantProceeds();
 
-                if(sourceMerchantProceeds.compareTo(new BigDecimal("0.01")) >= 0){
+                if (sourceMerchantProceeds.compareTo(new BigDecimal("0.01")) >= 0) {
 
                     //更新
                     cad.setPlatformBrokerage(sourcePlatformBrokerage.add(new BigDecimal("0.01")))
                             .setMerchantProceeds(sourceMerchantProceeds.subtract(new BigDecimal("0.01")));
 
-                    slaveOrders.set(index,cad);//送回
-                }else{
+                    slaveOrders.set(index, cad);//送回
+                } else {
                     steps++;
                 }
 
             }
 
-        }else if(incomeTotalInt<platformIncomeRealTotalInt){
+        } else if (incomeTotalInt < platformIncomeRealTotalInt) {
             //需要要减少平台扣点的值，余数尾数较小的先补
 
             Collections.sort(patchDtos);
 
             int steps = platformIncomeRealTotalInt - incomeTotalInt;
 
-            for(int i=0;i<steps;i++){
-                int loopI =  i%patchDtos.size();
+            for (int i = 0; i < steps; i++) {
+                int loopI = i % patchDtos.size();
 
                 BigDecimal tmp = patchDtos.get(loopI).getMainValue();
 
@@ -1673,7 +1688,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 BigDecimal sourcePlatformBrokerage = cad.getPlatformBrokerage();
                 BigDecimal sourceMerchantProceeds = cad.getMerchantProceeds();
 
-                if(sourcePlatformBrokerage.compareTo(new BigDecimal("0.01"))>=0){
+                if (sourcePlatformBrokerage.compareTo(new BigDecimal("0.01")) >= 0) {
 
                     //更新
                     cad
@@ -1681,38 +1696,39 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                             .setMerchantProceeds(sourceMerchantProceeds.add(new BigDecimal("0.01")));
 
                     //送回
-                    slaveOrders.set(index,cad);
-                }else{
+                    slaveOrders.set(index, cad);
+                } else {
                     steps++;
                 }
 
             }
         }
-    //============================================================================///////////////////////////
+        //============================================================================///////////////////////////
 
         return slaveOrders;
     }
     //==================================================================================
     //==================================================================================
+
     /**
      * 计算优惠卷
      */
     public DesignConditionsDTO calculateCoupon(DesignConditionsDTO dct) {
-        return itemsClculatex(dct,DiscountType.DISCOUNT_ONLY);
+        return itemsClculatex(dct, DiscountType.DISCOUNT_ONLY);
     }
 
     /**
      * 计算赠送金
      */
     public DesignConditionsDTO calculateGift(DesignConditionsDTO dct) {
-        return itemsClculatex(dct,DiscountType.GIFT_ONLY);
+        return itemsClculatex(dct, DiscountType.GIFT_ONLY);
     }
 
     /**
      * 计算赠送金与优惠卷
      */
     public DesignConditionsDTO calculateGiftCoupon(DesignConditionsDTO dct) {
-        return itemsClculatex(dct,DiscountType.DISCOUNT_AND_GIFT);
+        return itemsClculatex(dct, DiscountType.DISCOUNT_AND_GIFT);
     }
 
     /**
@@ -1720,7 +1736,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      */
     @Override
     public DesignConditionsDTO notDiscounts(DesignConditionsDTO dct) {
-        return itemsClculatex(dct,DiscountType.ORIGIN_PRICE);
+        return itemsClculatex(dct, DiscountType.ORIGIN_PRICE);
     }
 
     @Override
@@ -1761,7 +1777,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             //baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
 
             //==========================================================================更新排序分类:001
-            baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason,2);
+            baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason, 2);
 
 
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
@@ -1810,9 +1826,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                System.out.println("i+++++++++++++++++++++++++++++:"+i
 //                );
                 WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-                System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
                 );
-                wsPool.sendMessageToUser(wsByUser, 1+"");
+                wsPool.sendMessageToUser(wsByUser, 1 + "");
             }
 
 
@@ -1879,7 +1895,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (masterOrderEntities.size() != 0) {
             return result.error("已预定包房，不可重复预定");
         }
-        if(masterOrderService.selectByOrderId(mainOrderId).getCheckStatus()==1){
+        if (masterOrderService.selectByOrderId(mainOrderId).getCheckStatus() == 1) {
             return result.error(-11, "已翻台订单不可以加房！");
         }
         //生成订单号
@@ -1890,7 +1906,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity = merchantRoomParamsSetService.selectById(dto.getReservationId());
             Long merchantId = merchantRoomParamsSetEntity.getMerchantId();
             Long roomId = merchantRoomParamsSetEntity.getRoomId();
-            long roomSetId = 0 ;
+            long roomSetId = 0;
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date a1 = sdf.parse("05:00:00");
@@ -1898,11 +1914,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date a2 = sdf.parse("10:00:00");
             Date b2 = sdf.parse("14:59:00");
             Date a3 = sdf.parse("15:00:00");
-            Date b3 =sdf.parse("21:59:00");
+            Date b3 = sdf.parse("21:59:00");
             Date a4 = sdf.parse(" 22:00:00");
-            Date b4 =sdf.parse(" 23:59:00");
+            Date b4 = sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
-            Date b5 =sdf.parse(" 4:59:00");
+            Date b5 = sdf.parse(" 4:59:00");
             System.out.println(dto.getEatTime());
             System.out.println(a1);
             System.out.println(b1);
@@ -1913,20 +1929,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             boolean s5 = timeInRange(dto.getEatTime(), a5, b5);
 
 
-            if (s1==true){
-                roomSetId=1;
+            if (s1 == true) {
+                roomSetId = 1;
             }
-            if (s2==true){
-                roomSetId=2;
+            if (s2 == true) {
+                roomSetId = 2;
             }
-            if (s3==true){
-                roomSetId=3;
+            if (s3 == true) {
+                roomSetId = 3;
             }
-            if (s4==true){
-                roomSetId=4;
+            if (s4 == true) {
+                roomSetId = 4;
             }
-            if (s5==true){
-                roomSetId=1;
+            if (s5 == true) {
+                roomSetId = 1;
             }
             MerchantRoomParamsSetEntity merchantRoomParamsSetEntity1 = merchantRoomParamsSetService.selectByMartIdAndRoomIdAndRoomId(merchantId, roomId, roomSetId, simpleDateFormat.format(dto.getEatTime()));
             if (merchantRoomParamsSetEntity1 == null) {
@@ -1999,13 +2015,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (mainReservationType != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             return result.error(-9, "非只预定包房，不可以订餐！");
         }
-        if(orderDTO.getCheckStatus()==1){
+        if (orderDTO.getCheckStatus() == 1) {
             return result.error(-11, "已翻台订单不可以加菜！");
         }
         //生成订单号
         String orderId = OrderUtil.getOrderIdByTime(user.getId());
-        if (dto.getPayfs()!= null){
-            baseDao.insertPayMode(orderId,dto.getPayfs());
+        if (dto.getPayfs() != null) {
+            baseDao.insertPayMode(orderId, dto.getPayfs());
         }
         Integer reservationType = dto.getReservationType();
 
@@ -2137,15 +2153,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public PageData<OrderDTO> pageGetAuxiliaryOrder(Map<String, Object> params) {
         IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
         String orderId = params.get("orderId").toString();
-        System.out.println(orderId+"orderId");
+        System.out.println(orderId + "orderId");
         OrderDTO order = masterOrderService.getMasterOrder(orderId);
 
         List<OrderDTO> allMainOrder = baseDao.getAuxiliaryOrder(params);
-        System.out.println(allMainOrder+"allMainOrder");
+        System.out.println(allMainOrder + "allMainOrder");
         allMainOrder.add(order);
-        if (allMainOrder.size()!=0) {
+        if (allMainOrder.size() != 0) {
             for (OrderDTO s : allMainOrder) {
-                System.out.println(s+"s.getOrderId()");
+                System.out.println(s + "s.getOrderId()");
                 List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(s.getOrderId());
                 for (SlaveOrderEntity og : orderGoods) {
                     og.setGoodInfo(goodService.getByid(og.getGoodId()));
@@ -2179,15 +2195,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public OrderDTO orderParticulars(String orderId) {
         OrderDTO order = baseDao.getOrder(orderId);
         List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-        BigDecimal d=new BigDecimal("0");
-        BigDecimal a=new BigDecimal("0");
+        BigDecimal d = new BigDecimal("0");
+        BigDecimal a = new BigDecimal("0");
         for (SlaveOrderEntity og : orderGoods) {
             og.setGoodInfo(goodService.getByid(og.getGoodId()));
-            d=d.add(og.getDiscountsMoney());
+            d = d.add(og.getDiscountsMoney());
             BigDecimal price = og.getPrice();
             BigDecimal quantity = og.getQuantity();
             BigDecimal multiply = price.multiply(quantity);
-            a= a.add(multiply);
+            a = a.add(multiply);
         }
         order.setAccountPaymoney(a);
         order.setSlaveOrder(orderGoods);
@@ -2214,8 +2230,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> orders = baseDao.getOrder1(orderId);
         List<OrderDTO> list = baseDao.selectPOrderIdAndS(orderId);
         List<OrderDTO> orderDTOByPorderId = baseDao.getOrderDTOByPorderId(orderId);
-        BigDecimal g=new BigDecimal("0");
-        BigDecimal d=new BigDecimal("0");
+        BigDecimal g = new BigDecimal("0");
+        BigDecimal d = new BigDecimal("0");
         orders.removeAll(list);
         orders.removeAll(orderDTOByPorderId);
         OrderDTO mainOrder = new OrderDTO();
@@ -2242,8 +2258,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 order.setSlaveOrder(orderGoods);
                 order.setDiscountsMoney(discountsMoney);
                 order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-                g=g.add(order.getGiftMoney());
-                d=d.add(order.getDiscountsMoney());
+                g = g.add(order.getGiftMoney());
+                d = d.add(order.getDiscountsMoney());
                 if (order.getRoomId() != null) {
                     order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
                 } else if (order.getPOrderId().equals("0")) {
@@ -2268,10 +2284,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         List<OrderDTO> orders = baseDao.selectOrder(orderId);
         for (OrderDTO order : orders) {
             List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(orderId);
-            BigDecimal d=new BigDecimal("0");
+            BigDecimal d = new BigDecimal("0");
             for (SlaveOrderEntity og : orderGoods) {
                 og.setGoodInfo(goodService.getByid(og.getGoodId()));
-                d=d.add(og.getDiscountsMoney());
+                d = d.add(og.getDiscountsMoney());
             }
             order.setSlaveOrder(orderGoods);
             order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
@@ -2337,12 +2353,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Override
     public Result deleteOrder(String orderId) {
         MasterOrderEntity masterOrderEntity = baseDao.selectByOrderId(orderId);
-        if (masterOrderEntity==null){
+        if (masterOrderEntity == null) {
             return new Result().error("没有找到订单");
         }
-        if(masterOrderEntity.getStatus()==3 || masterOrderEntity.getStatus()==5 ||masterOrderEntity.getStatus()==8 ||masterOrderEntity.getStatus()==11){
+        if (masterOrderEntity.getStatus() == 3 || masterOrderEntity.getStatus() == 5 || masterOrderEntity.getStatus() == 8 || masterOrderEntity.getStatus() == 11) {
             List<MasterOrderEntity> masterOrderEntities = baseDao.selectNodelOrders(orderId);
-            if(masterOrderEntities.size()!=0){
+            if (masterOrderEntities.size() != 0) {
                 return new Result().error("您有从单未处理，请处理后再试");
             }
             List<MasterOrderEntity> order2 = baseDao.getOrder2(orderId);
@@ -2350,11 +2366,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 baseDao.updateOrderDeletedById(masterOrderEntity1.getId());
             }
             return new Result().ok("删除成功");
-        }else {
-               return new Result().error("该订单不能删除，请稍后再试");
+        } else {
+            return new Result().error("该订单不能删除，请稍后再试");
         }
-
-
 
 
     }
@@ -2363,10 +2377,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     public ShareOrderDTO shareOrder(String orderId) {
         ShareOrderDTO shareOrderDTO = new ShareOrderDTO();
         MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
-        if (masterOrderEntity==null){
+        if (masterOrderEntity == null) {
             return shareOrderDTO;
         }
-        if (masterOrderEntity.getEatTime().getTime() < System.currentTimeMillis()){
+        if (masterOrderEntity.getEatTime().getTime() < System.currentTimeMillis()) {
             return shareOrderDTO;
         }
         MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
@@ -2384,20 +2398,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         shareOrderDTO.setMerchantEntity(merchantEntity);
         shareOrderDTO.setMobile(clientUserEntity.getMobile());
         shareOrderDTO.setOrderId(orderId);
-        if (masterOrderEntity.getContacts()!=null){
+        if (masterOrderEntity.getContacts() != null) {
             shareOrderDTO.setName(masterOrderEntity.getContacts());
         }
-        if (masterOrderEntity.getRoomId()!=null){
+        if (masterOrderEntity.getRoomId() != null) {
             MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(masterOrderEntity.getRoomId());
             shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
             shareOrderDTO.setRoomType(merchantRoomEntity.getType());
             shareOrderDTO.setRoomName(merchantRoomEntity.getName());
             return shareOrderDTO;
-        }else {
-            List<MasterOrderEntity>  masterOrderEntities =  baseDao.selectSharePorderid(orderId);
-            if (masterOrderEntities.size()==0){
+        } else {
+            List<MasterOrderEntity> masterOrderEntities = baseDao.selectSharePorderid(orderId);
+            if (masterOrderEntities.size() == 0) {
                 return shareOrderDTO;
-            }else {
+            } else {
                 for (MasterOrderEntity orderEntity : masterOrderEntities) {
                     MerchantRoomEntity merchantRoomEntity = merchantRoomService.selectById(orderEntity.getRoomId());
                     shareOrderDTO.setRoomCount(merchantRoomEntity.getNumHigh());
@@ -2672,7 +2686,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
             List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
             for (MasterOrderEntity orderEntity : masterOrderEntities1) {
-                if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()||orderEntity.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()||orderEntity.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
+                if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() || orderEntity.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue() || orderEntity.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()) {
                     BigDecimal giftMoneys = orderEntity.getGiftMoney();
                     BigDecimal payMoneys = orderEntity.getPayMoney();
                     a = a.add(payMoneys.add(giftMoneys));
@@ -2705,9 +2719,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public PageData<BackDishesVo> backDishesPage(Map map) {
-        PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
+        PageHelper.startPage(Integer.parseInt(map.get("page") + ""), Integer.parseInt(map.get("limit") + ""));
         Page<BackDishesVo> page = (Page) baseDao.backDishesPage(map);
-        return new PageData<BackDishesVo>(page.getResult(),page.getTotal());
+        return new PageData<BackDishesVo>(page.getResult(), page.getTotal());
 
     }
 
@@ -2718,20 +2732,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     public PageTotalRowData<OrderVo> pagePC(Map<String, Object> params) {
-        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        PageHelper.startPage(Integer.parseInt(params.get("page") + ""), Integer.parseInt(params.get("limit") + ""));
         Page<OrderVo> page = (Page) baseDao.pagePC(params);
         Map map = new HashMap();
-        if(page.getResult() != null && page.getResult().size() > 0) {
+        if (page.getResult() != null && page.getResult().size() > 0) {
             OrderVo vo = baseDao.pagePCTotalRow(params);
-            if(vo != null) {
-                map.put("totalMoney",vo.getTotalMoney());
-                map.put("giftMoney",vo.getGiftMoney());
-                map.put("payMoney",vo.getPayMoney());
-                map.put("merchantProceeds",vo.getMerchantProceeds());
-                map.put("platformBrokerage",vo.getPlatformBrokerage());
+            if (vo != null) {
+                map.put("totalMoney", vo.getTotalMoney());
+                map.put("giftMoney", vo.getGiftMoney());
+                map.put("payMoney", vo.getPayMoney());
+                map.put("merchantProceeds", vo.getMerchantProceeds());
+                map.put("platformBrokerage", vo.getPlatformBrokerage());
             }
         }
-        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
+        return new PageTotalRowData<>(page.getResult(), page.getTotal(), map);
     }
 }
 

@@ -18,10 +18,7 @@ import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
-import io.treasure.service.MasterOrderService;
-import io.treasure.service.MerchantService;
-import io.treasure.service.MerchantUserService;
-import io.treasure.service.TokenService;
+import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +52,8 @@ public class MerchantUserController {
     private SMSConfig smsConfig;
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private MerchantClientService merchantClientService;
     @Autowired
     private MasterOrderService masterOrderService;
     @CrossOrigin
@@ -141,6 +140,7 @@ public class MerchantUserController {
         Map<String, Object> map = merchantUserService.login(dto);
         System.out.println("clientid="+cid);
         merchantUserService.updateCID(cid,dto.getMobile());
+        merchantClientService.insertMerchantUserClient(dto.getMobile(),cid);
        return new Result().ok(map);
     }
 

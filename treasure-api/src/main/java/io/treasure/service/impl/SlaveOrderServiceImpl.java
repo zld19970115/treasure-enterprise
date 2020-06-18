@@ -45,6 +45,8 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     @Autowired
     private MasterOrderService masterOrderService;
     @Autowired
+    private MerchantClientService merchantClientService;
+    @Autowired
     private MerchantRoomService merchantRoomService;
     @Autowired
     private GoodService goodService;
@@ -77,13 +79,12 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     @Override
     public PageData<SlaveOrderDTO> getOandPoGood(Map<String, Object> params) {
 
-        IPage<SlaveOrderEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<SlaveOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
 
-        List<SlaveOrderDTO> list=baseDao.getOandPoGood(params);
+        List<SlaveOrderDTO> list = baseDao.getOandPoGood(params);
 
 
-
-        return getPageData(list,pages.getTotal(), SlaveOrderDTO.class);
+        return getPageData(list, pages.getTotal(), SlaveOrderDTO.class);
 
     }
 
@@ -219,10 +220,14 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             OrderDTO order = masterOrderService.getOrder(orderId);
             MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
             MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-            String clientId = merchantUserDTO.getClientId();
-            slaveOrderService.updateRefundReason(slaveOrderDTO.getRefundReason(),slaveOrderDTO.getOrderId(),slaveOrderDTO.getGoodId());
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantDTO.getId());
+            String clientId = list.get(0).getClientId();
+            slaveOrderService.updateRefundReason(slaveOrderDTO.getRefundReason(), slaveOrderDTO.getOrderId(), slaveOrderDTO.getGoodId());
             if (StringUtils.isNotBlank(clientId)) {
-                AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", clientId);
+                for (int i = 0; i < list.size(); i++) {
+                    AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", list.get(i).getClientId());
+                }
+
             }
             SendSMSUtil.sendApplyRefusal(merchantUserDTO.getMobile(), smsConfig);
 
@@ -235,18 +240,20 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     public List<SlaveOrderEntity> getOrderGoods(String orderId) {
         return baseDao.getOrderGoods(orderId);
     }
+
     @Override
     public List<SlaveOrderEntity> getOrderGoods1(String orderId) {
         return baseDao.getOrderGoods1(orderId);
     }
+
     @Override
     public void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId, Long goodId) {
-        baseDao.updateSlaveOrderPointDeduction(mp,pb,orderId,goodId);
+        baseDao.updateSlaveOrderPointDeduction(mp, pb, orderId, goodId);
     }
 
     @Override
     public int updateRefundReason(String refundReason, String orderId, Long goodId) {
-        return baseDao.updateRefundReason(refundReason,orderId,goodId);
+        return baseDao.updateRefundReason(refundReason, orderId, goodId);
     }
 
 
@@ -278,13 +285,13 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     }
 
     @Override
-    public void updateStatusByOrderId(String orderId, int conditionStatus,int newStatus) {
-        slaveOrderDao.updateStatusByOrderId(orderId,conditionStatus,newStatus);
+    public void updateStatusByOrderId(String orderId, int conditionStatus, int newStatus) {
+        slaveOrderDao.updateStatusByOrderId(orderId, conditionStatus, newStatus);
 
     }
 
     @Override
-    public int selectCountOfNoPayOrderByOrderId(String orderId){
+    public int selectCountOfNoPayOrderByOrderId(String orderId) {
         return slaveOrderDao.selectCountOfNoPayOrderByOrderId(orderId);
     }
 
