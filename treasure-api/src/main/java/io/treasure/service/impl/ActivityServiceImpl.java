@@ -172,6 +172,21 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ActivityRewardVo receiveGiftCopy(ReceiveGiftDto dto) {
 
+//        if (dto != null) {
+//            vo.setId(dto.getId());
+//            vo.setGift(selectGiveByActivityId(dto.getId()).getCost());
+//            if(activityDao.cancellationUser(dto.getId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+//                vo.setState(1);
+//                return new Result<ActivityRartakeVo>().ok(vo);
+//            }
+//            int count = activityDao.activityRartake(dto.getId(),obj.getUserId());
+//            if(count == 0) {
+//                vo.setState(0);
+//                return new Result<ActivityRartakeVo>().ok(vo);
+//            }
+//            vo.setState(1);
+//        }
+
         if(dto.getActivityId() == null || dto.getToken() == null) {
 
             return new ActivityRewardVo(0,null);
@@ -293,13 +308,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Result<ActivityRartakeVo> hot(String token) {
         ActivityRartakeVo vo = new ActivityRartakeVo();
-//        if (token == null) {
-//            return new Result<ActivityRartakeVo>().error("请登录");
-//        }
-//        TokenEntity obj = tokenService.getByToken(token);
-//        if (obj == null || obj.getUserId() == null) {
-//            return new Result<ActivityRartakeVo>().error("token失效");
-//        }
 
         ActivityEntity dto = activityDao.getHotActivity();
         if (dto != null) {
