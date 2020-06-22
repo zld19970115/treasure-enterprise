@@ -21,4 +21,11 @@
 
     </select>
 
+    <select id="getHelpCountxx" resultType="integer">
+
+        select count(0) from sharing_activity_log
+
+        where helper_mobile = #{mobile}
+
+    </select>
 </mapper>

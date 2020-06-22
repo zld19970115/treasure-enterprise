@@ -55,7 +55,25 @@ public class SendSMSUtil {
         }
         return ret;
     }
-
+    /**
+     * 商家接单通知
+     * @param phoneNumber     手机号
+     * @param map    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean sendmerchantWithdraw(String phoneNumber, Map map, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_190792014", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
     /**
      * 商家拒单通知
      * @param phoneNumber     手机号

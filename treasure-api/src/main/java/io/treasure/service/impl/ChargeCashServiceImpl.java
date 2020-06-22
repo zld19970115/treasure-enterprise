@@ -15,10 +15,8 @@ import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.ChargeCashDao;
 import io.treasure.dao.MasterOrderDao;
-import io.treasure.dto.ChargeCashDTO;
-import io.treasure.dto.DaysTogetherPageDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantUserDTO;
+import io.treasure.dao.MerchantClientDao;
+import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
@@ -73,6 +71,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
 
     @Autowired
     MerchantUserService merchantUserService;
+    @Autowired
+    MerchantClientService merchantClientService;
     @Autowired
     private RefundOrderService refundOrderService;
 
@@ -256,11 +256,18 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         //System.out.println("position 3 : "+merchantDto.toString());
 
         if(null!=merchantDto){
+
             MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
-            if(null!=userDto){
-                String clientId=userDto.getClientId();
+            List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
+            if (list.size() == 0){
+                System.out.println("MasterOrder 263");
+            }
+            if(list.size() != 0){
+                String clientId=list.get(0).getClientId();
                 if(StringUtils.isNotBlank(clientId)){
-                    AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",userDto.getClientId());
+                    for (int i = 0; i < list.size(); i++) {
+                        AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！","",list.get(i).getClientId());
+                    }
                     StimmeEntity stimmeEntity = new StimmeEntity();
                     Date date1 = new Date();
                     stimmeEntity.setCreateDate(date1);
