@@ -31,4 +31,5 @@ public interface SharingActivityLogService {
     boolean insertOne(@NotEmpty SharingActivityLogEntity sharingActivityLogEntity);
 
     Integer getRewardSum(long intitiatorId, int activityId,int proposeSequeueNo);
+    int getHelperCount(String mobile);
 }

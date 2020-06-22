@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.treasure.dao.MerchantClientDao">
+
+
+    <insert id="insertMerchantUserClient">
+        insert into ct_merchant_client (merchant_id,client_id)
+         VALUES
+        (#{merchantId},#{clientId});
+    </insert>
+
+    <select id="getMerchantUserClientByMerchantId" resultType="io.treasure.dto.MerchantClientDTO">
+        select * from ct_merchant_client where merchant_id = #{merchantId}
+    </select>
+
+    <select id="getMerchantUserClientByClientId" resultType="io.treasure.dto.MerchantClientDTO">
+        select * from ct_merchant_client where client_id = #{clientId}
+    </select>
+</mapper>

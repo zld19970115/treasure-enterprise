@@ -9,7 +9,6 @@
 
 package io.treasure;
 import com.alipay.api.java_websocket.WebSocketImpl;
-import io.treasure.utils.MyWebScoket;
 import org.apache.catalina.connector.Connector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +20,7 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import io.treasure.utils.MyWebScoket;
 
 /**
  * treasure-api

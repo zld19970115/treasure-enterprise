@@ -22,9 +22,9 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     ClientUserEntity getUserByMobile(String mobile);
     ClientUserEntity getUserByPhone(String mobile);
     ClientUserEntity getUserByOpenId(String openId);
-    void updateOpenid(@Param("openId") String openId,@Param("mobile") String mobile);
-    void updateUnionid(@Param("openId") String openId,@Param("mobile") String mobile);
-    void updateCID(@Param("clientId") String clientId,@Param("mobile") String mobile);
+    void updateOpenid(@Param("openId") String openId, @Param("mobile") String mobile);
+    void updateUnionid(@Param("openId") String openId, @Param("mobile") String mobile);
+    void updateCID(@Param("clientId") String clientId, @Param("mobile") String mobile);
     ClientUserEntity getClientUser(Long id);
     ClientUserEntity  selectByMobile(String mobile);
 
@@ -32,13 +32,15 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator,
                                          @Param("gift") String gift);
 
-    List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
+   // List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
     List<ClientUserEntity> selectZhuXiao(String mobile);
-    List<ClientUserDTO> getRecordUserAll(Map<String,Object> params);
-    void addRecordGiftByUserid(String userId,String useGift);
+    List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
+    void addRecordGiftByUserid(String userId, String useGift);
 
     List<ClientUserDTO> pagePC(Map<String,Object> params);
 
     ClientUserDTO pagePCTotalRow(Map<String,Object> params);
+
+    Integer selectLogOffCount(String mobile);
 
 }

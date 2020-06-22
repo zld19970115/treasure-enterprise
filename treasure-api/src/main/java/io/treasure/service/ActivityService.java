@@ -44,5 +44,6 @@ public interface ActivityService {
     Result<ActivityRartakeVo> hot(String token);
 
     Result<String> updateHot(UpdateHotDto dto);
+    Result<ActivityRartakeVo> hot_bk(String token);
 
 }

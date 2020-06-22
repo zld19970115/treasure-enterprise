@@ -70,7 +70,6 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         }
         return true;
     }
-
     @Override
     public ClientUserEntity getByMobile(String mobile) {
         return baseDao.getUserByMobile(mobile);
@@ -211,7 +210,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
 
     @Override
     public List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto) {
-        return clientUserDao.selectListByCondition(queryClientUserDto);
+        return null;
     }
 
     @Override
@@ -239,6 +238,14 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         List<ClientUserDTO> list = baseDao.getRecordUserAll(params);
 
         return getPageData(list, page.getTotal(), ClientUserDTO.class);
+    }
+    @Override
+    public int getLogOffCount(String mobile){
+        int res = 0;
+        Integer tmp = clientUserDao.selectLogOffCount(mobile+"已注销");
+        if (tmp != null)
+            res = tmp;
+        return res;
     }
 
 }

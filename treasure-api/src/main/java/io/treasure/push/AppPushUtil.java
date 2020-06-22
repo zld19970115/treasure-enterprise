@@ -20,8 +20,8 @@ public class AppPushUtil {
     public static void main(String[] args) throws IOException {
         //String clientId="bed827bcb12f99ebb004180ee0cfa73d";
         //String clientId="42a6ceff19d73a608bc2cbf61ed0d86b";
-        String clientId="42a6ceff19d73a608bc2cbf61ed0d86b";
-        pushToSingleClient("订单管理","已经接单","",clientId);
+        String clientId="1e75793644a62383c849c7ec45c146ed";
+        pushToSingleMerchant("订单管理","已经接单","",clientId);
     }
 
 
@@ -39,7 +39,7 @@ public class AppPushUtil {
      * clientId
      */
     public  static void pushToSingleClient(String title,String text,String logo,String clientId) {
-        IGtPush push = new IGtPush(AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
+        IGtPush push = new IGtPush(url,AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
         AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
 //        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
@@ -80,7 +80,7 @@ public class AppPushUtil {
      * clientId
      */
     public  static void pushToSingleMerchant(String title,String text,String logo,String clientId) {
-        IGtPush push = new IGtPush(AppInfo.APPKEY_MERCHANT, AppInfo.MASTERSECRET_MERCHANT);
+        IGtPush push = new IGtPush(url,AppInfo.APPKEY_MERCHANT, AppInfo.MASTERSECRET_MERCHANT);
         AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_MERCHANT,AppInfo.APPKEY_MERCHANT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
 //        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
@@ -94,6 +94,7 @@ public class AppPushUtil {
         target.setClientId(clientId);
 //        target.setAlias(ALIAS); //别名需要提前绑定
         IPushResult ret = null;
+
         try {
             ret = push.pushMessageToSingle(message, target);
         } catch (RequestException e) {

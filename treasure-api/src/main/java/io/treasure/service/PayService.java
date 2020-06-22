@@ -23,13 +23,13 @@ public interface PayService {
     Result CashRefund(String orderNo, String refund_fee, Long goodId);
     Result wxRefund(String orderNo, String refund_fee);
 
-    Result refundByGood(String payMode, String orderId, String refund_fee,Long goodId);
+    Result refundByGood(String payMode, String orderId, String refund_fee, Long goodId);
 
     Result refundByOrder(String payMode, String orderId, String refund_fee);
 
     Result refundByOrder(String orderId, String refund_fee);
 
-    Result refundByGood(String orderId, String refund_fee,Long goodId);
+    Result refundByGood(String orderId, String refund_fee, Long goodId);
 
     Map<String, String> execAliCallBack(BigDecimal total_amount, String out_trade_no);
     Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no);

@@ -14,7 +14,7 @@ import java.util.Map;
 public interface JahresabschlussDao extends BaseDao<GoodEntity> {
 
   List<GoodCategoryDTO> selectCategory(Map<String, Object> params);
-  List<SlaveOrderDTO>  selectBYgoodID(@Param("id") long id, @Param("startTime1")  String startTime1,@Param("endTime1") String endTime1 );
+  List<SlaveOrderDTO>  selectBYgoodID(@Param("id") long id, @Param("startTime1") String startTime1, @Param("endTime1") String endTime1);
     List<GoodDTO> selectByCategoeyid(long categoeyId);
   List<MerchantOrderDTO>  selectBymerchantId(Map<String, Object> params);
   List<MerchantWithdrawDTO> selectBymerchantId2(Map<String, Object> params);

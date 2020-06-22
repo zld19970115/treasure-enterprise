@@ -25,7 +25,7 @@ public interface EvaluateService  extends CrudService<EvaluateEntity, EvaluateDT
     Double selectAvgFlavor(Map<String, Object> params);
     Double selectAvgAllScore(Map<String, Object> params);
     Double selectAvgAllScore2(long merchantId);
-    EvaluateEntity  selectByUserIdAndOid(long userId ,String merchantOrderId );
+    EvaluateEntity  selectByUserIdAndOid(long userId, String merchantOrderId);
     List<EvaluateEntity> selectByMerchantId(long merchantId);
     PageData<EvaluateDTO> selectEvaluateDTO(Map<String, Object> params);
     PageData<EvaluateDTO> selectPage(Map<String, Object> params);

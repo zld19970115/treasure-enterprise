@@ -17,8 +17,8 @@ public interface RecordGiftService  extends CrudService<RecordGiftEntity, Record
 
     PageData<RecordGiftDTO> selectByUserId(Map<String, Object> params);
 
-    int insertRecordGiftAdmin(Map<String,Object> params);
-    PageData<RecordGiftDTO> getAllRecordGoht(Map<String,Object> params);
-    PageData<RecordGiftDTO> getRecordGiftByUserId(Map<String,Object> params);
+    int insertRecordGiftAdmin(Map<String, Object> params);
+    PageData<RecordGiftDTO> getAllRecordGoht(Map<String, Object> params);
+    PageData<RecordGiftDTO> getRecordGiftByUserId(Map<String, Object> params);
 
 }

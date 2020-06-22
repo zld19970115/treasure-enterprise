@@ -16,7 +16,7 @@ import java.util.Map;
  * @since 1.0.0 2019-08-02
  */
 public interface ClientUserCollectService extends CrudService<ClientUserCollectEntity, ClientUserCollectDTO> {
-    ClientUserCollectDTO selectByUidAndMid(@Param("userId")Long userId, @Param("martId")Long martId);
-    void changeStatus(@Param("userId")Long userId, @Param("martId")Long martId);
+    ClientUserCollectDTO selectByUidAndMid(@Param("userId") Long userId, @Param("martId") Long martId);
+    void changeStatus(@Param("userId") Long userId, @Param("martId") Long martId);
     PageData<ClientUserCollectDTO> getCollectMerchantByUserId(Map<String, Object> params);
 }

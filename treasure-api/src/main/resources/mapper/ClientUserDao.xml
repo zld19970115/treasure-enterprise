@@ -112,4 +112,8 @@
          select * from ct_client_user where mobile=#{mobile}
     </select>
 
+    <select id="selectLogOffCount" resultType="integer">
+         select count(1) from ct_client_user where mobile=#{mobile}
+    </select>
+
 </mapper>

@@ -17,6 +17,7 @@ public interface SharingActivityLogDao extends BaseDao<SharingActivityLogEntity>
     Integer getHelpCount(@Param("intitiatorId")long intitiatorId,
                          @Param("activityId")Integer activityId,
                          @Param("proposeSequeueNo")Integer proposeSequeueNo);
+    Integer getHelpCountxx(String mobile);
 
 
 }

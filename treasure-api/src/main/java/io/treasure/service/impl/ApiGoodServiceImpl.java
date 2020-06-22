@@ -94,7 +94,7 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
 
     /**
      * 根据商户ID 查询商户下所有菜品
-     * @param martId
+     * @param
      * @return
      */
     @Override

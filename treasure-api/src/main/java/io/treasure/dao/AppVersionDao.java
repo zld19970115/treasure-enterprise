@@ -21,4 +21,5 @@ public interface AppVersionDao extends BaseDao<AppVersionEntity> {
     String getMaxVersion(@Param("appId")String appId);
 
     List<AppVersionDTO> pageList(Map<String, Object> params);
+
 }

@@ -42,9 +42,9 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
      * @param orderId
      * @param goodId
      */
-    void updateRefundId(@Param("refundId") String refundId,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+    void updateRefundId(@Param("refundId") String refundId, @Param("orderId") String orderId, @Param("goodId") Long goodId);
 
-    void updateSlaveOrderStatus(@Param("status")int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+    void updateSlaveOrderStatus(@Param("status") int status, @Param("orderId") String orderId, @Param("goodId") Long goodId);
 
 
     Result refundGood(SlaveOrderDTO slaveOrderDTO);
@@ -52,9 +52,9 @@ public interface SlaveOrderService extends CrudService<SlaveOrderEntity, SlaveOr
     List<SlaveOrderEntity> getOrderGoods(String orderId);
     List<SlaveOrderEntity> getOrderGoods1(String orderId);
 
-    void updateSlaveOrderPointDeduction(BigDecimal mp,BigDecimal pb,String orderId,Long goodId);
+    void updateSlaveOrderPointDeduction(BigDecimal mp, BigDecimal pb, String orderId, Long goodId);
 
-    int updateRefundReason(String refundReason,String orderId, Long goodId);
+    int updateRefundReason(String refundReason, String orderId, Long goodId);
 
     int selectCountOfNoPayOrderByOrderId(String orderId);
 

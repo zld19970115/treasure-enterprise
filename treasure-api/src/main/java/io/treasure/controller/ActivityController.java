@@ -97,7 +97,7 @@ public class ActivityController {
     }
 
     //尽量保持原接口不动，所以重新copy了一份新的接口
-    //@Login
+    @Login
     @PostMapping("receiveGiftCopy")
     @ApiOperation("活动奖励获取copy")
     public Result<String> receiveGiftCopy(@RequestBody ReceiveGiftDto dto, HttpServletRequest request) {
@@ -139,11 +139,18 @@ public class ActivityController {
         return activityService.activityRartake(dto);
     }
 
-    @Login
+    //@Login
     @GetMapping("hot")
     @ApiOperation("获取热推活动")
     public Result<ActivityRartakeVo> hot(HttpServletRequest request) {
         return activityService.hot(request.getHeader("token"));
+    }
+
+    @Login
+    @GetMapping("hot_bk")
+    @ApiOperation("获取热推活动")
+    public Result<ActivityRartakeVo> hot_bk(HttpServletRequest request) {
+        return activityService.hot_bk(request.getHeader("token"));
     }
 
     @Login

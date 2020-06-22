@@ -140,7 +140,24 @@ public class ApiClientUserController {
         boolean b = clientUserService.isRegister(tel);
         return new Result().ok(b);
     }
+    @GetMapping("isToken")
+    @ApiOperation("验证token是否可用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "query")
+    })
+    public Result isToken(String token) {
+        TokenEntity byToken = tokenService.getByToken(token);
+        if (byToken==null){
+            return new Result().ok(false);
+        }else {
+            if (byToken.getExpireDate().before(new Date())) {
+                return new Result().ok(true);
+            }else {
+                return new Result().ok(false);
+            }
+        }
 
+    }
     @GetMapping("userRegisterCode")
     @ApiOperation("用户注册验证码")
     @ApiImplicitParams({
@@ -518,6 +535,18 @@ public class ApiClientUserController {
     })
     public Result<PageTotalRowData<ClientUserDTO>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
         return new Result<PageTotalRowData<ClientUserDTO>>().ok(clientUserService.pagePC(params));
+    }
+
+
+    @ApiOperation("手机号")
+    @ApiImplicitParam(name = "mobile",value="手机号",dataType = "string",paramType = "query",required = false)
+    @GetMapping("logOffCount")
+    public Result getLogOffCount(String mobile){
+        int res = 0;
+        Integer integer = clientUserDao.selectLogOffCount(mobile+"已注销");
+        if (integer != null)
+            res = integer;
+        return new Result().ok("数量："+res);
     }
 
 }

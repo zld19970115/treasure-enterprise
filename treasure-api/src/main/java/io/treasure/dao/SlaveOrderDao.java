@@ -23,20 +23,20 @@ import java.util.Map;
 @Mapper
 public interface SlaveOrderDao extends BaseDao<SlaveOrderEntity> {
 
-    void updateRefundId(@Param("refundId") String refundId,@Param("orderId")  String orderId,@Param("goodId") Long goodId);
+    void updateRefundId(@Param("refundId") String refundId, @Param("orderId") String orderId, @Param("goodId") Long goodId);
     List<SlaveOrderEntity> selectslaveOrderByOrderId(String orderId);
-    SlaveOrderDTO getAllGoods(@Param("orderId") String orderId,@Param("goodId") long goodId);
+    SlaveOrderDTO getAllGoods(@Param("orderId") String orderId, @Param("goodId") long goodId);
 
-    void updateSlaveOrderStatus(@Param("status") int status,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+    void updateSlaveOrderStatus(@Param("status") int status, @Param("orderId") String orderId, @Param("goodId") Long goodId);
 
-    void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp,@Param("pb") BigDecimal pb,@Param("orderId") String orderId,@Param("goodId") Long goodId);
+    void updateSlaveOrderPointDeduction(@Param("mp") BigDecimal mp, @Param("pb") BigDecimal pb, @Param("orderId") String orderId, @Param("goodId") Long goodId);
 
     List<SlaveOrderEntity> getOrderGoods(String orderId);
     List<SlaveOrderEntity> getOrderGoods1(String orderId);
 
     List<SlaveOrderDTO> getOandPoGood(Map<String, Object> params);
 
-    int updateRefundReason(@Param("refundReason") String refundReason,@Param("orderId")  String orderId,@Param("goodId") Long goodId);
+    int updateRefundReason(@Param("refundReason") String refundReason, @Param("orderId") String orderId, @Param("goodId") Long goodId);
 
 
 

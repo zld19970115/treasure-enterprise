@@ -167,6 +167,7 @@ public class ActivityServiceImpl implements ActivityService {
         return 4;
     }
 
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ActivityRewardVo receiveGiftCopy(ReceiveGiftDto dto) {
@@ -194,9 +195,11 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (ParseException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+
         if(activityDao.cancellationUser(dto.getActivityId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
             return  new ActivityRewardVo(5,null);
         }
+        //==
         if(activityDao.receiveGift(dto.getActivityId(),obj.getUserId()) > 0) {
             ActivityGiveEntity activityGiveEntity = selectGiveByActivityId(dto.getActivityId());
             ActivityGiveLogEntity logObj = new ActivityGiveLogEntity();
@@ -223,6 +226,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return  new ActivityRewardVo(4,null);
     }
+
 
     @Override
     public ActivityDto selectById(Long id) {
@@ -288,6 +292,35 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Result<ActivityRartakeVo> hot(String token) {
+        ActivityRartakeVo vo = new ActivityRartakeVo();
+//        if (token == null) {
+//            return new Result<ActivityRartakeVo>().error("请登录");
+//        }
+//        TokenEntity obj = tokenService.getByToken(token);
+//        if (obj == null || obj.getUserId() == null) {
+//            return new Result<ActivityRartakeVo>().error("token失效");
+//        }
+
+        ActivityEntity dto = activityDao.getHotActivity();
+        if (dto != null) {
+            vo.setId(dto.getId());
+            vo.setGift(selectGiveByActivityId(dto.getId()).getCost());
+//            if(activityDao.cancellationUser(dto.getId(), clientUserService.get(obj.getUserId()).getMobile()) > 0) {
+//                vo.setState(1);
+//                return new Result<ActivityRartakeVo>().ok(vo);
+//            }
+//            int count = activityDao.activityRartake(dto.getId(),obj.getUserId());
+//            if(count == 0) {
+//                vo.setState(0);
+//                return new Result<ActivityRartakeVo>().ok(vo);
+//            }
+//            vo.setState(1);
+        }
+        return new Result<ActivityRartakeVo>().ok(vo);
+    }
+
+    @Override
+    public Result<ActivityRartakeVo> hot_bk(String token) {
         ActivityRartakeVo vo = new ActivityRartakeVo();
         if (token == null) {
             return new Result<ActivityRartakeVo>().error("请登录");

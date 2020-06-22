@@ -60,6 +60,14 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         return helpCount;
     }
 
+    @Override
+    public int getHelperCount(String mobile){
+        int res = 0;
+        Integer helpCountxx = sharingActivityLogDao.getHelpCountxx(mobile);
+        if(helpCountxx != null)
+            res = helpCountxx;
+        return res;
+    }
 
     /**
      * 插入新记录，向助力日志中

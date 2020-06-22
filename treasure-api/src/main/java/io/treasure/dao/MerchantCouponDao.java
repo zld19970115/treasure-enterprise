@@ -17,11 +17,11 @@ import java.util.Map;
  */
 @Mapper
 public interface MerchantCouponDao extends BaseDao<MerchantCouponEntity> {
-    void updateStatusById(long id,int status);
+    void updateStatusById(long id, int status);
 
     MerchantCouponEntity getAllById(Long id);
 
-    List<MerchantCouponDTO> getMoneyOffByMerchantId(long merchantId,long userId);
+    List<MerchantCouponDTO> getMoneyOffByMerchantId(long merchantId, long userId);
 
-    List<MerchantCouponDTO> listPage(Map<String,Object> param);
+    List<MerchantCouponDTO> listPage(Map<String, Object> param);
 }
