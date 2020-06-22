@@ -318,6 +318,13 @@
         and log.activity_id = #{activityId}
     </select>
 
+    <select id="cancellationUser_bk" resultType="java.lang.Integer">
+        select count(0) from ct_activity_give_log log
+        where
+        log.user_id in ( select id from ct_client_user u where u.mobile like concat('%', #{mobile}, '%') )
+        and log.activity_id = #{activityId}
+    </select>
+
     <select id="getHotActivity" resultType="io.treasure.entity.ActivityEntity">
         select * from ct_activity where hot = 1
     </select>
