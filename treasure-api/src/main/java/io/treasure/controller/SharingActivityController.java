@@ -114,49 +114,46 @@ public class SharingActivityController {
 
         //检查是否有token如果没有则插入（只针对新用户，所以完成注册）
         ClientUserEntity clientUserEntityTmp = null;
-        if(newUserOnly){
-            clientUserEntityTmp = clientUserService.getByMobile(mobile);
-            if(clientUserEntityTmp == null){
 
-                ClientUserEntity user = new ClientUserEntity();
-                user.setMobile(mobile);
-                user.setUsername(mobile);
+        clientUserEntityTmp = clientUserService.getByMobile(mobile);
+        if(clientUserEntityTmp == null){
 
-                String signedPassword = DigestUtils.sha256Hex(password);
-                System.out.println("signedPssword:"+signedPassword);
-                user.setPassword(signedPassword);
+            ClientUserEntity user = new ClientUserEntity();
+            user.setMobile(mobile);
+            user.setUsername(mobile);
 
-                user.setCreateDate(new Date());
-                //user.setUnionid(unionid);
-                //user.setClientId(clientId);
-                clientUserService.insert(user);
+            String signedPassword = DigestUtils.sha256Hex(password);
+            System.out.println("signedPssword:"+signedPassword);
+            user.setPassword(signedPassword);
 
-                newClient = clientUserService.getUserByPhone(mobile);
-                System.out.println("userByPhone1:"+newClient.toString());
-                tokenService.createToken(newClient.getId());
-                helperTokenEntity = tokenService.getByUserId(newClient.getId());
+            user.setCreateDate(new Date());
+            //user.setUnionid(unionid);
+            //user.setClientId(clientId);
+            clientUserService.insert(user);
+
+            newClient = clientUserService.getUserByPhone(mobile);
+            System.out.println("userByPhone1:"+newClient.toString());
+            tokenService.createToken(newClient.getId());
+            helperTokenEntity = tokenService.getByUserId(newClient.getId());
 
 
+        }else{
+
+            if(clientUserEntityTmp != null){
+                map.put("helper_id",clientUserEntityTmp.getId());
+                helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
+                map.put("helper_token",helperTokenEntity.getToken());
             }else{
-
-                if(clientUserEntityTmp != null){
-                    map.put("helper_id",clientUserEntityTmp.getId());
-                    helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
-                    map.put("helper_token",helperTokenEntity.getToken());
-                }else{
-                    map.put("helper_id",null);
-                    map.put("helper_token",null);
-                }
-
-                map.put("helper_mobile",mobile);
-
-                map.put("msg","仅新用户有效，不能重复助力！");
-                result.setData(map);
-                return result;
+                map.put("helper_id",null);
+                map.put("helper_token",null);
             }
 
-        }
+            map.put("helper_mobile",mobile);
 
+            map.put("msg","仅新用户有效，不能重复助力！");
+            result.setData(map);
+            return result;
+        }
         //////////////////////
 
         //给用户助力过，则返回助力
@@ -166,9 +163,24 @@ public class SharingActivityController {
                 map.put("helper_id",clientUserEntityTmp.getId());
                 helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
                 map.put("helper_token",helperTokenEntity.getToken());
-            }else{
-                map.put("helper_id",null);
-                map.put("helper_token",null);
+            } else{
+
+                if(newClient != null){
+                    map.put("helper_id",newClient.getId());
+                    if(helperTokenEntity != null){
+                        map.put("helper_token",helperTokenEntity.getToken());
+                    }else{
+                        map.put("helper_token",null);
+                    }
+
+                }else{
+                    map.put("helper_id",null);
+                    if(helperTokenEntity != null){
+                        map.put("helper_token",helperTokenEntity.getToken());
+                    }else{
+                        map.put("helper_token",null);
+                    }
+                }
             }
 
             map.put("helper_mobile",mobile);
