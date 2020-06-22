@@ -20,4 +20,26 @@
         select max(version) from sys_app_version where appid=#{appId} and status='1'
     </select>
 
+    <select id="pageList" resultType="io.treasure.dto.AppVersionDTO">
+        SELECT
+        id,
+        appid,
+        version,
+        url,
+        note,
+        status,
+        date_format(create_date, '%Y-%m-%d %H:%i:%S') as createDateStr
+        FROM
+        sys_app_version
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY create_date desc
+    </select>
+
 </mapper>

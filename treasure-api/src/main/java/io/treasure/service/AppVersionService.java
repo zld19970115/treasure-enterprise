@@ -1,9 +1,11 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
+import io.treasure.common.service.CrudService;
 import io.treasure.dto.AppVersionDTO;
 import io.treasure.entity.AppVersionEntity;
 
-import io.treasure.common.service.CrudService;
+import java.util.Map;
 
 
 /**
@@ -15,4 +17,7 @@ import io.treasure.common.service.CrudService;
 public interface AppVersionService extends CrudService<AppVersionEntity, AppVersionDTO> {
 
     AppVersionDTO getUpdateInfo(String appId);
+
+    PageData<AppVersionDTO> pageList(Map<String, Object> params);
+
 }

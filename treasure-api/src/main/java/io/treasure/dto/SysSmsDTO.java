@@ -50,6 +50,6 @@ public class SysSmsDTO implements Serializable {
     private Integer status;
 
     @ApiModelProperty(value = "创建时间")
-    private Date createDate;
+    private String createDate;
 
 }

@@ -31,6 +31,8 @@ public class OpinionDTO implements Serializable {
     @ApiModelProperty(value = "修改时间")
     private Date updateDate;
 
+    private String createDateStr;
+
     @ApiModelProperty(value = "创建时间")
     private Date createDate;
 

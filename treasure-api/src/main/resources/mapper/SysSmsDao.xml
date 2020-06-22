@@ -3,5 +3,35 @@
 
 <mapper namespace="io.treasure.dao.SysSmsDao">
 
+    <select id="pageList" resultType="io.treasure.dto.SysSmsDTO">
+        select
+            sms.id,
+            sms.platform,
+            sms.mobile,
+            sms.params_1,
+            sms.params_2,
+            sms.params_3,
+            sms.params_4,
+            sms.`status`,
+            date_format(sms.create_date, '%Y-%m-%d %H:%i:%S') as createDate
+        from
+            sys_sms sms
+        <where>
+            <if test="startDate != null and startDate != ''" >
+                and date_format(sms.create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''" >
+                and date_format(sms.create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+            <if test="mobile != null and mobile != ''" >
+                and sms.mobile = #{mobile}
+            </if>
+            <if test="status != null" >
+                and sms.`status` = #{status}
+            </if>
+        </where>
+        ORDER BY
+            sms.create_date desc
+    </select>
 
 </mapper>

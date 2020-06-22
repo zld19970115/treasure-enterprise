@@ -42,7 +42,7 @@
             ct.show_in_nav,
             ct.icon,
             ct.remarks,
-            date_format(ct.create_date, '%Y-%m-%d %H:%i:%S')
+            date_format(ct.create_date, '%Y-%m-%d %H:%i:%S') as createDate
         FROM
             `ct_category` ct
         <where>
