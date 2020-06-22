@@ -139,11 +139,18 @@ public class ActivityController {
         return activityService.activityRartake(dto);
     }
 
-    @Login
+    //@Login
     @GetMapping("hot")
     @ApiOperation("获取热推活动")
     public Result<ActivityRartakeVo> hot(HttpServletRequest request) {
         return activityService.hot(request.getHeader("token"));
+    }
+
+    @Login
+    @GetMapping("hot_bk")
+    @ApiOperation("获取热推活动")
+    public Result<ActivityRartakeVo> hot_bk(HttpServletRequest request) {
+        return activityService.hot_bk(request.getHeader("token"));
     }
 
     @Login

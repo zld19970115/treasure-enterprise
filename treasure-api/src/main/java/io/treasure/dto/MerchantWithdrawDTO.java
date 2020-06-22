@@ -81,4 +81,7 @@ public class MerchantWithdrawDTO implements Serializable {
 	private String totalCash;
 	@ApiModelProperty(value = "商户手机号码")
 	private String mobile;
+
+	@ApiModelProperty(value = "商家信息")
+	private MerchantDTO merchantInfo;
 }
