@@ -1,5 +1,6 @@
 package io.treasure.service;
 
+import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.SharingInitiatorEntity;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface SharingInitiatorService {
     int getCount(Long intitiatorId, Integer saId,Integer status);
 
     SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer status);
+
+    void closeActivity(Long intitiatorId,Integer saId);
 
 
     /**

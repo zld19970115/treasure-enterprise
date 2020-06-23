@@ -22,4 +22,17 @@
 
     </select>
 
+    <update id ="closeActivity">
+
+        update sharing_initiator set status=3
+
+        where
+            initiator_id=#{intitiatorId}
+            and sa_id=#{saId}
+            and status=1
+
+    </update>
+
+
+
 </mapper>

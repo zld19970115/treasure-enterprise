@@ -84,7 +84,10 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         return count;
     }
 
-
+    @Override
+    public void closeActivity(Long intitiatorId,Integer saId){
+        sharingInitiatorDao.closeActivity(intitiatorId,saId);
+    }
 
     @Override
     public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer status){

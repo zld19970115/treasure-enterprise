@@ -105,109 +105,100 @@ public class SharingActivityController {
         String unionid = vo.getUnionid();
         //String clientId = vo.getClientId();
 
-        System.out.println("initiator_id,sa_id,mobile,password:"+initiatorId+","+saId+","+mobile+","+password);
-        //System.out.println("unionid,clientId:"+unionid+","+clientId);
+        System.out.println("echo info ====== initiator_id,sa_id,mobile,password:"+initiatorId+","+saId+","+mobile+","+password);
 
         if(mobile == null || password == null || initiatorId == null || saId == null){
             return result.error("错误：参数有误！！");
         }
 
         //检查是否有token如果没有则插入（只针对新用户，所以完成注册）
-        ClientUserEntity clientUserEntityTmp = null;
-        if(newUserOnly){
-            clientUserEntityTmp = clientUserService.getByMobile(mobile);
-            if(clientUserEntityTmp == null){
+        ClientUserEntity clientUserEntityTmp = clientUserService.getByMobile(mobile);
+        if(clientUserEntityTmp != null){
 
-                ClientUserEntity user = new ClientUserEntity();
-                user.setMobile(mobile);
-                user.setUsername(mobile);
-
-                String signedPassword = DigestUtils.sha256Hex(password);
-                System.out.println("signedPssword:"+signedPassword);
-                user.setPassword(signedPassword);
-
-                user.setCreateDate(new Date());
-                //user.setUnionid(unionid);
-                //user.setClientId(clientId);
-                clientUserService.insert(user);
-
-                newClient = clientUserService.getUserByPhone(mobile);
-                System.out.println("userByPhone1:"+newClient.toString());
-                tokenService.createToken(newClient.getId());
-                helperTokenEntity = tokenService.getByUserId(newClient.getId());
-
-
-            }else{
-
-                if(clientUserEntityTmp != null){
-                    map.put("helper_id",clientUserEntityTmp.getId());
-                    helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
-                    map.put("helper_token",helperTokenEntity.getToken());
-                }else{
-                    map.put("helper_id",null);
-                    map.put("helper_token",null);
-                }
-
-                map.put("helper_mobile",mobile);
-
-                map.put("msg","仅新用户有效，不能重复助力！");
-                result.setData(map);
-                return result;
-            }
-
-        }
-
-        //////////////////////
-
-        //给用户助力过，则返回助力
-
-        if(sharingActivityLogService.getHelperCount(mobile) !=0 ){
-            if(clientUserEntityTmp != null){
-                map.put("helper_id",clientUserEntityTmp.getId());
-                helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
+            //1，并非新用户
+            map.put("helper_id",clientUserEntityTmp.getId());
+            helperTokenEntity = tokenService.getByUserId(clientUserEntityTmp.getId());
+            if(helperTokenEntity != null){
                 map.put("helper_token",helperTokenEntity.getToken());
             }else{
-                map.put("helper_id",null);
                 map.put("helper_token",null);
             }
-
             map.put("helper_mobile",mobile);
+            map.put("msg","仅新用户有效，不能重复助力！");
+            result.setData(map);
+            return result;
+
+
+        }else{
+            //2，新用户-更新注册信息
+            ClientUserEntity user = new ClientUserEntity();
+            user.setMobile(mobile);
+            user.setUsername(mobile);
+
+            String signedPassword = DigestUtils.sha256Hex(password);
+            System.out.println("signedPssword:"+signedPassword);
+            user.setPassword(signedPassword);
+            user.setCreateDate(new Date());
+            clientUserService.insert(user);
+
+            newClient = clientUserService.getUserByPhone(mobile);
+
+            if(newClient != null){
+                tokenService.createToken(newClient.getId());
+            }else{
+
+                //3，用户信息更新异常，请稍后重试
+                map.put("helper_id",null);
+                map.put("helper_token",null);
+                map.put("helper_mobile",mobile);
+                map.put("msg","注册失败，请稍后重试！");
+                result.setData(map);
+                return result;
+
+            }
+        }
+
+        //初始化返回基本信息
+        helperTokenEntity = tokenService.getByUserId(newClient.getId());
+        if(helperTokenEntity != null){
+            map.put("helper_token",helperTokenEntity.getToken());
+        }else{
+            map.put("helper_token",null);
+        }
+
+        map.put("helper_id",newClient.getId());
+        map.put("helper_mobile",mobile);
+
+
+        //2,给用户助力过，则返回助力
+        if(sharingActivityLogService.getHelperCount(mobile) !=0 ){
 
             map.put("msg","您助力过，不能重复助力！");
             result.setData(map);
             return result;
         }
 
-        ///////////////////////
-
-        if(newClient != null){
-            map.put("helper_id",newClient.getId());
-        }else{
-            System.out.println("得到手机号："+mobile);
-            ClientUserEntity userByMobile = clientUserDao.getUserByMobile(mobile);
-            map.put("helper_id",userByMobile.getId());
-        }
-
-        map.put("helper_token",helperTokenEntity.getToken());
-
-        map.put("helper_mobile",mobile);
-        //------新用户创建完毕-----
-
         //3、检查活动
         SharingActivityEntity saItem = sharingActivityService.getOneById(saId, true);
         if(saItem == null){
 
+            //检查并关闭用户当前的活动状态,置为失败
+            sharingInitiatorService.closeActivity(initiatorId, saId);
 
-            System.out.println("p0-活动是否存在或有效-saItem:"+saItem.toString());
+
+            System.out.println("p0-活动是否存在或有效-saItem:");
             map.put("msg","感谢参与,活动已结束！");
+
             result.setData(map);
             return result;
         }
+//
         //4、检查用户发起活动是不否存在
         SharingInitiatorEntity inProcessActivity = sharingInitiatorService.getOne(initiatorId, saId,ESharingInitiator.IN_PROCESSING.getCode());
         if(inProcessActivity == null){
 
             List<SharingInitiatorEntity> uActivitys = sharingInitiatorService.getList(initiatorId,saId,null);
+
 
             if(uActivitys.size()==0){
                 result.setData(map);
@@ -217,7 +208,7 @@ public class SharingActivityController {
                 return result;
             }else{
                 //默认排序，检查最后一个状态，是成功还是失败
-                SharingInitiatorEntity sharingInitiatorEntity = uActivitys.get(uActivitys.size());
+                SharingInitiatorEntity sharingInitiatorEntity = uActivitys.get(uActivitys.size()-1);
                 if(sharingInitiatorEntity.getStatus() == ESharingInitiator.COMPLETE_SUCCESS.getCode()){
                     System.out.println("p2-活动已经完成");
 
@@ -235,10 +226,6 @@ public class SharingActivityController {
             }
         }
 
-//        if(!newUserOnly){
-//            //4、检查用户助力次数
-//
-//        }
         //5、检查发起者完成的助力次数
         int allowHelpersNum = saItem.getHelpersNum();
         Integer completeCount = sharingActivityLogService.getCount(initiatorId, saId, inProcessActivity.getProposeId());
