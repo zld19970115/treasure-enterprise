@@ -18,6 +18,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -299,10 +300,8 @@ public class SharingActivityController {
         if(sharingActivityEntity.getRewardType()== 1){
             Integer rewardAmount = sharingActivityEntity.getRewardAmount();
 
-            if(rewardAmount >= 100){
-                String tmp = rewardAmount+"";
-                String res = tmp.substring(0,tmp.length()-2)+"."+tmp.substring(1);
-                clientUserService.addRecordGiftByUserid(initiatorId+"",res);
+            if(rewardAmount >= 0){
+                clientUserService.addRecordGiftByUserid(initiatorId+"",rewardAmount+"");
             }
 
         }
