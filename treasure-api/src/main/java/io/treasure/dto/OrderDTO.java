@@ -131,7 +131,8 @@ public class OrderDTO implements Serializable {
 	@ApiModelProperty(value = "主单相关联的所有单的实付金额总和")
 	private BigDecimal allpaymoneys;
 
-
+	@ApiModelProperty(value = "是否有从单(用于按钮显示)")
+	private Integer pOrderYorN;
 	private Integer responseStatus;
 
 	@ApiModelProperty(value = "平台扣点金额")

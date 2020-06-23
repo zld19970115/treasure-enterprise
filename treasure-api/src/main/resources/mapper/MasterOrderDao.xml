@@ -103,7 +103,9 @@
     <select id="selectPOrderIdAndS1" resultType="io.treasure.entity.MasterOrderEntity">
          select * from ct_master_order where p_order_id = #{orderId} and status  in (1,3,4,5,8,9)
     </select>
-
+    <select id="selectPorderIdTypeTwo" resultType="int">
+         select COUNT(*) from ct_master_order where p_order_id = #{orderId};
+    </select>
     <select id="selectByMasterIdAndStatus" resultType="io.treasure.entity.MasterOrderEntity">
          select * from ct_master_order where merchantId = #{martId} and status = 4
     </select>

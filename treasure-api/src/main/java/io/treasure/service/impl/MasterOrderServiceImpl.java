@@ -2116,6 +2116,17 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     s.setCheckStatus(1);
                 }
             }
+            if(s.getReservationType()==2){
+               int pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
+
+               if (pOrders!=0){
+                   s.setPOrderYorN(1);//有从单
+               }else {
+                   s.setPOrderYorN(1);//没有从单
+               }
+            }
+
+
             BigDecimal allpayMoney = new BigDecimal("0");
             List<MasterOrderEntity> auxiliaryOrderByOrderId = baseDao.getAuxiliaryOrderByOrderId(s.getOrderId());
             if (s.getPOrderId().equals("0") && auxiliaryOrderByOrderId.size() == 0) {
