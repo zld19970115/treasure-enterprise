@@ -43,6 +43,8 @@ public class AppVersionDTO implements Serializable {
 	@ApiModelProperty(value = "创建时间")
 	private Date createDate;
 
+	private String createDateStr;
+
 	@ApiModelProperty(value = "更新者")
 	private Long updater;
 

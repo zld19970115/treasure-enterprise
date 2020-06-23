@@ -1,15 +1,19 @@
 
 package io.treasure.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
+import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.ConvertUtils;
 import io.treasure.dao.AppVersionDao;
 import io.treasure.dto.AppVersionDTO;
+import io.treasure.dto.CategoryPageDto;
 import io.treasure.entity.AppVersionEntity;
 import io.treasure.service.AppVersionService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.common.service.impl.CrudServiceImpl;
-
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,6 +26,9 @@ import java.util.Map;
  */
 @Service
 public class AppVersionServiceImpl extends CrudServiceImpl<AppVersionDao, AppVersionEntity, AppVersionDTO> implements AppVersionService {
+
+    @Autowired
+    private AppVersionDao dao;
 
     @Override
     public QueryWrapper<AppVersionEntity> getWrapper(Map<String, Object> params){
@@ -49,6 +56,13 @@ public class AppVersionServiceImpl extends CrudServiceImpl<AppVersionDao, AppVer
         wrapper.eq(StringUtils.isNotBlank(version), "version", version);
         wrapper.eq("status", 1);
         return wrapper;
+    }
+
+    @Override
+    public PageData<AppVersionDTO> pageList(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<AppVersionDTO> page = (Page) dao.pageList(params);
+        return new PageData<>(page.getResult(),page.getTotal());
     }
 
 }

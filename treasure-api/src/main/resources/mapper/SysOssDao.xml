@@ -3,5 +3,22 @@
 
 <mapper namespace="io.treasure.dao.SysOssDao">
 
+    <select id="pageList" resultType="io.treasure.dto.SysOssDto">
+        SELECT
+        id,
+        url,
+        date_format(create_date, '%Y-%m-%d %H:%i:%S') as createDate
+        FROM
+        sys_oss
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY create_date desc
+    </select>
 
 </mapper>

@@ -97,7 +97,7 @@ public class ActivityController {
     }
 
     //尽量保持原接口不动，所以重新copy了一份新的接口
-    //@Login
+    @Login
     @PostMapping("receiveGiftCopy")
     @ApiOperation("活动奖励获取copy")
     public Result<String> receiveGiftCopy(@RequestBody ReceiveGiftDto dto, HttpServletRequest request) {

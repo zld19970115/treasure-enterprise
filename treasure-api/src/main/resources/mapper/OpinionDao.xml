@@ -9,4 +9,25 @@
         insert into ct_opinion (type,message_board,message_img,create_date,creator) values (#{type},#{messageBoard},#{messageImg},now(),#{creator})
 
     </insert>
+
+    <select id="pageList" resultType="io.treasure.dto.OpinionDTO">
+        SELECT
+        id,
+        type,
+        message_board as messageBoard,
+        message_img as messageImg,
+        status,
+        date_format(create_date, '%Y-%m-%d %H:%i:%S') as createDateStr
+        FROM
+        ct_opinion
+        <where>
+            <if test="startDate != null and startDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate!=''" >
+                and date_format(create_date, '%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY create_date desc
+    </select>
 </mapper>

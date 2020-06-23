@@ -9,33 +9,34 @@
 package io.treasure.controller;
 
 //import com.google.gson.Gson;
-import com.alibaba.fastjson.JSONObject;
+
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
-
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.ErrorCode;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.SysOssDto;
 import io.treasure.entity.SysOssEntity;
 import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.service.SysOssService;
-import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.util.*;
-
-import static org.apache.commons.io.IOUtils.toByteArray;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 文件上传
@@ -109,6 +110,25 @@ public class SysOssController {
         data.put("error", 0);
         data.put("url", url);
         return new Result<Map<String, Object>>().ok(data);
+    }
+
+    @GetMapping("pageList")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<SysOssDto>> pageList(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<SysOssDto>>().ok(sysOssService.pageList(params));
+    }
+
+    @GetMapping("del")
+    @ApiOperation("删除")
+    public Result delete(@RequestParam String ids){
+        sysOssService.deleteBatchIds(JSON.parseArray(ids).toJavaList(Long.class));
+        return new Result().ok("ok");
     }
 
 }

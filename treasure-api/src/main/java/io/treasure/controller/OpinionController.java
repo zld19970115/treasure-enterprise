@@ -8,7 +8,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.enm.Common;
+import io.treasure.dto.OpinionDTO;
 import io.treasure.service.OpinionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +38,18 @@ public class OpinionController {
     public Result insertOpinion(@ApiIgnore @RequestParam Map<String, Object> params){
         opinionService.insertOpinion(params);
         return new Result().ok("添加成功");
+    }
+
+    @GetMapping("pageList")
+    @ApiOperation("分页查询PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<OpinionDTO>> pageList(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<OpinionDTO>>().ok(opinionService.pageList(params));
     }
 
 }
