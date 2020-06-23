@@ -2117,9 +2117,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 }
             }
             if(s.getReservationType()==2){
-               int pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
+               Integer pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
 
-               if (pOrders!=0){
+               if (pOrders!=null){
                    s.setPOrderYorN(1);//有从单
                }else {
                    s.setPOrderYorN(1);//没有从单

@@ -49,7 +49,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<OrderDTO> getOrderDTOByPorderId(String orderId);
     List<MasterOrderEntity> getOrderByPOrderId(String orderId);
     List<OrderDTO> getAllMainOrder(Map params);
-    int selectPorderIdTypeTwo(String OrderId);
+    Integer selectPorderIdTypeTwo(String OrderId);
     List<MasterOrderEntity>getAuxiliaryOrderByOrderId(String orderId);
     List<OrderDTO>getAuxiliaryOrder(Map params);
     List<MasterOrderEntity> getStatus4Order(Map<String, Object> params);
