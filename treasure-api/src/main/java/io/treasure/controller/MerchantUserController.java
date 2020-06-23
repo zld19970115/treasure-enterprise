@@ -61,10 +61,10 @@ public class MerchantUserController {
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = Constant.PAGE, value ="1", paramType = "query", required = true, dataType="int") ,
-        @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
-        @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
-        @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = Constant.PAGE, value ="1", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "10", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "id", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "desc", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "weixinname" ,value = "微信名称", paramType = "query", dataType="String"),
             @ApiImplicitParam(name ="mobile", value = "手机号码", paramType = "query", dataType="String"),
             @ApiImplicitParam(name="merchantId",value="商户编号",required = true,paramType = "query", dataType="String")
@@ -90,7 +90,7 @@ public class MerchantUserController {
     }
 
 
-//    @PostMapping("save")
+    //    @PostMapping("save")
 //    @ApiOperation("创建下级会员")
 //    public Result save(@RequestBody MerchantUserDTO dto){
 //            //效验数据
@@ -139,9 +139,13 @@ public class MerchantUserController {
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
         System.out.println("clientid="+cid);
-        merchantUserService.updateCID(cid,dto.getMobile());
-        merchantClientService.insertMerchantUserClient(dto.getMobile(),cid);
-       return new Result().ok(map);
+        if(cid == null){
+            System.out.println("client为null");
+        }else {
+            merchantUserService.updateCID(cid,dto.getMobile());
+            merchantClientService.insertMerchantUserClient(dto.getMobile(),cid);
+        }
+        return new Result().ok(map);
     }
 
 
@@ -441,34 +445,34 @@ public class MerchantUserController {
         MerchantUserEntity userByPhone = merchantUserService.getUserByPhone(mobile);
         if (type.equals("APP")){
 
-        MerchantUserEntity user = new MerchantUserEntity();
-        Map<String, Object> map = new HashMap<>();
-        if(userByPhone!=null){
-            if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
-                return new Result().error("该手机号已被绑定");
+            MerchantUserEntity user = new MerchantUserEntity();
+            Map<String, Object> map = new HashMap<>();
+            if(userByPhone!=null){
+                if(userByPhone.getOpenid()!=null && userByPhone.getOpenid() != openId){
+                    return new Result().error("该手机号已被绑定");
+                }
+                if(userByPhone.getStatus()==3){
+                    return new Result().error("该手机号已注销");
+                }
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+                merchantUserService.updateOpenid(openId,mobile);
+                map.put("token",byUserId.getToken());
+                map.put("user",userByPhone);
+            }else {
+                user.setMobile(mobile);
+                user.setCreateDate(new Date());
+                user.setOpenid(openId);
+                user.setPassword(DigestUtils.sha256Hex(password));
+                user.setClientId(clientId);
+                user.setStatus(1);
+                merchantUserService.insert(user);
+                MerchantUserEntity userByPhone1 = merchantUserService.getUserByPhone(mobile);
+                tokenService.createToken(userByPhone1.getId());
+                map.put("user",userByPhone1);
+                TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+                map.put("token",byUserId.getToken());
             }
-            if(userByPhone.getStatus()==3){
-                return new Result().error("该手机号已注销");
-            }
-            TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
-            merchantUserService.updateOpenid(openId,mobile);
-            map.put("token",byUserId.getToken());
-            map.put("user",userByPhone);
-        }else {
-            user.setMobile(mobile);
-            user.setCreateDate(new Date());
-            user.setOpenid(openId);
-            user.setPassword(DigestUtils.sha256Hex(password));
-            user.setClientId(clientId);
-            user.setStatus(1);
-            merchantUserService.insert(user);
-            MerchantUserEntity userByPhone1 = merchantUserService.getUserByPhone(mobile);
-            tokenService.createToken(userByPhone1.getId());
-            map.put("user",userByPhone1);
-            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
-            map.put("token",byUserId.getToken());
-        }
-        return new Result<Map<String,Object>>().ok(map);}
+            return new Result<Map<String,Object>>().ok(map);}
         else {
 
             MerchantUserEntity user = new MerchantUserEntity();
