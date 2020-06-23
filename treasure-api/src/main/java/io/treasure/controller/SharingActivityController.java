@@ -28,7 +28,6 @@ import java.util.Map;
 @Api(tags="助力活动")
 public class SharingActivityController {
 
-
     @Autowired
     private ClientUserService clientUserService;
     @Autowired

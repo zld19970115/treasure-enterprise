@@ -470,11 +470,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
-            List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());
+            List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());//查子单
+
             for (OrderDTO orderDTO : affiliateOrde) {
                 if (affiliateOrde.size() == 1 && orderDTO.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     orderDTO.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                    baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
                     //003===============更新排序状态
                     orderDTO.setResponseStatus(2);//1表示商家已响应
                     baseDao.updateById(ConvertUtils.sourceToTarget(orderDTO, MasterOrderEntity.class));
@@ -488,6 +490,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
+            //主单中有房，且仅有房
+            if(dto.getReservationType() ==  Constants.ReservationType.ONLYROOMRESERVATION.getValue() && affiliateOrde.size()==0){
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());//释放房间
+
+                dto.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+                //003===============更新排序状态
+                dto.setResponseStatus(2);//1表示商家已响应
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+
+            }
+
             if (dto.getReservationType() != 2 && dto.getPayMoney().compareTo(nu) == 1) {
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
