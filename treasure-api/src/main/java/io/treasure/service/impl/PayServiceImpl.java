@@ -225,13 +225,15 @@ public class PayServiceImpl implements PayService {
         MerchantDTO merchantDto = merchantService.get(masterOrderEntity.getMerchantId());
         //System.out.println("position 3 : "+merchantDto.toString());
         List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
+        String clientId ="";
         if (list.size() == 0){
             System.out.println("PayService 229");
+        }else {
+            clientId = list.get(0).getClientId();
         }
         if (null != merchantDto) {
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
             if (null != userDto) {
-                String clientId = list.get(0).getClientId();
                 if (StringUtils.isNotBlank(clientId)) {
                     for (int i = 0; i < list.size(); i++) {
                         AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());
@@ -882,12 +884,15 @@ public class PayServiceImpl implements PayService {
 
         } else {
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
+            String cId = null;
             if (list.size() == 0){
                 System.out.println("PayService 883");
+            }else {
+                cId = list.get(0).getClientId();
             }
             System.out.println("position==========14");
             //4-3、发消息给商户会员
-            String cId = list.get(0).getClientId();
+
             if (StringUtils.isNotBlank(cId)) {
                 System.out.println("position==========15");
                 for (int i = 0; i < list.size(); i++) {
@@ -1077,11 +1082,14 @@ public class PayServiceImpl implements PayService {
         if (null != merchantDto) {
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
+            String clientId = null;
             if (list.size() == 0){
                 System.out.println("PayService 1076");
+            }else {
+                clientId = list.get(0).getClientId();
             }
             if (null != userDto) {
-                String clientId = list.get(0).getClientId();
+
                 if (StringUtils.isNotBlank(clientId)) {
                     for (int i = 0; i < list.size(); i++) {
                         AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());

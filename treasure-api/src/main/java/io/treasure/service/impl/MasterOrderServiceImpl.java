@@ -847,13 +847,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
             if (list.size() == 0){
                 System.out.println("MasterOrder 849");
-            }
-            String clientId = list.get(0).getClientId();
-            if (StringUtils.isNotBlank(clientId)) {
+            }else {
                 for (int i = 0; i < list.size(); i++) {
                     AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());
                 }
-
             }
             //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
 //            System.out.println("i+++++++++++++++++++++++++++++:"+i
@@ -1173,12 +1170,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         MerchantDTO merchantDTO = merchantService.get(masterOrderEntity.getMerchantId());
         MerchantUserDTO merchantUserDTO = merchantUserService.get(merchantDTO.getCreator());
-
+        String clientId = "";
         List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
         if (list.size() == 0){
             System.out.println("MasterOrder 1176");
+        }else {
+            clientId = list.get(0).getClientId();
         }
-        String clientId = list.get(0).getClientId();
         int s = masterOrderEntity.getStatus();
         if (s == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()) {
             masterOrderEntity.setStatus(Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue());
