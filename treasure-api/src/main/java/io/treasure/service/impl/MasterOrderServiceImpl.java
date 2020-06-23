@@ -2119,8 +2119,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if(s.getReservationType()==2){
                Integer pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
 
-               if (pOrders!=null){
-                   s.setPOrderYorN(1);//有从单
+               if (pOrders==0 ||pOrders==null ){
+                   s.setPOrderYorN(0);//有从单
                }else {
                    s.setPOrderYorN(1);//没有从单
                }
@@ -2494,6 +2494,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             s.setSlaveOrder(orderGoods);
             if (s.getRoomId() != null) {
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
+            }
+
+            if(s.getReservationType()==2){
+                Integer pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
+
+                if (pOrders==0 ||pOrders==null ){
+                    s.setPOrderYorN(0);//有从单
+                }else {
+                    s.setPOrderYorN(1);//没有从单
+                }
             }
         }
         return getPageData(allMainOrder, pages.getTotal(), OrderDTO.class);
