@@ -139,7 +139,7 @@ public class MerchantUserController {
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
         System.out.println("clientid="+cid);
-        if(cid == null){
+        if(StringUtils.isNotBlank(cid)){
             System.out.println("client为null");
         }else {
             merchantUserService.updateCID(cid,dto.getMobile());
