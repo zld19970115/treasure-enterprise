@@ -5,7 +5,6 @@ import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -39,4 +38,6 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     MerchantEntity getMerchantById(Long id);
     PageData<MerchantDTO>   martLike(Map<String, Object> params);
     Integer AuditMerchantStatus(Long id);
+
+    Integer updateRecommend(Long id, Integer recommend);
 }

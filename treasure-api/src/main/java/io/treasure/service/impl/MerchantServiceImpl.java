@@ -201,6 +201,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public Integer updateRecommend(Long id, Integer recommend) {
+        return baseDao.updateRecommend(id, recommend);
+    }
+
+    @Override
     public PageData<MerchantDTO> queryPage(Map<String, Object> params){
 //        IPage<MerchantEntity> page = baseDao.selectPage(
 //                getPage(params, null, false),

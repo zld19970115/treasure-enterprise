@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.PrinterDao">
+
+    <resultMap type="io.treasure.entity.PrinterEntity" id="map">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="state" column="state"/>
+        <result property="mid" column="mid"/>
+        <result property="create_date" column="create_date"/>
+    </resultMap>
+
+    <select id="myPrinter" resultType="io.treasure.entity.PrinterEntity">
+        select * from ct_printer where mid = #{mid}
+    </select>
+
+    <delete id="del">
+        DELETE FROM ct_printer WHERE mid = #{mid}
+    </delete>
+
+</mapper>

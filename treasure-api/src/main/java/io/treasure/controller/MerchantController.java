@@ -569,4 +569,10 @@ public class MerchantController {
 
         return new Result().ok(merchantService.getOutside(deliveryArea,distribution,martId));
     }
+
+    @GetMapping("updateRecommend")
+    @ApiOperation("开启外卖功能")
+    public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateRecommend(id, recommend));
+    }
 }

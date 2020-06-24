@@ -38,4 +38,6 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据商户id获取商家基本信息
     MerchantDTO selectBaseInfoByMartId(long marId);
     void updateAuditById(@Param("id") long id, @Param("auditStatus") int auditStatus);
+
+    Integer updateRecommend(@Param("id") Long id, @Param("recommend") Integer recommend);
 }
