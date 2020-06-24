@@ -87,14 +87,14 @@ ApiIndexController {
             @ApiImplicitParam(name = "categoryId", value = "经营类别", paramType = "query", dataType="String")
     })
     public Result<PageData<MerchantDTO>> queryHotMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
-        params.put("recommend","1");
+//        params.put("recommend","1");
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
 
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
 
     @GetMapping("queryALLMerchant")
-    @ApiOperation("附近全部店铺")
+    @ApiOperation("附近销量店铺")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,

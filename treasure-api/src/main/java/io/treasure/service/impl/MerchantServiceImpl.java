@@ -121,7 +121,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     @Override
     public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) {
         //分页
-        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        IPage<MerchantEntity> page = getPage(params,(String) params.get("ORDER_FIELD"), false);
         //查询
         List<MerchantDTO> list = baseDao.getMerchantList(params);
         for (MerchantDTO s:list) {
