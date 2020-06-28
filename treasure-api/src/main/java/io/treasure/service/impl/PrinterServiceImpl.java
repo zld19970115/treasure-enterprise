@@ -39,9 +39,9 @@ public class PrinterServiceImpl extends CrudServiceImpl<PrinterDao, PrinterEntit
         }
         if(list.size()>1 && list.get(1) != null) {
             if(list.get(1).getState() == 0) {
-                dto.setOnePrinter(list.get(0).getName());
+                dto.setOnePrinter(list.get(1).getName());
             } else {
-                dto.setTwoPrinter(list.get(0).getName());
+                dto.setTwoPrinter(list.get(1).getName());
             }
         }
         return new Result().ok(dto);
@@ -65,7 +65,7 @@ public class PrinterServiceImpl extends CrudServiceImpl<PrinterDao, PrinterEntit
             PrinterEntity info = new PrinterEntity();
             info.setMid(dto.getMid());
             info.setCreateDate(new Date());
-            info.setName(dto.getOnePrinter());
+            info.setName(dto.getTwoPrinter());
             info.setState(1);
             dao.insert(info);
         }

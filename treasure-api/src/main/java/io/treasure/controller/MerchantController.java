@@ -575,4 +575,15 @@ public class MerchantController {
     public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
         return new Result().ok(merchantService.updateRecommend(id, recommend));
     }
+
+    @CrossOrigin
+    @GetMapping("delPC")
+    @ApiOperation("删除PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delPC(@RequestParam Long id){
+        merchantService.deleteById(id);
+        return new Result();
+    }
 }

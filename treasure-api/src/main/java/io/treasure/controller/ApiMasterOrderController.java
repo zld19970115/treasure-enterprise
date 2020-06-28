@@ -198,6 +198,26 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("applRefundPagePC")
+    @ApiOperation("商户端-申请退款列表PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> applRefundPagePC(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+"");
+        params.put("ispOrderId",null);
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
+
     @CrossOrigin
     @Login
     @GetMapping("allPage")
@@ -759,4 +779,11 @@ public class ApiMasterOrderController {
             bitMessageUtil.deatchMsg(EMsgCode.ADD_DISHES);
         }
     }
+
+    @GetMapping("roomOrderPrinter")
+    @ApiOperation("房订单打印PC")
+    public Result roomOrderPrinter(@RequestParam String orderId) {
+        return new Result().ok(masterOrderService.roomOrderPrinter(orderId));
+    }
+
 }
