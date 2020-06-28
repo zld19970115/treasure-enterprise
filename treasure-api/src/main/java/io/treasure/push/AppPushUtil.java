@@ -40,7 +40,7 @@ public class AppPushUtil {
      */
     public  static void pushToSingleClient(String title,String text,String logo,String clientId) {
         IGtPush push = new IGtPush(url,AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
-        AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
+        AbstractTemplate template = PushTemplate.getTransmissionTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,text); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
 //        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
 //        AbstractTemplate template = PushTemplate.getRevokeTemplate(); //消息撤回模版
