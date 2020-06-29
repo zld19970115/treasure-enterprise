@@ -108,8 +108,15 @@ public class MerchantRoomParamsSetController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long")
     })
     public Result delete(@RequestParam long id){
-        merchantRoomParamsSetService.remove(id,Common.STATUS_DELETE.getStatus());
-        return new Result();
+
+        if(merchantRoomParamsSetService.removeRecord(id)){
+            merchantRoomParamsSetService.remove(id,Common.STATUS_DELETE.getStatus());
+            return new Result();
+        }else{
+            return new Result().error("需先解除占用房间后方可删除房间");
+        }
+
+
     }
 
     @Login

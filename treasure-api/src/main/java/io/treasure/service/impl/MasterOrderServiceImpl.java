@@ -27,6 +27,7 @@ import io.treasure.utils.*;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
+import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
@@ -2785,6 +2786,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         }
         return new PageTotalRowData<>(page.getResult(), page.getTotal(), map);
+    }
+
+    @Override
+    public RoomOrderPrinterVo roomOrderPrinter(String orderId) {
+        RoomOrderPrinterVo vo = baseDao.roomOrderPrinter(orderId);
+        vo.setGoodList(baseDao.goodPrinter(vo.getOrderId()));
+        return vo;
     }
 }
 

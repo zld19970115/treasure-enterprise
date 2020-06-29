@@ -303,8 +303,27 @@ public class MerchantController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
     })
     public Result setUpShop(@RequestParam Long id){
-        merchantService.closeShop(id,Common.STATUS_ON.getStatus());
-        return new Result();
+            Map<String,String> nullFieldMap = new HashMap<>();
+
+            //检查商户信息必填项是否为空
+            MerchantEntity merchantEntity = merchantService.selectById(id);
+            if(merchantEntity != null){
+                if(merchantEntity.isAllowOpening()){
+                    merchantService.closeShop(id,Common.STATUS_ON.getStatus());
+                    return new Result();
+                }else{
+                    //有非空字段
+                    List<String> res = new ArrayList<>();
+                    res = merchantEntity.nullFields();
+                    Result result = new Result().error("部分字段不能为空");
+                    result.setData(res);
+                    return result;
+                }
+
+            }else{
+                merchantService.closeShop(id,Common.STATUS_ON.getStatus());
+                return new Result();
+            }
     }
     @CrossOrigin
     @Login
@@ -574,5 +593,16 @@ public class MerchantController {
     @ApiOperation("开启外卖功能")
     public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
         return new Result().ok(merchantService.updateRecommend(id, recommend));
+    }
+
+    @CrossOrigin
+    @GetMapping("delPC")
+    @ApiOperation("删除PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delPC(@RequestParam Long id){
+        merchantService.deleteById(id);
+        return new Result();
     }
 }

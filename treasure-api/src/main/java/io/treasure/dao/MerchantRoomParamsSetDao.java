@@ -29,4 +29,8 @@ public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetE
     Integer getAvailableRooms(@Param("bigTime") long bigTime, @Param("merchantId") long merchantId);
     Integer getAvailableRoomsDesk(@Param("bigTime") long bigTime, @Param("merchantId") long merchantId);
     MerchantRoomParamsSetEntity selectByMartIdAndRoomIdAndRoomId(@Param("merchantId") long merchantId, @Param("roomId") long roomId, @Param("roomSetId") long roomSetId, @Param("format") String format);
+
+    void deleteFreeRecord(@Param("roomId") long roomId);
+
+    Integer existLockedRoom(@Param("roomId") long roomId);
 }

@@ -8,6 +8,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.MerchantRoomService;

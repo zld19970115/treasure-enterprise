@@ -10,10 +10,7 @@ import io.treasure.dao.MerchantRoomDao;
 import io.treasure.dto.*;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantRoomEntity;
-import io.treasure.service.ClientUserService;
-import io.treasure.service.MasterOrderService;
-import io.treasure.service.MerchantRoomService;
-import io.treasure.service.MerchantService;
+import io.treasure.service.*;
 import io.treasure.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,10 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
 
     @Autowired
     private MerchantRoomService merchantRoomService;
+
+    @Autowired
+    private MerchantRoomParamsSetService merchantRoomParamsSetService;
+
     //商户
     @Autowired
     private MerchantService merchantService;
@@ -76,6 +77,11 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     @Override
     public void remove(long id, int status) {
         baseDao.updateStatusById(id,status);
+
+        //status:9表示删除包房
+        if(status == 9)
+            merchantRoomParamsSetService.removeRecord(id);
+
     }
 
     /**

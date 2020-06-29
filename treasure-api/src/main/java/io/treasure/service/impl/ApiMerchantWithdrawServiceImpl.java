@@ -180,17 +180,14 @@ public class ApiMerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWith
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result audit(MerchantWithdrawDTO dto, HttpServletRequest request) throws AlipayApiException {
-      //  UserDetail user = SecurityUser.getUser();
         Result result=new Result();
         Date date = new Date();
         int state=dto.getVerifyState();
         if(state==1){
             throw new RenException("审核状态不正确！！！");
         }else{
-          //  dto.setVerify(user.getId());
             dto.setVerifyDate(date);
         }
-//
         if(state==2){
             int type=dto.getType();
             String orderNumber=dto.getId().toString();
@@ -202,12 +199,9 @@ public class ApiMerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWith
             }else if(type==2){
                 result=this.aliWithdraw(orderNumber,merchantId,amount,dto);
             }
-        }else
-        {
-
+        } else {
             this.update(dto);
         }
-
         return result;
     }
 
