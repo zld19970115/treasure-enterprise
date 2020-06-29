@@ -588,4 +588,21 @@ public class MerchantController {
 
         return new Result().ok(merchantService.getOutside(deliveryArea,distribution,martId));
     }
+
+    @GetMapping("updateRecommend")
+    @ApiOperation("开启外卖功能")
+    public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateRecommend(id, recommend));
+    }
+
+    @CrossOrigin
+    @GetMapping("delPC")
+    @ApiOperation("删除PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result delPC(@RequestParam Long id){
+        merchantService.deleteById(id);
+        return new Result();
+    }
 }

@@ -1,9 +1,11 @@
 package io.treasure.push;
 
 import com.gexin.fastjson.JSONObject;
+import com.gexin.rp.sdk.base.notify.Notify;
 import com.gexin.rp.sdk.base.payload.APNPayload;
 import com.gexin.rp.sdk.base.payload.MultiMedia;
 import com.gexin.rp.sdk.base.payload.VoIPPayload;
+import com.gexin.rp.sdk.dto.GtReq;
 import com.gexin.rp.sdk.template.*;
 
 
@@ -33,7 +35,7 @@ public class PushTemplate {
         template.setStyle(PushStyle.getStyle0(title,text,logo));
 
         template.setTransmissionType(1);  // 透传消息设置，收到消息是否立即启动应用： 1为立即启动，2则广播等待客户端自启动
-       // template.setTransmissionContent("内容");
+        // template.setTransmissionContent("内容");
         // template.setSmsInfo(PushSmsInfo.getSmsInfo()); //短信补量推送
         //template.setDuration("2019-07-09 11:40:00", "2019-07-09 12:24:00");  // 设置定时展示时间，安卓机型可用
         template.setNotifyid(123); // 在消息推送的时候设置notifyid。如果需要覆盖此条消息，则下次使用相同的notifyid发一条新的消息。客户端sdk会根据notifyid进行覆盖。
@@ -67,19 +69,21 @@ public class PushTemplate {
 
      * @return
      */
-    public static TransmissionTemplate getTransmissionTemplate(String appId,String appKey) {
+    public static TransmissionTemplate getTransmissionTemplate(String appId,String appKey,String text) {
         TransmissionTemplate template = new TransmissionTemplate();
-        // 设置APPID与APPKEY
         template.setAppId(appId);
         template.setAppkey(appKey);
-
-        //透传消息设置，1为强制启动应用，客户端接收到消息后就会立即启动应用；2为等待应用启动
-        template.setTransmissionType(1);
-        template.setTransmissionContent("透传内容"); //透传内容
-        template.setAPNInfo(getAPNPayload()); //ios消息推送
-//        template.setAPNInfo(getVoIPPayload());
-//        template.setSmsInfo(PushSmsInfo.getSmsInfo()); //短信补量推送
+        template.setTransmissionType(1);//搭配transmissionContent使用，可选值为1、2；1：立即启动APP（不推荐使用，影响客户体验）2：客户端收到消息后需要自行处理
+        template.setTransmissionContent("red"); //透传内容,不支持转义字符
+        template.setAPNInfo(getAPNPayload()); //ios消息推送，用于设置标题、内容、语音、多媒体、VoIP（基于IP的语音传输）等。离线走APNs时起效果
+        Notify notify = new Notify();
+        notify.setTitle("聚宝同城");
+        notify.setContent(text);
+        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=com.wosiwz.xunsi/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title=title;S.content=content;S.payload=test1;end");
+        notify.setType(GtReq.NotifyInfo.Type._intent);
+        template.set3rdNotifyInfo(notify);//设置第三方通知
         return template;
+
     }
 
     /**

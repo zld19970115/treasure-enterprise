@@ -376,5 +376,40 @@
         order by ctmo.create_date desc
     </select>
 
+    <select id="roomOrderPrinter" resultType="io.treasure.vo.RoomOrderPrinterVo">
+        select
+            ct.order_id as orderId,
+            ctm.`name`,
+            date_format(ct.create_date, '%Y-%m-%d %H:%i:%S') as createDate,
+            date_format(ct.eat_time, '%Y-%m-%d %H:%i:%S') as eatTime,
+            IFNULL(ct.description,'') as description,
+            ct.gift_money as giftMoney,
+            (ct.total_money+ct.gift_money) as totalMoney,
+            ct.pay_money as payMoney,
+            IFNULL(room.`name`,'') as roomName,
+            IFNULL(ct.contacts,'') as contacts,
+            ct.contact_number as contactNumber
+        from
+            ct_master_order ct
+        LEFT JOIN
+            ct_merchant ctm on ctm.id = ct.merchant_id
+        LEFT JOIN
+            ct_merchant_room room on room.id = ct.room_id
+        where ct.id = #{orderId}
+    </select>
+
+    <select id="goodPrinter" resultType="io.treasure.vo.GoodPrinterVo">
+        SELECT
+        good.`name`,
+        ROUND(ct.quantity) as quantity,
+        (ct.pay_money + ct.free_gold) as totalMoney
+        FROM
+            ct_slave_order ct
+        LEFT JOIN
+            ct_good good on good.id = ct.good_id
+        where
+            ct.`status` in (2,4,7)
+	        and ct.order_id = #{orderId}
+    </select>
 
 </mapper>

@@ -11,6 +11,7 @@ import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
+import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -166,4 +167,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     PageData<BackDishesVo> backDishesPage(Map params);
     List<MasterOrderEntity> selectByMasterIdAndStatus(long martId);
     PageTotalRowData<OrderVo> pagePC(Map<String, Object> params);
+
+    RoomOrderPrinterVo roomOrderPrinter(String orderId);
 }

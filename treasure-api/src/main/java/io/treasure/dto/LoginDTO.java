@@ -30,5 +30,6 @@ public class LoginDTO {
     @ApiModelProperty(value = "密码")
     @NotBlank(message="密码不能为空")
     private String password;
-
+    @ApiModelProperty(value = "cid")
+    private String  cid;
 }

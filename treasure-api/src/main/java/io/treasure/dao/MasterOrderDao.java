@@ -6,7 +6,9 @@ import io.treasure.dto.MerchantOrderDTO;
 import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.BackDishesVo;
+import io.treasure.vo.GoodPrinterVo;
 import io.treasure.vo.OrderVo;
+import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -87,6 +89,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
 
     OrderVo pagePCTotalRow(Map<String,Object> params);
 
-
+    RoomOrderPrinterVo roomOrderPrinter(@Param("orderId") String orderId);
+    List<GoodPrinterVo> goodPrinter(@Param("orderId") String orderId);
 
 }

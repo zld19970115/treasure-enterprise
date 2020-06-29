@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.ApiMerchantWithdrawService;
 import io.treasure.service.MerchantService;
 import io.treasure.utils.SendSMSUtil;
@@ -85,14 +86,15 @@ public class ApiMerchantWithdrawController {
         return new Result<MerchantWithdrawDTO>().ok(data);
     }
 
-    @PutMapping("audit")
+    @GetMapping("audit")
     @ApiOperation("审核")
-    public Result audit(@RequestBody MerchantWithdrawDTO dto, HttpServletRequest request) throws AlipayApiException {
-        //效验数据
-        ValidatorUtils.validateEntity(dto, UpdateGroup.class, DefaultGroup.class);
+    public Result audit(@RequestParam Long id,@RequestParam Integer state,@RequestParam String verifyReason, HttpServletRequest request) throws AlipayApiException {
+        MerchantWithdrawDTO dto = merchantWithdrawService.get(id);
+        dto.setVerifyState(state);
+        dto.setVerifyReason(verifyReason);
         Result result=merchantWithdrawService.audit(dto,request);
-        LinkedHashMap<String, String> map=new LinkedHashMap<String,String>();
         MerchantEntity merchantDTO =  merchantService.selectById(dto.getMerchantId());
+        LinkedHashMap<String, String> map=new LinkedHashMap<String,String>();
         map.put("code",merchantDTO.getName());
         map.put("money",dto.getMoney().toString());
         if(dto.getVerifyState()==2){
@@ -104,18 +106,6 @@ public class ApiMerchantWithdrawController {
         }else {
             throw new RenException("审核异常！");
         }
-//短信服务
-//        AbstractSmsService service = SmsFactory.build();
-//        if(service == null){
-//            throw new RenException(ErrorCode.SMS_CONFIG);
-//        }
-//
-////发送短信
-//        String tel=merchantDTO.getMobile();
-//        if(tel.length()!=11){
-//            throw new RenException("手机号不正确！");
-//        }
-//        service.sendSms(tel,map,"聚宝科技","SMS_190792014");
         SendSMSUtil.sendmerchantWithdraw(merchantDTO.getMobile(),map, smsConfig);
         return result;
     }

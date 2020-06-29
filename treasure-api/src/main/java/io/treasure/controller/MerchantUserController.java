@@ -138,12 +138,13 @@ public class MerchantUserController {
         ValidatorUtils.validateEntity(dto);
         //用户登录
         Map<String, Object> map = merchantUserService.login(dto);
-        System.out.println("clientid="+cid);
-        if(cid == null){
-            System.out.println("client为null");
+        System.out.println("clientid="+dto.getCid());
+        if(StringUtils.isNotBlank(dto.getCid())){
+            merchantUserService.updateCID(dto.getCid(),dto.getMobile());
+            merchantClientService.insertMerchantUserClient(dto.getMobile(),dto.getCid());
+
         }else {
-            merchantUserService.updateCID(cid,dto.getMobile());
-            merchantClientService.insertMerchantUserClient(dto.getMobile(),cid);
+            System.out.println("client为null");
         }
         return new Result().ok(map);
     }

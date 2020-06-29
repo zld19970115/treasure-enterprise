@@ -27,6 +27,7 @@ import io.treasure.utils.*;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
+import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
@@ -2119,8 +2120,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if(s.getReservationType()==2){
                Integer pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
 
-               if (pOrders!=null){
-                   s.setPOrderYorN(1);//有从单
+               if (pOrders==0 ||pOrders==null ){
+                   s.setPOrderYorN(0);//有从单
                }else {
                    s.setPOrderYorN(1);//没有从单
                }
@@ -2495,6 +2496,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (s.getRoomId() != null) {
                 s.setMerchantRoomEntity(merchantRoomService.getmerchantroom(s.getRoomId()));
             }
+
+            if(s.getReservationType()==2){
+                Integer pOrders =   baseDao.selectPorderIdTypeTwo(s.getOrderId());
+
+                if (pOrders==0 ||pOrders==null ){
+                    s.setPOrderYorN(0);//有从单
+                }else {
+                    s.setPOrderYorN(1);//没有从单
+                }
+            }
         }
         return getPageData(allMainOrder, pages.getTotal(), OrderDTO.class);
     }
@@ -2775,6 +2786,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
         }
         return new PageTotalRowData<>(page.getResult(), page.getTotal(), map);
+    }
+
+    @Override
+    public RoomOrderPrinterVo roomOrderPrinter(String orderId) {
+        RoomOrderPrinterVo vo = baseDao.roomOrderPrinter(orderId);
+        vo.setGoodList(baseDao.goodPrinter(vo.getOrderId()));
+        return vo;
     }
 }
 
