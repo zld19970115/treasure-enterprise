@@ -69,7 +69,7 @@ public class PushTemplate {
 
      * @return
      */
-    public static TransmissionTemplate getTransmissionTemplate(String appId,String appKey,String text) {
+    public static TransmissionTemplate getTransmissionTemplate(String appId,String appKey,String title,String text) {
         TransmissionTemplate template = new TransmissionTemplate();
         template.setAppId(appId);
         template.setAppkey(appKey);
@@ -77,7 +77,7 @@ public class PushTemplate {
         template.setTransmissionContent("red"); //透传内容,不支持转义字符
         template.setAPNInfo(getAPNPayload()); //ios消息推送，用于设置标题、内容、语音、多媒体、VoIP（基于IP的语音传输）等。离线走APNs时起效果
         Notify notify = new Notify();
-        notify.setTitle("聚宝同城");
+        notify.setTitle(title);
         notify.setContent(text);
         notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=com.wosiwz.xunsi/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title=title;S.content=content;S.payload=test1;end");
         notify.setType(GtReq.NotifyInfo.Type._intent);
@@ -126,29 +126,54 @@ public class PushTemplate {
     }
 
     private static APNPayload getAPNPayload() {
+//        APNPayload payload = new APNPayload();
+//        //在已有数字基础上加1显示，设置为-1时，在已有数字上减1显示，设置为数字时，显示指定数字
+//        payload.setAutoBadge("+1");
+//        payload.setContentAvailable(1);
+//        //ios 12.0 以上可以使用 Dictionary 类型的 sound
+//        payload.setSound("default");
+//        payload.setCategory("$由客户端定义");
+//        payload.addCustomMsg("由客户自定义消息key", "由客户自定义消息value");
+//
+//        //简单模式APNPayload.SimpleMsg
+//        payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
+////        payload.setAlertMsg(getDictionaryAlertMsg());  //字典模式使用APNPayload.DictionaryAlertMsg
+//
+//        //设置语音播报类型，int类型，0.不可用 1.播放body 2.播放自定义文本
+//        payload.setVoicePlayType(2);
+//        //设置语音播报内容，String类型，非必须参数，用户自定义播放内容，仅在voicePlayMessage=2时生效
+//        //注：当"定义类型"=2, "定义内容"为空时则忽略不播放
+//        payload.setVoicePlayMessage("定义内容");
+//
+//        // 添加多媒体资源
+//        payload.addMultiMedia(new MultiMedia().setResType(MultiMedia.MediaType.pic)
+//                .setResUrl("资源文件地址")
+//                .setOnlyWifi(true));
+//
+//        return payload;\
         APNPayload payload = new APNPayload();
         //在已有数字基础上加1显示，设置为-1时，在已有数字上减1显示，设置为数字时，显示指定数字
         payload.setAutoBadge("+1");
-        payload.setContentAvailable(1);
+        payload.setContentAvailable(1);//推送直接带有透传数据
         //ios 12.0 以上可以使用 Dictionary 类型的 sound
         payload.setSound("default");
-        payload.setCategory("$由客户端定义");
-        payload.addCustomMsg("由客户自定义消息key", "由客户自定义消息value");
+        payload.setCategory("$由客户端定义");//在客户端通知栏触发特定的action和button显示
+        payload.addCustomMsg("由客户自定义消息key", "由客户自定义消息value");//增加自定义的数据,Key-Value形式
 
         //简单模式APNPayload.SimpleMsg
-        payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
+        payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));//通知消息体 SimpleAlertMsg: 	通知文本消息字符串
 //        payload.setAlertMsg(getDictionaryAlertMsg());  //字典模式使用APNPayload.DictionaryAlertMsg
 
         //设置语音播报类型，int类型，0.不可用 1.播放body 2.播放自定义文本
-        payload.setVoicePlayType(2);
+//        payload.setVoicePlayType(2);
         //设置语音播报内容，String类型，非必须参数，用户自定义播放内容，仅在voicePlayMessage=2时生效
         //注：当"定义类型"=2, "定义内容"为空时则忽略不播放
-        payload.setVoicePlayMessage("定义内容");
+//        payload.setVoicePlayMessage("定义内容");//设置语音播报内容，String类型，非必须参数，用户自定义播放内容，仅在voicePlayMessage=2时生效
 
-        // 添加多媒体资源
-        payload.addMultiMedia(new MultiMedia().setResType(MultiMedia.MediaType.pic)
-                .setResUrl("资源文件地址")
-                .setOnlyWifi(true));
+        // 添加一个多媒体资源，当前最多传入3个资源
+//        payload.addMultiMedia(new MultiMedia().setResType(MultiMedia.MediaType.pic)
+//                .setResUrl("资源文件地址")
+//                .setOnlyWifi(true));
 
         return payload;
     }
