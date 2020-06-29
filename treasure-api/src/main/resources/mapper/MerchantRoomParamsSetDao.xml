@@ -61,4 +61,21 @@
           select * from ct_merchant_room_params_set where merchant_id=#{merchantId} and room_id = #{roomId} and room_params_id  =#{roomSetId} and DATE_FORMAT(use_date,'%Y-%m-%d') = #{format}
     </select>
 
+    <delete id="deleteFreeRecord" >
+        delete from ct_merchant_room_params_set
+        where state != 1
+            and room_id = #{roomId}
+            and DATE_FORMAT(use_date,'%Y %m %d %T')>DATE_FORMAT(now(),'%Y %m %d %T');
+
+    </delete>
+
+    <select id="existLockedRoom" resultType="integer">
+
+    select count(*) from ct_merchant_room_params_set
+    where state = 1 and status = 1
+        and room_id = #{roomId}
+        and DATE_FORMAT(use_date,'%Y %m %d %T')>DATE_FORMAT(now(),'%Y %m %d %T');
+
+    </select>
+
 </mapper>

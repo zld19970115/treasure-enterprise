@@ -150,5 +150,22 @@ public class MerchantRoomParamsSetServiceImpl extends CrudServiceImpl<MerchantRo
         return baseDao.selectByMartIdAndRoomIdAndRoomId(merchantId,roomId,roomSetId,format);
     }
 
+    @Override
+    public boolean removeRecord(Long id){
+        if(allowDeleteRoom(id)){
+            baseDao.deleteFreeRecord(id);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean allowDeleteRoom(Long id){
+
+        Integer tmp = baseDao.existLockedRoom(id);
+        if(tmp == null || tmp == 0)
+            return true;
+        return false;
+    }
 
 }

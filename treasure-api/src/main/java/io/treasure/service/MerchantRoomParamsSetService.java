@@ -32,4 +32,8 @@ public interface MerchantRoomParamsSetService extends CrudService<MerchantRoomPa
     int getAvailableRoomsDesk(long bigTime, long merchantId);
 
     MerchantRoomParamsSetEntity selectByMartIdAndRoomIdAndRoomId(Long merchantId, Long roomId, long roomSetId, String format);
+
+    boolean removeRecord(Long id);
+    boolean allowDeleteRoom(Long id);
+
 }
