@@ -4,13 +4,8 @@ import io.treasure.config.MyRedisPool;
 import io.treasure.enm.EMessageUpdateType;
 import io.treasure.jra.IMerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //更新初始数据
 
@@ -113,8 +108,23 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         return getMerchantMessageCounter(merchantId);
     }
 
+    @Override
+    public List<String> MerchantList(){
 
+        Set<String> keys = jedis.keys(MerchantMessage.MCH_MSG_PREFIX + "*");
+        if(keys.isEmpty())
+            return null;
+
+        return new ArrayList<>(keys);
+    }
+
+
+    //当对象不存在时和每天清台后执行
+    @Override
     public MerchantMessage initBaseValue(String merchantId){
+
+        //查询新单数量
+
 
 
         return null;

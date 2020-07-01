@@ -25,6 +25,8 @@ public interface IMerchantMessageJRA {
 
     MerchantMessage initBaseValue(String merchantId);
 
+    List<String> MerchantList();
+
 
 
 }

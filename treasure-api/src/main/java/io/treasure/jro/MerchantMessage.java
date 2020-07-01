@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class MerchantMessage {
 
 
-    private static final String MCH_MSG_PREFIX = "mm:";
+    public static final String MCH_MSG_PREFIX = "mm:";
     private String fieldName;
     private String merchantId;
 
