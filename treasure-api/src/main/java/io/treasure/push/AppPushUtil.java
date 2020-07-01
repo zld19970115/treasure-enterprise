@@ -40,9 +40,9 @@ public class AppPushUtil {
      */
     public  static void pushToSingleClient(String title,String text,String logo,String clientId) {
         IGtPush push = new IGtPush(url,AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
-        AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
+       // AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
-//        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
+        AbstractTemplate template = PushTemplate.getTransmissionTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text); //透传消息模版
 //        AbstractTemplate template = PushTemplate.getRevokeTemplate(); //消息撤回模版
 //        AbstractTemplate template = PushTemplate.getStartActivityTemplate(); //点击通知, 打开（自身）应用内任意页面
 
@@ -81,9 +81,9 @@ public class AppPushUtil {
      */
     public  static void pushToSingleMerchant(String title,String text,String logo,String clientId) {
         IGtPush push = new IGtPush(url,AppInfo.APPKEY_MERCHANT, AppInfo.MASTERSECRET_MERCHANT);
-        AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_MERCHANT,AppInfo.APPKEY_MERCHANT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
+       // AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_MERCHANT,AppInfo.APPKEY_MERCHANT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
 //        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
-//        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
+        AbstractTemplate template = PushTemplate.getTransmissionTemplate(AppInfo.APPID_MERCHANT,AppInfo.APPKEY_CLIENT,title,text);
 //        AbstractTemplate template = PushTemplate.getRevokeTemplate(); //消息撤回模版
 //        AbstractTemplate template = PushTemplate.getStartActivityTemplate(); //点击通知, 打开（自身）应用内任意页面
 
