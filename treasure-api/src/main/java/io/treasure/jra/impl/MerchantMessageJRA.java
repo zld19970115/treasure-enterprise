@@ -1,6 +1,7 @@
 package io.treasure.jra.impl;
 
 import io.treasure.config.MyRedisPool;
+import io.treasure.enm.EIncrType;
 import io.treasure.enm.EMessageUpdateType;
 import io.treasure.jra.IMerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
@@ -74,9 +75,12 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
     }
 
     @Override
-    public MerchantMessage updateSpecifyField(String merchantId, EMessageUpdateType eMessageUpdateType) {
-
+    public MerchantMessage updateSpecifyField(String merchantId, EMessageUpdateType eMessageUpdateType, EIncrType eIncrType) {
+        int step = 1;
         String targetItem = new MerchantMessage().initFieldName(merchantId).getFieldName();
+
+        if(eIncrType.ordinal()==EIncrType.SUB.ordinal())
+            step = -1;
 
         String hincrByField = null;
         switch(eMessageUpdateType){
@@ -103,7 +107,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
                 break;
         }
         if(hincrByField != null)
-            jedis.hincrBy(targetItem,hincrByField,1);
+            jedis.hincrBy(targetItem,hincrByField,step);
 
         return getMerchantMessageCounter(merchantId);
     }
