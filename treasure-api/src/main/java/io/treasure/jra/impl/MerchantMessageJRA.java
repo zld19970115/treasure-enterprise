@@ -157,7 +157,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         merchantMessage.setMerchantId(merchantId+"");
 
         Integer newOrders = orderDao.selectNewOrderCount(merchantId);
-       // Integer attachItems = orderDao.selectActtachItemCount(merchantId);
+        Integer attachItems = orderDao.selectActtachItemCount(merchantId);
         Integer attachRooms = orderDao.selectAttachRoomCount(merchantId);
         Integer refundOrders = orderDao.selectRefundOrderCount(merchantId);
         Integer detachItems = orderDao.selectDetachItemCount(merchantId);
@@ -165,8 +165,8 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         if(newOrders != null)
             merchantMessage.setCreateOrderCounter(newOrders);
 
-        //if(attachItems != null)
-         //   merchantMessage.setAttachItemCounter(attachItems);
+        if(attachItems != null)
+           merchantMessage.setAttachItemCounter(attachItems);
 
         if(attachRooms != null)
             merchantMessage.setAttachRoomCounter(attachRooms);

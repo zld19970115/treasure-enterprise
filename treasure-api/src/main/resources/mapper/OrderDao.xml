@@ -6,7 +6,7 @@
 <!--    新订单-->
     <select id="selectNewOrderCount" resultType="integer">
 
-        select count(0) from ct_master_order
+        select count(1) from ct_master_order
         where
           merchant_id=#{merchantId}
           and status = 4
@@ -20,7 +20,7 @@
 <!--    加菜订单-->
     <select id="selectActtachItemCount" resultType="integer" >
 
-        select * from ct_master_order
+        select count(1) from ct_master_order
         where merchant_id=#{merchantId}
             and status = 10
             and room_id is null
@@ -34,7 +34,7 @@
 <!--    加房订单位-->
     <select id="selectAttachRoomCount" resultType="integer" >
 
-        select * from ct_master_order
+        select count(1) from ct_master_order
         where merchant_id=#{merchantId}
             and status = 10
             and room_id is not null
@@ -48,7 +48,7 @@
 <!--    申请退款-->
     <select id="selectRefundOrderCount" resultType="integer" >
 
-        select p_order_id from ct_master_order
+        select count(1) from ct_master_order
             where status = 6
             and merchant_id=#{merchantId}
 
@@ -57,7 +57,7 @@
 <!--    申请退菜-->
     <select id="selectDetachItemCount" resultType="integer" >
 
-        select count(0) from ct_slave_order
+        select count(1) from ct_slave_order
             where status = 6
             and order_id in (
                 select order_id from ct_master_order
