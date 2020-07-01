@@ -1,17 +1,28 @@
 package io.treasure.jra.impl;
 
 import io.treasure.config.MyRedisPool;
+import io.treasure.dao.OrderDao;
 import io.treasure.enm.EIncrType;
 import io.treasure.enm.EMessageUpdateType;
 import io.treasure.jra.IMerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
+import io.treasure.jro.MerchantSet;
+import lombok.AllArgsConstructor;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import java.util.*;
 
 //更新初始数据
-
+@Component
 public class MerchantMessageJRA implements IMerchantMessageJRA {
 
+    @Autowired(required = false)
+    OrderDao orderDao;
+
+    @Autowired
+    MerchantSetJRA merchantSetJRA;
 
     Jedis jedis = MyRedisPool.getJedis();
 
@@ -65,6 +76,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         MerchantMessage merchantMessage = new MerchantMessage();
         merchantMessage.setMerchantId(merchantId);
         merchantMessage.initFieldName();
+
         merchantMessage.setCreateOrderCounter(Integer.parseInt(res.get(0)));
         merchantMessage.setAttachItemCounter(Integer.parseInt(res.get(1)));
         merchantMessage.setAttachRoomCounter(Integer.parseInt(res.get(2)));
@@ -74,6 +86,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         return merchantMessage;
     }
 
+
     @Override
     public MerchantMessage updateSpecifyField(String merchantId, EMessageUpdateType eMessageUpdateType, EIncrType eIncrType) {
         int step = 1;
@@ -82,34 +95,42 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         if(eIncrType.ordinal()==EIncrType.SUB.ordinal())
             step = -1;
 
-        String hincrByField = null;
-        switch(eMessageUpdateType){
+        if(isMerchantMessageExist(merchantId) && merchantSetJRA.isExistMember(merchantId)){
+            String hincrByField = null;
+            switch(eMessageUpdateType){
 
-            case CREATE_ORDER://新单
+                case CREATE_ORDER://新单
 
-                hincrByField = MerchantMessage.getCreateOrderCounterField();
-                break;
-            case ATTACH_ITEM://加菜
+                    hincrByField = MerchantMessage.getCreateOrderCounterField();
+                    break;
+                case ATTACH_ITEM://加菜
 
-                hincrByField = MerchantMessage.getAttachItemCounterField();
-                break;
-            case ATTACH_ROOM://加房
+                    hincrByField = MerchantMessage.getAttachItemCounterField();
+                    break;
+                case ATTACH_ROOM://加房
 
-                hincrByField = MerchantMessage.getAttachRoomCounterField();
-                break;
-            case REFUND_ORDER://整单退
+                    hincrByField = MerchantMessage.getAttachRoomCounterField();
+                    break;
+                case REFUND_ORDER://整单退
 
-                hincrByField = MerchantMessage.getRefundOrderCounterField();
-                break;
-            case DETACH_ITEM://退菜
+                    hincrByField = MerchantMessage.getRefundOrderCounterField();
+                    break;
+                case DETACH_ITEM://退菜
 
-                hincrByField = MerchantMessage.getDetachItemCounterField();
-                break;
+                    hincrByField = MerchantMessage.getDetachItemCounterField();
+                    break;
+            }
+            if(hincrByField != null)
+                jedis.hincrBy(targetItem,hincrByField,step);
+
+            return getMerchantMessageCounter(merchantId);
+        }else{
+            //如果redis模型不存在，则直接创建新模型
+            MerchantMessage counterByOrderDao = getCounterByOrderDao(Long.parseLong(merchantId));
+            addRecord(counterByOrderDao);
+            merchantSetJRA.add(merchantId);
+            return counterByOrderDao;
         }
-        if(hincrByField != null)
-            jedis.hincrBy(targetItem,hincrByField,step);
-
-        return getMerchantMessageCounter(merchantId);
     }
 
     @Override
@@ -122,16 +143,40 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         return new ArrayList<>(keys);
     }
 
-
-    //当对象不存在时和每天清台后执行
+    //每天凌晨五点定时清理提醒消息
     @Override
-    public MerchantMessage initBaseValue(String merchantId){
+    public void deleteRecord(){
 
         //查询新单数量
+        merchantSetJRA.removeAll();
 
+    }
 
+    public MerchantMessage getCounterByOrderDao(Long merchantId){
+        MerchantMessage merchantMessage = new MerchantMessage();
+        merchantMessage.setMerchantId(merchantId+"");
 
-        return null;
+        Integer newOrders = orderDao.selectNewOrderCount(merchantId);
+       // Integer attachItems = orderDao.selectActtachItemCount(merchantId);
+        Integer attachRooms = orderDao.selectAttachRoomCount(merchantId);
+        Integer refundOrders = orderDao.selectRefundOrderCount(merchantId);
+        Integer detachItems = orderDao.selectDetachItemCount(merchantId);
+
+        if(newOrders != null)
+            merchantMessage.setCreateOrderCounter(newOrders);
+
+        //if(attachItems != null)
+         //   merchantMessage.setAttachItemCounter(attachItems);
+
+        if(attachRooms != null)
+            merchantMessage.setAttachRoomCounter(attachRooms);
+
+        if(refundOrders != null)
+            merchantMessage.setRefundOrderCounter(refundOrders);
+
+        if(detachItems != null)
+            merchantMessage.setDetachItemCounter(detachItems);
+        return merchantMessage;
     }
 
 

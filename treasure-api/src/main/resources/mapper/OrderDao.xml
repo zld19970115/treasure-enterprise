@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.OrderDao">
+
+<!--    新订单-->
+    <select id="selectNewOrderCount" resultType="integer">
+
+        select count(0) from ct_master_order
+        where
+          merchant_id=#{merchantId}
+          and status = 4
+          and order_id not in (
+            select p_order_id from ct_master_order
+            where p_order_id != '0'
+          )
+
+    </select>
+
+<!--    加菜订单-->
+    <select id="selectActtachItemCount" resultType="integer" >
+
+        select * from ct_master_order
+        where merchant_id=#{merchantId}
+            and status = 10
+            and room_id is null
+            and order_id in(
+                select p_order_id from ct_master_order
+                where p_order_id != '0'
+            )
+
+    </select>
+
+<!--    加房订单位-->
+    <select id="selectAttachRoomCount" resultType="integer" >
+
+        select * from ct_master_order
+        where merchant_id=#{merchantId}
+            and status = 10
+            and room_id is not null
+            and order_id in(
+                select p_order_id from ct_master_order
+                where p_order_id != '0'
+            )
+
+    </select>
+
+<!--    申请退款-->
+    <select id="selectRefundOrderCount" resultType="integer" >
+
+        select p_order_id from ct_master_order
+            where status = 6
+            and merchant_id=#{merchantId}
+
+    </select>
+
+<!--    申请退菜-->
+    <select id="selectDetachItemCount" resultType="integer" >
+
+        select count(0) from ct_slave_order
+            where status = 6
+            and order_id in (
+                select order_id from ct_master_order
+                where merchant_id = #{merchantId}
+            )
+
+    </select>
+
+</mapper>
