@@ -23,6 +23,8 @@ public interface IMerchantMessageJRA {
     //获取当前消息计数器信息
     MerchantMessage getMerchantMessageCounter(String merchantId);
 
+    MerchantMessage initBaseValue(String merchantId);
+
 
 
 }

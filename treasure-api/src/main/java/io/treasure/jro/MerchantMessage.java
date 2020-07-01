@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 
 @Data
-@Component
 @ToString
 public class MerchantMessage {
 

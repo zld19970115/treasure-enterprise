@@ -114,5 +114,12 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
     }
 
 
+    public MerchantMessage initBaseValue(String merchantId){
+
+
+        return null;
+    }
+
+
 }
 
