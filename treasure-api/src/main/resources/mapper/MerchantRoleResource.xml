@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantRoleResourceDao">
+
+    <resultMap type="io.treasure.entity.MerchantRoleResourceEntity" id="map">
+        <result property="ID" column="ID"/>
+        <result property="ROLE_ID" column="ROLE_ID"/>
+        <result property="RESOURCE_ID" column="RESOURCE_ID"/>
+    </resultMap>
+
+   <select id="countByRid" resultType="java.lang.Long">
+        select COUNT(0) from ct_merchant_role_resource where RESOURCE_ID = #{rid}
+   </select>
+
+</mapper>
