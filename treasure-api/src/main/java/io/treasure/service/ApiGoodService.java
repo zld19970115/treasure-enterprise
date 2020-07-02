@@ -1,7 +1,9 @@
 package io.treasure.service;
 
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.GoodPagePCDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 
@@ -34,4 +36,6 @@ public interface ApiGoodService extends CrudService<GoodEntity, GoodDTO> {
     List getoutsideGoodsByGoodCategoryId(long martId, long goodCategoryId);
     //根据商户ID查询热销菜品
     List<GoodDTO> getShowInHotbyMartId(long martId);
+
+    PageData<GoodPagePCDTO> goodPageListPC(Map<String, Object> params);
 }

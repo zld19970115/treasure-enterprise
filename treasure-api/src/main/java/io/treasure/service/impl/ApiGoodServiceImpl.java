@@ -1,10 +1,15 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.ApiGoodDao;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.GoodPagePCDTO;
+import io.treasure.dto.NewsDto;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.service.ApiGoodService;
@@ -151,6 +156,13 @@ public class ApiGoodServiceImpl extends CrudServiceImpl<ApiGoodDao, GoodEntity, 
     @Override
     public List<GoodDTO> getShowInHotbyMartId(long martId) {
         return baseDao.getShowInHotbyMartId(martId);
+    }
+
+    @Override
+    public PageData<GoodPagePCDTO> goodPageListPC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<GoodPagePCDTO> page = (Page) baseDao.goodPageListPC(params);
+        return new PageData<>(page.getResult(),page.getTotal());
     }
 
 }
