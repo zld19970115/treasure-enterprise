@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.GoodPagePCDTO;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantEntity;
@@ -35,4 +36,6 @@ public interface ApiGoodDao extends BaseDao<GoodEntity> {
     List<GoodEntity> getGoodsByGoodCategoryId(@Param("martId") long martId, @Param("goodCategoryId") long goodCategoryId);
     List<GoodEntity>  getoutsideGoodsByGoodCategoryId(@Param("martId") long martId, @Param("goodCategoryId") long goodCategoryId);
     List<GoodDTO> getShowInHotbyMartId(long martId);
+
+    List<GoodPagePCDTO> goodPageListPC(Map<String, Object> params);
 }
