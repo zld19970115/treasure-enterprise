@@ -84,8 +84,7 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
-    @Autowired
-    BitMessageUtil bitMessageUtil;
+
     @Autowired
     WsPool wsPool;
     @Autowired

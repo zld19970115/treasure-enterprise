@@ -24,7 +24,6 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.utils.BitMessageUtil;
 import io.treasure.utils.EMsgCode;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
@@ -59,8 +58,6 @@ public class ApiMasterOrderController {
     @Autowired
     private ClientUserService clientUserService;
 
-    @Autowired
-    private BitMessageUtil bitMessageUtil;
     @Autowired
     private MasterOrderSimpleService masterOrderSimpleService;
     @Login
@@ -775,9 +772,7 @@ public class ApiMasterOrderController {
     })
     public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
         List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
-        if (masterOrderEntities.size()==0){
-            bitMessageUtil.deatchMsg(EMsgCode.ADD_DISHES);
-        }
+
     }
 
     @GetMapping("roomOrderPrinter")

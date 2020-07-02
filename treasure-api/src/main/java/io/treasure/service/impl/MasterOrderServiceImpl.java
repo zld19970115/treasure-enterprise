@@ -102,8 +102,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private UserTransactionDetailsService userTransactionDetailsService;
 
     @Autowired
-    BitMessageUtil bitMessageUtil;
-    @Autowired
     WsPool wsPool;
 
     @Override

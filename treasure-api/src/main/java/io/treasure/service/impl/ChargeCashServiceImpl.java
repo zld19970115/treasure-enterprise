@@ -64,8 +64,10 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     MerchantServiceImpl merchantService;
     @Autowired
     private IWXPay wxPay;
-    @Autowired
-    BitMessageUtil bitMessageUtil;
+
+    //@Autowired
+    //BitMessageUtil bitMessageUtil;
+
     @Autowired
     WsPool wsPool;
 
@@ -215,10 +217,13 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
 //        int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
 //        System.out.println("i+++++++++++++++++++++++++++++:"+i
 //        );
+
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
         );
         wsPool.sendMessageToUser(wsByUser, 2+"");
+
+
         //至此
         if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
             List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);

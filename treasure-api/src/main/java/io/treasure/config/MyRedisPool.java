@@ -6,8 +6,8 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-@ConfigurationProperties(prefix = "spring.redis")
-@Configuration
+//@ConfigurationProperties(prefix = "spring.redis")
+//@Configuration
 public class MyRedisPool {
     private static volatile JedisPool jedisPool = null;
 
