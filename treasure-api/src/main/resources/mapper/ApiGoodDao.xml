@@ -74,4 +74,44 @@
     <select id="getShowInHotbyMartId" parameterType="io.treasure.entity.GoodEntity" resultType="io.treasure.dto.GoodDTO">
         select * from ct_good where mart_id=#{martId} and show_in_hot=1 and status=1 and outside in (1,2) order by rank asc
     </select>
+
+    <select id="goodPageListPC" resultType="io.treasure.dto.GoodPagePCDTO">
+        SELECT
+        ct.id
+        ,ct.`name`
+        ,ct.description
+        ,ct.price
+        ,ct.introduce
+        ,ct.show_in_hot as showInHot
+        ,ct.units
+        ,ct.remarks
+        ,ct.outside
+        ,ct.out_price as outPrice
+        ,ct.sales
+        ,ct.buyers
+        ,ct.status
+        ,date_format(ct.create_date, '%Y-%m-%d %H:%i:%s') as createDate
+        ,ct.icon
+        ,ct.favorable_price as favorablePrice
+        ,ct.stock
+        ,ct.number
+        ,ct.mart_id
+        ,mer.`name` as merchantName
+        ,cat.`name` as categoryName
+        FROM ct_good ct
+        LEFT JOIN
+            ct_merchant mer on mer.id = ct.mart_id
+        LEFT JOIN
+            ct_good_category cat on cat.id = ct.good_category_id
+        where
+            ct.`status` != 9 and
+            ct.mart_id = #{mid}
+        <if test="startDate != null and startDate.trim() != ''">
+            <![CDATA[ and date_format(ct.create_date, '%Y-%m-%d') >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(ct.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+        </if>
+        ORDER BY ct.rank
+    </select>
 </mapper>
