@@ -3,54 +3,52 @@
 
 <mapper namespace="io.treasure.dao.MasterOrderSimpleDao">
 
-    <resultMap type="io.treasure.entity.MasterOrderSimpleEntity" id="masterOrderMap">
 
-        <result property="id" column="id"/>
-        <result property="orderId" column="order_id"/>
-        <result property="merchantId" column="merchant_id"/>
-        <result property="roomId" column="room_id"/>
-        <result property="reservationType" column="reservation_type"/>
-        <result property="reservationId" column="reservation_id"/>
-        <result property="discountId" column="discount_id"/>
-        <result property="eatTime" column="eat_time"/>
-        <result property="totalMoney" column="total_money"/>
-        <result property="payMoney" column="pay_money"/>
-        <result property="status" column="status"/>
-        <result property="payMode" column="pay_mode"/>
-        <result property="invoice" column="invoice"/>
-        <result property="description" column="description"/>
-        <result property="payDate" column="pay_date"/>
-        <result property="contacts" column="contacts"/>
-        <result property="contactNumber" column="contact_number"/>
-        <result property="checkStatus" column="check_status"/>
-        <result property="checkMode" column="check_mode"/>
-        <result property="refundReason" column="refund_reason"/>
-        <result property="refundId" column="refund_id"/>
-        <result property="refundDate" column="refund_date"/>
-        <result property="updateDate" column="update_date"/>
-        <result property="createDate" column="create_date"/>
-        <result property="creator" column="creator"/>
-        <result property="updater" column="updater"/>
-        <result property="platformBrokerage" column="platform_brokerage"/>
-        <result property="merchantProceeds" column="merchant_proceeds"/>
-    </resultMap>
+    <select id = "queryByOrder" resultType="io.treasure.entity.OrderSimpleEntity">
 
 
-    <select id = "queryByOrder" resultType="io.treasure.entity.MasterOrderSimpleEntity">
-        select order_id,room_id,description,contact_number,total_money,pay_money,update_date from ct_master_order
-        where merchant_id = #{merchantId}
+        select * from (
+                  (
+                      select order_id,mo.status,room_id,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date,cu.head_img
+                      from ct_master_order mo
+                      left join ct_client_user cu
+                      on mo.contact_number = cu.mobile
+                      where mo.merchant_id = ${merchantId}
+                  )
+                  union all
+                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order
+                  where order_id in (
+                      select order_id from ct_master_order
+                      where merchant_id = ${merchantId}
+                  )
+              ) as m_and_s
+        where status in(4,6)
+        order by update_date
+        limit #{index},#{pages};
 
-        <choose>
-            <when test="status != null and status != ''">
-                and status = #{status}
-                order by create_date
-            </when>
-
-            <otherwise>
-                order by status,create_date
-            </otherwise>
-
-        </choose>
     </select>
 
+    <select id="qureyCountByMerchantId" resultType="integer">
+        select count(0) from (
+                  (
+                      select order_id,mo.status,room_id,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date,cu.head_img
+                      from ct_master_order mo
+                      left join ct_client_user cu
+                      on mo.contact_number = cu.mobile
+                      where mo.merchant_id = ${merchantId}
+                  )
+                  union all
+                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order
+                  where order_id in (
+                      select order_id from ct_master_order
+                      where merchant_id = ${merchantId}
+                  )
+              ) as m_and_s
+        where status in(4,6)
+
+    </select>
+
+
 </mapper>
+
+

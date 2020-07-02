@@ -1,6 +1,7 @@
 
 package io.treasure.service.impl;
 
+import com.alipay.api.java_websocket.WebSocket;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.constant.Constant;
@@ -10,13 +11,17 @@ import io.treasure.common.utils.Result;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.EMessageUpdateType;
 import io.treasure.entity.*;
+import io.treasure.jra.impl.MerchantMessageJRA;
+import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.service.impl.CrudServiceImpl;
 
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.WsPool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static io.treasure.enm.EIncrType.ADD;
 
 /**
  * 订单菜品表
@@ -56,7 +63,10 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
     private PayService payService;
     @Autowired
     private MerchantUserService merchantUserService;
-
+    @Autowired
+    MerchantMessageJRA merchantMessageJRA;
+    @Autowired
+    WsPool wsPool;
     @Autowired
     private MerchantService merchantService;
 
@@ -235,7 +245,12 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
 
             }
             SendSMSUtil.sendApplyRefusal(merchantUserDTO.getMobile(), smsConfig);
+            WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+            System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
+            );
+            MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(masterOrderEntity.getMerchantId().toString(), EMessageUpdateType.DETACH_ITEM, ADD);
 
+            wsPool.sendMessageToUser(wsByUser, merchantMessage.toString());
 
         }
         return result;

@@ -13,11 +13,14 @@ import io.treasure.config.ISMSConfig;
 import io.treasure.dao.RefundOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.EMessageUpdateType;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.RefundOrderEntity;
 import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.jra.impl.MerchantMessageJRA;
+import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
@@ -31,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import static io.treasure.enm.EIncrType.SUB;
 
 @Service
 public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, RefundOrderEntity, RefundOrderDTO> implements RefundOrderService {
@@ -48,7 +53,8 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
 
     @Autowired
     private  PayServiceImpl payService;
-
+    @Autowired
+    MerchantMessageJRA merchantMessageJRA;
     @Autowired
     private MerchantService merchantService;
     @Autowired
@@ -213,8 +219,9 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
                 AppPushUtil.pushToSingleClient("商家同意退菜", "您的退菜申请已通过", "", clientId);
             }
         WebSocket wsByUser = wsPool.getWsByUser(order.getCreator().toString());
-        System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
-        );
+
+        MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(order.getMerchantId().toString(), EMessageUpdateType.DETACH_ITEM, SUB);
+
         wsPool.sendMessageToUser(wsByUser, 1+"");
             MerchantDTO merchantDTO = merchantService.get(order.getMerchantId());
             SendSMSUtil.sendMerchantAgreeRefusal(clientUserDTO.getMobile(), merchantDTO.getName(), smsConfig);
@@ -245,6 +252,7 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
         WebSocket wsByUser = wsPool.getWsByUser(order.getCreator().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:"+wsByUser
         );
+        MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(order.getMerchantId().toString(), EMessageUpdateType.DETACH_ITEM, SUB);
         wsPool.sendMessageToUser(wsByUser, 1+"");
     }
 

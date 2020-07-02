@@ -7,8 +7,10 @@ import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BusinessManagerDao  extends BaseDao<BusinessManagerEntity> {
     List<BusinessManagerDTO> getByNameAndPassWord(String realName, String passWord);
+    List<BusinessManagerDTO> listPage(Map<String, Object> params);
 }

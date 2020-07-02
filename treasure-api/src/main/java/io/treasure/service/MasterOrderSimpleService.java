@@ -1,8 +1,12 @@
 package io.treasure.service;
 
 import io.treasure.common.utils.Result;
+import io.treasure.entity.OrderSimpleEntity;
+
+import java.util.List;
 
 public interface MasterOrderSimpleService {
 
-    Result getOrderList(Long merchantId,Long merchantIdPosition,Integer status,Integer checkStatus,Integer index,Integer pageNumber);
+    List<OrderSimpleEntity> getOrderList(Long merchantId, Integer index, Integer pageNumber);
+    Integer getCount(Long merchantId);
 }

@@ -16,8 +16,11 @@ import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.EMessageUpdateType;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
+import io.treasure.jra.impl.MerchantMessageJRA;
+import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.*;
@@ -34,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.treasure.enm.EIncrType.ADD;
+
 /**
  * @author super
  * @since 1.0.0 2019-09-08
@@ -47,7 +52,8 @@ public class PayServiceImpl implements PayService {
 
     @Resource
     SlaveOrderDao slaveOrderDao;
-
+    @Autowired
+    MerchantMessageJRA merchantMessageJRA;
     @Autowired
     MasterOrderService masterOrderService;
     @Autowired
@@ -188,7 +194,9 @@ public class PayServiceImpl implements PayService {
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
         );
-        wsPool.sendMessageToUser(wsByUser, 2 + "");
+        MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(masterOrderEntity.getMerchantId().toString(), EMessageUpdateType.CREATE_ORDER, ADD);
+
+        wsPool.sendMessageToUser(wsByUser, merchantMessage.toString());
         if (masterOrderEntity.getReservationType() != Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
             List<SlaveOrderEntity> slaveOrderEntitys = slaveOrderService.selectByOrderId(out_trade_no);
             //System.out.println("position 2 : "+slaveOrderEntitys);

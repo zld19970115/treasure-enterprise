@@ -25,7 +25,9 @@
         select * from business_manager where status in (1,2) and  real_name =#{realName} and password = #{passWord} and deleted = 0
     </select>
 
-
+    <select id="listPage" resultType="io.treasure.dto.BusinessManagerDTO">
+         select * from business_manager where status in (1,2) and deleted = 0
+    </select>
 
 
 

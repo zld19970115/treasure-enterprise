@@ -19,8 +19,12 @@ import io.treasure.config.IWXPay;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
+import io.treasure.enm.EMessageUpdateType;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
+import io.treasure.jra.impl.MerchantMessageJRA;
+import io.treasure.jra.impl.MerchantSetJRA;
+import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.*;
@@ -40,6 +44,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static io.treasure.enm.EIncrType.ADD;
+import static io.treasure.enm.EIncrType.SUB;
 
 /**
  * 订单表
@@ -80,7 +87,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MerchantCouponService merchantCouponService;
     @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
-
+    @Autowired
+    MerchantMessageJRA merchantMessageJRA;
+    @Autowired
+    WsPool wsPool;
     @Autowired
     private IWXPay wxPay;
 
@@ -102,7 +112,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private UserTransactionDetailsService userTransactionDetailsService;
 
     @Autowired
-    WsPool wsPool;
+    BitMessageUtil bitMessageUtil;
+
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -210,8 +221,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
                     SendSMSUtil.sendMerchantReceipt(userDto.getMobile(), merchantDTO.getName(), smsConfig);
                     WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-                    System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
-                    );
+                    MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.CREATE_ORDER, SUB);
                     wsPool.sendMessageToUser(wsByUser, 1 + "");
                 }
             } else {
@@ -498,7 +508,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 //003===============更新排序状态
                 dto.setResponseStatus(2);//1表示商家已响应
                 baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
-
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
+                wsPool.sendMessageToUser(wsByUser, 1 + "");
             }
 
             if (dto.getReservationType() != 2 && dto.getPayMoney().compareTo(nu) == 1) {
@@ -541,7 +553,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                                 slaveOrderService.updateSlaveOrderStatus(status, s.getOrderId(), s.getGoodId());
                             }
                         }
-
+                        WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                        MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
+                        wsPool.sendMessageToUser(wsByUser, 1 + "");
                     }
                 } else {
                     return new Result().error(result1.getMsg());
@@ -606,8 +620,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 MerchantEntity merchantById = merchantService.getMerchantById(dto.getMerchantId());
                 SendSMSUtil.sendRefuseRefund(clientUserDTO.getMobile(), merchantById.getName(), smsConfig);
                 WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
-                System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
-                );
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
                 wsPool.sendMessageToUser(wsByUser, 1 + "");
             } else {
                 return new Result().error("无法退款！");
@@ -871,7 +884,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             WebSocket wsByUser = wsPool.getWsByUser(dto.getMerchantId().toString());
             System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
             );
-            wsPool.sendMessageToUser(wsByUser, 2 + "");
+            MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.CREATE_ORDER, ADD);
+
+            wsPool.sendMessageToUser(wsByUser, merchantMessage.toString());
         }
         MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
         masterOrderEntity.setInvoice("0");
@@ -1206,6 +1221,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
                 SendSMSUtil.sendApplyRefund(merchantUserDTO.getMobile(), smsConfig);
+                WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+                System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
+                );
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(masterOrderEntity.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, ADD);
+
+                wsPool.sendMessageToUser(wsByUser, merchantMessage.toString());
+
+
+
                 result.ok(true);
             } else {
                 return result.error(-1, "申请退款失败！");
@@ -1843,6 +1867,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                System.out.println("i+++++++++++++++++++++++++++++:"+i
 //                );
                 WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.CREATE_ORDER, SUB);
                 System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
                 );
                 wsPool.sendMessageToUser(wsByUser, 1 + "");
