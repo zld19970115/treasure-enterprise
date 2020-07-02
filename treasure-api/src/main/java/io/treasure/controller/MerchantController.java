@@ -118,7 +118,7 @@ public class MerchantController {
         //效验数据
        // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
-        MerchantEntity flag = merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+        MerchantEntity flag = merchantService.getByName(dto.getName(),9);
         if(null!=flag){
             return new Result().error("该商户您已经注册过了！");
         }
