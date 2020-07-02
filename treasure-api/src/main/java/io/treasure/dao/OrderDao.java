@@ -28,6 +28,7 @@ public interface OrderDao{
 
 
     Integer selectNewOrderCount(Long merchantId);
+    Integer selectNewOrderCountOnly(Long merchantId);
     Integer selectActtachItemCount(Long merchantId);
     Integer selectAttachRoomCount(Long merchantId);
     Integer selectRefundOrderCount(Long merchantId);

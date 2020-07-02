@@ -30,6 +30,4 @@ public interface IMerchantMessageJRA {
 
     MerchantMessage getCounterByOrderDao(Long merchantId);
 
-
-
 }

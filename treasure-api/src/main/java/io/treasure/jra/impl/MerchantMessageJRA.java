@@ -165,11 +165,11 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         if(newOrders != null)
             merchantMessage.setCreateOrderCounter(newOrders);
 
-        if(attachItems != null)
-           merchantMessage.setAttachItemCounter(attachItems);
-
-        if(attachRooms != null)
-            merchantMessage.setAttachRoomCounter(attachRooms);
+//        if(attachItems != null)
+//           merchantMessage.setAttachItemCounter(attachItems);
+//
+//        if(attachRooms != null)
+//            merchantMessage.setAttachRoomCounter(attachRooms);
 
         if(refundOrders != null)
             merchantMessage.setRefundOrderCounter(refundOrders);

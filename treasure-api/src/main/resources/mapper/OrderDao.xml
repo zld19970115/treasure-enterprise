@@ -3,8 +3,17 @@
 
 <mapper namespace="io.treasure.dao.OrderDao">
 
-<!--    新订单-->
+    <!--    所有新订单-->
     <select id="selectNewOrderCount" resultType="integer">
+
+        select count(1) from ct_master_order
+        where
+          merchant_id=#{merchantId}
+          and status = 4
+
+    </select>
+<!--    所有新订单-->
+    <select id="selectNewOrderCountOnly" resultType="integer">
 
         select count(1) from ct_master_order
         where
