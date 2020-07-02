@@ -103,7 +103,17 @@ public class BusinessManagerController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
     })
     public Result<PageData<BusinessManagerDTO>> getAll(@ApiIgnore @RequestParam Map<String, Object> params){
-        PageData<BusinessManagerDTO> page = businessManagerService.page(params);
+        PageData<BusinessManagerDTO> page = businessManagerService.listPage(params);
         return new Result<PageData<BusinessManagerDTO>>().ok(page);
+    }
+    @GetMapping("binding")
+    @ApiOperation("绑定业务员与商家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bmId", value = "业务员id", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "mchId", value = "商户id", paramType = "query", required = true, dataType = "long")
+    })
+    public Result binding(@ApiIgnore @RequestParam int bmId , long  mchId){
+      //  businessManagerService.binding(bmId,mchId);
+        return new Result().ok("绑定成功！");
     }
 }
