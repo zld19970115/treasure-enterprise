@@ -23,6 +23,10 @@ public class MasterOrderSimpleServiceImpl implements MasterOrderSimpleService {
     public List<OrderSimpleEntity> getOrderList(Long merchantId, Integer index, Integer pageNumber){
 
         List<OrderSimpleEntity> orderSimpleEntities = masterOrderSimpleDao.queryByOrder(merchantId, index, pageNumber);
+        for(int i=0;i<orderSimpleEntities.size();i++){
+            if(orderSimpleEntities.get(i).getGoodId().equals("good_id"))
+            orderSimpleEntities.set(i,orderSimpleEntities.get(i).resetGoodId());
+        }
         return orderSimpleEntities;
 
     }

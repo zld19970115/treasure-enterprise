@@ -15,6 +15,7 @@ import java.util.Date;
 public class OrderSimpleEntity{
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
 	private String orderId;
 	private Integer status;
 	private String roomId;
@@ -25,6 +26,14 @@ public class OrderSimpleEntity{
 	private String pOrderId;
 	private Date updateDate;
 	private String headImg;
+
+	private String contactNumber;
+
+	public OrderSimpleEntity resetGoodId(){
+		goodId = null;
+		return this;
+	}
+
 
 
 }
