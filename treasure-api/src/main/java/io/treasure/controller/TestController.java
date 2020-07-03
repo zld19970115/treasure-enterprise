@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/notify_test")
@@ -30,6 +31,20 @@ public class TestController {
     public Result requireOrder(){
 
         MerchantMessage counterByOrderDao = merchantMessageJRA.getCounterByOrderDao(1271232511760064513L);
+
+        return new Result().ok(counterByOrderDao);
+
+    }
+
+
+
+    @GetMapping("mmsg")
+    @ApiOperation("查询消息数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "martId", value = "主订单编号", paramType = "query", required = true, dataType="long")
+    })
+    public Result queryOrderNotify(@ApiIgnore @RequestParam long martId) {
+        MerchantMessage counterByOrderDao = merchantMessageJRA.getCounterByOrderDao(martId);
 
         return new Result().ok(counterByOrderDao);
 

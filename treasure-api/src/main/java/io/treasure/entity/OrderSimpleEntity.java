@@ -26,6 +26,7 @@ public class OrderSimpleEntity{
 	private String pOrderId;
 	private Date updateDate;
 	private String headImg;
+	private String roomName;
 
 	private String contactNumber;
 
