@@ -23,7 +23,6 @@ import io.treasure.jra.impl.MerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.BitMessageUtil;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.utils.WsPool;
 import org.apache.commons.lang.StringUtils;
@@ -58,8 +57,6 @@ public class RefundOrderServiceImpl extends CrudServiceImpl<RefundOrderDao, Refu
     MerchantMessageJRA merchantMessageJRA;
     @Autowired
     private MerchantService merchantService;
-    @Autowired
-    BitMessageUtil bitMessageUtil;
     @Autowired
     WsPool wsPool;
 
