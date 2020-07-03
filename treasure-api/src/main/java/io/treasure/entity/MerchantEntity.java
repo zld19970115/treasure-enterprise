@@ -224,40 +224,5 @@ public class MerchantEntity implements Serializable {
 	 */
 	private Integer monthySales;
 
-
-
-	public boolean isAllowOpening(){
-
-		if(name.equals("") ||name.equals(null)
-		|| headurl.equals("")|| headurl.equals(null)
-		|| monetary <= 0
-		|| log.equals("")|| log.equals(null)
-		|| lat.equals("")|| lat.equals(null)
-		||businesshours.equals("")||businesshours.equals(null)
-		|| tel.equals("")|| tel.equals(null)
-		|| categoryid.equals("")|| categoryid.equals(null))
-			return false;
-		return true;
-	}
-	public List<String>  nullFields(){
-		List<String> res = new ArrayList<>();
-
-		if(name.equals("") ||name.equals(null))
-			res.add("店铺名称");
-		if(headurl.equals("")|| headurl.equals(null))
-			res.add("店铺logo");
-		if(monetary <= 0)
-			res.add("人均收入");
-		if(log.equals("")|| log.equals(null)||lat.equals("")|| lat.equals(null))
-			res.add("经纬度");
-		if(businesshours.equals("")||businesshours.equals(null))
-			res.add("营业时间");
-		if(tel.equals("")|| tel.equals(null))
-			res.add("联系电话");
-		if(categoryid.equals("")|| categoryid.equals(null))
-			res.add("所属类别一级");
-
-		return res;
-
-	}
+	
 }

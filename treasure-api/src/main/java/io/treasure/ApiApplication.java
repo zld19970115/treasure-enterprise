@@ -21,13 +21,19 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import io.treasure.utils.MyWebScoket;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * treasure-api
  *
  * @author Super 63600679@qq.com
  */
-//@EnableAspectJAutoProxy(exposeProxy=true,proxyTargetClass=true)
+
+//@EnableAsync
+//@EnableScheduling
+//@EnableTransactionManagement
 @SpringBootApplication
 @ServletComponentScan
 public class ApiApplication extends SpringBootServletInitializer {

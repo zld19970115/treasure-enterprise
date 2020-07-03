@@ -118,7 +118,7 @@ public class MerchantController {
         //效验数据
        // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
-        MerchantEntity flag = merchantService.getByNameAndCards(dto.getName(),dto.getCards());
+        MerchantEntity flag = merchantService.getByName(dto.getName(),9);
         if(null!=flag){
             return new Result().error("该商户您已经注册过了！");
         }
@@ -295,6 +295,57 @@ public class MerchantController {
         merchantService.closeShop(id,Common.STATUS_CLOSE.getStatus());
         return new Result();
     }
+
+
+    public boolean isAllowOpening(MerchantEntity merchantEntity){
+
+        String name = merchantEntity.getName()+"xx";
+        String headurl = merchantEntity.getHeadurl()+"xx";
+        String log = merchantEntity.getLog()+"xx";
+        String lat = merchantEntity.getLat()+"xx";
+        String businesshours = merchantEntity.getBusinesshours()+"xx";
+        String tel = merchantEntity.getTel()+"xx";
+        String categoryid = merchantEntity.getCategoryid()+"xx";
+
+        if(name.length()<4||name.equals("nullxx")
+                || headurl.length()<4||headurl.equals("nullxx")
+                ||log.equals("nullxx")|| log.length()<4
+                || lat.equals("nullxx")||lat.length()<4
+                ||businesshours.length()<4||businesshours.equals("nullxx")
+                || tel.length()<4 ||tel.equals("nullxx")
+                || categoryid.length()<4||categoryid.equals("nullxx"))
+            return false;
+        return true;
+    }
+    public List<String>  nullFields(MerchantEntity merchantEntity){
+        String name = merchantEntity.getName()+"xx";
+        String headurl = merchantEntity.getHeadurl()+"xx";
+        String log = merchantEntity.getLog()+"xx";
+        String lat = merchantEntity.getLat()+"xx";
+        String businesshours = merchantEntity.getBusinesshours()+"xx";
+        String tel = merchantEntity.getTel()+"xx";
+        String categoryid = merchantEntity.getCategoryid()+"xx";
+        //Double monetary = merchantEntity.getMonetary();
+
+        List<String> res = new ArrayList<>();
+        //name.equals("") ||headurl.equals("")|| log.equals("")||lat.equals("")||businesshours.equals("")||tel.equals("")|| categoryid.equals("")||
+        if(name.length()<4 ||name.equals("nullxx"))
+            res.add("店铺名称");
+        if(headurl.length()<4||headurl.equals("nullxx"))
+            res.add("店铺logo");
+        if( log.length()<4||log.equals("nullxx")|| lat.length()<4||lat.equals("nullxx"))
+            res.add("经纬度");
+        if(businesshours.length()<4||businesshours.equals("nullxx"))
+            res.add("营业时间");
+        if(tel.length()<4||tel.equals("nullxx"))
+            res.add("联系电话");
+        if(categoryid.length()<4||categoryid.equals("nullxx"))
+            res.add("所属类别一级");
+
+        return res;
+
+    }
+
     @CrossOrigin
     @Login
     @PutMapping("setUpShop")
@@ -308,13 +359,13 @@ public class MerchantController {
             //检查商户信息必填项是否为空
             MerchantEntity merchantEntity = merchantService.selectById(id);
             if(merchantEntity != null){
-                if(merchantEntity.isAllowOpening()){
+                if(isAllowOpening(merchantEntity)){
                     merchantService.closeShop(id,Common.STATUS_ON.getStatus());
                     return new Result();
                 }else{
                     //有非空字段
                     List<String> res = new ArrayList<>();
-                    res = merchantEntity.nullFields();
+                    res = nullFields(merchantEntity);
                     Result result = new Result().error("部分字段不能为空");
                     result.setData(res);
                     return result;
