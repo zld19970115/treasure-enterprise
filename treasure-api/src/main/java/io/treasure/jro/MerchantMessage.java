@@ -19,8 +19,12 @@ public class MerchantMessage {
     private int attachRoomCounter =0;
     private int refundOrderCounter =0;
     private int detachItemCounter =0;
+    private int inProcessCounter = 0;
 
 
+    public static String getInProcessCounterField(){
+        return "ipc";
+    }
     public static String getCreateOrderCounterField(){
         return "coc";
     }

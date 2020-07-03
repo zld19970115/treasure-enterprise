@@ -75,4 +75,11 @@
 
     </select>
 
+    <select id="selectInProcessCount" resultType="integer" >
+
+        select count(1) from ct_master_order
+            where merchant_id = #{merchantId}
+            and status in (2,7)
+    </select>
+
 </mapper>
