@@ -111,9 +111,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private UserTransactionDetailsService userTransactionDetailsService;
 
-    @Autowired
-    BitMessageUtil bitMessageUtil;
-
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {

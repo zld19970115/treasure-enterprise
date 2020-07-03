@@ -62,6 +62,8 @@ public class ApiApplication extends SpringBootServletInitializer {
 	/**
 	 * 启动websocket
 	 */
+
+	/*     1/2
 	@Bean
 	public void startWebsocketInstantMsg() {
 		//WebSocketImpl..DEBUG = false;
@@ -70,4 +72,6 @@ public class ApiApplication extends SpringBootServletInitializer {
 		s.start();
 		System.out.println("websocket启动成功");
 	}
+
+	 */
 }

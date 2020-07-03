@@ -4,6 +4,28 @@
 <mapper namespace="io.treasure.dao.MasterOrderSimpleDao">
 
 
+    下面是测试ok的select * from (
+    (
+    select order_id,mo.status,room_id,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date,cu.head_img
+    from ct_master_order mo
+    left join ct_client_user cu
+    on mo.contact_number = cu.mobile
+    where mo.merchant_id = 1214096640268759041
+    )
+    union all
+    (
+    select cso.order_id,cso.status,null,good_id,cso.pay_money,null,null,null,cso.update_date,ccu.head_img from ct_slave_order cso
+    left join ct_master_order cmo on cso.order_id=cmo.order_id
+    left join ct_client_user ccu on ccu.mobile=cmo.contact_number
+    where cso.order_id in (
+    select order_id from ct_master_order
+    where merchant_id = 1214096640268759041
+    )
+    )
+    ) as a_and_b
+    where status =3
+    order by update_date
+
     <select id = "queryByOrder" resultType="io.treasure.entity.OrderSimpleEntity">
 
 
@@ -16,13 +38,18 @@
                       where mo.merchant_id = ${merchantId}
                   )
                   union all
-                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order
-                  where order_id in (
-                      select order_id from ct_master_order
-                      where merchant_id = ${merchantId}
-                  )
+                  (
+                        select cso.order_id,cso.status,null,good_id,cso.pay_money,null,null,null,cso.update_date,ccu.head_img
+                        from ct_slave_order cso
+                        left join ct_master_order cmo on cso.order_id=cmo.order_id
+                        left join ct_client_user ccu on ccu.mobile=cmo.contact_number
+                        where cso.order_id in (
+                        select order_id from ct_master_order
+                        where merchant_id = ${merchantId}
+                        )
+                    )
               ) as m_and_s
-        where status in(4,6)
+        where status not in(4,6)
         order by update_date
         limit #{index},#{pages};
 
