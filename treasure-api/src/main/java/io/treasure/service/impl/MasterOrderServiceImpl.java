@@ -2814,6 +2814,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         vo.setGoodList(baseDao.goodPrinter(vo.getOrderId()));
         return vo;
     }
+
+    @Override
+    public List<MasterOrderEntity> selectInProcessList(long martId){
+        return masterOrderDao.selectInProcessList(martId);
+    }
 }
 
 /*

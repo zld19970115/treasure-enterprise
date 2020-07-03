@@ -412,4 +412,10 @@
 	        and ct.order_id = #{orderId}
     </select>
 
+
+
+    <select id = "selectInProcessList" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from ct_master_order where status in(2,7)
+    </select>
+
 </mapper>
