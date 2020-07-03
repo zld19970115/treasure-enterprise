@@ -747,8 +747,13 @@ public class ApiMasterOrderController {
 
 
         System.out.println("xx"+merchantId+","+","+index+","+pageNumber);
-        if(index == null)
+        if(index == null){
             index = 0;
+        }else{
+            if(index >0)
+                index--;
+        }
+
         if(pageNumber == null)
             pageNumber = 10;
 
@@ -760,12 +765,13 @@ public class ApiMasterOrderController {
 
         Result orderList = new Result();
         List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
+        System.out.println("数值:"+orderList1);
         for(int i=0;i<orderList1.size();i++){
             System.out.println("qurey result:"+orderList1.get(i).toString());
         }
         orderList.setData(orderList1);
 
-        orderList.setMsg(rpages+","+itemNum);
+        orderList.setMsg(rpages+"");
 
         return orderList;
     }

@@ -6,25 +6,32 @@
 
     <select id = "queryByOrder" resultType="io.treasure.entity.OrderSimpleEntity">
 
-
         select * from (
                   (
-                      select order_id,mo.status,room_id,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date,cu.head_img
+                      select mo.id,order_id,mo.status,room_id,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date ,cu.head_img
                       from ct_master_order mo
-                      left join ct_client_user cu
-                      on mo.contact_number = cu.mobile
+                      right join ct_client_user cu
+                      on cu.mobile = mo.contact_number
                       where mo.merchant_id = ${merchantId}
+                        and mo.status in(4,6)
                   )
                   union all
-                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order
-                  where order_id in (
-                      select order_id from ct_master_order
-                      where merchant_id = ${merchantId}
+                  (
+                      select cso.id,cso.order_id,cso.status,null,good_id,cso.pay_money,null,null,null,cso.update_date,ccu.head_img
+                      from ct_slave_order cso
+                      left join ct_master_order cmo on cso.order_id=cmo.order_id
+                      left join ct_client_user ccu on ccu.mobile=cmo.contact_number
+                      where cso.order_id in (
+                          select order_id from ct_master_order
+                          where merchant_id = ${merchantId}
+                      )
+                      and cso.status = 6
                   )
+
               ) as m_and_s
-        where status in(4,6)
-        order by update_date
-        limit #{index},#{pages};
+
+    order by update_date
+    limit #{index},#{pages};
 
     </select>
 
@@ -36,15 +43,16 @@
                       left join ct_client_user cu
                       on mo.contact_number = cu.mobile
                       where mo.merchant_id = ${merchantId}
+                      and mo.status in(4,6)
                   )
                   union all
-                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order
+                  select order_id,status,null,good_id,pay_money,null,null,null,update_date,null from ct_slave_order cs
                   where order_id in (
                       select order_id from ct_master_order
                       where merchant_id = ${merchantId}
+                      and cs.status in(4,6)
                   )
               ) as m_and_s
-        where status in(4,6)
 
     </select>
 
