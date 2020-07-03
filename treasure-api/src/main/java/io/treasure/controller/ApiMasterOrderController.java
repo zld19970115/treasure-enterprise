@@ -760,6 +760,9 @@ public class ApiMasterOrderController {
 
         Result orderList = new Result();
         List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
+        for(int i=0;i<orderList1.size();i++){
+            System.out.println("qurey result:"+orderList1.get(i).toString());
+        }
         orderList.setData(orderList1);
 
         orderList.setMsg(rpages+","+itemNum);

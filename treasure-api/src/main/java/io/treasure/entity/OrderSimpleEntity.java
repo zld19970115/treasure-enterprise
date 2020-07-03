@@ -17,11 +17,11 @@ public class OrderSimpleEntity{
 
 	private String orderId;
 	private Integer status;
-	private Long roomId;
-	private Long goodId;
+	private String roomId;
+	private String goodId;
 	private BigDecimal payMoney;
-	private Integer reservationType;
-	private Date eatTime;
+	private String reservationType;
+	private String eatTime;
 	private String pOrderId;
 	private Date updateDate;
 	private String headImg;
