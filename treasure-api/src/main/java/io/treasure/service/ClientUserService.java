@@ -49,4 +49,5 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     PageTotalRowData<ClientUserDTO> pagePC(Map<String, Object> params);
 
     int getLogOffCount(String mobile);
+    void addCoinsByUserid(String userId, String useGift);
 }
