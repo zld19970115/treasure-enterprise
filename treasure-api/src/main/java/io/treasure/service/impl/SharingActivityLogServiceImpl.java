@@ -12,6 +12,7 @@ import io.treasure.service.SharingInitiatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -61,9 +62,24 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
     }
 
     @Override
-    public int getHelperCount(String mobile){
+    public int getHelpedCount(String mobile){
         int res = 0;
         Integer helpCountxx = sharingActivityLogDao.getHelpCountxx(mobile);
+        if(helpCountxx != null)
+            res = helpCountxx;
+        return res;
+    }
+
+    @Override
+    public int getHelpedCount(String mobile, Date start, Date stop){
+        int res = 0;
+
+        QueryWrapper<SharingActivityLogEntity> sae = new QueryWrapper<>();
+        sae.between("create_pmt",start,stop);
+        sae.eq("helper_mobile",mobile);
+
+        Integer helpCountxx = sharingActivityLogDao.selectCount(sae);
+
         if(helpCountxx != null)
             res = helpCountxx;
         return res;
@@ -81,11 +97,11 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         SharingActivityEntity sharingActivityEntity = sharingActivityService.getOneById(sharingActivityLogEntity.getActivityId(), true);
 
         if(sharingActivityEntity != null){
-            allowHelpersNum = sharingActivityEntity.getHelpersNum();
+            allowHelpersNum = sharingActivityEntity.getPersonLimit();
         }
 
         SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorService.getOne(
-                sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(), ESharingInitiator.IN_PROCESSING.getCode());
+                sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(), ESharingInitiator.IN_PROCESSING.getCode(),ESharingInitiator.COMPLETE_SUCCESS.getCode());
 
         if(sharingInitiatorEntity.getProposeId() != null){
             completeCount = getCount(sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(),sharingInitiatorEntity.getProposeId());
@@ -110,6 +126,18 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         if(res == null)
             return 0;
         return res;
+    }
+
+    @Override
+    public SharingActivityLogEntity getOne(Integer activityId,Integer proposeSequeueNo,String helperMobile){
+
+        QueryWrapper<SharingActivityLogEntity> sale = new QueryWrapper<>();
+
+        if (activityId != null)             sale.eq("activity_id",activityId);
+        if(proposeSequeueNo != null)        sale.eq("propose_sequeue_no",proposeSequeueNo);
+        if(helperMobile != null)            sale.eq("helper_mobile",helperMobile);
+
+        return sharingActivityLogDao.selectOne(sale);
     }
 
 

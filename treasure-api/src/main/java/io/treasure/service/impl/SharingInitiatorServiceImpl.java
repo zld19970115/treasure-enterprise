@@ -90,7 +90,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     }
 
     @Override
-    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer status){
+    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer... status){
 
         QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
 
@@ -98,7 +98,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         if(saId != null)
             sieqw.eq("sa_id",saId);
         if(status != null)
-            sieqw.eq("status",status);
+            sieqw.in("status",status);
 
         return sharingInitiatorDao.selectOne(sieqw);
     }

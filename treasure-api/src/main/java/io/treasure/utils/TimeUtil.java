@@ -7,11 +7,13 @@ import java.util.Date;
 public class TimeUtil {
 
     /**             与时间相关                */
-    static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
-    static SimpleDateFormat sdfYmd = new SimpleDateFormat("yyyy-MM-dd");
-    static SimpleDateFormat sdfHms = new SimpleDateFormat("HH:mm:ss");
-    static SimpleDateFormat sdfHm = new SimpleDateFormat("HH:mm");
-    static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+    public static SimpleDateFormat sdfYmd = new SimpleDateFormat("yyyy-MM-dd");
+    public static SimpleDateFormat sdfYm = new SimpleDateFormat("yyyy-MM");
+    public static SimpleDateFormat sdfM = new SimpleDateFormat("MM");
+    public static SimpleDateFormat sdfHms = new SimpleDateFormat("HH:mm:ss");
+    public static SimpleDateFormat sdfHm = new SimpleDateFormat("HH:mm");
+    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     /**

@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import io.treasure.entity.SharingActivityLogEntity;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.List;
 
 public interface SharingActivityLogService {
@@ -31,5 +32,8 @@ public interface SharingActivityLogService {
     boolean insertOne(@NotEmpty SharingActivityLogEntity sharingActivityLogEntity);
 
     Integer getRewardSum(long intitiatorId, int activityId,int proposeSequeueNo);
-    int getHelperCount(String mobile);
+    int getHelpedCount(String mobile);
+    int getHelpedCount(String mobile, Date start, Date stop);
+    SharingActivityLogEntity getOne(Integer activityId,Integer proposeSequeueNo,String helperMobile);
+
 }
