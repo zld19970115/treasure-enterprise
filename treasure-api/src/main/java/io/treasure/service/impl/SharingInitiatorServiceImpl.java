@@ -34,6 +34,8 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
 
         //检查助力状态
         SharingInitiatorEntity inProcessingObject = getOne(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.IN_PROCESSING.getCode());
+        if(inProcessingObject != null)
+            return true;
         //成功次数
         Integer successTimes = getCount(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.COMPLETE_SUCCESS.getCode());
 
@@ -90,7 +92,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     }
 
     @Override
-    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer status){
+    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer... status){
 
         QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
 
@@ -98,11 +100,37 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         if(saId != null)
             sieqw.eq("sa_id",saId);
         if(status != null)
-            sieqw.eq("status",status);
+            sieqw.in("status",status);
 
         return sharingInitiatorDao.selectOne(sieqw);
     }
 
+    @Override
+    public SharingInitiatorEntity getLastInProcessOne(Long intitiatorId,Integer saId){
+
+        QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
+
+        sieqw.eq("initiator_id",intitiatorId);
+        if(saId != null)
+            sieqw.eq("sa_id",saId);
+        sieqw.eq("status",ESharingInitiator.IN_PROCESSING.getCode());
+
+        SharingInitiatorEntity inProcessEntity = sharingInitiatorDao.selectOne(sieqw);
+        if(inProcessEntity != null){
+            return inProcessEntity;
+        }else{
+            //没有进行中的活动，使用完成的活动
+            QueryWrapper<SharingInitiatorEntity> sieqw1 = new QueryWrapper<>();
+
+            sieqw1.eq("initiator_id",intitiatorId);
+            if(saId != null)
+                sieqw1.eq("sa_id",saId);
+            sieqw1.eq("status",ESharingInitiator.COMPLETE_SUCCESS.getCode());
+            sieqw1.orderByDesc("start_time");
+            SharingInitiatorEntity completeEntity = sharingInitiatorDao.selectOne(sieqw1);
+            return completeEntity;
+        }
+    }
 
     /**
      *

@@ -33,7 +33,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 //@EnableAsync
 //@EnableScheduling
-//@EnableTransactionManagement
+@EnableTransactionManagement
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @SpringBootApplication
 @ServletComponentScan
 public class ApiApplication extends SpringBootServletInitializer {

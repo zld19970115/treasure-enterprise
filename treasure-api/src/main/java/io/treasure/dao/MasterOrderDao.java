@@ -81,7 +81,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
                          @Param("payDate")Date payDate,@Param("status") int status);
     void  updateOrderDeletedById(long id);
 //       <select id="selectMOById" resultType="io.treasure.entity.MasterOrderEntity">
-    MasterOrderEntity selectMOById(String orderId);
+ //   MasterOrderEntity selectMOById(String orderId);
 
     List<BackDishesVo> backDishesPage(Map params);
     List<MasterOrderEntity> selectByMasterIdAndStatus(long martId);
@@ -92,6 +92,5 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     RoomOrderPrinterVo roomOrderPrinter(@Param("orderId") String orderId);
     List<GoodPrinterVo> goodPrinter(@Param("orderId") String orderId);
 
-    List<MasterOrderEntity> selectInProcessList(long martId);
 
 }

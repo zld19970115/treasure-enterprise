@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.IfNull;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
@@ -14,6 +15,7 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
@@ -60,6 +62,10 @@ public class ApiMasterOrderController {
 
     @Autowired
     private MasterOrderSimpleService masterOrderSimpleService;
+
+    @Autowired(required = false)
+    private MasterOrderDao masterOrderDao;
+
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -787,6 +793,31 @@ public class ApiMasterOrderController {
     @ApiOperation("房订单打印PC")
     public Result roomOrderPrinter(@RequestParam String orderId) {
         return new Result().ok(masterOrderService.roomOrderPrinter(orderId));
+    }
+
+    @GetMapping("inProcessList")
+    @ApiOperation("进行中的订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户id号", paramType = "query", required = false, dataType="Long"),
+            @ApiImplicitParam(name = "index", value = "页码", paramType = "query",required = false, dataType="Integer"),
+            @ApiImplicitParam(name = "pageNumber", value = "页数", paramType = "query", required = false,dataType="Integer")
+
+        })
+    public Result inProcessList(@ApiIgnore @RequestParam Map<String, String> params){
+
+        @IfNull
+        Long mchId = Long.parseLong(params.get("merchantId"));
+        @IfNull
+        Integer index = Integer.parseInt(params.get("index"));
+        @IfNull
+        Integer pageNumber = Integer.parseInt(params.get("pageNumber"));
+
+        System.out.println("mchId,index,pageNumber"+mchId+","+index+","+pageNumber);
+
+
+        //List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList();
+        return null;
+
     }
 
 }
