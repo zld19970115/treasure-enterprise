@@ -26,7 +26,7 @@ public class SharingAndDistributionParamsServiceImpl implements SharingAndDistri
 
     @Override
     public SharingAndDistributionParamsEntity getSharingDistributionParams() {
-        return dao.selectOne(null);
+        return dao.selectById(1);
     }
 
     @Override
