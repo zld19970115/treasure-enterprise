@@ -11,6 +11,7 @@ import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.*;
 import io.treasure.service.*;
+import io.treasure.service.impl.DistributionRewardServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.ProposeSharingActivityVo;
@@ -58,6 +59,9 @@ public class SharingActivityController {
 
     @Autowired
     private SharingAndDistributionParamsService sharingAndDistributionParamsService;
+
+    @Autowired
+    private DistributionRewardServiceImpl distributionRewardService;
 
     @PostMapping("startRelay")
     @ApiOperation("发起助力")
@@ -304,7 +308,16 @@ public class SharingActivityController {
         ClientUserEntity helperEntity = null;
         switch(identificationCode){
             case 0:
+                //取得用户信息
                 helperEntity = (ClientUserEntity)identificationInfo.get("user");
+                //绑定主从关系
+                String masterMobile = null;
+                ClientUserEntity clientUserTmp = clientUserService.getClientUser(initiatorId);
+                if(clientUserTmp != null)
+                    masterMobile = clientUserTmp.getMobile();
+                if(masterMobile != null)
+                    distributionRewardService.binding(saId,masterMobile,mobile);
+
                 break;
             case 1://次数超限
                 return initResult("助力次数超限，晚点再试吧!",mobile,true);
