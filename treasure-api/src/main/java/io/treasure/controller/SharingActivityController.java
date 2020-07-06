@@ -214,7 +214,6 @@ public class SharingActivityController {
         }
     }
 
-
     /**
      * @param errorMessage
      * @return

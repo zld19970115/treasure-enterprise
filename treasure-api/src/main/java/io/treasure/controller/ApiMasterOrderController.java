@@ -805,16 +805,42 @@ public class ApiMasterOrderController {
         })
     public Result inProcessList(@ApiIgnore @RequestParam Map<String, String> params){
 
-        @IfNull
         Long mchId = Long.parseLong(params.get("merchantId"));
-        @IfNull
         Integer index = Integer.parseInt(params.get("index"));
-        @IfNull
         Integer pageNumber = Integer.parseInt(params.get("pageNumber"));
 
         System.out.println("mchId,index,pageNumber"+mchId+","+index+","+pageNumber);
 
 
+/*
+        if(index == null){
+            index = 0;
+        }else{
+            if(index >0)
+                index--;
+        }
+
+        if(pageNumber == null)
+            pageNumber = 10;
+
+        Integer itemNum = masterOrderSimpleService.getCount(merchantId);
+        if(itemNum == null)
+            itemNum = 0;
+        int rpages = (itemNum+pageNumber-1)/pageNumber;
+
+
+        Result orderList = new Result();
+        List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
+        System.out.println("数值:"+orderList1);
+        for(int i=0;i<orderList1.size();i++){
+            System.out.println("qurey result:"+orderList1.get(i).toString());
+        }
+        orderList.setData(orderList1);
+
+        orderList.setMsg(rpages+"");
+
+        return orderList;
+*/
         //List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList();
         return null;
 
