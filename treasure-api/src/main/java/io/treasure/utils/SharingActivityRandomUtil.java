@@ -20,7 +20,7 @@ public class SharingActivityRandomUtil {
         this.preferenceValue = preferenceValue;
         maxLimit = preferenceValue*30/100;
         minLimit = preferenceValue*1/100;
-        if(minLimit<1)   maxLimit = 1;
+        if(minLimit<1)   minLimit = 1;
     }
 
     public int getRandomValue(){

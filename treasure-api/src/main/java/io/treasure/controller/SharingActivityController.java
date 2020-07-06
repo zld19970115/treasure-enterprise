@@ -179,13 +179,12 @@ public class SharingActivityController {
     /**
      * @return 助力身份认证,返回允许助力的用户信息
      */
-    public Map<String,Object> helperIdentification(String mobile,String password,
+    public int helperIdentification(String mobile,String password,
                                                    Integer saId,
                                                    Integer proposeId,
                                                    boolean activityInitiatorEffective,
                                                    SharingAndDistributionParamsEntity entity
     ) throws ParseException{
-        Map<String,Object> res = new HashMap<>();
 
         int allowHelpedTimes = entity.getHelpedTimes();      //1-1规定相对时间内允许助力的次数
         int months = entity.getMonths();                     //1-2规定时间：月数
@@ -193,32 +192,25 @@ public class SharingActivityController {
 
         ClientUserEntity clientUserEntityDb = clientUserService.getUserByPhone(mobile);
         if(clientUserEntityDb != null){
-            //助力次数不超限
 
+            //助力次数不超限
             if(allowUserHelp(mobile,saId,proposeId,allowHelpedTimes,months)){
-                res.put("code",0);
-                res.put("user",clientUserEntityDb);
-                return res;
+                return 0;
             }else{
-                res.put("code",1);
-                return res;//助力次数超限
+                return 1;//助力次数超限
             }
 
         }else{
             if(alwaysRegisterSuccess || activityInitiatorEffective){
                 ClientUserEntity proSpectiveUser = userRegistrationViaHelp(mobile,password);
                 if(proSpectiveUser != null){
-                    res.put("code",0);
-                    res.put("user",proSpectiveUser);
-                    return res;
+                    return 0;
                 }else{
-                    res.put("code",2);
-                    return res;//注册失败，发生错误,请稍的重试
+                    return 2;//注册失败，发生错误,请稍的重试
                 }
 
             }else{
-                res.put("code",3);
-                return null;//活动已结束且活动结束不接授注册
+                return 3;//活动已结束且活动结束不接授注册
             }
         }
     }
@@ -269,9 +261,9 @@ public class SharingActivityController {
         String password = vo.getPassword();
 
         if(mobile == null || initiatorId == null || saId == null){
+            System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
             return initResult("错误：参数有误！！",mobile,true);
         }
-
         //1,系统参数
         SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();
         if(sharingDistributionParams == null){
@@ -290,10 +282,8 @@ public class SharingActivityController {
             }else{
                 return initResult("本活动已结束，感谢参与!",null,true);
             }
-
-
         }
-        //3,用户是否发起了此活动
+        //3,用户是否发起了此活动(活动状态为1，若活动状态没有为1的则为2的)
         SharingInitiatorEntity inProcess = sharingInitiatorService.getLastInProcessOne(initiatorId,saId);
         //SharingInitiatorEntity inProcess = sharingInitiatorService.getOne(initiatorId,saId,1,2);
         if(inProcess == null) {//用户未发起或助力已完成
@@ -308,26 +298,33 @@ public class SharingActivityController {
         }
 
             //4,活动有效-->进行用户授权及用户助力次数检查
-        ClientUserEntity helperEntity = null;
-        Map<String, Object> identificationInfo = helperIdentification(mobile, password, saId, inProcess.getProposeId(), true, sharingDistributionParams);
-        int identificationCode = Integer.parseInt(identificationInfo.get("code")+"");
-        switch(identificationCode){
+
+        int code = helperIdentification(mobile, password, saId, inProcess.getProposeId(), true, sharingDistributionParams);
+        switch(code){
             case 0:
                 //取得用户信息
-                helperEntity = (ClientUserEntity)identificationInfo.get("user");
                 //绑定主从关系
                 String masterMobile = null;
                 ClientUserEntity clientUserTmp = clientUserService.getClientUser(initiatorId);
                 if(clientUserTmp != null)
                     masterMobile = clientUserTmp.getMobile();
-                if(masterMobile != null)
-                    distributionRewardService.binding(saId,masterMobile,mobile);
+                if(masterMobile != null){
+                    if(masterMobile != mobile){
+                        distributionRewardService.binding(saId,masterMobile,mobile);
+                    }else{
+                        //以后改成查看助力详情
+                        return initResult("自已无法为自已助力!",mobile,true);
+                    }
+                }else{
+                    return initResult("繁忙或异常(0)，请稍后重试!",mobile,true);
+                }
+
 
                 break;
             case 1://次数超限
                 return initResult("助力次数超限，晚点再试吧!",mobile,true);
             case 2://注册失败
-                return initResult("繁忙或异常，请稍后重试!",null,true);
+                return initResult("繁忙或异常(1)，请稍后重试!",null,true);
             case 3://活动结束且非都可注册成功模式
                 return initResult("本活动已结束，感谢参与!",null,true);
         }
@@ -365,6 +362,7 @@ public class SharingActivityController {
                 int rewardSum = sharingActivityLogService.getRewardSum(initiatorId, saId, inProcess.getProposeId());
                 if (rewardSum < completeCount) {
                     int itemReward = saItem.getRewardAmount() - rewardSum;
+
                     insertSharingActivityLog(saId, initiatorId, mobile, itemReward, inProcess.getProposeId());
                 }
 
