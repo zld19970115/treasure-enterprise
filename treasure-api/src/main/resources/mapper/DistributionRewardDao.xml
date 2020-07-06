@@ -4,7 +4,7 @@
 <mapper namespace="io.treasure.dao.DistributionRewardDao">
 
     <select id="selectByslaverUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
-      select * from distribution_relationship where mobile_slaver=#{mobileSlaver} and
+      select * from distribution_relationship where mobile_slaver=#{mobileSlaver}
     </select>
     <select id="selectByMasterUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
       select * from distribution_relationship where mobile_master=#{mobileMaster}
