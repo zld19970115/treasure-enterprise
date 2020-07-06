@@ -349,7 +349,7 @@ public class SharingActivityController {
                 int itemReward = new  SharingActivityRandomUtil(inProcess.getRewardValue()-rewardSum).getRandomValue();
                 insertSharingActivityLog(saId,initiatorId,mobile,itemReward,inProcess.getProposeId());
 
-                map.put("msg","成功为"+initiatorId+"助力："+itemReward+saItem.getRewardUnit()+"!");
+                map.put("msg","助力成功："+itemReward+saItem.getRewardUnit()+"!");
             }
             //给用户奖励
             Integer rValue = extendsInfo.getHelperRewardAmount();
@@ -359,7 +359,7 @@ public class SharingActivityController {
         }else if((completeCount+1) == allowHelpersNum) {//助力成功
 
             if(inProcess.getStatus() == ESharingInitiator.IN_PROCESSING.getCode()){
-                map.put("msg", "助力成功" + initiatorId + "获得" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!");
+                map.put("msg", "助力成功,获得：" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!");
 
                 //更新助力记录：获得还需助力的费用值
                 int rewardSum = sharingActivityLogService.getRewardSum(initiatorId, saId, inProcess.getProposeId());
@@ -391,7 +391,7 @@ public class SharingActivityController {
 
         }else{
             System.out.println("活动终止");
-            return initResult("手慢了，用户本次活动已经完成！",mobile,true);
+            return initResult("手慢了，本次活动已经完成！",mobile,true);
         }
 
         ClientUserEntity clientUser = clientUserService.getByMobile(mobile);

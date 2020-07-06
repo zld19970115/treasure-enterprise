@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -808,6 +809,7 @@ public class ApiMasterOrderController {
         Integer pageNumber = Integer.parseInt(params.get("pageNumber"));
 
         System.out.println("mchId,index,pageNumber"+mchId+","+index+","+pageNumber);
+        QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
 
 /*
         if(index == null){
