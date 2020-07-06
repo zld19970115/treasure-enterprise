@@ -32,7 +32,6 @@ public class DistributionRewardServiceImpl {
     public Boolean binding(int saId,String mobileMaster,String mobileSlaver) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobileMaster);
         ClientUserEntity slaverUserByPhone = clientUserService.getUserByPhone(mobileSlaver);
-        SharingActivityEntity sharingActivityEntity = sharingActivityDao.selectById(saId);
         if (userByPhone==null || slaverUserByPhone==null){
             return true;
         }
@@ -45,7 +44,8 @@ public class DistributionRewardServiceImpl {
         distributionRelation.setMobileSlaver(mobileSlaver);
         distributionRelation.setStatus(1);
         distributionRelation.setUnionStartTime(new Date());
-        distributionRelation.setUnionExpireTime(sharingActivityEntity.getCloseDate());
+        distributionRelation.setSaId(saId);
+//        distributionRelation.setUnionExpireTime(sharingActivityEntity.getCloseDate());
 
         try{
             distributionRewardDao.updateById(distributionRelation);
@@ -56,20 +56,25 @@ public class DistributionRewardServiceImpl {
 
         return true;
     }
-    public Boolean distribution(int saId,String mobileMaster,String mobileSlaver,int referencesTotal) {
-        ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobileMaster);
-        ClientUserEntity slaverUserByPhone = clientUserService.getUserByPhone(mobileSlaver);
-        int radio =  distributionRewardDao.selectRadio(saId);
-        if (userByPhone==null || slaverUserByPhone==null){
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public Boolean distribution(String mobileSlaver,int referencesTotal) {
+
+        DistributionRelationshipEntity distributionRelationshipEntity = distributionRewardDao.selectByslaverUser(mobileSlaver);
+
+        if (distributionRelationshipEntity==null){
             return true;
         }
-        DistributionRelationshipEntity distributionRelationshipEntity = distributionRewardDao.selectByslaverUser(mobileSlaver);
-        if (distributionRelationshipEntity==null){
+        int radio =  distributionRewardDao.selectRadio(distributionRelationshipEntity.getSaId());
+        ClientUserEntity userByPhone = clientUserService.getUserByPhone(distributionRelationshipEntity.getMobileMaster());
+        ClientUserEntity slaverUserByPhone = clientUserService.getUserByPhone(mobileSlaver);
+
+        if (userByPhone==null || slaverUserByPhone==null){
             return true;
         }
         DistributionRewardLogEntity distributionRewardLogEntity = new DistributionRewardLogEntity();
         distributionRewardLogEntity.setConsume_time(new Date());
-        distributionRewardLogEntity.setMobile_master(mobileMaster);
+        distributionRewardLogEntity.setMobile_master(distributionRelationshipEntity.getMobileMaster());
         distributionRewardLogEntity.setMobile_slaver(mobileSlaver);
         distributionRewardLogEntity.setReferences_total(referencesTotal);
         distributionRewardLogEntity.setReward_amount(referencesTotal*radio/100);
