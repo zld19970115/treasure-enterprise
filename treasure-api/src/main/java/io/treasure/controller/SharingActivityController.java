@@ -101,8 +101,9 @@ public class SharingActivityController {
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ClientUserEntity userRegistrationViaHelp(String mobile,String password){
-        if(password == null){
-            return   clientUserService.getByMobile(mobile);
+        ClientUserEntity clientUserEntity = clientUserService.getByMobile(mobile);
+        if(password == null || clientUserEntity != null){
+            return   clientUserEntity;
         }
 
         ClientUserEntity prospectiveUser = new ClientUserEntity();
@@ -113,6 +114,7 @@ public class SharingActivityController {
         prospectiveUser.setCreateDate(new Date());
 
         try{
+
             clientUserService.insert(prospectiveUser);
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
