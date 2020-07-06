@@ -22,12 +22,12 @@ public class DistributionRewardServiceImpl {
     @Autowired
     private ClientUserServiceImpl clientUserService;
 
-    @Autowired
+    @Autowired(required = false)
     private SharingActivityDao sharingActivityDao;
 
-    @Autowired
+    @Autowired(required = false)
     private DistributionRewardDao distributionRewardDao;
-    @Autowired
+    @Autowired(required = false)
     private DistributionRewardLogDao distributionRewardLogDao;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -48,13 +48,13 @@ public class DistributionRewardServiceImpl {
         distributionRelation.setUnionStartTime(new Date());
         distributionRelation.setSaId(saId);
 //        distributionRelation.setUnionExpireTime(sharingActivityEntity.getCloseDate());
-
-        try{
-            distributionRewardDao.updateById(distributionRelation);
-        }catch(Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return false;
-        }
+//
+//        try{
+            distributionRewardDao.insert(distributionRelation);
+//        }catch(Exception e){
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            return false;
+//        }
 
         return true;
     }
@@ -87,7 +87,7 @@ public class DistributionRewardServiceImpl {
         BigDecimal newCoin = a.add(coin);
         userByPhone.setCoin(newCoin);
         try{
-            distributionRewardLogDao.updateById(distributionRewardLogEntity);
+            distributionRewardLogDao.insert(distributionRewardLogEntity);
             clientUserService.updateById(userByPhone);
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
