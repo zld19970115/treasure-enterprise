@@ -7,7 +7,8 @@ public enum EMessageUpdateType {
         ATTACH_ITEM(2,"加菜订单"),       //ATTACH_ORDER
         ATTACH_ROOM(3,"加房订单"),       //ATTACH_ROOM
         REFUND_ORDER(4,"整单退"),        //REFUND_ORDER
-        DETACH_ITEM(5,"退菜订单");       //DETACH_ITEM
+        DETACH_ITEM(5,"退菜订单"),       //DETACH_ITEM
+        INPROCESS_ORDER(6,"进行中");
 
 
         private int code;

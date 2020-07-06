@@ -15,16 +15,26 @@ import java.util.Date;
 public class OrderSimpleEntity{
 	private static final long serialVersionUID = 1L;
 
+	private Long id;
 	private String orderId;
 	private Integer status;
-	private Long roomId;
-	private Long goodId;
+	private String roomId;
+	private String goodId;
 	private BigDecimal payMoney;
-	private Integer reservationType;
-	private Date eatTime;
+	private String reservationType;
+	private String eatTime;
 	private String pOrderId;
 	private Date updateDate;
 	private String headImg;
+	private String roomName;
+
+	private String contactNumber;
+
+	public OrderSimpleEntity resetGoodId(){
+		goodId = null;
+		return this;
+	}
+
 
 
 }

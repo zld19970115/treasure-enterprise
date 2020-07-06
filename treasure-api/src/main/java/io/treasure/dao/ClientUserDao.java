@@ -35,7 +35,8 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
    // List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
     List<ClientUserEntity> selectZhuXiao(String mobile);
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
-    void addRecordGiftByUserid(String userId, String useGift);
+    void addRecordGiftByUserid(@Param("userId")String userId,@Param("useGift") String useGift);
+    void addCoinsByUserid(@Param("userId")String userId, @Param("coins")String coins);
 
     List<ClientUserDTO> pagePC(Map<String,Object> params);
 

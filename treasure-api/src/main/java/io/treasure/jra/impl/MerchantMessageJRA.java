@@ -53,6 +53,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         map.put(merchantMessage.getAttachRoomCounterField(),merchantMessage.getAttachRoomCounter()+"");
         map.put(merchantMessage.getRefundOrderCounterField(),merchantMessage.getRefundOrderCounter()+"");
         map.put(merchantMessage.getDetachItemCounterField(),merchantMessage.getDetachItemCounter()+"");
+        map.put(merchantMessage.getInProcessCounterField(),merchantMessage.getInProcessCounter()+"");
 
         String res = jedis.hmset(targetItem, map).toLowerCase();
 
@@ -69,9 +70,11 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
                                         MerchantMessage.getAttachItemCounterField(),
                                         MerchantMessage.getAttachRoomCounterField(),
                                         MerchantMessage.getRefundOrderCounterField(),
-                                        MerchantMessage.getDetachItemCounterField());
+                                        MerchantMessage.getDetachItemCounterField(),
+                                        MerchantMessage.getInProcessCounterField());
 
-        if(res.size()<5)
+
+        if(res.size()<6)
             return null;
         MerchantMessage merchantMessage = new MerchantMessage();
         merchantMessage.setMerchantId(merchantId);
@@ -82,6 +85,12 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         merchantMessage.setAttachRoomCounter(Integer.parseInt(res.get(2)));
         merchantMessage.setRefundOrderCounter(Integer.parseInt(res.get(3)));
         merchantMessage.setDetachItemCounter(Integer.parseInt(res.get(4)));
+        merchantMessage.setInProcessCounter(Integer.parseInt(res.get(5)));
+
+        //重复更新进行中的订单
+        Integer inp = orderDao.selectInProcessCount(Long.parseLong(merchantId));
+        if(inp != null)
+            merchantMessage.setInProcessCounter(inp);
 
         return merchantMessage;
     }
@@ -123,6 +132,7 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
             if(hincrByField != null)
                 jedis.hincrBy(targetItem,hincrByField,step);
 
+
             return getMerchantMessageCounter(merchantId);
         }else{
             //如果redis模型不存在，则直接创建新模型
@@ -157,16 +167,17 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
         merchantMessage.setMerchantId(merchantId+"");
 
         Integer newOrders = orderDao.selectNewOrderCount(merchantId);
-        Integer attachItems = orderDao.selectActtachItemCount(merchantId);
-        Integer attachRooms = orderDao.selectAttachRoomCount(merchantId);
+
+        //Integer attachItems = orderDao.selectActtachItemCount(merchantId);
+        //Integer attachRooms = orderDao.selectAttachRoomCount(merchantId);
         Integer refundOrders = orderDao.selectRefundOrderCount(merchantId);
         Integer detachItems = orderDao.selectDetachItemCount(merchantId);
+        Integer inProcess = orderDao.selectInProcessCount(merchantId);
 
         if(newOrders != null)
             merchantMessage.setCreateOrderCounter(newOrders);
-
-//        if(attachItems != null)
-//           merchantMessage.setAttachItemCounter(attachItems);
+        //if(attachItems != null)
+          // merchantMessage.setAttachItemCounter(attachItems);
 //
 //        if(attachRooms != null)
 //            merchantMessage.setAttachRoomCounter(attachRooms);
@@ -176,6 +187,9 @@ public class MerchantMessageJRA implements IMerchantMessageJRA {
 
         if(detachItems != null)
             merchantMessage.setDetachItemCounter(detachItems);
+        if(inProcess != null)
+            merchantMessage.setInProcessCounter(inProcess);
+
         return merchantMessage;
     }
 

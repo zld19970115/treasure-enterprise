@@ -1,9 +1,11 @@
 package io.treasure.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.IfNull;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
@@ -14,17 +16,14 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.OrderSimpleEntity;
-import io.treasure.entity.SlaveOrderEntity;
+import io.treasure.entity.*;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.utils.BitMessageUtil;
 import io.treasure.utils.EMsgCode;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
@@ -60,9 +59,11 @@ public class ApiMasterOrderController {
     private ClientUserService clientUserService;
 
     @Autowired
-    private BitMessageUtil bitMessageUtil;
-    @Autowired
     private MasterOrderSimpleService masterOrderSimpleService;
+
+    @Autowired(required = false)
+    private MasterOrderDao masterOrderDao;
+
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -747,8 +748,13 @@ public class ApiMasterOrderController {
 
 
         System.out.println("xx"+merchantId+","+","+index+","+pageNumber);
-        if(index == null)
+        if(index == null){
             index = 0;
+        }else{
+            if(index >0)
+                index--;
+        }
+
         if(pageNumber == null)
             pageNumber = 10;
 
@@ -760,9 +766,13 @@ public class ApiMasterOrderController {
 
         Result orderList = new Result();
         List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
+        System.out.println("数值:"+orderList1);
+        for(int i=0;i<orderList1.size();i++){
+            System.out.println("qurey result:"+orderList1.get(i).toString());
+        }
         orderList.setData(orderList1);
 
-        orderList.setMsg(rpages+","+itemNum);
+        orderList.setMsg(rpages+"");
 
         return orderList;
     }
@@ -774,15 +784,64 @@ public class ApiMasterOrderController {
     })
     public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
         List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
-        if (masterOrderEntities.size()==0){
-            bitMessageUtil.deatchMsg(EMsgCode.ADD_DISHES);
-        }
+
     }
 
     @GetMapping("roomOrderPrinter")
     @ApiOperation("房订单打印PC")
     public Result roomOrderPrinter(@RequestParam String orderId) {
         return new Result().ok(masterOrderService.roomOrderPrinter(orderId));
+    }
+
+    @GetMapping("inProcessList")
+    @ApiOperation("进行中的订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户id号", paramType = "query", required = false, dataType="Long"),
+            @ApiImplicitParam(name = "index", value = "页码", paramType = "query",required = false, dataType="Integer"),
+            @ApiImplicitParam(name = "pageNumber", value = "页数", paramType = "query", required = false,dataType="Integer")
+
+        })
+    public Result inProcessList(@ApiIgnore @RequestParam Map<String, String> params){
+
+        Long mchId = Long.parseLong(params.get("merchantId"));
+        Integer index = Integer.parseInt(params.get("index"));
+        Integer pageNumber = Integer.parseInt(params.get("pageNumber"));
+
+        System.out.println("mchId,index,pageNumber"+mchId+","+index+","+pageNumber);
+
+/*
+        if(index == null){
+            index = 0;
+        }else{
+            if(index >0)
+                index--;
+        }
+
+        if(pageNumber == null)
+            pageNumber = 10;
+
+        Integer itemNum = masterOrderSimpleService.getCount(merchantId);
+        if(itemNum == null)
+            itemNum = 0;
+        int rpages = (itemNum+pageNumber-1)/pageNumber;
+
+
+
+        Result orderList = new Result();
+        List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
+        System.out.println("数值:"+orderList1);
+        for(int i=0;i<orderList1.size();i++){
+            System.out.println("qurey result:"+orderList1.get(i).toString());
+        }
+        orderList.setData(orderList1);
+
+        orderList.setMsg(rpages+"");
+
+        return orderList;
+*/
+        //List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList();
+        return null;
+
     }
 
 }

@@ -3,12 +3,14 @@ package io.treasure.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @TableName("sharing_activity_log")
+@Accessors(chain = true)
 public class SharingActivityLogEntity {
 
         @TableId(value="sal_id",type = IdType.INPUT)

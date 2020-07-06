@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.DistributionRewardDao">
+
+    <select id="selectByslaverUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
+      select * from distribution_relationship where mobile_slaver=#{mobileSlaver}
+    </select>
+    <select id="selectByMasterUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
+      select * from distribution_relationship where mobile_master=#{mobileMaster}
+    </select>
+    <select id="selectRadio" resultType="int">
+      select radio from sharing_activity where sa_id=#{saId}
+    </select>
+</mapper>

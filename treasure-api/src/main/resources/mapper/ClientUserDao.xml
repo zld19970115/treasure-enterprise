@@ -98,6 +98,12 @@
         update ct_client_user set gift=gift+ ${useGift}
         where id = #{userId}
     </update>
+    <update id="addCoinsByUserid">
+        update ct_client_user set coin=coin+ ${coins}
+        where id = #{userId}
+    </update>
+
+
     <update id="updateUnionid" parameterType="io.treasure.entity.ClientUserEntity">
         UPDATE `ct_client_user` SET `unionid` = #{openId} where mobile=#{mobile}
     </update>
