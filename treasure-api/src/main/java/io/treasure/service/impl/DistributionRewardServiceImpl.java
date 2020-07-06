@@ -8,6 +8,9 @@ import io.treasure.entity.DistributionRelationshipEntity;
 import io.treasure.entity.DistributionRewardLogEntity;
 import io.treasure.entity.SharingActivityEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -24,6 +27,8 @@ public class DistributionRewardServiceImpl {
     private DistributionRewardDao distributionRewardDao;
     @Autowired
     private DistributionRewardLogDao distributionRewardLogDao;
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public Boolean binding(int saId,String mobileMaster,String mobileSlaver) {
         ClientUserEntity userByPhone = clientUserService.getUserByPhone(mobileMaster);
         ClientUserEntity slaverUserByPhone = clientUserService.getUserByPhone(mobileSlaver);
@@ -41,7 +46,14 @@ public class DistributionRewardServiceImpl {
         distributionRelation.setStatus(1);
         distributionRelation.setUnionStartTime(new Date());
         distributionRelation.setUnionExpireTime(sharingActivityEntity.getCloseDate());
-        distributionRewardDao.updateById(distributionRelation);
+
+        try{
+            distributionRewardDao.updateById(distributionRelation);
+        }catch(Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
+
         return true;
     }
     public Boolean distribution(int saId,String mobileMaster,String mobileSlaver,int referencesTotal) {
@@ -62,13 +74,18 @@ public class DistributionRewardServiceImpl {
         distributionRewardLogEntity.setReferences_total(referencesTotal);
         distributionRewardLogEntity.setReward_amount(referencesTotal*radio/100);
         distributionRewardLogEntity.setReward_ratio(radio);
-        distributionRewardLogDao.updateById(distributionRewardLogEntity);
         int i = referencesTotal * radio / 100 / 100;
         BigDecimal coin = userByPhone.getCoin();
         BigDecimal a = new BigDecimal(i);
         BigDecimal newCoin = a.add(coin);
         userByPhone.setCoin(newCoin);
-        clientUserService.updateById(userByPhone);
+        try{
+            distributionRewardLogDao.updateById(distributionRewardLogEntity);
+            clientUserService.updateById(userByPhone);
+        }catch(Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
         return true;
     }
 }
