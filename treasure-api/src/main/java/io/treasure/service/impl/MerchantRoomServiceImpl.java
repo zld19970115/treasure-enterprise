@@ -2,6 +2,8 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -419,5 +421,12 @@ public class MerchantRoomServiceImpl extends CrudServiceImpl<MerchantRoomDao, Me
     @Override
     public Integer selectCountDesk(long merhcnatId) {
         return baseDao.selectCountDesk(merhcnatId);
+    }
+
+    @Override
+    public PageData selectRoomPC(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page page = (Page) baseDao.selectRoomPC(params);
+        return new PageData(page.getResult(),page.getTotal());
     }
 }

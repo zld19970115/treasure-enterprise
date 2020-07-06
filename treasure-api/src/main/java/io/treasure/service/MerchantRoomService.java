@@ -4,6 +4,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.dto.RoomPCDto;
 import io.treasure.entity.MerchantRoomEntity;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,4 +34,6 @@ public interface MerchantRoomService extends CrudService<MerchantRoomEntity, Mer
 
     Integer selectCountRoom(long merhcnatId);
     Integer selectCountDesk(long merhcnatId);
+
+    PageData selectRoomPC(Map<String, Object> params);
 }

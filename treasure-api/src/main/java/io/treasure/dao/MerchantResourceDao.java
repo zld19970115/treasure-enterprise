@@ -3,6 +3,8 @@ package io.treasure.dao;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MerchantResourceSaveDto;
 import io.treasure.dto.MerchantResourceShowDto;
+import io.treasure.dto.RoleMenuDto;
+import io.treasure.dto.UserMenuDto;
 import io.treasure.entity.MerchantResourceEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,5 +26,9 @@ public interface MerchantResourceDao extends BaseDao<MerchantResourceEntity> {
     int updateMenu(MerchantResourceSaveDto dto);
 
     int del(@Param("id") Long id);
+
+    List<RoleMenuDto> roleMenuList(Map<String, Object> params);
+
+    List<UserMenuDto> userMenu(@Param("userId") Long userId,@Param("menuId") Long menuId);
 
 }

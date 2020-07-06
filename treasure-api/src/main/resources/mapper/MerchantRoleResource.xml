@@ -13,4 +13,24 @@
         select COUNT(0) from ct_merchant_role_resource where RESOURCE_ID = #{rid}
    </select>
 
+    <select id="countByRole" resultType="java.lang.Long">
+        select COUNT(0) from ct_merchant_role_resource where ROLE_ID = #{roleId}
+   </select>
+
+    <delete id="delByRole">
+        DELETE FROM ct_merchant_role_resource WHERE ROLE_ID = #{roleId}
+    </delete>
+
+    <insert id="saveRoleMenu">
+        insert into ct_merchant_role_resource
+        (ROLE_ID, RESOURCE_ID)
+        values
+        <foreach collection="ids" item="item" index="index" separator=",">
+            (
+                #{roleId},
+                #{item}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

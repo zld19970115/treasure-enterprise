@@ -1,10 +1,7 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantRoomDTO;
-import io.treasure.dto.MerchantRoomParamsDTO;
-import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.dto.*;
 import io.treasure.entity.MerchantRoomEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +36,6 @@ public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     //查询所有店铺信息
     List<MerchantDTO> selectMerchantAll(Map<String, Object> params);
     List<MerchantRoomParamsDTO> selectRoomParam();
+
+    List<RoomPCDto> selectRoomPC(Map<String, Object> params);
 }

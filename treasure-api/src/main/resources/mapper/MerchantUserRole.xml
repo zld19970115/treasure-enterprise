@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantUserRoleDao">
+
+    <resultMap type="io.treasure.entity.MerchantUserRoleEntity" id="map">
+        <result property="id" column="ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="roleId" column="ROLE_ID"/>
+    </resultMap>
+
+    <select id="countByRole" resultType="java.lang.Long">
+        select count(0) from ct_merchant_user_role where ROLE_ID = #{roleId}
+    </select>
+
+    <select id="selectByUserId" resultMap="map">
+        select * from ct_merchant_user_role where USER_ID = #{userId}
+    </select>
+
+    <delete id="userRoleDel">
+         DELETE FROM ct_merchant_user_role WHERE USER_ID = #{userId}
+    </delete>
+
+    <insert id="userRoleSave">
+        INSERT INTO ct_merchant_user_role
+        (USER_ID,ROLE_ID)
+        VALUES (#{userId},#{roleId})
+    </insert>
+
+</mapper>
