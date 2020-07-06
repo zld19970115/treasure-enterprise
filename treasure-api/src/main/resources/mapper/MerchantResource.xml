@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantResourceDao">
+
+    <resultMap type="io.treasure.entity.MerchantResourceEntity" id="map">
+        <result property="ID" column="ID"/>
+        <result property="NAME" column="NAME"/>
+        <result property="URL" column="URL"/>
+        <result property="PERMISSION" column="PERMISSION"/>
+        <result property="MENU_ID" column="MENU_ID"/>
+        <result property="SEQ" column="SEQ"/>
+        <result property="FUN_NAME" column="FUN_NAME"/>
+        <result property="PID" column="PID"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+        <result property="icon" column="icon"/>
+        <result property="TYPE" column="TYPE"/>
+    </resultMap>
+
+    <insert id="add" parameterType="io.treasure.dto.MerchantResourceSaveDto">
+        INSERT INTO ct_merchant_resource
+        ( NAME,URL,MENU_ID,SEQ,PID,create_date,icon,TYPE )
+        VALUES  (#{name},#{url},#{menuId},#{seq},#{pid},NOW(),#{icon},#{type})
+    </insert>
+
+    <update id="updateMenu">
+        UPDATE
+            ct_merchant_resource
+        SET
+            NAME = #{name}
+            ,URL = #{url}
+            ,SEQ = #{seq}
+            ,update_date = NOW()
+            ,icon = #{icon}
+        WHERE ID = #{id}
+    </update>
+
+    <select id="menuList" resultType="io.treasure.dto.MerchantResourceShowDto">
+        select
+            ct.ID as id
+            ,ct.`NAME` as title
+            ,ct.icon
+            ,ct.URL as url
+            ,ct.PID as pid
+            ,ct.MENU_ID as menuId
+            ,ct.SEQ as sort
+        from ct_merchant_resource ct
+        where PID = #{pid}
+        <if test="menuId != null ">
+            and MENU_ID = #{menuId}
+        </if>
+        order by ct.SEQ
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(0) from ct_merchant_resource
+        <where>
+            <if test="pid != null ">
+                and PID = #{pid}
+            </if>
+        </where>
+    </select>
+
+    <select id="countMenuId" resultType="java.lang.Long">
+        select count(0) from ct_merchant_resource
+        <where>
+            <if test="menuId != null ">
+                and MENU_ID = #{menuId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="del">
+        DELETE FROM ct_merchant_resource WHERE id = #{id}
+    </delete>
+
+    <select id="roleMenuList" resultType="io.treasure.dto.RoleMenuDto">
+        select
+            ct.id
+            ,ct.`NAME` as title
+            ,(case when r.RESOURCE_ID is null then false else true end) as checked
+        from ct_merchant_resource ct
+        LEFT JOIN ct_merchant_role_resource r on r.RESOURCE_ID = ct.id and r.ROLE_ID = #{roleId}
+        where ct.PID = #{pid} and ct.MENU_ID = #{menuId}
+    </select>
+
+    <select id="userMenu" resultType="io.treasure.dto.UserMenuDto">
+        select
+            ctr.`NAME` as name,
+            ctr.URL as url,
+            ctr.icon,
+            ctr.ID as id
+        from
+            ct_merchant_role_resource ct
+        LEFT JOIN
+            ct_merchant_resource ctr on ctr.ID = ct.RESOURCE_ID
+        where
+            ctr.PID is not null
+            and ct.ROLE_ID = ( SELECT ctu.ROLE_ID FROM ct_merchant_user_role ctu where ctu.USER_ID = #{userId} )
+            and ctr.MENU_ID = #{menuId}
+        ORDER BY
+            ctr.SEQ
+    </select>
+
+</mapper>

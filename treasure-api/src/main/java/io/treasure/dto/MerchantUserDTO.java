@@ -83,4 +83,6 @@ public class MerchantUserDTO {
 	private String clientId;
 	@ApiModelProperty(value = "商户名称")
 	private String merchantName;
+
+	private String roleName;
 }

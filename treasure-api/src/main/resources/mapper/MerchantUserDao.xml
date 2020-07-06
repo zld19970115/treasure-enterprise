@@ -49,8 +49,10 @@
 
     <select id="listPage" resultType="io.treasure.dto.MerchantUserDTO">
         select users.*,merchant.name merchantName
+        ,(SELECT r.`NAME` FROM ct_merchant_role r where r.id = role.ROLE_ID) as roleName
         from ct_merchant_user users
         left join ct_merchant merchant on find_in_set(merchant.id,users.merchantId)
+        LEFT JOIN ct_merchant_user_role role on role.USER_ID = users.id
         where users.status in (1,0)
         <if test="mobile != null">
             and users.mobile like  CONCAT('%',#{mobile},'%')

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantRoleDao">
+
+    <resultMap type="io.treasure.entity.MerchantRoleResourceEntity" id="map">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="sn" column="SN"/>
+        <result property="descr" column="DESCR"/>
+        <result property="pid" column="pid"/>
+    </resultMap>
+
+    <select id="roleList" resultType="io.treasure.dto.MerchantRoleShowDto">
+        select id,name as title from ct_merchant_role where pid = #{pid}
+    </select>
+
+    <select id="roleUserList" resultType="io.treasure.dto.RoleUserDto">
+        select
+            role.id
+            ,role.`NAME` as name
+            ,case when u.mobile is not null then 1 else 0 end as checked
+        from
+            ct_merchant_role role
+        LEFT JOIN
+            ct_merchant_user_role r on r.ROLE_ID = role.id and  r.USER_ID = #{userId}
+        LEFT JOIN
+            ct_merchant_user u on u.id = r.USER_ID and u.id = #{userId}
+        where role.pid is not null
+    </select>
+
+</mapper>

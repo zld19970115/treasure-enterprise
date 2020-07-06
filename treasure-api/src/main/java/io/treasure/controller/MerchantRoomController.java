@@ -10,10 +10,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
-import io.treasure.dto.ExportMerchantRoomDTO;
-import io.treasure.dto.MerchantDTO;
-import io.treasure.dto.MerchantRoomDTO;
-import io.treasure.dto.MerchantRoomParamsSetDTO;
+import io.treasure.dto.*;
 import io.treasure.enm.Common;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.MerchantEntity;
@@ -352,5 +349,15 @@ public class MerchantRoomController {
             merchantRoomService.insert(roomEntity);
         }
         return new Result();
+    }
+
+    @GetMapping("selectRoomPC")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result selectRoomPC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result().ok(merchantRoomService.selectRoomPC(params));
     }
 }

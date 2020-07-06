@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.PlatformDao">
+
+    <resultMap type="io.treasure.entity.PlatformEntity" id="map">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+    </resultMap>
+
+    <select id="pageList" resultType="io.treasure.dto.PlatformDto">
+        select id,name from ct_platform
+        <where>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+        </where>
+    </select>
+
+</mapper>

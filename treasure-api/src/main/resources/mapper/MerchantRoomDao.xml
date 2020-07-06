@@ -235,4 +235,18 @@
     <select id="selectRoomParam" parameterType="io.treasure.entity.MerchantRoomParamsEntity" resultType="io.treasure.dto.MerchantRoomParamsDTO">
         select * from  ct_merchant_room_params where  status=1
     </select>
+
+    <select id="selectRoomPC" resultType="io.treasure.dto.RoomPCDto">
+        select
+        id,name,description,brief,icon,
+        num_low as numLow,num_high as numHigh,sort,type,
+        merchant_id as merchantId,status,create_date as createDate
+        from ct_merchant_room where merchant_id = #{id} and status != 9
+        <if test="startDate != null and startDate.trim() != ''">
+            <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+        </if>
+    </select>
 </mapper>
