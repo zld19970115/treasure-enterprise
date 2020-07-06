@@ -35,7 +35,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     void updateOpenid(String openId, String mobile);
     void updateUnionid(String openId, String mobile);
     void addRecordGiftByUserid(String userId, String useGift);
-
+    void updateBynewCoin(long userId,BigDecimal newCoin);
     void updateCID(String clientId, String mobile);
 
     ClientUserEntity getClientUser(Long id);

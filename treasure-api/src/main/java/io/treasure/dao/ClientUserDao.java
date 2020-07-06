@@ -7,6 +7,7 @@ import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
     void addRecordGiftByUserid(@Param("userId")String userId,@Param("useGift") String useGift);
     void addCoinsByUserid(@Param("userId")String userId, @Param("coins")String coins);
-
+    void updateBynewCoin(long userId,BigDecimal newCoin);
     List<ClientUserDTO> pagePC(Map<String,Object> params);
 
     ClientUserDTO pagePCTotalRow(Map<String,Object> params);

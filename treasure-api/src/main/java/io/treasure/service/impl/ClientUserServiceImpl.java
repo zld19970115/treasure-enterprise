@@ -124,6 +124,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void updateBynewCoin(long userId,BigDecimal newCoin) {
+        baseDao.updateBynewCoin(userId,newCoin);
+    }
+
+    @Override
     public void addCoinsByUserid(String userId, String useGift) {
         baseDao.addCoinsByUserid(userId,useGift);
     }

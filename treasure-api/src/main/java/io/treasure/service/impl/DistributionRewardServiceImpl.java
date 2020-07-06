@@ -85,10 +85,10 @@ public class DistributionRewardServiceImpl {
         BigDecimal coin = userByPhone.getCoin();
         BigDecimal a = new BigDecimal(i);
         BigDecimal newCoin = a.add(coin);
-        userByPhone.setCoin(newCoin);
+
         try{
             distributionRewardLogDao.insert(distributionRewardLogEntity);
-            clientUserService.updateById(userByPhone);
+            clientUserService.updateBynewCoin(userByPhone.getId(),newCoin);
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
