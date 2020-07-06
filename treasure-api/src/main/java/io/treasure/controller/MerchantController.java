@@ -656,4 +656,5 @@ public class MerchantController {
         merchantService.deleteById(id);
         return new Result();
     }
+
 }
