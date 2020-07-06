@@ -101,6 +101,9 @@ public class SharingActivityController {
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ClientUserEntity userRegistrationViaHelp(String mobile,String password){
+        if(password == null){
+            return   clientUserService.getByMobile(mobile);
+        }
 
         ClientUserEntity prospectiveUser = new ClientUserEntity();
         prospectiveUser.setMobile(mobile);
@@ -263,7 +266,7 @@ public class SharingActivityController {
         String mobile = vo.getMobile();
         String password = vo.getPassword();
 
-        if(mobile == null || password == null || initiatorId == null || saId == null){
+        if(mobile == null || initiatorId == null || saId == null){
             return initResult("错误：参数有误！！",mobile,true);
         }
 
@@ -302,10 +305,10 @@ public class SharingActivityController {
             }
         }
 
-        //4,活动有效-->进行用户授权及用户助力次数检查
+            //4,活动有效-->进行用户授权及用户助力次数检查
+        ClientUserEntity helperEntity = null;
         Map<String, Object> identificationInfo = helperIdentification(mobile, password, saId, inProcess.getProposeId(), true, sharingDistributionParams);
         int identificationCode = Integer.parseInt(identificationInfo.get("code")+"");
-        ClientUserEntity helperEntity = null;
         switch(identificationCode){
             case 0:
                 //取得用户信息
@@ -326,6 +329,8 @@ public class SharingActivityController {
             case 3://活动结束且非都可注册成功模式
                 return initResult("本活动已结束，感谢参与!",null,true);
         }
+
+
 
         //5,更新奖励======================
         Integer completeCount = sharingActivityLogService.getCount(initiatorId, saId,inProcess.getProposeId());
