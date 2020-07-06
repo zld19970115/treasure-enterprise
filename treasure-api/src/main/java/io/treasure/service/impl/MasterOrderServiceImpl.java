@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -108,6 +109,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private CtDaysTogetherService ctDaysTogetherService;
 
+    @Autowired
+    private DistributionRewardServiceImpl distributionRewardService;
     @Autowired
     private UserTransactionDetailsService userTransactionDetailsService;
 
@@ -340,16 +343,21 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
         );
         wsPool.sendMessageToUser(wsByUser, 1 + "");
+        BigDecimal distributionReward =new BigDecimal("0");
         //用户支付获得积分，比例暂时为1:1
         ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
         BigDecimal integral = clientUserEntity.getIntegral();
         integral = integral.add(dto.getPayMoney());
+        distributionReward = distributionReward.add(dto.getPayMoney());
         List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectBYPOrderId(dto.getOrderId());
         for (MasterOrderEntity masterOrderEntity : masterOrderEntities) {
             integral = integral.add(masterOrderEntity.getPayMoney());
+            distributionReward = distributionReward.add(masterOrderEntity.getPayMoney());
         }
         clientUserEntity.setIntegral(integral);
         clientUserService.updateById(clientUserEntity);
+        BigDecimal total = distributionReward.multiply(new BigDecimal(100));
+        distributionRewardService.distribution(clientUserEntity.getMobile(),total.intValue());
         String orderId = dto.getOrderId();
         //粘入内容结束==============================================================================
         List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderId);
