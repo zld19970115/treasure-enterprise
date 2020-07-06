@@ -4,12 +4,12 @@
 <mapper namespace="io.treasure.dao.DistributionRewardDao">
 
     <select id="selectByslaverUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
-      select * from distribution_relationship where mobile_slaver=#{mobileSlaver};
+      select * from distribution_relationship where mobile_slaver=#{mobileSlaver} and
     </select>
     <select id="selectByMasterUser" resultType="io.treasure.entity.DistributionRelationshipEntity">
-      select * from distribution_relationship where mobile_master=#{mobileMaster};
+      select * from distribution_relationship where mobile_master=#{mobileMaster}
     </select>
     <select id="selectRadio" resultType="int">
-      select radio from distribution_params where sa_id=#{saId};
+      select radio from sharing_activity where sa_id=#{saId}
     </select>
 </mapper>

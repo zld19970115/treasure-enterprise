@@ -45,4 +45,11 @@ public class DistributionRelationshipEntity {
      * 关联失效时间
      */
     private Date unionExpireTime;
+
+
+    /**
+     * 活动id
+     */
+    private Integer saId;
+
 }

@@ -44,4 +44,10 @@ public class DistributionRelationshipDTO {
      */
     @ApiModelProperty(value = "关联失效时间")
     private Date unionExpireTime;
+
+    /**
+     * 活动id
+     */
+    @ApiModelProperty(value = "活动id")
+    private Integer saId;
 }
