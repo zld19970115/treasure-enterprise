@@ -42,7 +42,7 @@ public class GoodCategoryController {
     @Autowired
     private MerchantService merchantService;//商户
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("pageOn")
     @ApiOperation("显示中列表")
     @ApiImplicitParams({
@@ -59,8 +59,8 @@ public class GoodCategoryController {
         PageData<GoodCategoryDTO> page = goodCategoryService.selectPage(params);
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
-    @CrossOrigin
-    @Login
+   @CrossOrigin
+   // @Login
     @GetMapping("pageOff")
     @ApiOperation("隐藏中列表")
     @ApiImplicitParams({
@@ -77,7 +77,7 @@ public class GoodCategoryController {
         return new Result<PageData<GoodCategoryDTO>>().ok(page);
     }
     @CrossOrigin
-    @Login
+   // @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -176,7 +176,7 @@ public class GoodCategoryController {
      * @param id
      * @return
      */
-    @Login
+    //@Login
     @PutMapping("on")
     @ApiOperation("显示数据")
     @ApiImplicitParams({

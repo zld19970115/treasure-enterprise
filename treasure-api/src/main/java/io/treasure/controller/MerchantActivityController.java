@@ -44,7 +44,7 @@ public class MerchantActivityController {
     @Autowired
     private MerchantActivityService merchantActivityService;
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
@@ -60,7 +60,7 @@ public class MerchantActivityController {
         return new Result<PageData<MerchantActivityDTO>>().ok(page);
     }
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("getById")
     @ApiOperation("信息")
     @ApiImplicitParams({

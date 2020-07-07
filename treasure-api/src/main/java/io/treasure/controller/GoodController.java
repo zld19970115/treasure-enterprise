@@ -51,7 +51,7 @@ public class GoodController {
     private GoodCategoryService goodCategoryService;//分类
 
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("onPage")
     @ApiOperation("销售中商品列表")
     @ApiImplicitParams({
@@ -67,8 +67,8 @@ public class GoodController {
         PageData<GoodDTO> page = goodService.listPage(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
-    @CrossOrigin
-    @Login
+   @CrossOrigin
+   // @Login
     @GetMapping("offPage")
     @ApiOperation("已下架品列表")
     @ApiImplicitParams({
@@ -84,8 +84,8 @@ public class GoodController {
         PageData<GoodDTO> page = goodService.listPage(params);
         return new Result<PageData<GoodDTO>>().ok(page);
     }
-    @CrossOrigin
-    @Login
+   @CrossOrigin
+  //  @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -99,7 +99,7 @@ public class GoodController {
             return new Result<GoodDTO>().error(null);
         }
     }
-    @CrossOrigin
+   @CrossOrigin
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
@@ -131,7 +131,7 @@ public class GoodController {
         goodService.save(dto);
         return new Result();
     }
-    @CrossOrigin
+   @CrossOrigin
     @Login
     @PutMapping("update")
     @ApiOperation("修改")
@@ -338,7 +338,7 @@ public class GoodController {
      */
 
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("onPageSimple")
     @ApiOperation("销售中商品列表")
     @ApiImplicitParams({

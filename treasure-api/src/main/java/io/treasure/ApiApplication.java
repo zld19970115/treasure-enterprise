@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 
 //@EnableAsync
-//@EnableScheduling
+@EnableScheduling
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @SpringBootApplication

@@ -57,7 +57,7 @@ public class MerchantRoomParamsSetController {
     //商户
     @Autowired
     private MerchantService merchantService;
-    @Login
+    //@Login
     @GetMapping("page")
     @ApiOperation("分页")
     @ApiImplicitParams({
@@ -119,7 +119,7 @@ public class MerchantRoomParamsSetController {
 
     }
 
-    @Login
+    //@Login
     @GetMapping("getAvailableRoomsByData")
     @ApiOperation("查询指定日期、时间段内可用包房")
     @ApiImplicitParams({
@@ -131,7 +131,7 @@ public class MerchantRoomParamsSetController {
         return new Result<List<MerchantRoomParamsSetDTO>>().ok(merchantRoomParamsSetService.getAvailableRoomsByData(useDate, roomParamsId,type,merchantId));
     }
 
-    @Login
+    //@Login
     @GetMapping("getAvailableRooms")
     @ApiOperation("查询当日可用包房桌数量")
     @ApiImplicitParams({
