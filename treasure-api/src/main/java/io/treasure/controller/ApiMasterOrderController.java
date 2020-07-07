@@ -2,6 +2,8 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,9 +28,7 @@ import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.utils.EMsgCode;
-import io.treasure.vo.BackDishesVo;
-import io.treasure.vo.OrderVo;
-import io.treasure.vo.PageTotalRowData;
+import io.treasure.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -36,6 +36,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.beans.Transient;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -804,46 +805,60 @@ public class ApiMasterOrderController {
         })
     public Result inProcessList(@ApiIgnore @RequestParam Map<String, String> params){
 
-        Long mchId = Long.parseLong(params.get("merchantId"));
-        Integer index = Integer.parseInt(params.get("index"));
-        Integer pageNumber = Integer.parseInt(params.get("pageNumber"));
+        Long mchId = params.get("merchantId")==null?0:Long.parseLong(params.get("merchantId"));
+        Integer index = params.get("index")==null?0:Integer.parseInt(params.get("index"));
+        Integer pageNumber = params.get("pageNumber")==null?0:Integer.parseInt(params.get("pageNumber"));
+        Result result = new Result();
 
-        System.out.println("mchId,index,pageNumber"+mchId+","+index+","+pageNumber);
+        if(mchId == 0){
+            result.setMsg("请输入商户id");
+            return result.ok(null);
+        }
         QueryWrapper<MasterOrderEntity> wrapper = new QueryWrapper<>();
 
-/*
         if(index == null){
             index = 0;
         }else{
             if(index >0)
                 index--;
         }
-
         if(pageNumber == null)
             pageNumber = 10;
 
-        Integer itemNum = masterOrderSimpleService.getCount(merchantId);
-        if(itemNum == null)
-            itemNum = 0;
-        int rpages = (itemNum+pageNumber-1)/pageNumber;
+        wrapper.eq("merchant_id",mchId);
+        wrapper.in("status",2,7);
+        wrapper.eq("check_status",0);
+
+        IPage<MasterOrderEntity> map = new Page<MasterOrderEntity>(index,pageNumber);
+        IPage<MasterOrderEntity> orderList = masterOrderDao.selectPage(map, wrapper);
 
 
+        List<MasterOrderEntity> records = orderList.getRecords();
+        List<ClientUserEntity> clientUserList = new ArrayList<>();
 
-        Result orderList = new Result();
-        List<OrderSimpleEntity> orderList1 = masterOrderSimpleService.getOrderList(merchantId, index, pageNumber);
-        System.out.println("数值:"+orderList1);
-        for(int i=0;i<orderList1.size();i++){
-            System.out.println("qurey result:"+orderList1.get(i).toString());
+        List<MasterOrderCombo> masterOrderCombos = new ArrayList<>();
+        for(int i=0;i<records.size();i++){
+            MasterOrderCombo masterOrderCombo = new MasterOrderCombo();
+
+            MasterOrderEntity currentEntity = records.get(i);
+            String mobile = currentEntity.getContactNumber();
+            masterOrderCombo.setMasterOrderEntity(currentEntity);
+            ClientUserEntity byMobile = null;
+            if(mobile != null){
+                byMobile = clientUserService.getByMobile(mobile);
+                if(byMobile != null){
+                    masterOrderCombo.setClientUserEntity(byMobile);
+                }
+            }
+            masterOrderCombos.add(masterOrderCombo);
         }
-        orderList.setData(orderList1);
+        MasterOrderVo masterOrderVo = new MasterOrderVo();
+        if(records.size()>0){
+            masterOrderVo.setMasterOrderCombos(masterOrderCombos);
+        }
+        masterOrderVo.setPages(orderList.getPages());
 
-        orderList.setMsg(rpages+"");
-
-        return orderList;
-*/
-        //List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList();
-        return null;
-
+            return result.ok(masterOrderVo);
     }
 
 }

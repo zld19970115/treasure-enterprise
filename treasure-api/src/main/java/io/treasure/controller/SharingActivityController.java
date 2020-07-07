@@ -313,7 +313,7 @@ public class SharingActivityController {
                         distributionRewardService.binding(saId,masterMobile,mobile);
                     }else{
                         //以后改成查看助力详情
-                        return initResult("自已无法为自已助力!",mobile,true);
+                        return initResult("您的助力正在进行中!",mobile,true);
                     }
                 }else{
                     return initResult("繁忙或异常(0)，请稍后重试!",mobile,true);
