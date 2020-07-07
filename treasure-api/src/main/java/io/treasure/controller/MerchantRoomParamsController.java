@@ -53,7 +53,7 @@ public class  MerchantRoomParamsController {
         return new Result<PageData<MerchantRoomParamsDTO>>().ok(page);
     }
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("allPage")
     @ApiOperation("不根据商户查询列表")
     @ApiImplicitParams({
