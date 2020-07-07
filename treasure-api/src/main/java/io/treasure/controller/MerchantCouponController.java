@@ -44,7 +44,7 @@ public class MerchantCouponController {
     @Autowired
     private MerchantCouponService merchantCouponService;
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("page")
     @ApiOperation("全部列表")
     @ApiImplicitParams({
@@ -60,7 +60,7 @@ public class MerchantCouponController {
         return new Result<PageData<MerchantCouponDTO>>().ok(page);
     }
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("getInfo")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -114,7 +114,7 @@ public class MerchantCouponController {
      * @return
      */
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("getMoneyOffByMerchantId")
     @ApiOperation("查询此用户所有满减优惠")
     @ApiImplicitParams({

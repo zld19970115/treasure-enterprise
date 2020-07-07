@@ -54,7 +54,7 @@ public class MerchantController {
     @Autowired
     private SMSConfig smsConfig;
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("page")
     @ApiOperation("列表")
     @ApiImplicitParams({
@@ -73,7 +73,7 @@ public class MerchantController {
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -523,7 +523,7 @@ public class MerchantController {
      * @return
      */
     @CrossOrigin
-    //@Login
+    @Login
     @GetMapping("/list_sum")
     @ApiOperation(value = "分类提现列表与汇总",tags = "按不同方式显示提现记录和汇总信息")
     @ApiImplicitParams({

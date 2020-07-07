@@ -83,7 +83,7 @@ public class ApiClientUserCollectController {
         return new Result().ok("未收藏");
 
     }
-//    @Login
+    @Login
     @GetMapping("/yesOrNo")
     @ApiOperation("是否收藏")
     @ApiImplicitParams({

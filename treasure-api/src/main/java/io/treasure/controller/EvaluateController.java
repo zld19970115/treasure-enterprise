@@ -84,7 +84,7 @@ public class EvaluateController {
         evaluateService.delEvaluate(id);
         return new Result();
     }
-    //@Login
+    @Login
     @GetMapping("/see")
     @ApiOperation("查看评价表")
     @ApiImplicitParams({
@@ -117,7 +117,7 @@ public class EvaluateController {
         list.add(map);
         return new Result<PageData<EvaluateDTO>>().ok(page);
     }
-   // @Login
+    @Login
     @GetMapping("/seeComment")
     @ApiOperation("查看评论表")
     @ApiImplicitParams({

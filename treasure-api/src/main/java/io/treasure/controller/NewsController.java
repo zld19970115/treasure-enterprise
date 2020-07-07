@@ -27,7 +27,7 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
 
-    //@Login
+    @Login
     @GetMapping("page")
     @ApiOperation("分页查询")
     @ApiImplicitParams({
@@ -40,7 +40,7 @@ public class NewsController {
         return new Result<PageData<NewsDto>>().ok(newsService.page(params));
     }
 
-    //@Login
+    @Login
     @GetMapping("agreePage")
     @ApiOperation("分页查询")
     @ApiImplicitParams({
@@ -51,7 +51,7 @@ public class NewsController {
         return new Result<PageData<NewsDto>>().ok(newsService.agreePage(params));
     }
 
-    //@Login
+    @Login
     @CrossOrigin
     @GetMapping("newsById")
     @ApiOperation("根据id查询")
@@ -88,14 +88,14 @@ public class NewsController {
         return new Result<String>().ok("ok");
     }
 
-    //@Login
+    @Login
     @GetMapping("privacyAgrre")
     @ApiOperation("隐私协议")
     public Result<NewsDto> privacyAgrre() {
         return newsService.privacyAgrre();
     }
 
-    //@Login
+    @Login
     @GetMapping("userAgrre")
     @ApiOperation("用户协议")
     public Result<NewsDto> userAgrre() {
