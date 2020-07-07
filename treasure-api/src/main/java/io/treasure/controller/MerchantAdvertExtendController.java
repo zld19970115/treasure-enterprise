@@ -43,7 +43,7 @@ public class MerchantAdvertExtendController {
     @Autowired
     private MerchantAdvertExtendService merchantAdvertExtendService;
     @CrossOrigin
-    @Login
+    //@Login
     @GetMapping("allPage")
     @ApiOperation("全部列表")
     @ApiImplicitParams({
@@ -89,8 +89,8 @@ public class MerchantAdvertExtendController {
         PageData<MerchantAdvertExtendDTO> page = merchantAdvertExtendService.listPage(params);
         return new Result<PageData<MerchantAdvertExtendDTO>>().ok(page);
     }
-    @CrossOrigin
-    @Login
+    //@CrossOrigin
+    //@Login
     @GetMapping("getByInfo")
     @ApiOperation("信息")
     @ApiImplicitParams({

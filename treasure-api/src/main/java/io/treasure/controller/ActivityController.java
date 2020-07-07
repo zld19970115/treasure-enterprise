@@ -29,7 +29,7 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
-    @Login
+    //@Login
     @GetMapping("page")
     @ApiOperation("分页查询")
     @ApiImplicitParams({

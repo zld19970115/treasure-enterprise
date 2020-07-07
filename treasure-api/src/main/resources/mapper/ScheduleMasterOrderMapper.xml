@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.treasure.dao.ScheduleMasterOrderMapper">
+
+    <!--    主单清台    -->
+    <update id="clearSlaveOrder" parameterType="java.lang.String">
+
+        update ct_master_order
+        set check_mode=2,check_status=1,status=10,update_date = NOW()
+        where status in(2,7)
+        and DATE_FORMAT(eat_time,'%Y %m %d %T') BETWEEN
+        DATE_FORMAT(#{startTime},'%Y %m %d %T')
+        AND DATE_FORMAT(#{stopTime},'%Y %m %d %T')
+
+    </update>
+
+    <update id="clearMasterOrder">
+
+    </update>
+
+    <update id="clearMerchantRoom">
+
+    </update>
+
+
+
+
+
+</mapper>

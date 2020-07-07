@@ -38,7 +38,7 @@ public class ApiGoodController {
     @Autowired
     private ApiGoodService apigoodService;
 
-    @Login
+    //@Login
     @GetMapping("onPage")
     @ApiOperation("销售中商品列表")
     @ApiImplicitParams({
@@ -54,7 +54,7 @@ public class ApiGoodController {
         return new Result<PageData<GoodDTO>>().ok(page);
     }
 
-    @Login
+    //@Login
     @GetMapping("offPage")
     @ApiOperation("已下架品列表")
     @ApiImplicitParams({
@@ -70,7 +70,7 @@ public class ApiGoodController {
         return new Result<PageData<GoodDTO>>().ok(page);
     }
 
-    @Login
+    //@Login
     @GetMapping("getById")
     @ApiOperation("详细信息")
     @ApiImplicitParams({
@@ -181,7 +181,7 @@ public class ApiGoodController {
      * @param martId
      * @return
      */
-    @Login
+    //@Login
     @GetMapping("getGoodCategoryByMartId")
     @ApiOperation("根据商户ID显示此商户菜品分类")
     @ApiImplicitParams({
@@ -200,7 +200,7 @@ public class ApiGoodController {
      * @param
      * @return
      */
-    @Login
+    //@Login
     @GetMapping("getGoodsByMartId")
     @ApiOperation("根据商户ID显示此商户菜品")
     @ApiImplicitParams({
@@ -214,7 +214,7 @@ public class ApiGoodController {
      * @param
      * @return
      */
-    @Login
+    //@Login
     @GetMapping("getoutsideGoodsByMartId")
     @ApiOperation("根据商户ID显示此商户外卖菜品")
     @ApiImplicitParams({
@@ -228,13 +228,13 @@ public class ApiGoodController {
      * @param martId,goodCategoryId
      * @return
      */
-    @Login
+    //@Login
     @GetMapping("getGoodsByGoodCategoryId")
     @ApiOperation("根据商户ID显示此商户菜品")
     public Result<List> getGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
         return new Result<List>().ok(apigoodService.getGoodsByGoodCategoryId(martId,goodCategoryId));
     }
-    @Login
+    //@Login
     @GetMapping("getoutsideGoodsByGoodCategoryId")
     @ApiOperation("根据商户ID显示此商户外卖菜品")
     public Result<List> getoutsideGoodsByGoodCategoryId(long martId,long goodCategoryId ) {
@@ -242,7 +242,7 @@ public class ApiGoodController {
     }
 
 
-    @Login
+    //@Login
     @GetMapping("getShowInHotbyMartId")
     @ApiOperation("根据商户ID查询此商户热销菜品")
     public Result<List<GoodDTO>> getShowInHotbyMartId(long martId ) {
