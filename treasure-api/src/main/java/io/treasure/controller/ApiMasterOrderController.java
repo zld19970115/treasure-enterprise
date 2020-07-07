@@ -8,7 +8,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.treasure.annotation.IfNull;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
