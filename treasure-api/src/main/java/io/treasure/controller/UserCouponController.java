@@ -26,7 +26,7 @@ import java.util.List;
 public class UserCouponController {
     @Autowired
     UserCouponServiceImpl userCouponService;
-    @Login
+//    @Login
     @GetMapping("/selectMartCoupon")
     @ApiOperation("查询商家可领取优惠卷")
     public  Result selectMartCoupon(@RequestParam(value = "userId") Long userId,@RequestParam(value = "martId")long martId){
