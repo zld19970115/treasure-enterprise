@@ -390,7 +390,6 @@ public class SharingActivityController {
             return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
 
         }else{
-            System.out.println("活动终止");
             return initResult("手慢了，本次活动已经完成！",mobile,true);
         }
 
@@ -438,7 +437,7 @@ public class SharingActivityController {
                 break;
         }
         //map.put("msg","恭喜获得"+rValue+unitStrng+"!");
-        return initResult("恭喜获得"+rValue+unitStrng+"!",mobile,false);
+        return initResult("助力成功，恭喜获得"+rValue+unitStrng+"!",mobile,false);
 
     }
 
