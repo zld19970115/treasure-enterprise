@@ -106,7 +106,6 @@
         where id = #{userId}
     </update>
 
-    void addBalanceByUserid(@Param("userId")String userId, @Param("baobi")String baobi);
     <update id="addBalanceByUserid">
         update ct_client_user set balance=balance+ ${baobi}
         where id = #{userId}
