@@ -71,9 +71,6 @@
         <if test="recommend != null and recommend != ''">
             and recommend = #{recommend}
         </if>
-        <if test="distance == null and distance == ''">
-            and distance &lt;= 5000
-        </if>
         <if test="categoryId != null and categoryId != ''">
             and categoryId = #{categoryId}
         </if>
