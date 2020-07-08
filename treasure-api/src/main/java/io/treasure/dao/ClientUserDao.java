@@ -38,6 +38,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
     void addRecordGiftByUserid(@Param("userId")String userId,@Param("useGift") String useGift);
     void addCoinsByUserid(@Param("userId")String userId, @Param("coins")String coins);
+    void addBalanceByUserid(@Param("userId")String userId, @Param("baobi")String baobi);
     void updateBynewCoin(long userId,BigDecimal newCoin);
     List<ClientUserDTO> pagePC(Map<String,Object> params);
 

@@ -51,5 +51,8 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     int getLogOffCount(String mobile);
     void addCoinsByUserid(String userId, String useGift);
 
+    //宝币
+    void addBalanceByUserid(String userId, String baobi);
+
 
 }

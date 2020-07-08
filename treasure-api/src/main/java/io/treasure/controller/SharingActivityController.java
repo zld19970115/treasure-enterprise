@@ -462,7 +462,7 @@ public class SharingActivityController {
             case 4://宝币
                 Integer rewardAmount4 = sharingActivityEntity.getRewardAmount();
                 if(rewardAmount4 >= 0)
-                    clientUserService.addCoinsByUserid(initiatorId+"",rewardAmount4+"");
+                    clientUserService.addBalanceByUserid(initiatorId+"",rewardAmount4+"");
                 break;
 
         }
@@ -480,7 +480,7 @@ public class SharingActivityController {
                     clientUserService.addRecordGiftByUserid(id+"",rewardValue+"");
                 break;
             case 4://宝币
-                    clientUserService.addCoinsByUserid(id+"",rewardValue+"");
+                    clientUserService.addBalanceByUserid(id+"",rewardValue+"");
                 break;
         }
 

@@ -134,6 +134,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void addBalanceByUserid(String userId, String baobi) {
+        baseDao.addBalanceByUserid(userId,baobi);
+    }
+
+    @Override
     public void updateCID(String clientId, String mobile) {
         baseDao.updateCID(clientId,mobile);
     }
