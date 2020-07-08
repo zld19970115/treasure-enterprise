@@ -81,14 +81,12 @@ public class DistributionRewardServiceImpl {
         distributionRewardLogEntity.setReferences_total(referencesTotal);
         distributionRewardLogEntity.setReward_amount(referencesTotal*radio/100);
         distributionRewardLogEntity.setReward_ratio(radio);
-        int i = referencesTotal * radio / 100 / 100;
-        BigDecimal coin = userByPhone.getCoin();
-        BigDecimal a = new BigDecimal(i);
-        BigDecimal newCoin = a.add(coin);
+        float v = Float.parseFloat(String.valueOf(referencesTotal * radio / 100));
+        float newCoin = v / 100;
 
         try{
             distributionRewardLogDao.insert(distributionRewardLogEntity);
-            clientUserService.updateBynewCoin(userByPhone.getId(),newCoin);
+            clientUserService.addCoinsByUserid(String.valueOf(userByPhone.getId()),newCoin+"");
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
