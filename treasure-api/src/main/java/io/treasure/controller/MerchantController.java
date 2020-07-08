@@ -500,7 +500,9 @@ public class MerchantController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
+
     })
     public Result<PageData<MerchantDTO>> queryClassifyMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.getMerchantByCategoryId(params);
