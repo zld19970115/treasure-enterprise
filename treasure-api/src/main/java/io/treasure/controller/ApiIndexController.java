@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -9,6 +10,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.dto.MerchantDTO;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.impl.EvaluateServiceImpl;
@@ -84,7 +86,8 @@ ApiIndexController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "categoryId", value = "经营类别", paramType = "query", dataType="String")
+            @ApiImplicitParam(name = "categoryId", value = "经营类别", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
     })
     public Result<PageData<MerchantDTO>> queryHotMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
 //        params.put("recommend","1");
@@ -92,6 +95,20 @@ ApiIndexController {
 
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
+//    public  void s() {
+//
+//        QueryWrapper<MerchantEntity> mweqw = new QueryWrapper<>();
+//
+//        if (not_cash != null)
+//            mweqw.orderByDesc()
+//    }
+//
+//        Page<MerchantEntity> map = new Page<MerchantEntity>(index,itemNum);
+//        map.setCurrent(index);
+//        map.setSize(itemNum);
+//        IPage<MerchantEntity> merchantEntityIPage = merchantDao.selectPage(map, mweqw);
+//        return new Result().ok(merchantEntityIPage);
+//return new Result().ok(merchantWithdrawEntityIPage.getRecords());
 
     @GetMapping("queryALLMerchant")
     @ApiOperation("附近销量店铺")
@@ -101,7 +118,8 @@ ApiIndexController {
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
     })
     public Result<PageData<MerchantDTO>> queryALLMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
@@ -113,7 +131,7 @@ ApiIndexController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
-            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = "orderByField" ,value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),

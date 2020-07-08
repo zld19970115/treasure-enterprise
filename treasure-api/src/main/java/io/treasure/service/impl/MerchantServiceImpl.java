@@ -122,7 +122,10 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     @Override
     public PageData<MerchantDTO> queryRoundPage(Map<String, Object> params) {
         //分页
-        IPage<MerchantEntity> page = getPage(params,(String) params.get("ORDER_FIELD"), false);
+        IPage<MerchantEntity> page = baseDao.selectPage(
+                getPage(params, null, false),
+                getQueryWrapper(params))
+                ;
         //查询
         List<MerchantDTO> list = baseDao.getMerchantList(params);
         for (MerchantDTO s:list) {
@@ -257,6 +260,14 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         wrapper.like(StringUtils.isNotBlank(name), "name", name);
         wrapper.like(StringUtils.isNotBlank(mobile),"mobile",mobile);
         wrapper.eq("status",1);
+        String shortField = (String)params.get("orderByField");
+        if(shortField == "score" || "score".equals(shortField)){
+            wrapper.orderByDesc(shortField,"monthy_sales");
+       }
+      else if(shortField == "monthy_sales"){
+            wrapper.orderByDesc(shortField,"score");
+         }
+
         return wrapper;
     }
 
