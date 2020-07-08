@@ -85,4 +85,6 @@ public class MerchantUserDTO {
 	private String merchantName;
 
 	private String roleName;
+
+	private Long merchantId;
 }

@@ -105,6 +105,7 @@
         update ct_client_user set coin=coin+ ${coins}
         where id = #{userId}
     </update>
+
     <update id="addBalanceByUserid">
         update ct_client_user set balance=balance+ ${baobi}
         where id = #{userId}
