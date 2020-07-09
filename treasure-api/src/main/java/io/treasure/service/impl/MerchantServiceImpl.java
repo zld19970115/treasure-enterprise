@@ -276,7 +276,9 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
        }
       else if(shortField == "monthy_sales"){
             wrapper.orderByDesc(shortField,"score");
-         }
+         } else if(shortField == "distance"){
+            wrapper.orderByAsc(shortField);
+        }
 
         return wrapper;
     }

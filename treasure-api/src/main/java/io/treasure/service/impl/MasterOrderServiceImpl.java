@@ -880,7 +880,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 System.out.println("MasterOrder 849");
             }else {
                 for (int i = 0; i < list.size(); i++) {
-                    AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！", "", list.get(i).getClientId());
+                    AppPushUtil.pushToSingleMerchant("订单管理", "您有新的订单，请注意查收！",  list.get(i).getClientId());
                 }
             }
             //   int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
@@ -1222,7 +1222,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (i > 0) {
                 if (StringUtils.isNotBlank(clientId)) {
                     for (int j = 0; j < list.size(); j++) {
-                        AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", list.get(j).getClientId());
+                        AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！",  list.get(j).getClientId());
                     }
                 }
                 SendSMSUtil.sendApplyRefund(merchantUserDTO.getMobile(), smsConfig);
