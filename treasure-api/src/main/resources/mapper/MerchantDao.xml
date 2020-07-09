@@ -64,16 +64,12 @@
         select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
 
-
         FROM ct_merchant having status=1
         <if test="distanced != null and distanced != ''">
             and distance &lt;= #{distanced}
         </if>
         <if test="recommend != null and recommend != ''">
             and recommend = #{recommend}
-        </if>
-        <if test="distance == null and distance == ''">
-            and distance &lt;= 5000
         </if>
         <if test="categoryId != null and categoryId != ''">
             and categoryId = #{categoryId}
