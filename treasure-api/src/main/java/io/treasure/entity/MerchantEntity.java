@@ -224,5 +224,9 @@ public class MerchantEntity implements Serializable {
 	 */
 	private Integer monthySales;
 
+	private Integer party;
+
+	private Integer special;
+
 	
 }

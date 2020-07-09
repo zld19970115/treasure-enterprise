@@ -138,4 +138,10 @@ public class MerchantPageVo {
     @ApiModelProperty(value = "月销量")
     private Integer monthySales;
 
+    @ApiModelProperty(value = "聚餐")
+    private Integer party;
+
+    @ApiModelProperty(value = "特色")
+    private Integer special;
+
 }

@@ -643,9 +643,21 @@ public class MerchantController {
     }
 
     @GetMapping("updateRecommend")
-    @ApiOperation("开启外卖功能")
+    @ApiOperation("热推")
     public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
         return new Result().ok(merchantService.updateRecommend(id, recommend));
+    }
+
+    @GetMapping("updateParty")
+    @ApiOperation("聚餐")
+    public Result updateParty(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateParty(id, recommend));
+    }
+
+    @GetMapping("updateSpecial")
+    @ApiOperation("特色")
+    public Result updateSpecial(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateSpecial(id, recommend));
     }
 
     @CrossOrigin

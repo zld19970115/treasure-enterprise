@@ -40,4 +40,6 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     Integer AuditMerchantStatus(Long id);
 
     Integer updateRecommend(Long id, Integer recommend);
+    Integer updateParty(Long id, Integer recommend);
+    Integer updateSpecial(Long id, Integer recommend);
 }

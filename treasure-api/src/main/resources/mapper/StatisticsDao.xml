@@ -924,7 +924,29 @@
     <select id="realTimeOrder" resultType="io.treasure.vo.RealTimeOrder">
         SELECT
             IFNULL(SUM(case when STATUS = 4 then 1 else 0 end),0) as completeOrder,
-            IFNULL(SUM(case when STATUS = 2 and p_order_id = '0' then 1 else 0 end),0) as conductOrder,
+            IFNULL(
+                (
+                    select count(0)
+                    from (
+                        select masterOrder.id from ct_master_order masterOrder
+                        where
+                            masterOrder.p_order_id = '0'
+                            and masterOrder.status = 2
+                            and masterOrder.merchant_id = #{merchantId}
+                        union all
+                        select masterOrder.id from ct_master_order masterOrder
+                        where
+                            masterOrder.order_id in (
+                                select masterOrder.p_order_id
+                                from ct_master_order masterOrder
+                                where
+                                    masterOrder.p_order_id != '0'
+                                    and masterOrder.status = 2
+                                    and masterOrder.merchant_id = #{merchantId}
+                            )
+                ) l GROUP BY l.id
+            )
+            ,0) as conductOrder,
             IFNULL(SUM(case when STATUS = 6 then 1 else 0 end),0) as applyRefundOrder,
             sum((select
                             COUNT(0)
