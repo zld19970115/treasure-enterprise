@@ -501,6 +501,8 @@ public class MerchantController {
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
             @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "party", value = "聚餐", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "special", value = "特色", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
     })
