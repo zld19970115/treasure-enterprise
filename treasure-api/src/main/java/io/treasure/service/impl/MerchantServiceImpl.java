@@ -210,6 +210,16 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public Integer updateParty(Long id, Integer recommend) {
+        return baseDao.updateParty(id, recommend);
+    }
+
+    @Override
+    public Integer updateSpecial(Long id, Integer recommend) {
+        return baseDao.updateSpecial(id, recommend);
+    }
+
+    @Override
     public PageData<MerchantDTO> queryPage(Map<String, Object> params){
 //        IPage<MerchantEntity> page = baseDao.selectPage(
 //                getPage(params, null, false),
@@ -266,7 +276,9 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
        }
       else if(shortField == "monthy_sales"){
             wrapper.orderByDesc(shortField,"score");
-         }
+         } else if(shortField == "distance"){
+            wrapper.orderByAsc(shortField);
+        }
 
         return wrapper;
     }

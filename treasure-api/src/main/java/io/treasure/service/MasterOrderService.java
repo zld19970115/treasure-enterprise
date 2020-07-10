@@ -63,6 +63,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     Map<String, String> getNotify(Constants.PayMode alipay, BigDecimal bigDecimal, String out_trade_no);
 
     PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params);
+
+    PageData<MerchantOrderDTO> listMerchantPagesPC(Map<String, Object> params);
     /**
      * 优惠卷
      * @param dct

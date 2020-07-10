@@ -240,7 +240,7 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
             slaveOrderService.updateRefundReason(slaveOrderDTO.getRefundReason(), slaveOrderDTO.getOrderId(), slaveOrderDTO.getGoodId());
             if (StringUtils.isNotBlank(clientId)) {
                 for (int i = 0; i < list.size(); i++) {
-                    AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！", "", list.get(i).getClientId());
+                    AppPushUtil.pushToSingleMerchant("订单管理", "您有退款信息，请及时处理退款！",  list.get(i).getClientId());
                 }
 
             }

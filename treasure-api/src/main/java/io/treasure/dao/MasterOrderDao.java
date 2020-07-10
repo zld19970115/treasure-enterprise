@@ -32,6 +32,7 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     int updateStatusById(@Param("id") long id, @Param("status") int status, @Param("updater") long updater, @Param("refundDate") Date refundDate, @Param("refundReason")  String refundReason);
     //商户端查询
     List<MerchantOrderDTO> listMerchant(Map params);
+    List<MerchantOrderDTO> listMerchantPC(Map params);
     List<MerchantOrderDTO> listMerchant2(Map params);
     List<MasterOrderEntity>  selectByUserId(long userId);
     List<MasterOrderEntity> selectByMasterId(Map<String, Object> params);
