@@ -200,9 +200,6 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             s.setRoomNum(availableRooms);
             s.setDesk(availableRoomsDesk);
         }
-        if (params.get("userId")!=null&&params.get("name")!=null){
-            userSearchJRA.add((String) params.get("userId"),(String) params.get("name"));
-        }
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 

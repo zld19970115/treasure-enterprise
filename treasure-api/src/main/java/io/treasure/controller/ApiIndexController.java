@@ -1,6 +1,8 @@
 package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -59,8 +61,7 @@ ApiIndexController {
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "userId", value = "userId", paramType = "query", dataType="String")
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String")
     })
     public Result<PageData<MerchantDTO>> page(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.getLikeMerchant(params);
@@ -208,6 +209,7 @@ ApiIndexController {
             return new  Result().ok("0");
         }
     }
+
     @GetMapping("delSysSearchKeysVo")
     @ApiOperation("删除系统设置记录")
     @ApiImplicitParams({
@@ -221,5 +223,19 @@ ApiIndexController {
             return new  Result().ok("0");
         }
     }
+    @GetMapping("getSysAndUserSearchKeysVo")
+    @ApiOperation("保存历史记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "userId", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "name", value = "查询", paramType = "query", dataType="String")
+    })
+    public Result getSysAndUserSearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
+        if (params.get("userId")!=null&&params.get("name")!=null){
+            userSearchJRA.add((String) params.get("userId"),(String) params.get("name"));
+            return new Result().ok((String) params.get("name"));
+        }else {
+            return new Result().ok((String) params.get("name"));
+        }
 
+}
 }
