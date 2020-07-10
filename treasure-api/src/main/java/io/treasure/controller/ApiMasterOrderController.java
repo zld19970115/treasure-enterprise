@@ -146,7 +146,7 @@ public class ApiMasterOrderController {
     public Result<PageData<MerchantOrderDTO>> ongPagePc(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", "2");
         params.put("ispOrderId", "1");
-        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPages(params);
+        PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPagesPC(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
     @CrossOrigin

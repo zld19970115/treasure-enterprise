@@ -35,6 +35,8 @@
         <result property="characteristic" column="characteristic"></result>
         <result property="monetary" column="monetary"/>
         <result property="depost" column="depost"/>
+        <result property="party" column="party"/>
+        <result property="special" column="special"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
@@ -143,5 +145,11 @@
     </select>
     <update id="updateRecommend">
         update ct_merchant set recommend = #{recommend} where id = #{id}
+    </update>
+    <update id="updateParty">
+        update ct_merchant set party = #{recommend} where id = #{id}
+    </update>
+    <update id="updateSpecial">
+        update ct_merchant set special = #{recommend} where id = #{id}
     </update>
 </mapper>

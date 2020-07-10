@@ -40,4 +40,6 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     void updateAuditById(@Param("id") long id, @Param("auditStatus") int auditStatus);
 
     Integer updateRecommend(@Param("id") Long id, @Param("recommend") Integer recommend);
+    Integer updateParty(@Param("id") Long id, @Param("recommend") Integer recommend);
+    Integer updateSpecial(@Param("id") Long id, @Param("recommend") Integer recommend);
 }

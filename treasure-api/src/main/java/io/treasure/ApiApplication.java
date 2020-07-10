@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Super 63600679@qq.com
  */
 
-//@EnableAsync
 @EnableScheduling
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)

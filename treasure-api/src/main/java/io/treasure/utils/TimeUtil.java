@@ -17,10 +17,24 @@ public class TimeUtil {
 
 
     /**
+     * 每天早上8点复位所有需要复位的内容
+     * */
+    public static boolean resetTaskStatusTime(){
+        String tmp = sdfHm.format(new Date());
+        String[] tmps = tmp.split(":");
+        int intNow = Integer.parseInt(tmps[0])*60+Integer.parseInt(tmps[1]);
+        if(intNow >= 480 &&intNow<500){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
      * 得到凌晨5点钟的时间
      * hour指定时间
      * */
-    public static boolean isOnHour(){
+    public static boolean isClearTime(){
         String tmp = sdfHm.format(new Date());
         String[] tmps = tmp.split(":");
         int intNow = Integer.parseInt(tmps[0])*60+Integer.parseInt(tmps[1]);
@@ -38,7 +52,6 @@ public class TimeUtil {
         long longOnDayAgo = longNow - 60*60*24*1000+1000*60;
         String stringNow = simpleDateFormat.format(new Date(longNow));
         String stringOnDayAgo = simpleDateFormat.format(new Date(longOnDayAgo));
-        //System.out.println("current:"+stringNow +",the tommow:"+stringOnDayAgo);
         String result[] = {stringOnDayAgo,stringNow};
         return result;
     }
