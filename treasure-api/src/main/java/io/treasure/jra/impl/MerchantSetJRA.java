@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -26,6 +28,9 @@ public class MerchantSetJRA implements IMerchantSetJRA {
         jedis.del(MerchantSet.fieldName);
     }
 
+    public void delItem(String value){
+        jedis.srem("name",value);
+    }
     @Override
     public boolean isExistMember(String merchantId) {
         jedis.del(MerchantSet.compareFiledName);

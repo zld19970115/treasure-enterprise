@@ -10,6 +10,7 @@ import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.jra.impl.UserSearchJRA;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.MerchantRoomService;
 import io.treasure.service.MerchantService;
@@ -30,7 +31,8 @@ import java.util.Map;
 public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEntity, MerchantDTO> implements MerchantService {
     @Autowired
     private MerchantRoomParamsSetService merchantRoomParamsSetService;
-
+    @Autowired
+    private UserSearchJRA userSearchJRA;
     @Autowired
     private MerchantRoomService merchantRoomService;
 
@@ -166,7 +168,9 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             s.setRoomNum(availableRooms);
             s.setDesk(availableRoomsDesk);
         }
-
+        if (params.get("userId")!=null){
+            userSearchJRA.add((String) params.get("userId"),(String) params.get("name"));
+        }
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
