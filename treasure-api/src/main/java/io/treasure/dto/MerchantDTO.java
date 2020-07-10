@@ -168,4 +168,10 @@ public class MerchantDTO implements Serializable {
 	private Integer monthySales;
 	@ApiModelProperty(value = "商户二维码")
 	private String merchantQrUrl;
+
+	@ApiModelProperty(value = "聚餐")
+	private Integer party;
+
+	@ApiModelProperty(value = "特色")
+	private Integer special;
 }

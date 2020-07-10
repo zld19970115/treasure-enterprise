@@ -63,6 +63,43 @@
         </if>
         </where>
     </select>
+
+    <select id="listMerchantPC" parameterType="Map" resultType="io.treasure.dto.MerchantOrderDTO">
+        select l.* from (
+            select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
+            left join ct_merchant_room room on masterOrder.room_id=room.id
+            left join ct_client_user cuser on masterOrder.creator=cuser.id
+            where
+            masterOrder.p_order_id = '0' and
+            masterOrder.status in (2)
+            <if test="orderId != null  and orderId.trim() != '' ">
+                and masterOrder.order_id like CONCAT('%',#{orderId},'%')
+            </if>
+            and masterOrder.merchant_id in
+            <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            union all
+            select masterOrder.*,room.name roomName,cuser.head_img userHeadImg from ct_master_order masterOrder
+            left join ct_merchant_room room on masterOrder.room_id=room.id
+            left join ct_client_user cuser on masterOrder.creator=cuser.id
+            where
+            masterOrder.order_id in (
+                select masterOrder.p_order_id from ct_master_order masterOrder
+                where
+                masterOrder.p_order_id != '0' and
+                masterOrder.status in (2)
+                <if test="orderId != null  and orderId.trim() != '' ">
+                    and masterOrder.order_id like CONCAT('%',#{orderId},'%')
+                </if>
+                and masterOrder.merchant_id in
+                <foreach item="item" index="index" collection="merchantIdStr" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            )
+        ) l GROUP BY l.id
+    </select>
+
     <select id="selectPOrderId" resultType="io.treasure.entity.MasterOrderEntity">
         select * from ct_master_order where p_order_id = #{orderId} or order_id  = #{orderId}
     </select>

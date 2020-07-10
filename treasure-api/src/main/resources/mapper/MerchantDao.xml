@@ -35,6 +35,8 @@
         <result property="characteristic" column="characteristic"></result>
         <result property="monetary" column="monetary"/>
         <result property="depost" column="depost"/>
+        <result property="party" column="party"/>
+        <result property="special" column="special"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
@@ -64,16 +66,12 @@
         select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
 
-
         FROM ct_merchant having status=1
         <if test="distanced != null and distanced != ''">
             and distance &lt;= #{distanced}
         </if>
         <if test="recommend != null and recommend != ''">
             and recommend = #{recommend}
-        </if>
-        <if test="distance == null and distance == ''">
-            and distance &lt;= 5000
         </if>
         <if test="categoryId != null and categoryId != ''">
             and categoryId = #{categoryId}
@@ -147,5 +145,11 @@
     </select>
     <update id="updateRecommend">
         update ct_merchant set recommend = #{recommend} where id = #{id}
+    </update>
+    <update id="updateParty">
+        update ct_merchant set party = #{recommend} where id = #{id}
+    </update>
+    <update id="updateSpecial">
+        update ct_merchant set special = #{recommend} where id = #{id}
     </update>
 </mapper>
