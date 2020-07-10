@@ -157,6 +157,38 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public PageData<MerchantDTO> getMerchantByparty(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<MerchantDTO> list = baseDao.getMerchantByparty(params);
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
+    public PageData<MerchantDTO> getMerchantByspecial(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
+        //查询
+        List<MerchantDTO> list = baseDao.getMerchantByspecial(params);
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
     public PageData<MerchantDTO> getLikeMerchant(Map<String, Object> params) {
         //分页
         IPage<MerchantEntity> page = getPage(params, Constant.CREATE_DATE, false);
@@ -168,7 +200,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             s.setRoomNum(availableRooms);
             s.setDesk(availableRoomsDesk);
         }
-        if (params.get("userId")!=null){
+        if (params.get("userId")!=null&&params.get("name")!=null){
             userSearchJRA.add((String) params.get("userId"),(String) params.get("name"));
         }
         return getPageData(list, page.getTotal(), MerchantDTO.class);

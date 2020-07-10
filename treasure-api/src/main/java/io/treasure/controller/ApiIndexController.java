@@ -195,7 +195,31 @@ ApiIndexController {
             return new  Result().ok("0");
         }
     }
-
-
+    @GetMapping("insertSysSearchKeysVo")
+    @ApiOperation("添加系统设置记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "value", value = "value", paramType = "query", required = true, dataType="String")
+    })
+    public Result insertSysSearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
+        if (params.get("value")!=null){
+           userSearchJRA.add("SysProd",(String) params.get("value"));
+            return new  Result().ok("添加成功");
+        }else {
+            return new  Result().ok("0");
+        }
+    }
+    @GetMapping("delSysSearchKeysVo")
+    @ApiOperation("删除系统设置记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "value", value = "value", paramType = "query", required = true, dataType="String")
+    })
+    public Result delSysSearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
+        if (params.get("value")!=null){
+            userSearchJRA.delItem("SysProd",(String) params.get("value"));
+            return new  Result().ok("删除成功");
+        }else {
+            return new  Result().ok("0");
+        }
+    }
 
 }
