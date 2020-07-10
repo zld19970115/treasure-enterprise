@@ -170,13 +170,13 @@ ApiIndexController {
     })
     public Result<SearchKeysVo> SearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
         SearchKeysVo searchKeysVo = new SearchKeysVo();
-        if (params.get("userId")!=null){
-            Set<String> userId = userSearchJRA.getSetMembers((String) params.get("userId"));
-            if(userId!=null){
-                List<String> result = new ArrayList<>(userId);
-                searchKeysVo.setUserProdValue(result);
-            }
-        }
+//        if (params.get("userId")!=null){
+//            Set<String> userId = userSearchJRA.getSetMembers((String) params.get("userId"));
+////            if(userId!=null){
+////                List<String> result = new ArrayList<>(userId);
+////                searchKeysVo.setUserProdValue(result);
+////            }
+//        }
         Set<String> SysProd = userSearchJRA.getSetMembers("SysProd");
         List<String> result = new ArrayList<>(SysProd);
         searchKeysVo.setSysProdValues(result);
