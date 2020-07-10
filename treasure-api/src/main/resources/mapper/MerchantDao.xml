@@ -176,6 +176,14 @@
     <select id="selectOfficialMobile" resultType="java.lang.String">
         select param_value from sys_params where id=15604548127
     </select>
+    <select id="selectName" resultType="io.treasure.dto.MakeListDTO">
+        select name as name
+        FROM ct_merchant where  status=1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+
+    </select>
     <update id="updateRecommend">
         update ct_merchant set recommend = #{recommend} where id = #{id}
     </update>

@@ -3,6 +3,7 @@ package io.treasure.service;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 
@@ -40,7 +41,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     MerchantEntity getMerchantById(Long id);
     PageData<MerchantDTO>   martLike(Map<String, Object> params);
     Integer AuditMerchantStatus(Long id);
-
+    List<MakeListDTO>  selectName(Map<String, Object> params);
     Integer updateRecommend(Long id, Integer recommend);
     Integer updateParty(Long id, Integer recommend);
     Integer updateSpecial(Long id, Integer recommend);

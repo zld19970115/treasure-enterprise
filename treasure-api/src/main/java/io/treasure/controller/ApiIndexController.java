@@ -11,6 +11,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodCategoryDTO;
+import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.jra.impl.UserSearchJRA;
@@ -226,19 +227,15 @@ ApiIndexController {
             return new  Result().ok("0");
         }
     }
-    @GetMapping("getSysAndUserSearchKeysVo")
-    @ApiOperation("保存历史记录")
+    @GetMapping("getearchByName")
+    @ApiOperation("模糊查询饭店名")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "userId", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "name", value = "查询", paramType = "query", dataType="String")
     })
     public Result getSysAndUserSearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
-        if (params.get("userId")!=null&&params.get("name")!=null){
-            userSearchJRA.add((String) params.get("userId"),(String) params.get("name"));
-            return new Result().ok((String) params.get("name"));
-        }else {
-            return new Result().ok((String) params.get("name"));
-        }
-
+        List<MakeListDTO> makeListDTOS = merchantService.selectName(params);
+        return new Result().ok(makeListDTOS);
 }
+
+
 }

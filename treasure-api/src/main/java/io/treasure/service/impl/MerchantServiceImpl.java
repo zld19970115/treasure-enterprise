@@ -7,6 +7,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
@@ -235,6 +236,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     public Integer AuditMerchantStatus(Long id) {
         baseDao.updateAuditById(id,2);
         return 1;
+    }
+
+    @Override
+    public List<MakeListDTO> selectName(Map<String, Object> params) {
+        return baseDao.selectName(params);
     }
 
     @Override
