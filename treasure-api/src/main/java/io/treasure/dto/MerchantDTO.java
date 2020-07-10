@@ -128,7 +128,7 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value ="预约天数")
 	private Integer days;
 	@ApiModelProperty(value ="是否推荐：0否，1是；")
-	private String recommend;
+	private Integer recommend;
 	@ApiModelProperty(value ="特色菜；多个菜名用英文逗号分隔")
 	private String characteristic;
 	@ApiModelProperty(value ="距离（米）")

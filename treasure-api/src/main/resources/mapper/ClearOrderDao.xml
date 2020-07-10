@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.ClearOrderDao">
+
+
+    <!--    从单清台   注意必须行清此单 然后再执行主单清台，否则调用的主单标志位将不存在了  -->
+    <update id="clearSlaveOrders"  parameterType="java.lang.String">
+    update ct_slave_order
+    set ct_slave_order.status = 10
+    where ct_slave_order.order_id in(
+	    select ct_master_order.order_id from ct_master_order
+        where status in(2,7)
+        and DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T') BETWEEN
+        DATE_FORMAT(#{startTime},'%Y %m %d %T')
+        AND DATE_FORMAT(#{stopTime},'%Y %m %d %T')
+    )
+    </update>
+
+    <!--    清台  房间  !isnull(room_id)-->
+    <update id="clearRooms"  parameterType="java.lang.String">
+            update ct_merchant_room_params_set
+            set state = 0
+            where room_id in(
+                select ct_master_order.room_id from ct_master_order
+                where ct_master_order.status in(1,2,3,5,7,8,9,11)
+                and !isnull(ct_master_order.room_id)
+                and DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T') BETWEEN
+                DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                AND DATE_FORMAT(#{stopTime},'%Y %m %d %T')
+            )
+    </update>
+
+    <!--    主单清台    -->
+    <select id="distributionList" parameterType="java.lang.String" resultType="io.treasure.vo.DistributionVo">
+
+        select  contact_number,pay_money from ct_master_order
+        where status in(2,7)
+        and DATE_FORMAT(eat_time,'%Y %m %d %T') BETWEEN
+        DATE_FORMAT(#{startTime},'%Y %m %d %T')
+        AND DATE_FORMAT(#{stopTime},'%Y %m %d %T')
+
+    </select>
+
+    <!--    主单清台    -->
+    <update id="clearMasterOrders" parameterType="java.lang.String">
+
+        update ct_master_order
+        set check_mode=2,check_status=1,status=10,update_date = NOW()
+        where status in(2,7)
+        and DATE_FORMAT(eat_time,'%Y %m %d %T') BETWEEN
+        DATE_FORMAT(#{startTime},'%Y %m %d %T')
+        AND DATE_FORMAT(#{stopTime},'%Y %m %d %T')
+
+    </update>
+
+
+</mapper>

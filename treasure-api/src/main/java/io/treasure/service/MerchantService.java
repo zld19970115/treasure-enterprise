@@ -32,6 +32,8 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     Result getOutside(String deliveryArea , int distribution, long martId);
     PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);
     PageData<MerchantDTO> getMerchantByCategoryId(Map<String, Object> params);
+    PageData<MerchantDTO> getMerchantByparty(Map<String, Object> params);
+    PageData<MerchantDTO> getMerchantByspecial(Map<String, Object> params);
     PageData<MerchantDTO> getLikeMerchant(Map<String, Object> params);
     List<MerchantDTO> getListByOn();
     PageData<MerchantDTO>  merchantSortingPage (Map<String, Object> params);

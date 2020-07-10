@@ -136,7 +136,7 @@ public class MerchantEntity implements Serializable {
 	/**
 	 * 是否推荐：0否，1是；
 	 */
-	private String recommend;
+	private Integer recommend;
 	/**
 	 * 特色菜；多个菜名用英文逗号分隔
 	 */
