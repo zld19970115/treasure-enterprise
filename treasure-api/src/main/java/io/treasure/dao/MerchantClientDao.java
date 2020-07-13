@@ -24,5 +24,5 @@ public interface MerchantClientDao extends BaseDao<MerchantClientEntity> {
 
     List<MerchantClientDTO> getMerchantUserClientByClientId(String clientId);
 
-    List<MerchantClientDTO> updateMenuMerchantUserClientByClientId(Long merchantId,String clientId);
+    void updateMenuMerchantUserClientByClientId(Long merchantId,String clientId);
 }
