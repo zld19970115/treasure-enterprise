@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class MerchantSet {
 
-    public static  String fieldName = "mch_set";
+    public static  String fieldName = "mch_set:";
     public static String compareFiledName = "mch_set_compare";
 
 }

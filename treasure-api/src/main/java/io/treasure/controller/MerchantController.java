@@ -492,20 +492,58 @@ public class MerchantController {
 
 
     @GetMapping("getMerchantByCategoryId")
-    @ApiOperation("查询某分类下店铺")
+    @ApiOperation("查询某分类下店铺(推荐)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
             @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
-            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "party", value = "聚餐", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "special", value = "特色", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query", dataType="String"),
             @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
-
     })
     public Result<PageData<MerchantDTO>> queryClassifyMerchant(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.getMerchantByCategoryId(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+    @GetMapping("getMerchantByparty")
+    @ApiOperation("查询某分类下店铺(聚餐)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
+
+    })
+    public Result<PageData<MerchantDTO>> getMerchantByparty(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.getMerchantByparty(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+    @GetMapping("getMerchantByspecial")
+    @ApiOperation("查询某分类下店铺(特色)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
+
+    })
+    public Result<PageData<MerchantDTO>> getMerchantByspecial(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.getMerchantByspecial(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
     @GetMapping("merchantSorting")
@@ -643,9 +681,21 @@ public class MerchantController {
     }
 
     @GetMapping("updateRecommend")
-    @ApiOperation("开启外卖功能")
+    @ApiOperation("热推")
     public Result updateRecommend(@RequestParam Long id ,@RequestParam Integer recommend){
         return new Result().ok(merchantService.updateRecommend(id, recommend));
+    }
+
+    @GetMapping("updateParty")
+    @ApiOperation("聚餐")
+    public Result updateParty(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateParty(id, recommend));
+    }
+
+    @GetMapping("updateSpecial")
+    @ApiOperation("特色")
+    public Result updateSpecial(@RequestParam Long id ,@RequestParam Integer recommend){
+        return new Result().ok(merchantService.updateSpecial(id, recommend));
     }
 
     @CrossOrigin

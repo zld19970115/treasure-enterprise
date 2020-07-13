@@ -172,12 +172,7 @@ public class ApiAlipayController {
                         return "FAIL";
                     }
                 }
-
-
-
             }
-
-
             return "success";
         }
 

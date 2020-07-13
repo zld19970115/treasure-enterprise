@@ -35,6 +35,8 @@
         <result property="characteristic" column="characteristic"></result>
         <result property="monetary" column="monetary"/>
         <result property="depost" column="depost"/>
+        <result property="party" column="party"/>
+        <result property="special" column="special"/>
     </resultMap>
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
@@ -65,6 +67,15 @@
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
 
         FROM ct_merchant having status=1
+        <if test="party != null and party!='' ">
+            and party  = 1
+        </if>
+        <if test="special != null and special!='' ">
+            and special  = 1
+        </if>
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
         <if test="distanced != null and distanced != ''">
             and distance &lt;= #{distanced}
         </if>
@@ -98,7 +109,16 @@
     <select id="getMerchantByCategoryId" resultType="io.treasure.dto.MerchantDTO">
         select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
-        FROM ct_merchant having status=1 and recommend= '1'
+        FROM ct_merchant having status=1 and recommend= 1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+        <if test="party != null and party!='' ">
+            and party  = 1
+        </if>
+        <if test="special != null and special!='' ">
+            and special  = 1
+        </if>
         <if test="distanced != null and distanced != ''">
             and distance &lt;= #{distanced}
         </if>
@@ -106,7 +126,34 @@
             and categoryId  = #{categoryId}
         </if>
     </select>
-
+    <select id="getMerchantByparty" resultType="io.treasure.dto.MerchantDTO">
+        select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        FROM ct_merchant having status=1 and party= 1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+        <if test="distanced != null and distanced != ''">
+            and distance &lt;= #{distanced}
+        </if>
+        <if test="categoryId != null and categoryId!='' ">
+            and categoryId  = #{categoryId}
+        </if>
+    </select>
+    <select id="getMerchantByspecial" resultType="io.treasure.dto.MerchantDTO">
+        select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        FROM ct_merchant having status=1 and special= 1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+        <if test="distanced != null and distanced != ''">
+            and distance &lt;= #{distanced}
+        </if>
+        <if test="categoryId != null and categoryId!='' ">
+            and categoryId  = #{categoryId}
+        </if>
+    </select>
     <select id="getLikeMerchant" resultType="io.treasure.dto.MerchantDTO">
         select *,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
@@ -141,7 +188,21 @@
     <select id="selectOfficialMobile" resultType="java.lang.String">
         select param_value from sys_params where id=15604548127
     </select>
+    <select id="selectName" resultType="io.treasure.dto.MakeListDTO">
+        select name as name
+        FROM ct_merchant where  status=1
+        <if test="name != null and name!='' ">
+            and name  like  CONCAT('%',#{name},'%')
+        </if>
+
+    </select>
     <update id="updateRecommend">
         update ct_merchant set recommend = #{recommend} where id = #{id}
+    </update>
+    <update id="updateParty">
+        update ct_merchant set party = #{recommend} where id = #{id}
+    </update>
+    <update id="updateSpecial">
+        update ct_merchant set special = #{recommend} where id = #{id}
     </update>
 </mapper>
