@@ -113,7 +113,7 @@ public class BusinessManagerController {
             @ApiImplicitParam(name = "mchId", value = "商户id", paramType = "query", required = true, dataType = "long")
     })
     public Result binding(@ApiIgnore @RequestParam int bmId , long  mchId){
-      //  businessManagerService.binding(bmId,mchId);
+        businessManagerService.binding(bmId,mchId);
         return new Result().ok("绑定成功！");
     }
 }
