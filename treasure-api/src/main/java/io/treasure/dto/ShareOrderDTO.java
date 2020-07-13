@@ -16,6 +16,8 @@ public class ShareOrderDTO {
     private Date dinnerTime;
     @ApiModelProperty(value = "就餐人姓名")
     private String name;
+    @ApiModelProperty(value = "就餐人头像")
+    private String head_photo;
     @ApiModelProperty(value = "就餐人手机号")
     private String mobile;
     @ApiModelProperty(value = "包房类型")
