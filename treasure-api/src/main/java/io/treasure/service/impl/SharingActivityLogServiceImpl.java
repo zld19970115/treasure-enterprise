@@ -1,14 +1,17 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.treasure.dao.SharingActivityHelpedLogDao;
 import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.SharingActivityEntity;
+import io.treasure.entity.SharingActivityHelpedEntity;
 import io.treasure.entity.SharingActivityLogEntity;
 import io.treasure.entity.SharingInitiatorEntity;
 import io.treasure.service.SharingActivityLogService;
 import io.treasure.service.SharingActivityService;
 import io.treasure.service.SharingInitiatorService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +27,8 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
     private SharingActivityService sharingActivityService;
     @Autowired
     private SharingInitiatorService sharingInitiatorService;
+    @Autowired(required = false)
+    private SharingActivityHelpedLogDao sharingActivityHelpedLogDao;
 
     /**
      * 取得本活动参加助力的详情，指定用户
@@ -68,6 +73,14 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         if(helpCountxx != null)
             res = helpCountxx;
         return res;
+    }
+
+    @Override
+    public int getHelpedCountForCurrentSharing(long intitiatorId,int activityId,int proposeSequeueNo,String mobile){
+        Integer helpCountCurrentSharing = sharingActivityLogDao.getHelpCountCurrentSharing(intitiatorId, activityId, proposeSequeueNo, mobile);
+        if(helpCountCurrentSharing == null)
+            return 0;
+        return helpCountCurrentSharing;
     }
 
     @Override
@@ -129,16 +142,34 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
     }
 
     @Override
-    public SharingActivityLogEntity getOne(Integer activityId,Integer proposeSequeueNo,String helperMobile){
+    public SharingActivityLogEntity getOne(Long initiatorId,Integer activityId,Integer proposeSequeueNo,String helperMobile){
 
         QueryWrapper<SharingActivityLogEntity> sale = new QueryWrapper<>();
 
         if (activityId != null)             sale.eq("activity_id",activityId);
         if(proposeSequeueNo != null)        sale.eq("propose_sequeue_no",proposeSequeueNo);
         if(helperMobile != null)            sale.eq("helper_mobile",helperMobile);
+        if(initiatorId != null)             sale.eq("initiator_id",initiatorId);
 
         return sharingActivityLogDao.selectOne(sale);
     }
 
+    @Override
+    public List<SharingActivityLogEntity> getHelpedList(long intitiatorId, Integer activityId,Integer proposeSequeueNo){
 
+        QueryWrapper<SharingActivityLogEntity> sieqw = new QueryWrapper<>();
+        sieqw.eq("initiator_id",intitiatorId);
+        if(activityId != null)
+            sieqw.eq("activity_id",activityId);
+        if(proposeSequeueNo != null)
+            sieqw.eq("propose_sequeue_no",proposeSequeueNo);
+
+        return sharingActivityLogDao.selectList(sieqw);
+    }
+
+    @Override
+    public List<SharingActivityHelpedEntity> getHelpedListCombo(Long intitiatorId, Integer activityId){
+
+        return sharingActivityHelpedLogDao.selectHelpedListCombo(intitiatorId, activityId);
+    }
 }
