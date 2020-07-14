@@ -28,4 +28,13 @@
         where helper_mobile = #{mobile}
 
     </select>
+
+    <select id = "getHelpCountCurrentSharing" resultType="integer">
+        select count(0) from treasure.sharing_activity_log
+        where initiator_id = #{intitiatorId}
+        and activity_id =#{activityId}
+        and propose_sequeue_no = #{proposeSequeueNo}
+        and helper_mobile = #{mobile}
+    </select>
+
 </mapper>
