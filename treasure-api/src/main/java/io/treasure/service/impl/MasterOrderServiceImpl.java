@@ -2455,6 +2455,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         shareOrderDTO.setDinnerTime(masterOrderEntity.getEatTime());
         shareOrderDTO.setMerchantEntity(merchantEntity);
         shareOrderDTO.setMobile(clientUserEntity.getMobile());
+        if (clientUserEntity.getHeadImg()!=null){
+            shareOrderDTO.setHead_photo(clientUserEntity.getHeadImg());
+        }else {
+            shareOrderDTO.setHead_photo("0");
+        }
         shareOrderDTO.setOrderId(orderId);
         if (masterOrderEntity.getContacts() != null) {
             shareOrderDTO.setName(masterOrderEntity.getContacts());

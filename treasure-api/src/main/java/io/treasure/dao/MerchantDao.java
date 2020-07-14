@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,6 +32,8 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     List<MerchantDTO> getListByOn();
     MerchantEntity getMerchantById(Long id);
     List<MerchantDTO> getMerchantByCategoryId(Map<String, Object> params);
+    List<MerchantDTO> getMerchantByparty(Map<String, Object> params);
+    List<MerchantDTO> getMerchantByspecial(Map<String, Object> params);
     List<MerchantDTO> getLikeMerchant(Map<String, Object> params);
     List<MerchantDTO> merchantSortingPage(Map<String, Object> params);
     List<MerchantDTO>   martLike(Map<String, Object> params);
@@ -38,7 +41,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     //根据商户id获取商家基本信息
     MerchantDTO selectBaseInfoByMartId(long marId);
     void updateAuditById(@Param("id") long id, @Param("auditStatus") int auditStatus);
-
+    List<MakeListDTO> selectName(Map<String, Object> params);
     Integer updateRecommend(@Param("id") Long id, @Param("recommend") Integer recommend);
     Integer updateParty(@Param("id") Long id, @Param("recommend") Integer recommend);
     Integer updateSpecial(@Param("id") Long id, @Param("recommend") Integer recommend);

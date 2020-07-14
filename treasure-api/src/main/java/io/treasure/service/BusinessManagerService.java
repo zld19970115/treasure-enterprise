@@ -13,4 +13,5 @@ import java.util.Map;
 public interface BusinessManagerService extends CrudService<BusinessManagerEntity, BusinessManagerDTO> {
     List<BusinessManagerDTO> getByNameAndPassWord(String realName,String passWord);
     PageData<BusinessManagerDTO>  listPage(Map<String, Object> params);
+   void binding(int bmId , long  mchId);
 }

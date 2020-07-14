@@ -926,7 +926,7 @@
             IFNULL(SUM(case when STATUS = 4 then 1 else 0 end),0) as completeOrder,
             IFNULL(
                 (
-                    select count(0)
+                    select count(DISTINCT(l.id))
                     from (
                         select masterOrder.id from ct_master_order masterOrder
                         where
@@ -944,7 +944,7 @@
                                     and masterOrder.status = 2
                                     and masterOrder.merchant_id = #{merchantId}
                             )
-                ) l GROUP BY l.id
+                ) l
             )
             ,0) as conductOrder,
             IFNULL(SUM(case when STATUS = 6 then 1 else 0 end),0) as applyRefundOrder,

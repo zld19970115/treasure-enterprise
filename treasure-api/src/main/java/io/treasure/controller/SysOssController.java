@@ -53,7 +53,7 @@ public class SysOssController {
     private final static String KEY = Constant.CLOUD_STORAGE_CONFIG_KEY;
 
     @CrossOrigin
-    @Login
+    //@Login
     @PostMapping("upload")
     @ApiOperation(value = "上传文件")
     public Result<Map<String, Object>> upload(@RequestParam("file") MultipartFile file) throws Exception {
@@ -86,7 +86,7 @@ public class SysOssController {
     }
 
     @CrossOrigin
-    @Login
+    //@Login
     @PostMapping("upload2")
     @ApiOperation(value = "上传文件富文本专用")
     public Result<Map<String, Object>> upload2(HttpServletRequest request) throws IOException {

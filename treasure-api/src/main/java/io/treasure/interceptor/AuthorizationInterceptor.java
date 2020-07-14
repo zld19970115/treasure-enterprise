@@ -37,12 +37,14 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Login annotation;
-
+        System.out.println("验证 token");
 //        request.getContextPath();
 //        request.getMethod()
         if(handler instanceof HandlerMethod) {
+            System.out.println("验证 token");
             annotation = ((HandlerMethod) handler).getMethodAnnotation(Login.class);
         }else{
+            System.out.println("验证2 token");
             return true;
         }
 
