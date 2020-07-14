@@ -83,7 +83,7 @@
             and recommend = #{recommend}
         </if>
         <if test="categoryId != null and categoryId != ''">
-            and categoryId = #{categoryId}
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
     </select>
     <select id="selectByUserlongitudeandlatitude" resultType="io.treasure.dto.MerchantDTO">
@@ -96,7 +96,7 @@
             and distance &lt;= ct_merchant.delivery_area
         </if>
         <if test="categoryId != null and categoryId != ''">
-            and categoryId = #{categoryId}
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
 
     </select>
@@ -123,7 +123,7 @@
             and distance &lt;= #{distanced}
         </if>
         <if test="categoryId != null and categoryId!='' ">
-            and categoryId  = #{categoryId}
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
     </select>
     <select id="getMerchantByparty" resultType="io.treasure.dto.MerchantDTO">
@@ -137,7 +137,7 @@
             and distance &lt;= #{distanced}
         </if>
         <if test="categoryId != null and categoryId!='' ">
-            and categoryId  = #{categoryId}
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
     </select>
     <select id="getMerchantByspecial" resultType="io.treasure.dto.MerchantDTO">
@@ -151,7 +151,7 @@
             and distance &lt;= #{distanced}
         </if>
         <if test="categoryId != null and categoryId!='' ">
-            and categoryId  = #{categoryId}
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
     </select>
     <select id="getLikeMerchant" resultType="io.treasure.dto.MerchantDTO">

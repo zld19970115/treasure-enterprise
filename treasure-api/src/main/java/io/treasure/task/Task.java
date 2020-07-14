@@ -15,7 +15,7 @@ public class Task {
     //处理次数记录
     private int taskInProcess = 0;
 
-    @Scheduled(fixedDelay = 5000)
+    //@Scheduled(fixedDelay = 5000)
     public void TaskManager(){
         if(isInProcess()) return;
         lockedTask();//

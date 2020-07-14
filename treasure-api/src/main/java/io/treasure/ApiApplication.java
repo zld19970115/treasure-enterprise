@@ -70,4 +70,5 @@ public class ApiApplication extends SpringBootServletInitializer {
 		s.start();
 		System.out.println("websocket启动成功");
 	}
+
 }
