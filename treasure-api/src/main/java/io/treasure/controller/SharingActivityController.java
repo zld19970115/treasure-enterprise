@@ -258,11 +258,8 @@ public class SharingActivityController {
 
         result.setData(map);
 
-
-
         return result;
     }
-
 
     /**
      * 协助助力的用户信息(参数方式)
@@ -285,6 +282,14 @@ public class SharingActivityController {
             System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
             return initResult("错误：参数有误！！",mobile,true,initiatorId,saId);
         }
+        //0,检查是否是发起者打开了本助力活动
+        ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
+        if(clientUserEntity != null)
+            if(clientUserEntity.getMobile().equals(mobile)){
+                //自己不能给自己助力
+                return initResult("邀请更多好友为我助力！！",mobile,false,initiatorId,saId);
+            }
+
         //1,系统参数
         SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();
         if(sharingDistributionParams == null){
@@ -347,8 +352,6 @@ public class SharingActivityController {
             case 3://活动结束且非都可注册成功模式
                 return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId);
         }
-
-
 
         //5,更新奖励======================
         Integer completeCount = sharingActivityLogService.getCount(initiatorId, saId,inProcess.getProposeId());
