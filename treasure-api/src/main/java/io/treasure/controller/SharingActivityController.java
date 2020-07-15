@@ -9,6 +9,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.SharingActivityLogDao;
+import io.treasure.dto.SharingActivityDTO;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.*;
 import io.treasure.oss.cloud.OSSFactory;
@@ -587,5 +588,35 @@ public class SharingActivityController {
         result.setMsg("成功");
         return result;
     }
+    @GetMapping("getMerchantActivity")
+    @ApiOperation("商家生成助力")
+    public Result getMerchantActivity(@RequestBody SharingActivityDTO sharingActivityDTO){
+        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(sharingActivityDTO.getSaId(), new Date());
+        if (oneByMerchantIdAndStatus.size()>0){
+            return new Result().error("您有助力活动未结束");
+        }
 
+        SharingActivityEntity sharingActivityEntity = new SharingActivityEntity();
+
+        sharingActivityEntity.setActivityImg(sharingActivityDTO.getActivityImg());
+        sharingActivityEntity.setSubject(sharingActivityDTO.getSubject());
+        sharingActivityEntity.setHelpersNum(sharingActivityDTO.getHelpersNum());
+        sharingActivityEntity.setMemberHelper(sharingActivityDTO.getMemberHelper());
+        sharingActivityEntity.setSuccessMsg(sharingActivityDTO.getSuccessMsg());
+        sharingActivityEntity.setProposeTimes(sharingActivityDTO.getProposeTimes());
+        sharingActivityEntity.setRepeatableTimes(sharingActivityDTO.getRepeatableTimes());
+        sharingActivityEntity.setRewardType(3);
+        sharingActivityEntity.setRewardAmount(sharingActivityDTO.getRewardAmount());
+        sharingActivityEntity.setRewardId(sharingActivityDTO.getRewardId());
+        sharingActivityEntity.setRewardMchId(sharingActivityDTO.getRewardMchId());
+        sharingActivityEntity.setInStoreOnly(sharingActivityDTO.getInStoreOnly());
+        sharingActivityEntity.setRewardUnit(sharingActivityDTO.getRewardUnit());
+        sharingActivityEntity.setHelperSuccess("助力成功");
+        sharingActivityEntity.setWinningWords("成功获得奖励");
+        sharingActivityEntity.setOpenDate(sharingActivityDTO.getOpenDate());
+        sharingActivityEntity.setCloseDate(sharingActivityDTO.getCloseDate());
+        sharingActivityService.insertOne(sharingActivityEntity);
+        return new Result().ok("生成成功！");
+    }
 }
+
