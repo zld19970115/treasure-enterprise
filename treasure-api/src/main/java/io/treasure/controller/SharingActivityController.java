@@ -96,13 +96,23 @@ public class SharingActivityController {
 
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
+
+        //增加查看列表
+        List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListCombo(id, saId);
+        if(helpedListCombo != null)
+            map.put("helpers",helpedListCombo);
+
+        ClientUserEntity clientUser = clientUserService.getClientUser(id);
+        if(clientUser != null)
+            map.put("initiator_head_img",clientUser.getHeadImg());
+
         boolean b = sharingInitiatorService.insertOne(siEntity);
         if(b){
             map.put("sharing",siEntity);
             String finishStamp = TimeUtil.dateToStamp(saItem.getCloseDate());
             map.put("finishStamp",finishStamp);
-            result.setData(map);
             result.setMsg("成功发起："+saItem.getSubject()+"活动");
+
             return result.ok(map);
         }else{
             map.put("sharing",null);
@@ -110,6 +120,9 @@ public class SharingActivityController {
             result.setData(map);
             return result.error("活动发起失败，请稍后重试！");
         }
+
+
+
 
 
     }
