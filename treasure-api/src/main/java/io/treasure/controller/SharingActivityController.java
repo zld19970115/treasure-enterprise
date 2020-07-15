@@ -103,8 +103,10 @@ public class SharingActivityController {
             map.put("helpers",helpedListCombo);
 
         ClientUserEntity clientUser = clientUserService.getClientUser(id);
+        String headImage = null;
         if(clientUser != null)
-            map.put("initiator_head_img",clientUser.getHeadImg());
+            headImage = clientUser.getHeadImg();
+            map.put("initiator_head_img",headImage);
 
         boolean b = sharingInitiatorService.insertOne(siEntity);
         if(b){
@@ -117,6 +119,9 @@ public class SharingActivityController {
         }else{
             map.put("sharing",null);
             map.put("finishStamp",null);
+            map.put("initiator_head_img",headImage);
+            map.put("helpers",null);
+
             result.setData(map);
             return result.error("活动发起失败，请稍后重试！");
         }
