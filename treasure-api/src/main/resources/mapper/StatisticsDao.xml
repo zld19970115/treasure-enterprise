@@ -580,6 +580,9 @@
             and ct.`status` != 9
             and room.`status` != 9
             and date_format(ct.use_date, '%Y-%m-%d') = #{time}
+            <if test="type != null">
+                and ct.type = #{type}
+            </if>
         GROUP BY
             ct.room_id
         ORDER BY
