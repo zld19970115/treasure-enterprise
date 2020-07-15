@@ -6,6 +6,8 @@ import io.treasure.entity.SharingActivityLogEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
+
 
 @Mapper
 public interface SharingActivityLogDao extends BaseDao<SharingActivityLogEntity> {
@@ -19,5 +21,10 @@ public interface SharingActivityLogDao extends BaseDao<SharingActivityLogEntity>
                          @Param("proposeSequeueNo")Integer proposeSequeueNo);
     Integer getHelpCountxx(String mobile);
 
+    Integer getHelpCountCurrentSharing(
+                         @Param("intitiatorId")long intitiatorId,
+                         @Param("activityId")int activityId,
+                         @Param("proposeSequeueNo")int proposeSequeueNo,
+                         @Param("mobile")String mobile);
 
 }

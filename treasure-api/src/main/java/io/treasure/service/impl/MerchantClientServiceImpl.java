@@ -40,6 +40,8 @@ public class MerchantClientServiceImpl extends CrudServiceImpl<MerchantClientDao
         List<MerchantClientDTO> list = baseDao.getMerchantUserClientByClientId(clientId);
         if (list.size()==0){
             baseDao.insertMerchantUserClient(merchantUserEntity.getId(),clientId);
+        }else {
+            baseDao.updateMenuMerchantUserClientByClientId(merchantUserEntity.getId(),clientId);
         }
     }
 

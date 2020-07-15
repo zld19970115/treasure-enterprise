@@ -16,4 +16,12 @@
     <select id="getMerchantUserClientByClientId" resultType="io.treasure.dto.MerchantClientDTO">
         select * from ct_merchant_client where client_id = #{clientId}
     </select>
+
+    <update id="updateMenuMerchantUserClientByClientId">
+        UPDATE
+            ct_merchant_client
+        SET
+            merchant_id = #{merchantId}
+        WHERE client_id = #{clientId}
+    </update>
 </mapper>

@@ -56,4 +56,10 @@ public class TimeUtil {
         return result;
     }
 
+    public static String dateToStamp(Date date) throws ParseException{
+        //Date date = simpleDateFormat.parse(s);
+        long ts = date.getTime();
+        return String.valueOf(ts);
+    }
+
 }

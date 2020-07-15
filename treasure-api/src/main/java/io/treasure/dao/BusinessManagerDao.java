@@ -13,4 +13,5 @@ import java.util.Map;
 public interface BusinessManagerDao  extends BaseDao<BusinessManagerEntity> {
     List<BusinessManagerDTO> getByNameAndPassWord(String realName, String passWord);
     List<BusinessManagerDTO> listPage(Map<String, Object> params);
+   void binding(int bmId, long mchId);
 }

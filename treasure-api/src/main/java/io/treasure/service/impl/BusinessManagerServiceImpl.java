@@ -40,4 +40,11 @@ public class BusinessManagerServiceImpl  extends CrudServiceImpl<BusinessManager
         List<BusinessManagerDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), BusinessManagerDTO.class);
     }
+
+    @Override
+    public void binding(int bmId, long mchId) {
+
+
+        baseDao.binding(bmId,mchId);
+    }
 }

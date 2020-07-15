@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.SharingActivityHelpedLogDao">
+
+
+    <select id="selectHelpedListCombo" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+
+        select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
+        left join ct_client_user as clu
+        on sal.helper_mobile = clu.mobile
+
+        where activity_id = ${activityId}
+        and initiator_id = ${initiatorId}
+
+        and propose_sequeue_no = (
+            select propose_sequeue_no from sharing_activity_log
+            where activity_id = ${activityId}
+            and initiator_id = ${initiatorId}
+            order by propose_sequeue_no desc
+            limit 0,1
+        )
+    </select>
+
+</mapper>
