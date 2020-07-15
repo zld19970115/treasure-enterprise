@@ -55,4 +55,5 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     void addBalanceByUserid(String userId, String baobi);
 
 
+
 }

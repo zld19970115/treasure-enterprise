@@ -5,11 +5,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.*;
+import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.service.*;
 import io.treasure.service.impl.DistributionRewardServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
@@ -17,17 +19,18 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.ProposeSharingActivityVo;
 import io.treasure.vo.HelpSharingActivityVo;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/sharing_activity")
@@ -258,11 +261,8 @@ public class SharingActivityController {
 
         result.setData(map);
 
-
-
         return result;
     }
-
 
     /**
      * 协助助力的用户信息(参数方式)
@@ -285,6 +285,14 @@ public class SharingActivityController {
             System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
             return initResult("错误：参数有误！！",mobile,true,initiatorId,saId);
         }
+        //0,检查是否是发起者打开了本助力活动
+        ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
+        if(clientUserEntity != null)
+            if(clientUserEntity.getMobile().equals(mobile)){
+                //自己不能给自己助力
+                return initResult("邀请更多好友为我助力！！",mobile,false,initiatorId,saId);
+            }
+
         //1,系统参数
         SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();
         if(sharingDistributionParams == null){
@@ -347,8 +355,6 @@ public class SharingActivityController {
             case 3://活动结束且非都可注册成功模式
                 return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId);
         }
-
-
 
         //5,更新奖励======================
         Integer completeCount = sharingActivityLogService.getCount(initiatorId, saId,inProcess.getProposeId());

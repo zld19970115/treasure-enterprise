@@ -2,15 +2,25 @@ package io.treasure.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.treasure.common.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * client_level_rule
  * @author 
  */
+
 @Data
-public class ClientLevelRuleEntity implements Serializable {
-    private Integer id;
+@EqualsAndHashCode(callSuper=false)
+@TableName("client_level_rule")
+public class ClientLevelRuleEntity extends BaseEntity {
+
+    @TableId
+    private Integer clr_id;
 
     /**
      * 满分
@@ -88,6 +98,4 @@ public class ClientLevelRuleEntity implements Serializable {
     private Integer consumtionRatio;
 
     private Date update;
-
-    private static final long serialVersionUID = 1L;
 }
