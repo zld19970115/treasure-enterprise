@@ -248,7 +248,7 @@ public class SharingActivityController {
             map.put("client_id",null);
             map.put("token",null);
         }
-        System.out.println("error:"+errorMessage);
+        System.out.println("sa_info:"+errorMessage);
         map.put("msg",errorMessage);
 
 
