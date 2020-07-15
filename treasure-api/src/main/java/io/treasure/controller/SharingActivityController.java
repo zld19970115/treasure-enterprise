@@ -5,11 +5,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.*;
+import io.treasure.oss.cloud.OSSFactory;
 import io.treasure.service.*;
 import io.treasure.service.impl.DistributionRewardServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
@@ -17,17 +19,18 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.ProposeSharingActivityVo;
 import io.treasure.vo.HelpSharingActivityVo;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/sharing_activity")
