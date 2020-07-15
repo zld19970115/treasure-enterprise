@@ -26,6 +26,8 @@ public class SharingInitiatorDTO {
   private Integer rewardValue;// int(10) DEFAULT NULL COMMENT '奖励值',
   private Integer status;// int(2) DEFAULT '0' COMMENT '0未成功，1成功',
 
+  private String qrCode;//助力二维码
+
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date startTime;// datetime DEFAULT NULL COMMENT '活动开始时间',

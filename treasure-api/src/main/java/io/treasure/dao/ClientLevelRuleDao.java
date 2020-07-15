@@ -1,9 +1,13 @@
 package io.treasure.dao;
 
+import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.ClientLevelRuleEntity;
+import org.apache.ibatis.annotations.Mapper;
 
-public interface ClientLevelRuleDao {
-    int insert(ClientLevelRuleEntity record);
 
-    int insertSelective(ClientLevelRuleEntity record);
+@Mapper
+public interface ClientLevelRuleDao extends BaseDao<ClientLevelRuleEntity> {
+
+    ClientLevelRuleEntity selectLevelRule();
+
 }
