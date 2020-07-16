@@ -5,6 +5,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
@@ -18,6 +20,7 @@ import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.ProposeSharingActivityVo;
 import io.treasure.vo.HelpSharingActivityVo;
+import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.DataInputStream;
@@ -97,10 +101,18 @@ public class SharingActivityController {
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
 
+
+        List<SharingInitiatorEntity> unreadedLogList = sharingActivityLogService.getUnreadedLogList(id, saId);
+
         //增加查看列表
         List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListCombo(id, saId);
-        if(helpedListCombo != null)
+        if(helpedListCombo.size() == 0){
             map.put("helpers",helpedListCombo);
+        }else{
+            List<SharingActivityHelpedEntity> helpedListComboUnread = getHelpedListComboUnread(id, saId);
+            map.put("helpers",helpedListComboUnread);
+        }
+
 
         ClientUserEntity clientUser = clientUserService.getClientUser(id);
         String headImage = null;
@@ -125,13 +137,88 @@ public class SharingActivityController {
             result.setData(map);
             return result.error("活动发起失败，请稍后重试！");
         }
+    }
 
+    @GetMapping("sReaded")
+    @ApiOperation("更新助力活动为已读")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "client_id", value = "客户id", paramType = "query", required = true, dataType="long") ,
+            @ApiImplicitParam(name = "sharingId", value = "活动id", paramType = "query",required = true, dataType="int")
+    })
+    public Result readed(Long client_id,Integer sharingId){
+        sharingInitiatorService.setReadedStatus(client_id,sharingId);
 
+        return new Result().ok("已更新");
+    }
+//=====================================================================================================
+    public Result initSharingActivityInfo(Long initiatorId,int saId,String msg,boolean isError)throws Exception{
+        Result result = new Result();
+        Map<String,Object> map = new HashMap<>();
 
+        if(isError){
+            result.setCode(501);
+        }else{
+            result.setCode(200);
+        }
 
+        result.setMsg(msg);//设置返回信息
+
+        //发起者基本信息中添加头像
+        ClientUserEntity clientUser = clientUserService.getClientUser(initiatorId);
+        String headImage = null;
+        if(clientUser != null)
+            headImage = clientUser.getHeadImg();
+        map.put("initiator_head_img",headImage);
+
+        //助力活动相关信息
+        SharingInitiatorEntity currentOne = sharingInitiatorService.getCurrentOne(initiatorId, saId);
+
+        //增加查看列表
+        List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListCombo(initiatorId, saId);
+        if(helpedListCombo != null)
+            map.put("helpers",helpedListCombo);
+
+        String finishStamp = TimeUtil.dateToStamp(currentOne.getFinishedTime());
+        map.put("finishStamp",finishStamp);
+
+        return result;
 
     }
 
+    @PostMapping("sharingInfo")
+    @ApiOperation("助力信息")
+    public Result sharingInfo(@RequestBody ProposeSharingActivityVo vo) throws Exception{
+
+        Result result = new Result();
+        Map<String,Object> map = new HashMap<>();
+
+        Long id = vo.getId();
+        Integer saId = vo.getSaId();
+        System.out.println("get requestBody info(id,said):"+id+","+saId);
+
+        //1、活动不存在或无效则返回
+        SharingActivityEntity saItem = sharingActivityService.getOneById(saId, false);
+        if(saItem == null){
+            return initSharingActivityInfo(id,saId,"活动("+saId+")不存在！",true);
+        }else{
+            if(saItem.getCloseDate().getTime()<= new Date().getTime()){
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已结束！",true);
+            }
+        }
+
+        //2、初始化数据
+        val currentOne = sharingInitiatorService.getCurrentOne(vo.getId(), vo.getSaId());
+        switch(currentOne.getStatus()){
+            case 1:
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动进行中！",false);
+            case 2:
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已经成功！",false);
+
+            default:
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动未成功！",true);
+
+        }
+    }
     /**
      * @param mobile
      * @param password
@@ -290,7 +377,7 @@ public class SharingActivityController {
 
         //增加查看列表
         if(intitiatorId != null && activityId != null){
-            List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListCombo(intitiatorId, activityId);
+            List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListComboUnread(intitiatorId, activityId);
             if(helpedListCombo != null)
                 map.put("helpers",helpedListCombo);
         }
@@ -557,6 +644,10 @@ public class SharingActivityController {
 
     public List<SharingActivityHelpedEntity> getHelpedListCombo(Long intitiatorId, Integer activityId){
         return sharingActivityLogService.getHelpedListCombo(intitiatorId,activityId);
+    }
+
+    public List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId){
+        return sharingActivityLogService.getHelpedListComboUnread(intitiatorId,activityId);
     }
 
     //onlyEnabled是否仅查询有效的助力活动（客户，时间）

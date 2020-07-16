@@ -9,6 +9,8 @@ public interface SharingInitiatorService {
 
     boolean insertOne(SharingInitiatorEntity sharingInitiatorEntity);
 
+    SharingInitiatorEntity getCurrentOne(Long intitiatorId, Integer saId);
+
     /**
      * @param intitiatorId  client_id 用户id
      * @return  返回该用户当前是否有进行中的活动
@@ -43,6 +45,8 @@ public interface SharingInitiatorService {
      * @param sharingInitiatorEntity
      */
     boolean updateById(SharingInitiatorEntity sharingInitiatorEntity);
+
+    void setReadedStatus(Long intitiatorId,Integer saId);
 
 
 }

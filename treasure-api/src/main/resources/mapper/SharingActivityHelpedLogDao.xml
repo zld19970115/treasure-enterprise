@@ -22,4 +22,22 @@
         )
     </select>
 
+
+    <select id="selectHelpedListComboUnread" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+
+        select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
+        left join ct_client_user as clu
+        on sal.helper_mobile = clu.mobile
+
+        where  propose_sequeue_no in (
+            select propose_id from sharing_initiator si
+            where sa_id=#{activityId}
+            and si.initiator_id =#{intitiatorId}
+            and readed = 1
+            )
+            order by create_pmt desc
+            limit 0,10
+
+    </select>
+
 </mapper>

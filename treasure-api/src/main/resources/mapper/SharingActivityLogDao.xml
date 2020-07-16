@@ -36,4 +36,17 @@
         and helper_mobile = #{mobile}
     </select>
 
+
+    <select id="getUnreadedList" resultType="io.treasure.entity.SharingInitiatorEntity">
+        select * from treasure.sharing_activity_log
+        where propose_sequeue_no =(
+            select propose_id from sharing_initiator si
+            where sa_id=#{activityId}
+              and si.initiator_id =#{intitiatorId}
+              and readed = 1
+            )
+        order by create_pmt desc
+        limit 0,10
+    </select>
+
 </mapper>

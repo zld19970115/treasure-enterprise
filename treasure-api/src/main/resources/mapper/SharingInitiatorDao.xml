@@ -34,5 +34,9 @@
     </update>
 
 
+    <update id="setReadedStatus" >
+        update sharing_initiator set readed = 2 where initiator_id=#{intitiatorId}
+            and sa_id=#{saId} and status in (2,3)
+    </update>
 
 </mapper>
