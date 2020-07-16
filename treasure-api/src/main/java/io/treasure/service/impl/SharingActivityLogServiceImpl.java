@@ -119,6 +119,9 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         if(sharingInitiatorEntity.getProposeId() != null){
             completeCount = getCount(sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(),sharingInitiatorEntity.getProposeId());
             if(completeCount < allowHelpersNum){
+
+                sharingActivityLogEntity.setCreatePmt(new Date());
+                
                 sharingActivityLogDao.insert(sharingActivityLogEntity);
                 System.out.println("助力完成001");
                 return true;//助力完成
@@ -171,5 +174,15 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
     public List<SharingActivityHelpedEntity> getHelpedListCombo(Long intitiatorId, Integer activityId){
 
         return sharingActivityHelpedLogDao.selectHelpedListCombo(intitiatorId, activityId);
+    }
+    @Override
+    public List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId){
+
+        return sharingActivityHelpedLogDao.selectHelpedListComboUnread(intitiatorId, activityId);
+    }
+
+    @Override
+    public List<SharingInitiatorEntity> getUnreadedLogList(long intitiatorId,int activityId){
+        return sharingActivityLogDao.getUnreadedList(intitiatorId,activityId);
     }
 }

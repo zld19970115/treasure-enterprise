@@ -10,6 +10,8 @@ import io.treasure.entity.SharingActivityEntity;
 import io.treasure.entity.SharingInitiatorEntity;
 import io.treasure.service.SharingActivityService;
 import io.treasure.service.SharingInitiatorService;
+import io.treasure.utils.TimeUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,28 +36,25 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
 
         //检查助力状态
         SharingInitiatorEntity inProcessingObject = getOne(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.IN_PROCESSING.getCode());
-        if(inProcessingObject != null)
+        if(inProcessingObject != null){
             return true;
-        //成功次数
-        Integer successTimes = getCount(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.COMPLETE_SUCCESS.getCode());
+        }else{
+            //成功次数
+            Integer successTimes = getCount(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.COMPLETE_SUCCESS.getCode());
+            //允许成功次数
+            Integer allowSuccessTimes = 0;
+            SharingActivityEntity sharingActivityEntity = sharingActivityService.getOneById(sharingInitiatorEntity.getSaId(), true);
+            if(sharingActivityEntity != null)
+                allowSuccessTimes = sharingActivityEntity.getProposeTimes();
 
-        //允许成功次数
-        Integer allowSuccessTimes = 0;
-        SharingActivityEntity sharingActivityEntity = sharingActivityService.getOneById(sharingInitiatorEntity.getSaId(), true);
-        if(sharingActivityEntity != null)
-            allowSuccessTimes = sharingActivityEntity.getProposeTimes();
-        //无进行中的助力活动，且参加次数未超限
-        if(inProcessingObject == null){
+            //无进行中的助力活动，且参加次数未超限
             if(successTimes<allowSuccessTimes){
-
                 sharingInitiatorDao.insert(sharingInitiatorEntity);     //插入新记录(活动编号)
                 return true;
-
             }else{
                 return false;//参加活动次数超限
             }
         }
-        return true;//正在活动中无须二次插入新活动
     }
 
     /**
@@ -102,6 +101,17 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         if(status != null)
             sieqw.in("status",status);
 
+        return sharingInitiatorDao.selectOne(sieqw);
+    }
+
+    @Override
+    public SharingInitiatorEntity getCurrentOne(Long intitiatorId, Integer saId){
+
+        QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
+        sieqw.eq("initiator_id",intitiatorId);
+        if(saId != null)
+            sieqw.eq("sa_id",saId);
+        sieqw.orderByAsc("status");
         return sharingInitiatorDao.selectOne(sieqw);
     }
 
@@ -183,6 +193,10 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
 
     }
 
+    @Override
+    public void setReadedStatus(Long intitiatorId,Integer saId){
+        sharingInitiatorDao.setReadedStatus(intitiatorId,saId);
+    }
 
 
 

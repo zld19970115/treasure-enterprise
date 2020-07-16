@@ -2,6 +2,8 @@ package io.treasure.service;
 
 import io.treasure.entity.SharingActivityHelpedEntity;
 import io.treasure.entity.SharingActivityLogEntity;
+import io.treasure.entity.SharingInitiatorEntity;
+
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
@@ -42,4 +44,6 @@ public interface SharingActivityLogService {
     List<SharingActivityHelpedEntity> getHelpedListCombo(Long intitiatorId, Integer activityId);
     int getHelpedCountForCurrentSharing(long intitiatorId,int activityId,int proposeSequeueNo,String mobile);
 
+    List<SharingInitiatorEntity> getUnreadedLogList(long intitiatorId, int activityId);
+    List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId);
 }

@@ -141,6 +141,25 @@ ApiIndexController {
         PageData<MerchantDTO> page = merchantService.queryRoundPage(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
+    @GetMapping("queryALLMerchantBydistance")
+    @ApiOperation("附近距离店铺")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "name", value = "店铺名称支持模糊查找", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "party", value = "聚餐", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "special", value = "特色", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
+    })
+    public Result<PageData<MerchantDTO>> queryALLMerchantBydistance(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.queryALLMerchantBydistance(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+
 
     @GetMapping("queryClassifyMerchant")
     @ApiOperation("附近分类店铺")

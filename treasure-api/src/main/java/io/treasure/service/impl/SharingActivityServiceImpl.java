@@ -71,6 +71,11 @@ public class SharingActivityServiceImpl implements SharingActivityService {
     }
 
     @Override
+    public List<SharingActivityEntity> getOneByMerchantIdAndStatus(long MerchantId,Date now) {
+        return sharingActivityDao.getOneByMerchantIdAndStatus(MerchantId,now);
+    }
+
+    @Override
     public void insertOne(SharingActivityEntity sharingActivityEntity){
         sharingActivityDao.insert(sharingActivityEntity);
     }

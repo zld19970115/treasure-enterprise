@@ -88,15 +88,6 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         return baseDao.selectByMartId(params);
     }
 
-    @Override
-    public PageData<MerchantDTO> queryAllPage(Map<String, Object> params) {
-        IPage<MerchantEntity> page = baseDao.selectPage(
-                getPage(params, null, false),
-                getQueryWrapper(params)
-        );
-
-        return getPageData(page, MerchantDTO.class);
-    }
 
     @Override
     public PageData<MerchantDTO> selectByUserlongitudeandlatitude(Map<String, Object> params) {
@@ -282,6 +273,21 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         baseDao.updateWX(martId);
     }
 
+    @Override
+    public PageData<MerchantDTO> queryALLMerchantBydistance(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, (String) params.get("orderField"), true);
+        //查询
+        List<MerchantDTO> list = baseDao.getMerchantList(params);
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
     /**
      * 查询条件
      * @param params
@@ -300,7 +306,8 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
      * @param params
      * @return
      */
-    public QueryWrapper<MerchantEntity> getQueryWrapper(Map<String, Object> params){
+    public QueryWrapper<MerchantEntity>
+    getQueryWrapper(Map<String, Object> params){
         //店铺名称
         String name= (String) params.get("name");
         //手机号码
@@ -313,12 +320,9 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         if(shortField == "score" || "score".equals(shortField)){
             wrapper.orderByDesc(shortField,"monthy_sales");
        }
-      else if(shortField == "monthy_sales"){
+      else if(shortField == "monthy_sales"|| "monthy_sales".equals(shortField)){
             wrapper.orderByDesc(shortField,"score");
-         } else if(shortField == "distance"){
-            wrapper.orderByAsc(shortField);
-        }
-
+         }
         return wrapper;
     }
 

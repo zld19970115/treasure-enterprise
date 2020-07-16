@@ -3,10 +3,12 @@ package io.treasure.dao;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.SharingActivityEntity;
 import io.treasure.entity.SharingActivityLogEntity;
+import io.treasure.entity.SharingInitiatorEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Mapper
@@ -26,5 +28,9 @@ public interface SharingActivityLogDao extends BaseDao<SharingActivityLogEntity>
                          @Param("activityId")int activityId,
                          @Param("proposeSequeueNo")int proposeSequeueNo,
                          @Param("mobile")String mobile);
+
+
+    List<SharingInitiatorEntity> getUnreadedList(@Param("intitiatorId")long intitiatorId,
+                                                 @Param("activityId")int activityId);
 
 }

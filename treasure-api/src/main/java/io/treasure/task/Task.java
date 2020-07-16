@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class Task {
 
@@ -15,8 +17,8 @@ public class Task {
     //处理次数记录
     private int taskInProcess = 0;
 
-    //@Scheduled(fixedDelay = 5000)
-    public void TaskManager(){
+    @Scheduled(fixedDelay = 5000)
+    public void TaskManager() throws Exception {
         if(isInProcess()) return;
         lockedTask();//
 
@@ -27,9 +29,6 @@ public class Task {
         //1,自动清台任务+加销奖励
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
-
-
-
 
         unlockTask();
     }
@@ -50,6 +49,26 @@ public class Task {
 
     public void resetAllCounter(){
         orderClear.resetTaskCounter();
+    }
+
+
+    public void sssest() throws Exception{
+        long timeStamp = 1598917869000L;
+
+        String s = TimeUtil.dateToStamp(new Date());
+        long timeDiff = timeStamp - Long.parseLong(s);
+
+        int day = 1000*60*60*24;
+        int hour = 1000*60*60;
+        int min = 1000*60;
+        long days = timeDiff/day;
+        long hours = (timeDiff%day)/hour;
+        long mins = ((timeDiff%day)%hour)/min;
+        long sec = ((timeDiff%day)%hour)%min;
+        System.out.println("当前时间:"+days+"天,"+hours+"时，"+mins+"分，"+sec+"妙");
+
+
+
     }
 
 
