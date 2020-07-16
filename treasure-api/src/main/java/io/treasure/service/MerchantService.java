@@ -28,7 +28,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     List<MerchantDTO>  selectByMartId(Map<String, Object> params);
     PageData<MerchantDTO> queryPage(Map<String, Object> params);
     void updateWX(String martId);
-    PageData<MerchantDTO> queryAllPage(Map<String, Object> params);
+    PageData<MerchantDTO> queryALLMerchantBydistance(Map<String, Object> params);
     PageData<MerchantDTO> selectByUserlongitudeandlatitude(Map<String, Object> params);
     Result getOutside(String deliveryArea , int distribution, long martId);
     PageData<MerchantDTO> queryRoundPage(Map<String, Object> params);

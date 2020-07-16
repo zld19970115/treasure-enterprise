@@ -119,6 +119,9 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         if(sharingInitiatorEntity.getProposeId() != null){
             completeCount = getCount(sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(),sharingInitiatorEntity.getProposeId());
             if(completeCount < allowHelpersNum){
+
+                sharingActivityLogEntity.setCreatePmt(new Date());
+                
                 sharingActivityLogDao.insert(sharingActivityLogEntity);
                 System.out.println("助力完成001");
                 return true;//助力完成
