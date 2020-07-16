@@ -13,6 +13,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.dto.LoginDTO;
+import io.treasure.entity.TokenEntity;
 import io.treasure.service.TokenService;
 import io.treasure.service.UserService;
 import io.swagger.annotations.Api;
@@ -58,5 +59,17 @@ public class ApiLoginController {
         tokenService.expireToken(userId);
         return new Result();
     }
+
+    @GetMapping("tokenCheck")
+    @ApiOperation("token校验")
+    public Result tokenCheck(@RequestParam("token") String token) {
+        TokenEntity t = tokenService.getByToken(token);
+        if(t == null) {
+            return new Result().error("");
+        } else {
+            return new Result().ok("");
+        }
+    }
+
 
 }
