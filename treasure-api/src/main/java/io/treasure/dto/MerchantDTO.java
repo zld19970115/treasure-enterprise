@@ -174,4 +174,16 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "特色")
 	private Integer special;
+	private List<GoodDTO> goodDTOs;
+	@Override
+	public boolean equals(Object obj) {
+		MerchantDTO u = (MerchantDTO) obj;
+		return id.equals(u.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
 }
