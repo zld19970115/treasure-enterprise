@@ -114,9 +114,9 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         }
 
         SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorService.getOne(
-                sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(), ESharingInitiator.IN_PROCESSING.getCode(),ESharingInitiator.COMPLETE_SUCCESS.getCode());
+                sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(), false);
 
-        if(sharingInitiatorEntity.getProposeId() != null){
+        if(sharingInitiatorEntity != null){
             completeCount = getCount(sharingActivityLogEntity.getInitiatorId(), sharingActivityLogEntity.getActivityId(),sharingInitiatorEntity.getProposeId());
             if(completeCount < allowHelpersNum){
 

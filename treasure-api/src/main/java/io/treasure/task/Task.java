@@ -1,5 +1,7 @@
 package io.treasure.task;
 
+import io.treasure.service.QRCodeService;
+import io.treasure.service.impl.QRcodeServiceImpl;
 import io.treasure.task.item.OrderClear;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ public class Task {
 
     @Autowired
     private OrderClear orderClear;
+
 
     //处理次数记录
     private int taskInProcess = 0;
@@ -30,7 +33,6 @@ public class Task {
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
 
-        unlockTask();
     }
 
     //=========================基本状态锁定===============================

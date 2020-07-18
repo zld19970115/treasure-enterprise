@@ -17,5 +17,9 @@ public interface SharingInitiatorDao extends BaseDao<SharingInitiatorEntity> {
     void setReadedStatus(@Param("intitiatorId")Long intitiatorId,
                          @Param("saId")Integer saId);
 
+    void updateSuccessStatus(@Param("proposeId") Integer proposeId,@Param("helpedNum") Integer helpedNum);
+
+    SharingInitiatorEntity getLastOne(@Param("intitiatorId")Long intitiatorId,@Param("saId")Integer saId);
+
 
 }

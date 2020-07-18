@@ -24,6 +24,7 @@ import io.treasure.vo.HelpSharingActivityVo;
 import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,27 +50,22 @@ public class SharingActivityController {
 
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
-
     @Autowired
     private SharingActivityService sharingActivityService;
-
     @Autowired
     private SharingActivityExtendsService sharingActivityExtendsService;
-
     @Autowired
     private SharingInitiatorService sharingInitiatorService;
-
     @Autowired
     private SharingActivityLogService sharingActivityLogService;
-
     @Autowired(required = false)
     private SharingActivityLogDao sharingActivityLogDao;
-
     @Autowired
     private SharingAndDistributionParamsService sharingAndDistributionParamsService;
-
     @Autowired
     private DistributionRewardServiceImpl distributionRewardService;
+    @Autowired
+    private QRCodeService qrCodeService;
 
     @PostMapping("startRelay")
     @ApiOperation("发起助力")
@@ -97,11 +93,9 @@ public class SharingActivityController {
         siEntity.setStatus(ESharingInitiator.IN_PROCESSING.getCode());
         siEntity.setStartTime(saItem.getOpenDate());
         siEntity.setFinishedTime(saItem.getCloseDate());
-        siEntity.setQrCode("http://image.jubaoapp.com/upload/20200715/42fb1393357144af8ec54f2f55d77352.jpg");
-
+        siEntity.setQrCode(initQRCode(id+""));
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
-
 
         List<SharingInitiatorEntity> unreadedLogList = sharingActivityLogService.getUnreadedLogList(id, saId);
 
@@ -113,13 +107,18 @@ public class SharingActivityController {
             List<SharingActivityHelpedEntity> helpedListComboUnread = getHelpedListComboUnread(id, saId);
             map.put("helpers",helpedListComboUnread);
         }
+        map.put("body",saItem.getHelpersNum());
 
 
         ClientUserEntity clientUser = clientUserService.getClientUser(id);
         String headImage = null;
-        if(clientUser != null)
+        String clientName = null;
+        if(clientUser != null){
             headImage = clientUser.getHeadImg();
-            map.put("initiator_head_img",headImage);
+            clientName = clientUser.getUsername();
+        }
+        map.put("client_name",clientName);
+        map.put("initiator_head_img",headImage);
 
         boolean b = sharingInitiatorService.insertOne(siEntity);
         if(b){
@@ -140,6 +139,14 @@ public class SharingActivityController {
         }
     }
 
+    public String initQRCode(String client_id)throws Exception{
+        String url ="https://jubaoapp.com:8443/treasure-api/sharing_activitys/Readed";
+        Map<String,String> map = new HashMap<>();
+        map.put("client_id",client_id);
+        map.put("sharingId","777");
+        return qrCodeService.generateQrAndUrl(url,map);
+    }
+
     @GetMapping("sReaded")
     @ApiOperation("更新助力活动为已读")
     @ApiImplicitParams({
@@ -152,7 +159,8 @@ public class SharingActivityController {
         return new Result().ok("已更新");
     }
 //=====================================================================================================
-    public Result initSharingActivityInfo(Long initiatorId,int saId,String msg,boolean isError)throws Exception{
+
+    public Result initSharingActivityInfo(Long initiatorId,int saId,String msg,boolean isError,int helperNum)throws Exception{
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
 
@@ -182,6 +190,9 @@ public class SharingActivityController {
         String finishStamp = TimeUtil.dateToStamp(currentOne.getFinishedTime());
         map.put("finishStamp",finishStamp);
 
+        map.put("body",helperNum);
+        result.setData(map);
+
         return result;
 
     }
@@ -199,26 +210,29 @@ public class SharingActivityController {
 
         //1、活动不存在或无效则返回
         SharingActivityEntity saItem = sharingActivityService.getOneById(saId, false);
+        int helpersNum = 0;
         if(saItem == null){
-            return initSharingActivityInfo(id,saId,"活动("+saId+")不存在！",true);
+            return initSharingActivityInfo(id,saId,"活动("+saId+")不存在！",true,0);
         }else{
+            helpersNum = saItem.getHelpersNum();
             if(saItem.getCloseDate().getTime()<= new Date().getTime()){
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已结束！",true);
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已结束！",true,helpersNum);
             }
-        }
 
+        }
         //2、初始化数据
         val currentOne = sharingInitiatorService.getCurrentOne(vo.getId(), vo.getSaId());
         switch(currentOne.getStatus()){
             case 1:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动进行中！",false);
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动进行中！",false,helpersNum);
             case 2:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已经成功！",false);
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已经成功！",false,helpersNum);
 
             default:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动未成功！",true);
+                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动未成功！",true,helpersNum);
 
         }
+
     }
     /**
      * @param mobile
@@ -355,15 +369,16 @@ public class SharingActivityController {
      */
 
     public Result initResult(String errorMessage, String helperMobile, boolean isError,
-                            Long intitiatorId,Integer activityId,SharingInitiatorEntity sharingInitiatorEntity) throws ParseException {
+                            Long intitiatorId,Integer activityId,SharingInitiatorEntity sharingInitiatorEntity,int rewardValue) throws ParseException {
+        Map<String,Object> map = new HashMap();
         Result result = new Result();
         if(isError){
             result.setCode(501);
         }else{
             result.setCode(200);
+            if(rewardValue != 0)
+                map.put("helperReward",rewardValue);
         }
-
-        Map<String,Object> map = new HashMap();
         ClientUserEntity clientUser = clientUserService.getByMobile(helperMobile);
         if(clientUser != null){
             map.put("client_id",clientUser.getId());
@@ -424,14 +439,14 @@ public class SharingActivityController {
 
         if(mobile == null ||mobile == ""|| initiatorId == null || saId == null){
             System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
-            return initResult("错误：参数有误！！",mobile,true,initiatorId,saId,null);
+            return initResult("错误：参数有误！！",mobile,true,initiatorId,saId,null,0);
         }
         //0,是否为发起助力者本人
         ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
         if(clientUserEntity != null)
             if(clientUserEntity.getMobile().equals(mobile)){
                 //自己不能给自己助力
-                return initResult("邀请更多好友为我助力！！",mobile,false,initiatorId,saId,null);
+                return initResult("邀请更多好友为我助力！！",mobile,false,initiatorId,saId,null,0);
             }
 
         //1,系统参数
@@ -447,10 +462,10 @@ public class SharingActivityController {
             if(alwaysRegisterSuccess){
                 ClientUserEntity proSpectiveUser = userRegistrationViaHelp(mobile,password);
                 if(proSpectiveUser != null)
-                    return initResult("本活动已结束，感谢参与!",mobile,true,initiatorId,saId,null);
-                return initResult("服务器繁忙，请稍候再试！",null,true,initiatorId,saId,null);
+                    return initResult("本活动已结束，感谢参与!",mobile,true,initiatorId,saId,null,0);
+                return initResult("服务器繁忙，请稍候再试！",null,true,initiatorId,saId,null,0);
             }else{
-                return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId,null);
+                return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId,null,0);
             }
         }
         //3,用户是否发起了此活动(活动状态为1，若活动状态没有为1的则为2的)
@@ -460,10 +475,10 @@ public class SharingActivityController {
             if(alwaysRegisterSuccess){
                 ClientUserEntity proSpectiveUser = userRegistrationViaHelp(mobile,password);
                 if(proSpectiveUser != null)
-                    return initResult("用户助力活动已完成！",mobile,true,initiatorId,saId,inProcess);
-                return initResult("服务器繁忙，请稍候再试！",null,true,initiatorId,saId,inProcess);
+                    return initResult("用户助力活动已完成！",mobile,true,initiatorId,saId,inProcess,0);
+                return initResult("服务器繁忙，请稍候再试！",null,true,initiatorId,saId,inProcess,0);
             }else{
-                return initResult("点晚了，活动已完成！",null,true,initiatorId,saId,inProcess);
+                return initResult("点晚了，活动已完成！",null,true,initiatorId,saId,inProcess,0);
             }
         }
 
@@ -482,19 +497,19 @@ public class SharingActivityController {
                         distributionRewardService.binding(saId,masterMobile,mobile);
                     }else{
                         //以后改成查看助力详情
-                        return initResult("您的助力正在进行中!",mobile,true,initiatorId,saId,inProcess);
+                        return initResult("您的助力正在进行中!",mobile,true,initiatorId,saId,inProcess,0);
                     }
                 }else{
-                    return initResult("繁忙或异常(0)，请稍后重试!",mobile,true,initiatorId,saId,inProcess);
+                    return initResult("繁忙或异常(0)，请稍后重试!",mobile,true,initiatorId,saId,inProcess,0);
                 }
 
                 break;
             case 1://次数超限
-                return initResult("助力次数超限，晚点再试吧!",mobile,true,initiatorId,saId,inProcess);
+                return initResult("助力次数超限，晚点再试吧!",mobile,true,initiatorId,saId,inProcess,0);
             case 2://注册失败
-                return initResult("繁忙或异常(1)，请稍后重试!",null,true,initiatorId,saId,inProcess);
+                return initResult("繁忙或异常(1)，请稍后重试!",null,true,initiatorId,saId,inProcess,0);
             case 3://活动结束且非都可注册成功模式
-                return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId,inProcess);
+                return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId,inProcess,0);
         }
 
         //5,更新奖励======================
@@ -503,7 +518,7 @@ public class SharingActivityController {
         Integer allowHelpersNum = saItem.getHelpersNum();//助力最低人数
         Integer allPersonLimit = saItem.getPersonLimit();//最大助力次数
         SharingActivityExtendsEntity extendsInfo = sharingActivityExtendsService.getExtendsInfoById(saItem.getSaId());
-
+        int rValue = 0;
         if((completeCount+1)<allowHelpersNum){//助力未成功
 
             int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcess.getProposeId());
@@ -516,7 +531,7 @@ public class SharingActivityController {
                 messageStr = "助力成功："+itemReward+saItem.getRewardUnit()+"!";
             }
             //给用户奖励
-            Integer rValue = extendsInfo.getHelperRewardAmount();
+            rValue = extendsInfo.getHelperRewardAmount();
             if(rValue > 0)
                 prizesHelper(saItem.getSaId(),mobile,extendsInfo.getHelperRewardType(),rValue);
 
@@ -528,7 +543,7 @@ public class SharingActivityController {
 
                 //更新助力记录：获得还需助力的费用值
                 int rewardSum = sharingActivityLogService.getRewardSum(initiatorId, saId, inProcess.getProposeId());
-                if (rewardSum < completeCount) {
+                if (rewardSum < saItem.getRewardAmount()) {
                     int itemReward = saItem.getRewardAmount() - rewardSum;
 
                     insertSharingActivityLog(saId, initiatorId, mobile, itemReward, inProcess.getProposeId());
@@ -541,7 +556,7 @@ public class SharingActivityController {
                 prizesInitiator(saItem, initiatorId);//给发起者奖励
 
                 //给用户奖励???????用户助力分享成功前是否给助力用户发奖励
-                int rValue = extendsInfo.getHelperRewardAmount();
+                rValue = extendsInfo.getHelperRewardAmount();
                 if (rValue > 0)
                     prizesHelper(saItem.getSaId(), mobile, extendsInfo.getHelperRewardType(), rValue);
             }
@@ -556,10 +571,10 @@ public class SharingActivityController {
             return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
 
         }else{
-            return initResult("手慢了，本次活动已经完成！",mobile,true,initiatorId,saId,inProcess);
+            return initResult("手慢了，本次活动已经完成！",mobile,true,initiatorId,saId,inProcess,0);
         }
 
-        return initResult(messageStr,mobile,false,initiatorId,saId,inProcess);
+        return initResult(messageStr,mobile,false,initiatorId,saId,inProcess,rValue);
     }
 
 
@@ -593,7 +608,7 @@ public class SharingActivityController {
                 break;
         }
         //map.put("msg","恭喜获得"+rValue+unitStrng+"!");
-        return initResult("助力成功，恭喜获得"+rValue+unitStrng+"!",mobile,false,initiatorId,saId,inProcess);
+        return initResult("助力成功，恭喜获得"+rValue+unitStrng+"!",mobile,false,initiatorId,saId,inProcess,itemReward);
 
     }
 
