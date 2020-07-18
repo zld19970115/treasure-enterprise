@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
+import io.treasure.common.exception.ErrorCode;
+import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
@@ -15,11 +17,15 @@ import io.treasure.dto.GoodDTO;
 import io.treasure.dto.GoodPagePCDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
+import io.treasure.entity.TokenEntity;
 import io.treasure.service.ApiGoodService;
+import io.treasure.service.TokenService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +43,9 @@ import java.util.Map;
 public class ApiGoodController {
     @Autowired
     private ApiGoodService apigoodService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Login
     @GetMapping("onPage")
@@ -253,5 +262,30 @@ public class ApiGoodController {
     @ApiOperation("菜品列表PC")
     public Result goodPageListPC(@ApiIgnore @RequestParam Map<String, Object> params) {
         return new Result<>().ok(apigoodService.goodPageListPC(params));
+    }
+
+    @Login
+    @GetMapping("check_token")
+    @ApiOperation("令牌检测")
+    public int goodPageListPC(HttpServletRequest request) {
+        int res_ok = 100;
+        int res_invalid=0;
+
+        String token = request.getHeader("token");
+        //如果header中不存在token，则从参数中获取token
+        if(StringUtils.isBlank(token)){
+            token = request.getParameter("token");
+        }
+        //token为空
+        if(StringUtils.isBlank(token)){
+            return res_invalid;
+        }
+
+        //查询token信息
+        TokenEntity tokenEntity = tokenService.getByToken(token);
+        if(tokenEntity == null || tokenEntity.getExpireDate().getTime() < System.currentTimeMillis()){
+            return res_invalid;
+        }
+        return res_ok;
     }
 }

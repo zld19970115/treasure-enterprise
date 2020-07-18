@@ -6,26 +6,27 @@ import io.treasure.common.exception.ErrorCode;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.SysOssEntity;
 import io.treasure.oss.cloud.OSSFactory;
+import io.treasure.service.QRCodeService;
 import io.treasure.service.SysOssService;
 import io.treasure.utils.QRCodeUtil;
 import javassist.NotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.schema.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
-public class QRcodeServiceImpl {
+public class QRcodeServiceImpl implements QRCodeService {
 
 
     @Autowired
@@ -33,35 +34,49 @@ public class QRcodeServiceImpl {
 
     private final static String KEY = Constant.CLOUD_STORAGE_CONFIG_KEY;
 
+    /**
+     *
+     * https://jubaoapp.com:8443/treasure-api/sharing_activitys/Readed?client_id=1272363843756167170&sharingId=777
+     */
 
-    public static void main(String[] args) throws Exception {
+    public  String generateQrAndUrl(String url,@NotNull Map<String,String> params) throws Exception{
         // 存放在二维码中的内容
-        String text = "http://api.jubaoapp.com";
+        String content = null;
+        StringBuilder sb = new StringBuilder();
+        if(params != null)
+        for(Map.Entry<String,String> entry:params.entrySet()){
+            sb.append("&"+entry.getKey()+"="+entry.getValue());
+        }
+        content = sb.toString().trim();
+        if(content != null){
+            if(content.length()>3)
+            content = url +"?"+ content.substring(1);
+        }
+        System.out.println("内容为："+content);
+        String iconPath = "D:/qrCode/jubao_logo.png";//图标d:\\qrcode\\jubao_log.png
+        String tmpFilePath = "D:/qrCode/sharing_activity_code.jpg";//临时二维码
 
-        // 嵌入二维码的图片路径
-        String imgPath = "D:/qrCode/dog.jpg";
-        // 生成的二维码的路径及名称
-        String destPath = "D:/qrCode/jam.jpg";
+
+
+        String osName = System.getProperty("os.name");
+        System.out.println("osName:"+osName);
+        if(!osName.toLowerCase().startsWith("win")){
+            iconPath = "/www/qrcode/jubao_logo.png";
+            tmpFilePath = "/www/qrcode/sharing_activity_code.jpg";
+        }
+
+        File tmpFile = new File(tmpFilePath);
         //生成二维码
-        QRCodeUtil.encode(text, imgPath, destPath, true);
-        // 解析二维码
-        String str = QRCodeUtil.decode(destPath);
-        // 打印出解析出的内容
-
-        File file = new File("D:/qrCode/jam.jpg");
-
-
-        //上传文件
-        String url = OSSFactory.build().uploadSuffix(getBytesFromFile(file), "jpg");
-
-        System.out.println("url......"+url);
-
-
+        QRCodeUtil.encode(content, iconPath, tmpFilePath, true);
+        //String str = QRCodeUtil.decode(tmpFilePath);
+        String qrURL = OSSFactory.build().uploadSuffix(getBytesFromFile(tmpFile), "jpg");
+        System.out.println("generator QRCode url:"+qrURL);
+        return qrURL;
     }
 
 
     // 返回一个byte数组
-	public static byte[] getBytesFromFile(File file) throws IOException {
+	public byte[] getBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);// 获取文件大小
 		long lengths = file.length();
 		System.out.println("lengths = " + lengths);
@@ -83,7 +98,7 @@ public class QRcodeServiceImpl {
 		// Close the input stream and return bytes
 		is.close();
 		return bytes;
-        }
+    }
 
 
     public String generateQRCodeUri() throws FileNotFoundException {

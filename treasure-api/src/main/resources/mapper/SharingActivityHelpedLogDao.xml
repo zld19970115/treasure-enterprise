@@ -32,7 +32,7 @@
         where  propose_sequeue_no in (
             select propose_id from sharing_initiator si
             where sa_id=#{activityId}
-            and si.initiator_id =#{intitiatorId}
+            and si.initiator_id =#{initiatorId}
             and readed = 1
             )
             order by create_pmt desc

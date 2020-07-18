@@ -24,7 +24,7 @@ public interface SharingInitiatorService {
      */
     int getCount(Long intitiatorId, Integer saId,Integer status);
 
-    SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer... status);
+    SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,boolean onlyEnable);
     SharingInitiatorEntity getLastInProcessOne(Long intitiatorId,Integer saId);
 
     void closeActivity(Long intitiatorId,Integer saId);

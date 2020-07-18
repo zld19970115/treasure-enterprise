@@ -27,6 +27,11 @@ public class AppPushUtil {
     // STEP1：获取应用基本信息
     private static String url = "http://sdk.open.api.igexin.com/apiex.htm";
     public static void main(String[] args) throws IOException {
+        //小米: ba4271181fe37773fbbd152b93c512dc
+        //苹果：eb55b5961ab55896101ec7137c2d7fbd
+        //华为（吴哥）：08e983e496e77f6cd3c7b8395fbdc405
+        //华为：625db053cc1289ce623f5d769e6914cc
+        //oppo：3f9191a8046f260aec666f94277e23c4
         //String clientId="bed827bcb12f99ebb004180ee0cfa73d";
         //String clientId="42a6ceff19d73a608bc2cbf61ed0d86b";
         String clientId="eb55b5961ab55896101ec7137c2d7fbd";
@@ -78,10 +83,10 @@ public class AppPushUtil {
     private static APNPayload getAPNPayload(String text) {
         APNPayload payload = new APNPayload();
         //在已有数字基础上加1显示，设置为-1时，在已有数字上减1显示，设置为数字时，显示指定数字
-//        payload.setAutoBadge("-1");
+        payload.setAutoBadge("-1");
         payload.setContentAvailable(1);//推送直接带有透传数据
         //ios 12.0 以上可以使用 Dictionary 类型的 sound
-        payload.setSound("default");
+        payload.setSound("pushsound.caf");
         payload.setCategory("$由客户端定义");//在客户端通知栏触发特定的action和button显示
         payload.addCustomMsg("由客户自定义消息key", "由客户自定义消息value");//增加自定义的数据,Key-Value形式
 

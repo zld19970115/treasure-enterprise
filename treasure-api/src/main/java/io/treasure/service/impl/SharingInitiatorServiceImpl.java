@@ -15,6 +15,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     public boolean insertOne(SharingInitiatorEntity sharingInitiatorEntity){
 
         //检查助力状态
-        SharingInitiatorEntity inProcessingObject = getOne(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.IN_PROCESSING.getCode());
+        SharingInitiatorEntity inProcessingObject = getOne(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), true);
         if(inProcessingObject != null){
             return true;
         }else{
@@ -64,7 +65,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     @Override
     public boolean unfinishedCheck(Long intitiatorId,Integer saId){
 
-        SharingInitiatorEntity siEntity = getOne(intitiatorId,saId,ESharingInitiator.IN_PROCESSING.getCode());
+        SharingInitiatorEntity siEntity = getOne(intitiatorId,saId,true);
 
         if(siEntity == null)
             return false;
@@ -91,17 +92,22 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     }
 
     @Override
-    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,Integer... status){
+    public SharingInitiatorEntity getOne(Long intitiatorId,Integer saId,boolean onlyEnable){
 
+        //优先选择进行中的，如果没有进行中的选择成功了的,即1优先，2在后面
         QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
-
         sieqw.eq("initiator_id",intitiatorId);
         if(saId != null)
             sieqw.eq("sa_id",saId);
-        if(status != null)
-            sieqw.in("status",status);
 
-        return sharingInitiatorDao.selectOne(sieqw);
+            sieqw.eq("status",1);
+        SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorDao.selectOne(sieqw);
+        if(onlyEnable)
+            return sharingInitiatorEntity;
+
+        if(sharingInitiatorEntity != null)
+            return sharingInitiatorEntity;
+        return sharingInitiatorDao.getLastOne(intitiatorId,saId);
     }
 
     @Override
@@ -111,8 +117,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         sieqw.eq("initiator_id",intitiatorId);
         if(saId != null)
             sieqw.eq("sa_id",saId);
-        sieqw.orderByAsc("status");
-        return sharingInitiatorDao.selectOne(sieqw);
+        return sharingInitiatorDao.getLastOne(intitiatorId,saId);
     }
 
     @Override
@@ -129,15 +134,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         if(inProcessEntity != null){
             return inProcessEntity;
         }else{
-            //没有进行中的活动，使用完成的活动
-            QueryWrapper<SharingInitiatorEntity> sieqw1 = new QueryWrapper<>();
-
-            sieqw1.eq("initiator_id",intitiatorId);
-            if(saId != null)
-                sieqw1.eq("sa_id",saId);
-            sieqw1.eq("status",ESharingInitiator.COMPLETE_SUCCESS.getCode());
-            sieqw1.orderByDesc("start_time");
-            SharingInitiatorEntity completeEntity = sharingInitiatorDao.selectOne(sieqw1);
+            SharingInitiatorEntity completeEntity = sharingInitiatorDao.getLastOne(intitiatorId,saId);
             return completeEntity;
         }
     }
@@ -179,7 +176,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
             if(saId == null || initiatorId == null)
                 return false;//更新失败
 
-            SharingInitiatorEntity inprocessItem = getOne(initiatorId,saId,ESharingInitiator.IN_PROCESSING.getCode());
+            SharingInitiatorEntity inprocessItem = getOne(initiatorId,saId,false);
             if(inprocessItem != null){
                 sharingInitiatorEntity.setProposeId(inprocessItem.getProposeId());
             }else{

@@ -39,4 +39,24 @@
             and sa_id=#{saId} and status in (2,3)
     </update>
 
+
+    <update id="updateSuccessStatus">
+        update sharing_initiator
+        set status = 2
+        where
+        (select count(1) from sharing_activity_log
+        where propose_sequeue_no = #{proposeId}
+        )>=#{helpedNum}
+        and status = 1
+    </update>
+
+    <select id="getLastOne" resultType="io.treasure.entity.SharingInitiatorEntity">
+        select * from sharing_initiator
+        where status in(1,2)
+        and initiator_id=#{intitiatorId}
+        and sa_id=#{saId}
+        order by propose_id desc
+        limit 0,1
+    </select>
+
 </mapper>
