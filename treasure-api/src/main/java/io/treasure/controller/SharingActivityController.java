@@ -697,13 +697,12 @@ public class SharingActivityController {
     @GetMapping("getMerchantActivity")
     @ApiOperation("商家生成助力")
     public Result getMerchantActivity(@RequestBody SharingActivityDTO sharingActivityDTO){
-        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(sharingActivityDTO.getSaId(), new Date());
+        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(sharingActivityDTO.getRewardMchId(), new Date());
         if (oneByMerchantIdAndStatus.size()>0){
             return new Result().error("您有助力活动未结束");
         }
 
         SharingActivityEntity sharingActivityEntity = new SharingActivityEntity();
-
         sharingActivityEntity.setActivityImg(sharingActivityDTO.getActivityImg());
         sharingActivityEntity.setSubject(sharingActivityDTO.getSubject());
         sharingActivityEntity.setHelpersNum(sharingActivityDTO.getHelpersNum());
@@ -724,5 +723,18 @@ public class SharingActivityController {
         sharingActivityService.insertOne(sharingActivityEntity);
         return new Result().ok("生成成功！");
     }
+    @GetMapping("getActivityByMerchant")
+    @ApiOperation("根据商家获取去助力")
+    public Result getActivityByMerchant(long merchantId){
+        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(merchantId, new Date());
+        if (oneByMerchantIdAndStatus.size()>0){
+            return new Result().ok(oneByMerchantIdAndStatus);
+        }else {
+
+            return new Result().ok("没有助力信息");
+        }
+    }
+
+
 }
 

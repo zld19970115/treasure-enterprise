@@ -7,6 +7,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
@@ -247,6 +248,21 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     @Override
     public Integer updateSpecial(Long id, Integer recommend) {
         return baseDao.updateSpecial(id, recommend);
+    }
+
+    @Override
+    public PageData<MerchantDTO> search(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
+        //查询
+        List<MerchantDTO> list = baseDao.selectbYGoods(params);
+        for (MerchantDTO merchantDTO : list) {
+            List<GoodDTO> goodDTOS=   baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
+            merchantDTO.setGoodDTOs(goodDTOS);
+        }
+
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
     @Override
