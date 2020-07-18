@@ -126,8 +126,10 @@ public class SharingActivityController {
             String finishStamp = TimeUtil.dateToStamp(saItem.getCloseDate());
             map.put("finishStamp",finishStamp);
             result.setMsg("成功发起："+saItem.getSubject()+"活动");
+            result.setData(map);
+            result.setCode(200);
 
-            return result.ok(map);
+            return result;
         }else{
             map.put("sharing",null);
             map.put("finishStamp",null);
@@ -565,9 +567,7 @@ public class SharingActivityController {
 
             }
 
-        }
-        //接续
-        else if(completeCount <allPersonLimit){//成功但可继续
+        }else if(completeCount <allPersonLimit){//成功但可继续
             return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
 
         }else{
