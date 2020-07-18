@@ -446,7 +446,7 @@ public class SharingActivityController {
         if(clientUserEntity != null)
             if(clientUserEntity.getMobile().equals(mobile)){
                 //自己不能给自己助力
-                return initResult("邀请更多好友为我助力！！",mobile,false,initiatorId,saId,null,0);
+                return initResult("邀请更多好友为我助力！！",mobile,true,initiatorId,saId,null,0);
             }
 
         //1,系统参数
