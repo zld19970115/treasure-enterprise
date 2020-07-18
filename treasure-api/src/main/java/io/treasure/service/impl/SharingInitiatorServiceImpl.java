@@ -97,16 +97,17 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         //优先选择进行中的，如果没有进行中的选择成功了的,即1优先，2在后面
         QueryWrapper<SharingInitiatorEntity> sieqw = new QueryWrapper<>();
         sieqw.eq("initiator_id",intitiatorId);
-        if(saId != null){
+        if(saId != null)
             sieqw.eq("sa_id",saId);
-        }
 
-        if(onlyEnable = true){
             sieqw.eq("status",1);
-            return sharingInitiatorDao.selectOne(sieqw);
-        }else{
-            return sharingInitiatorDao.getLastOne(intitiatorId,saId);
-        }
+        SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorDao.selectOne(sieqw);
+        if(onlyEnable)
+            return sharingInitiatorEntity;
+
+        if(sharingInitiatorEntity != null)
+            return sharingInitiatorEntity;
+        return sharingInitiatorDao.getLastOne(intitiatorId,saId);
     }
 
     @Override
@@ -133,12 +134,6 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
         if(inProcessEntity != null){
             return inProcessEntity;
         }else{
-            //没有进行中的活动，使用完成的活动
-            QueryWrapper<SharingInitiatorEntity> sieqw1 = new QueryWrapper<>();
-
-            sieqw1.eq("initiator_id",intitiatorId);
-            if(saId != null)
-                sieqw1.eq("sa_id",saId);
             SharingInitiatorEntity completeEntity = sharingInitiatorDao.getLastOne(intitiatorId,saId);
             return completeEntity;
         }
