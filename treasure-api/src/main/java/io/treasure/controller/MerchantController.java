@@ -18,6 +18,7 @@ import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.SharingActivityLogEntity;
 import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
@@ -631,7 +632,6 @@ public class MerchantController {
         return new Result().ok(merchantEntityIPage);
         //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
     }
-
     @GetMapping("auditMerchantStatus")
     @ApiOperation("商户审核")
     @ApiImplicitParams({

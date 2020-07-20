@@ -1,5 +1,6 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,17 +19,11 @@ import java.util.Date;
 public class DistributionRewardLogEntity {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * ID
-     */
+
+    @TableId
     private long id;
-    /**
-     * consumer从手机号
-     */
+
     private String mobile_slaver;
-    /**
-     * reward主手机号
-     */
     private String mobile_master;
     /**
      * 1:宝币，2：代付金，3现金
