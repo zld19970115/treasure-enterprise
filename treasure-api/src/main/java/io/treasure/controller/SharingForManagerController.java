@@ -18,6 +18,7 @@ import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.SharingActivityDTO;
 import io.treasure.entity.*;
 import io.treasure.vo.PagePlus;
+import io.treasure.vo.SharingActivityComboVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -196,6 +197,18 @@ public class SharingForManagerController {
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
 
         sharingActivityForDtoDao.insert(dto);
+
+        return new Result().ok("added new record");
+    }
+    @Login
+    @PutMapping("/sharing_combo_item")
+    @ApiOperation("插入新活动")
+    public Result insertSharingComboItem(@RequestBody SharingActivityComboVo vo){
+        //效验数据
+        ValidatorUtils.validateEntity(vo.getSharingActivityDto(), AddGroup.class, DefaultGroup.class);
+
+        sharingActivityForDtoDao.insert(vo.getSharingActivityDto());
+        sharingActivityExtendsDao.insert(vo.getSharingActivityExtendsEntity());
 
         return new Result().ok("added new record");
     }
