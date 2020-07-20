@@ -225,12 +225,6 @@
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
         from ct_merchant m left join  ct_good g  on ( find_in_set(m.id,g.mart_id) )    group by m.id
        having m.status=1
-        <if test="party != null and party!='' ">
-            and m.party  = 1
-        </if>
-        <if test="special != null and special!='' ">
-            and m.special  = 1
-        </if>
         <if test="value != null and value!='' ">
             and  (gName  like  CONCAT('%',#{value},'%') or m.name  like  CONCAT('%',#{value},'%'))
 
@@ -255,6 +249,27 @@
         select *
         from  ct_good
         where  mart_id = #{merchantId} order by sales limit 0,2
+    </select>
+    <select id="selectBygreay" resultType="io.treasure.dto.MerchantDTO">
+        select * ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        from ct_merchant
+        having status=1   and categoryId  like  CONCAT('%',#{acategoryId},'%')
+        <if test="distanced != null and distanced != ''">
+            and distance &lt;= #{distanced}
+        </if>
+        <if test="recommend != null and recommend != ''">
+            and recommend = #{recommend}
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            and categoryId  like  CONCAT('%',#{categoryId},'%')
+        </if>
+
+
+
+    </select>
+    <select id="selectcategoryDTOS" resultType="io.treasure.dto.CategoryDTO">
+        select * from ct_category where  name   like  CONCAT('%',#{value},'%') and status =1
     </select>
 
     <update id="updateRecommend">
