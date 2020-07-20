@@ -257,10 +257,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         //查询
         List<MerchantDTO> list = baseDao.selectbYGoods(params);
         for (MerchantDTO merchantDTO : list) {
-            List<GoodDTO> goodDTOS=   baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
+            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
+            List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
+            goodDTOS.removeAll(goodDTOS1);
+            goodDTOS.addAll(goodDTOS1);
             merchantDTO.setGoodDTOs(goodDTOS);
         }
-
 
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }

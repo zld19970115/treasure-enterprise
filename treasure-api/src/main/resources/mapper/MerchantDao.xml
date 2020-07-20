@@ -251,6 +251,11 @@
         from  ct_good
         where  mart_id = #{merchantId} and name like  CONCAT('%',#{value},'%')
     </select>
+    <select id="selectByMidAndSales" resultType="io.treasure.dto.GoodDTO">
+        select *
+        from  ct_good
+        where  mart_id = #{merchantId} order by sales limit 0,2
+    </select>
 
     <update id="updateRecommend">
         update ct_merchant set recommend = #{recommend} where id = #{id}
