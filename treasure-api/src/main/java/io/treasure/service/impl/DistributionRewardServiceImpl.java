@@ -75,12 +75,12 @@ public class DistributionRewardServiceImpl {
             return true;
         }
         DistributionRewardLogEntity distributionRewardLogEntity = new DistributionRewardLogEntity();
-        distributionRewardLogEntity.setConsume_time(new Date());
-        distributionRewardLogEntity.setMobile_master(distributionRelationshipEntity.getMobileMaster());
-        distributionRewardLogEntity.setMobile_slaver(mobileSlaver);
-        distributionRewardLogEntity.setReferences_total(referencesTotal);
-        distributionRewardLogEntity.setReward_amount(referencesTotal*radio/100);
-        distributionRewardLogEntity.setReward_ratio(radio);
+        distributionRewardLogEntity.setConsumeTime(new Date());
+        distributionRewardLogEntity.setMobileMaster(distributionRelationshipEntity.getMobileMaster());
+        distributionRewardLogEntity.setMobileSlaver(mobileSlaver);
+        distributionRewardLogEntity.setReferencesTotal(referencesTotal);
+        distributionRewardLogEntity.setRewardAmount(referencesTotal*radio/100);
+        distributionRewardLogEntity.setRewardRatio(radio);
         float v = Float.parseFloat(String.valueOf(referencesTotal * radio / 100));
         float newCoin = v / 100;
 

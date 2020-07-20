@@ -2,8 +2,7 @@ package io.treasure.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.Date;
 
@@ -14,7 +13,10 @@ import java.util.Date;
  * @since 1.0.0 2019-07-28
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @TableName("distribution_reward_log")
 public class DistributionRewardLogEntity {
 
@@ -23,27 +25,27 @@ public class DistributionRewardLogEntity {
     @TableId
     private long id;
 
-    private String mobile_slaver;
-    private String mobile_master;
+    private String mobileSlaver;
+    private String mobileMaster;
     /**
      * 1:宝币，2：代付金，3现金
      */
-    private Integer reward_type;
+    private Integer rewardType;
     /**
      * 参考总金额，单位为分
      */
-    private Integer references_total;
+    private Integer referencesTotal;
     /**
      * 例：80代表百分之80
      */
-    private Integer reward_ratio;
+    private Integer rewardRatio;
     /**
      * 奖励数量，单位为分
      */
-    private Integer reward_amount;
+    private Integer rewardAmount;
     /**
      * 消费时间
      */
-    private Date consume_time;
+    private Date consumeTime;
 
 }
