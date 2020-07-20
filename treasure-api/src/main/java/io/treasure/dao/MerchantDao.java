@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 
 import io.treasure.common.dao.BaseDao;
+import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
@@ -47,5 +48,8 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     Integer updateParty(@Param("id") Long id, @Param("recommend") Integer recommend);
     Integer updateSpecial(@Param("id") Long id, @Param("recommend") Integer recommend);
     List<MerchantDTO> selectbYGoods(Map<String, Object> params);
+    List<MerchantDTO> selectBygreay(Map<String, Object> params);
+    List<CategoryDTO> selectcategoryDTOS(String Value);
     List<GoodDTO> selectByMidAndValue(Long merchantId,String value);
+    List<GoodDTO> selectByMidAndSales(Long merchantId);
 }

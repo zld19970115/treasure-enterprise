@@ -7,6 +7,7 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
@@ -256,11 +257,22 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         IPage<MerchantEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
         //查询
         List<MerchantDTO> list = baseDao.selectbYGoods(params);
-        for (MerchantDTO merchantDTO : list) {
-            List<GoodDTO> goodDTOS=   baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
-            merchantDTO.setGoodDTOs(goodDTOS);
+        List<CategoryDTO>  categoryDTOS = baseDao.selectcategoryDTOS((String) params.get("value"));
+        for (CategoryDTO categoryDTO : categoryDTOS) {
+            params.put("acategoryId",categoryDTO.getId());
+            List<MerchantDTO> list1 = baseDao.selectBygreay(params);
+            list.removeAll(list1);
+            list.addAll(list1);
         }
 
+
+        for (MerchantDTO merchantDTO : list) {
+            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
+            List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
+            goodDTOS.removeAll(goodDTOS1);
+            goodDTOS.addAll(goodDTOS1);
+            merchantDTO.setGoodDTOs(goodDTOS);
+        }
 
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }

@@ -85,7 +85,7 @@ public class DistributionRewardServiceImpl {
         float newCoin = v / 100;
 
         try{
-            distributionRewardLogDao.insert(distributionRewardLogEntity);
+            distributionRewardLogDao.insert(distributionRewardLogEntity); 
             clientUserService.addCoinsByUserid(String.valueOf(userByPhone.getId()),newCoin+"");
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
