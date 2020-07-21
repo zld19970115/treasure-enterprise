@@ -68,9 +68,6 @@ public class Task {
         long mins = ((timeDiff%day)%hour)/min;
         long sec = ((timeDiff%day)%hour)%min;
         System.out.println("当前时间:"+days+"天,"+hours+"时，"+mins+"分，"+sec+"妙");
-
-
-
     }
 
 
