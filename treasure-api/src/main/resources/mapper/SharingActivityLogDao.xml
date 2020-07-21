@@ -46,7 +46,7 @@
               and readed = 1
             )
         order by create_pmt desc
-        limit 0,10
+        limit 0,9
     </select>
 
 </mapper>
