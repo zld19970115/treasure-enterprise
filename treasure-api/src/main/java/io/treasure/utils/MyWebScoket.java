@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.java_websocket.WebSocket;
 import com.alipay.api.java_websocket.handshake.ClientHandshake;
 import com.alipay.api.java_websocket.server.WebSocketServer;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -35,7 +37,8 @@ public class MyWebScoket extends WebSocketServer {
         userLeave(conn);
         System.out.println(reason);
     }
-
+    @Autowired
+    WsPool wsPool;
     @Override
     public void onMessage(WebSocket conn, String message) {
         //有用户连接进来
@@ -44,6 +47,7 @@ public class MyWebScoket extends WebSocketServer {
         System.out.println(message);
      //  String username = obj.get("name");
         userJoin(conn,  message);
+        wsPool.sendMessageToAll("用户连接。。。到了");
     }
 
     @Override

@@ -20,10 +20,10 @@ import java.util.Map;
 
 /**
  * 用户收藏
- *
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-08-02
  */
+
 @RestController
 @RequestMapping("/api/collect")
 @Api(tags="用户收藏")
