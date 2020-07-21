@@ -369,8 +369,6 @@ public class SharingActivityController {
             }
         }
     }
-
-
     /**
      * @param errorMessage
      * @return
@@ -481,7 +479,6 @@ public class SharingActivityController {
         creator = saItem.getCreator();
         //3,用户是否发起了此活动(活动状态为1，若活动状态没有为1的则为2的)
         SharingInitiatorEntity inProcess = sharingInitiatorService.getLastInProcessOne(initiatorId,saId);
-        //SharingInitiatorEntity inProcess = sharingInitiatorService.getOne(initiatorId,saId,1,2);
         if(inProcess == null) {//用户未发起或助力已完成
             if(alwaysRegisterSuccess){
                 ClientUserEntity proSpectiveUser = userRegistrationViaHelp(mobile,password);
@@ -533,7 +530,7 @@ public class SharingActivityController {
         int rValue = 0;
         if((completeCount+1)<allowHelpersNum){//助力未成功
             //平台发布的助力活动
-            if(creator == 0){
+
                 int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcess.getProposeId());
                 if(rewardSum < inProcess.getRewardValue()){
 
@@ -542,18 +539,16 @@ public class SharingActivityController {
 
                     //map.put("msg","助力成功："+itemReward+saItem.getRewardUnit()+"!");
                     messageStr = "助力成功："+itemReward+saItem.getRewardUnit()+"!";
+                }else{
+                    insertSharingActivityLog(saId,initiatorId,mobile,1,inProcess.getProposeId());
                 }
                 //给用户奖励
                 rValue = extendsInfo.getHelperRewardAmount();
                 if(rValue > 0)
                     prizesHelper(saItem.getSaId(),mobile,extendsInfo.getHelperRewardType(),rValue);
-            }else{
-                //商家发布的助力活动
-                //===============================================================================================
-                messageStr = "成功为好友助力!";
-            }
+
         }else if((completeCount+1) == allowHelpersNum) {//助力成功
-            if(creator == 0){
+            //if(creator == 0l){
                 if(inProcess.getStatus() == ESharingInitiator.IN_PROCESSING.getCode()){
 
                     messageStr = "助力成功,获得：" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!";
@@ -576,15 +571,16 @@ public class SharingActivityController {
                     rValue = extendsInfo.getHelperRewardAmount();
                     if (rValue > 0)
                         prizesHelper(saItem.getSaId(), mobile, extendsInfo.getHelperRewardType(), rValue);
-                }
-                else{
+               }
+               else{
                     return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
-                }
-            }else{
+              }
+
+            //}else{
                 //给商家奖励
-                prizesInitiator(saItem, initiatorId);//给发起者奖励
-                return initResult("恭喜助力成功！",mobile,false,initiatorId,saId,inProcess,0);
-            }
+              //  prizesInitiator(saItem, initiatorId);//给发起者奖励
+              //  return initResult("恭喜助力成功！",mobile,false,initiatorId,saId,inProcess,0);
+            //}
         }else if(completeCount <allPersonLimit){//成功但可继续
             if(creator == 0){
                 return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);

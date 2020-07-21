@@ -4,7 +4,7 @@
 <mapper namespace="io.treasure.dao.SharingActivityHelpedLogDao">
 
 
-    <select id="selectHelpedListComboByProposeIdx" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+    <select id="selectHelpedListComboByProposeIds" resultType="io.treasure.entity.SharingActivityHelpedEntity">
 
         select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
         left join ct_client_user as clu
@@ -46,7 +46,7 @@
             and readed = 1
             )
             order by create_pmt desc
-            limit 0,9
+            limit 0,10
 
     </select>
 
