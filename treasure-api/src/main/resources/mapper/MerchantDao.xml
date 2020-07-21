@@ -272,7 +272,7 @@
     <select id="searchMart" resultType="io.treasure.dto.MerchantDTO">
         select m.* ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
-        from ct_merchant  on ( find_in_set(m.id,g.mart_id) )
+        from ct_merchant
         having m.status=1
         <if test="value != null and value!='' ">
             and  name  like  CONCAT('%',#{value},'%')
