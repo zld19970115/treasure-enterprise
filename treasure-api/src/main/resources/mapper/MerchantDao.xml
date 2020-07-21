@@ -221,22 +221,20 @@
         </if>
  </select>
     <select id="selectbYGoods" resultType="io.treasure.dto.MerchantDTO">
-       select m.* ,g.name  gName,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+       select m.* ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
-        from ct_merchant m left join  ct_good g  on ( find_in_set(m.id,g.mart_id) )    group by m.id
-       having m.status=1
+        from ct_merchant m left join  ct_good g  on ( find_in_set(m.id,g.mart_id) )
+          where 1 = 1
         <if test="value != null and value!='' ">
-            and  (gName  like  CONCAT('%',#{value},'%') or m.name  like  CONCAT('%',#{value},'%'))
-
+            and  g.name  like  CONCAT('%',#{value},'%')
         </if>
+       group by m.id
+       having m.status=1
         <if test="distanced != null and distanced != ''">
             and distance &lt;= #{distanced}
         </if>
         <if test="recommend != null and recommend != ''">
             and m.recommend = #{recommend}
-        </if>
-        <if test="categoryId != null and categoryId != ''">
-            and m.categoryId  like  CONCAT('%',#{categoryId},'%')
         </if>
 
     </select>
@@ -270,6 +268,23 @@
     </select>
     <select id="selectcategoryDTOS" resultType="io.treasure.dto.CategoryDTO">
         select * from ct_category where  name   like  CONCAT('%',#{value},'%') and status =1
+    </select>
+    <select id="searchMart" resultType="io.treasure.dto.MerchantDTO">
+        select m.* ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
+        COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
+        from ct_merchant
+        having m.status=1
+        <if test="value != null and value!='' ">
+            and  name  like  CONCAT('%',#{value},'%')
+        </if>
+        <if test="distanced != null and distanced != ''">
+            and distance &lt;= #{distanced}
+        </if>
+        <if test="recommend != null and recommend != ''">
+            and  recommend = #{recommend}
+        </if>
+
+
     </select>
 
     <update id="updateRecommend">

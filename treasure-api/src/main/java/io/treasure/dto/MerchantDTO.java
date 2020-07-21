@@ -143,7 +143,8 @@ public class MerchantDTO implements Serializable {
 	private Double depost;
 	@ApiModelProperty(value = "商家可提现总额")
 	private Double totalCash;
-
+	@ApiModelProperty(value = "评分")
+	private Double sorce;
 	@ApiModelProperty(value = "商家已提现金额")
 	private Double alreadyCash;
 	@ApiModelProperty(value = "商家未提现金额")
@@ -175,6 +176,8 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "特色")
 	private Integer special;
 	private List<GoodDTO> goodDTOs;
+	@ApiModelProperty(value = "推荐菜")
+	private GoodDTO goodDTO;
 	@Override
 	public boolean equals(Object obj) {
 		MerchantDTO u = (MerchantDTO) obj;

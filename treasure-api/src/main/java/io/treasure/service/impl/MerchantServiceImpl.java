@@ -257,6 +257,37 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         IPage<MerchantEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
         //查询
         List<MerchantDTO> list = baseDao.selectbYGoods(params);
+//        List<CategoryDTO>  categoryDTOS = baseDao.selectcategoryDTOS((String) params.get("value"));
+//        for (CategoryDTO categoryDTO : categoryDTOS) {
+//            params.put("acategoryId",categoryDTO.getId());
+//            List<MerchantDTO> list1 = baseDao.selectBygreay(params);
+//            list.removeAll(list1);
+//            list.addAll(list1);
+//        }
+
+        for (MerchantDTO merchantDTO : list) {
+            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
+            for (GoodDTO goodDTO : goodDTOS) {
+                merchantDTO.setGoodDTO(goodDTO);
+                break;
+            }
+          if (goodDTOS.size()>0){
+              List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
+              goodDTOS.removeAll(goodDTOS1);
+              goodDTOS.addAll(goodDTOS1);
+          }
+            merchantDTO.setGoodDTOs(goodDTOS);
+        }
+
+        return getPageData(list, page.getTotal(), MerchantDTO.class);
+    }
+
+    @Override
+    public PageData<MerchantDTO> searchMart(Map<String, Object> params) {
+        //分页
+        IPage<MerchantEntity> page = getPage(params, (String) params.get("ORDER_FIELD"), false);
+        //查询
+        List<MerchantDTO> list = baseDao.searchMart(params);
         List<CategoryDTO>  categoryDTOS = baseDao.selectcategoryDTOS((String) params.get("value"));
         for (CategoryDTO categoryDTO : categoryDTOS) {
             params.put("acategoryId",categoryDTO.getId());
@@ -264,16 +295,6 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             list.removeAll(list1);
             list.addAll(list1);
         }
-
-
-        for (MerchantDTO merchantDTO : list) {
-            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
-            List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
-            goodDTOS.removeAll(goodDTOS1);
-            goodDTOS.addAll(goodDTOS1);
-            merchantDTO.setGoodDTOs(goodDTOS);
-        }
-
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
