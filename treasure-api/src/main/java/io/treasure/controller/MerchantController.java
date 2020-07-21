@@ -710,7 +710,7 @@ public class MerchantController {
     }
 
     @GetMapping("search")
-    @ApiOperation("搜索")
+    @ApiOperation("搜索菜品")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -725,6 +725,24 @@ public class MerchantController {
     })
     public Result<PageData<MerchantDTO>> search(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.search(params);
+        return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+    @GetMapping("searchMart")
+    @ApiOperation("搜索商家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "longitude", value = "顾客的经度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "value", value = "模糊查找", paramType = "query",required = true, dataType="String"),
+            @ApiImplicitParam(name = "latitude", value = "顾客的纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "recommend", value = "推荐", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "categoryId", value = "分类ID", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "distanced", value = "距离", paramType = "query", dataType="int")
+    })
+    public Result<PageData<MerchantDTO>> searchMart(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<MerchantDTO> page = merchantService.searchMart(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
     }
 }
