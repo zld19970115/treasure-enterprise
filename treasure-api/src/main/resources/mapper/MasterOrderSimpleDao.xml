@@ -15,7 +15,7 @@
                       where mo.merchant_id = ${merchantId}
                         and mo.status in(4,6)
                   )
-
+                    union all
                   (
                       select cso.id,cso.order_id,cso.status,cmo.room_id,null,good_id,cso.pay_money,cmo.reservation_type,cmo.eat_time,null,cso.update_date,ccu.head_img,ccu.id as clientid,cmo.contact_number as contact_number
                       from ct_slave_order cso

@@ -4,6 +4,17 @@
 <mapper namespace="io.treasure.dao.SharingActivityHelpedLogDao">
 
 
+    <select id="selectHelpedListComboByProposeId" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+
+        select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
+        left join ct_client_user as clu
+        on sal.helper_mobile = clu.mobile
+
+        where activity_id = ${activityId}
+        and initiator_id = ${initiatorId}
+
+        and propose_sequeue_no = ${proposeId}
+    </select>
     <select id="selectHelpedListCombo" resultType="io.treasure.entity.SharingActivityHelpedEntity">
 
         select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
@@ -22,7 +33,6 @@
         )
     </select>
 
-
     <select id="selectHelpedListComboUnread" resultType="io.treasure.entity.SharingActivityHelpedEntity">
 
         select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
@@ -38,6 +48,19 @@
             order by create_pmt desc
             limit 0,10
 
+    </select>
+
+    <!--    精确查找助力列表    -->
+    <select id="selectHelpedListComboByProposeId" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+
+        select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
+        left join ct_client_user as clu
+        on sal.helper_mobile = clu.mobile
+        <where>
+            <if test="proposeSequeueNo != null and proposeSequeueNo != ''">
+                propose_sequeue_no = ${proposeSequeueNo}
+            </if>
+        </where>
     </select>
 
 </mapper>
