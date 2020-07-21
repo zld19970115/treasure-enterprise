@@ -4,7 +4,7 @@
 <mapper namespace="io.treasure.dao.SharingActivityHelpedLogDao">
 
 
-    <select id="selectHelpedListComboByProposeId" resultType="io.treasure.entity.SharingActivityHelpedEntity">
+    <select id="selectHelpedListComboByProposeIds" resultType="io.treasure.entity.SharingActivityHelpedEntity">
 
         select sal.*,clu.username as user_name,clu.head_img from sharing_activity_log as sal
         left join ct_client_user as clu
