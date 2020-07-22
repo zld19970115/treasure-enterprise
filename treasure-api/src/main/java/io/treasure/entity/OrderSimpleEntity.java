@@ -31,6 +31,7 @@ public class OrderSimpleEntity{
 	private String roomName;
 	private String contactNumber;
 
+	private String originPrice;
 	public OrderSimpleEntity resetGoodId(){
 		goodId = null;
 		return this;
