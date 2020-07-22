@@ -532,9 +532,11 @@ public class SharingActivityController {
             //平台发布的助力活动
 
                 int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcess.getProposeId());
+                int remainCount = inProcess.getRewardValue()- rewardSum - allowHelpersNum + completeCount+1;
                 if(rewardSum < inProcess.getRewardValue()){
 
-                    int itemReward = new  SharingActivityRandomUtil(inProcess.getRewardValue()-rewardSum).getRandomValue();
+                    //int itemReward = new  SharingActivityRandomUtil(inProcess.getRewardValue()-rewardSum).getRandomValue();
+                    int itemReward = new  SharingActivityRandomUtil(remainCount).getRandomValue();
                     insertSharingActivityLog(saId,initiatorId,mobile,itemReward,inProcess.getProposeId());
 
                     //map.put("msg","助力成功："+itemReward+saItem.getRewardUnit()+"!");

@@ -27,5 +27,12 @@ public class SharingActivityRandomUtil {
         return (int)(Math.random()*(maxLimit-minLimit))+minLimit;
     }
 
+    public int getRandomValue(int maxLimit){
+        int tmp = (int)(Math.random()*(maxLimit-minLimit))+minLimit;
+        if(tmp > maxLimit)
+            return maxLimit;
+        return tmp;
+    }
+
 
 }
