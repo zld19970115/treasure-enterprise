@@ -425,7 +425,50 @@ public class SharingActivityController {
 
         return result;
     }
+    @PostMapping("helped")
+    @ApiOperation("检查是否为本活动助力过")
+    public Result isProposer(@RequestBody HelpSharingActivityVo vo) throws Exception{
+        Result result = new Result();
 
+        String messageStr = null;
+        Long initiatorId = vo.getInitiator_id();    //发起者client_usr/id
+        Integer saId = vo.getSa_id();               //活动id
+        String mobile = vo.getMobile();
+
+        if(mobile == null ||mobile == ""|| initiatorId == null || saId == null){
+            System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
+            result.setCode(200);
+            result.setMsg("0");
+            return result;
+        }
+        ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
+        if(clientUserEntity == null){
+            result.setCode(200);
+            result.setMsg("0");
+            return result;
+        }
+
+
+        SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();
+        if(sharingDistributionParams == null){
+            sharingDistributionParams = new SharingAndDistributionParamsEntity();
+        }
+
+        SharingInitiatorEntity inProcess = sharingInitiatorService.getLastInProcessOne(initiatorId,saId);
+        if(inProcess != null){
+            int code = helperIdentification(initiatorId,mobile, null, saId, inProcess.getProposeId(), true, sharingDistributionParams);
+            if(code == 1){
+                result.setCode(200);
+                result.setMsg("1010");
+                return result;
+            }
+        }
+
+        result.setCode(200);
+        result.setMsg("0");
+        return result;
+
+    }
     /**
      * 协助助力的用户信息(参数方式)
      * @return
