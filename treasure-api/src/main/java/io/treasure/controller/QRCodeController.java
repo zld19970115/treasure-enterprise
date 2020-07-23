@@ -62,7 +62,7 @@ public class QRCodeController {
     }
     @CrossOrigin
     @Login
-    @PostMapping("getQRCode")
+    @GetMapping("getQRCode")
     @ApiOperation("生成商户二维码")
     @ApiImplicitParams({
             @ApiImplicitParam(name ="id", value = "商户id", paramType = "query",required = true, dataType="long"),
