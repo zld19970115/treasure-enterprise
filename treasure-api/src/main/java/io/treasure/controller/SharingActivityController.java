@@ -390,9 +390,12 @@ public class SharingActivityController {
             map.put("client_id",clientUser.getId());
             map.put("token",tokenService.getByUserId(clientUser.getId()).getToken());
             map.put("initiator_head_img",clientUser.getHeadImg());
+            map.put("client_name",clientUser.getName());
         }else{
             map.put("client_id",null);
             map.put("token",null);
+            map.put("initiator_head_img",null);
+            map.put("client_name",null);
         }
         System.out.println("sa_info:"+errorMessage);
         map.put("msg",errorMessage);
