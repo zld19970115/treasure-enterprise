@@ -3,6 +3,7 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.google.zxing.WriterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -20,6 +21,7 @@ import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.SharingActivityLogEntity;
 import io.treasure.service.CategoryService;
+import io.treasure.service.MerchantQrCodeService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import io.treasure.utils.SendSMSUtil;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -54,6 +57,8 @@ public class MerchantController {
     private MerchantDao merchantDao;
     @Autowired
     private SMSConfig smsConfig;
+    @Autowired
+    private MerchantQrCodeService merchantQrCodeService;
     @CrossOrigin
     @Login
     @GetMapping("page")
@@ -115,7 +120,7 @@ public class MerchantController {
     @Login
     @PostMapping("save")
     @ApiOperation("保存")
-    public Result save(@RequestBody MerchantDTO dto){
+    public Result save(@RequestBody MerchantDTO dto) throws IOException, WriterException {
         //效验数据
        // ValidatorUtils.validateEntity(dto);
         //根据商户名称、身份证号查询商户信息
@@ -128,6 +133,7 @@ public class MerchantController {
         dto.setCreateDate(new Date());
         dto.setAuditstatus(Audit.STATUS_NO.getStatus());
         merchantService.save(dto);
+
         //修改创建者的商户信息
         MerchantUserDTO user=merchantUserService.get(dto.getCreator());
         //根据商户名称、身份证号查询商户信息
@@ -135,6 +141,7 @@ public class MerchantController {
         String merchantId=user.getMerchantid();
         user.setMerchantid(String.valueOf(entity.getId()));
         merchantUserService.update(user);
+        merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(entity.getId()));
         String mobile = merchantService.selectOfficialMobile();
         SendSMSUtil.MerchantsSettlement(mobile, dto.getName(), smsConfig);
         return new Result().ok(entity);

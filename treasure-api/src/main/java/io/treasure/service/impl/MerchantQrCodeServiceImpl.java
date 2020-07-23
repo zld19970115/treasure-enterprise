@@ -65,7 +65,11 @@ public class MerchantQrCodeServiceImpl extends CrudServiceImpl<MerchantQrCodeDao
         String url = OSSFactory.build().uploadSuffix(inSteam, IMAGE_SUFFIX);
         System.out.println("二维码存储地址"+url);
         Date date = new Date();
-       baseDao.insertMerchantQrCodeByMerchantId(url, Long.valueOf(merchantId),date);
+        MerchantQrCodeEntity merchantQrCodeByMerchantId = getMerchantQrCodeByMerchantId(Long.valueOf(merchantId));
+        if (merchantQrCodeByMerchantId==null){
+            baseDao.insertMerchantQrCodeByMerchantId(url, Long.valueOf(merchantId),date);
+        }
+
     }
 
     @Override

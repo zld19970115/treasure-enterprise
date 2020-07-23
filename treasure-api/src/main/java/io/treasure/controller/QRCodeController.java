@@ -59,10 +59,20 @@ public class QRCodeController {
         Map<String, Object> data = new HashMap<>(1);
         merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(id));
         return new Result<Map<String, Object>>().ok(data);
-
-
-
     }
+    @CrossOrigin
+    @Login
+    @PostMapping("getQRCode")
+    @ApiOperation("生成商户二维码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="id", value = "商户id", paramType = "query",required = true, dataType="long"),
+    })
+    public Result<MerchantQrCodeEntity> getQRCode(@ApiIgnore @RequestParam Long id)  {
+
+        MerchantQrCodeEntity merchantQrCodeByMerchantId = merchantQrCodeService.getMerchantQrCodeByMerchantId(id);
+        return new Result<MerchantQrCodeEntity>().ok(merchantQrCodeByMerchantId);
+    }
+
 
 
 
