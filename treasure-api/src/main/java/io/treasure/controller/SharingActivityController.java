@@ -118,6 +118,8 @@ public class SharingActivityController {
         if(clientUser != null){
             headImage = clientUser.getHeadImg();
             clientName = clientUser.getUsername();
+            if(clientName== null)
+                clientName = clientUser.getMobile();
         }
         map.put("client_name",clientName);
         map.put("initiator_head_img",headImage);
@@ -182,7 +184,9 @@ public class SharingActivityController {
         String client_name = null;
         if(clientUser != null){
             headImage = clientUser.getHeadImg();
-            client_name = clientUser.getName();
+            client_name = clientUser.getUsername();
+            if(client_name== null)
+                client_name = clientUser.getMobile();
         }
 
         map.put("initiator_head_img",headImage);
@@ -394,7 +398,10 @@ public class SharingActivityController {
             map.put("client_id",clientUser.getId());
             map.put("token",tokenService.getByUserId(clientUser.getId()).getToken());
             map.put("initiator_head_img",clientUser.getHeadImg());
-            map.put("client_name",clientUser.getName());
+            String clientName = clientUser.getUsername();
+            if(clientName== null)
+                clientName = clientUser.getMobile();
+            map.put("client_name",clientName);
         }else{
             map.put("client_id",null);
             map.put("token",null);
