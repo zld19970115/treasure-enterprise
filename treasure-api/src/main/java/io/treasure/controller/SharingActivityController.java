@@ -179,10 +179,14 @@ public class SharingActivityController {
         //发起者基本信息中添加头像
         ClientUserEntity clientUser = clientUserService.getClientUser(initiatorId);
         String headImage = null;
-        if(clientUser != null)
+        String client_name = null;
+        if(clientUser != null){
             headImage = clientUser.getHeadImg();
-        map.put("initiator_head_img",headImage);
+            client_name = clientUser.getName();
+        }
 
+        map.put("initiator_head_img",headImage);
+        map.put("client_name",client_name);
         //助力活动相关信息
         SharingInitiatorEntity currentOne = sharingInitiatorService.getCurrentOne(initiatorId, saId);
 
