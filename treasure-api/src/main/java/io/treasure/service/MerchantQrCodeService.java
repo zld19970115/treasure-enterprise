@@ -25,7 +25,7 @@ public interface MerchantQrCodeService extends CrudService<MerchantQrCodeEntity,
     /***
      * 根据商户ID查询商户二维码
      */
-    MerchantQrCodeEntity getMerchantQrCodeByMerchantId(Long merchantId);
+    MerchantQrCodeEntity getMerchantQrCodeByMerchantId(Long merchantId) throws IOException, WriterException;
 
 
 }

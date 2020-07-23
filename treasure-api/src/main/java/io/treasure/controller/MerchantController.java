@@ -141,7 +141,7 @@ public class MerchantController {
         String merchantId=user.getMerchantid();
         user.setMerchantid(String.valueOf(entity.getId()));
         merchantUserService.update(user);
-        merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(entity.getId()));
+//        merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(entity.getId()));
         String mobile = merchantService.selectOfficialMobile();
         SendSMSUtil.MerchantsSettlement(mobile, dto.getName(), smsConfig);
         return new Result().ok(entity);

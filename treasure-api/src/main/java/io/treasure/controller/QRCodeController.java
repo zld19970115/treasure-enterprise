@@ -67,7 +67,7 @@ public class QRCodeController {
     @ApiImplicitParams({
             @ApiImplicitParam(name ="id", value = "商户id", paramType = "query",required = true, dataType="long"),
     })
-    public Result<MerchantQrCodeEntity> getQRCode(@ApiIgnore @RequestParam Long id)  {
+    public Result<MerchantQrCodeEntity> getQRCode(@ApiIgnore @RequestParam Long id) throws IOException, WriterException {
 
         MerchantQrCodeEntity merchantQrCodeByMerchantId = merchantQrCodeService.getMerchantQrCodeByMerchantId(id);
         return new Result<MerchantQrCodeEntity>().ok(merchantQrCodeByMerchantId);
