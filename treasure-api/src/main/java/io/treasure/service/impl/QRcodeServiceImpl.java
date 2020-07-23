@@ -38,7 +38,6 @@ public class QRcodeServiceImpl implements QRCodeService {
      *
      * https://jubaoapp.com:8443/treasure-api/sharing_activitys/Readed?client_id=1272363843756167170&sharingId=777
      */
-
     public  String generateQrAndUrl(String url,@NotNull Map<String,String> params) throws Exception{
         // 存放在二维码中的内容
         String content = null;

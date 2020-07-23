@@ -642,8 +642,6 @@ public class SharingActivityController {
         return initResult(messageStr,mobile,false,initiatorId,saId,inProcess,rValue);
     }
 
-
-
     public Result continueSharing(SharingActivityEntity saItem,Integer saId,
                                   Long initiatorId,String mobile,
                                   SharingInitiatorEntity inProcess,SharingActivityExtendsEntity extendsInfo) throws Exception{

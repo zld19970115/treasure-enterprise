@@ -20,10 +20,12 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.common.validator.group.UpdateGroup;
+import io.treasure.dao.BusinessManagerDao;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.RecordGiftDTO;
+import io.treasure.entity.BusinessManagerEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.TokenEntity;
@@ -547,6 +549,24 @@ public class ApiClientUserController {
         if (integer != null)
             res = integer;
         return new Result().ok("数量："+res);
+    }
+
+
+    @Autowired(required = false)
+    BusinessManagerDao businessManagerDao;
+
+    @ApiOperation("业务员")
+    @ApiImplicitParam(name = "mobile",value="手机号",dataType = "string",paramType = "query",required = false)
+    @GetMapping("is_service")
+    public Result isService(String mobile){
+        QueryWrapper<BusinessManagerEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("mobile",mobile);
+        queryWrapper.or().eq("emergent_contact",mobile);
+        Integer integer = businessManagerDao.selectCount(queryWrapper);
+        int res = 0;
+        if(integer != null)
+            res = integer;
+        return new Result().ok(res);
     }
 
 }

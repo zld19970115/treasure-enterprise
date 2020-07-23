@@ -31,6 +31,7 @@ public class BusinessManagerEntity {
     private String emergentContact;//char(11)                            null comment '紧急联系人',
     private Integer wageBase;  //int(10)   default 0                 null comment '工资基数：单位分',
     private Integer status;     //int(2)                              null comment '状态1:试用，2：正式入职，3:离
+    private Integer isService;
     /**
      * 逻辑删除字段
      */
