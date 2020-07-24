@@ -1,9 +1,13 @@
 package io.treasure.task;
 
+import io.treasure.dto.SharingActivityExtendsDTO;
+import io.treasure.entity.SharingActivityExtendsEntity;
 import io.treasure.service.QRCodeService;
 import io.treasure.service.impl.QRcodeServiceImpl;
 import io.treasure.task.item.OrderClear;
+import io.treasure.utils.ObjectUtil;
 import io.treasure.utils.TimeUtil;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -68,10 +72,5 @@ public class Task {
         long mins = ((timeDiff%day)%hour)/min;
         long sec = ((timeDiff%day)%hour)%min;
         System.out.println("当前时间:"+days+"天,"+hours+"时，"+mins+"分，"+sec+"妙");
-
-
-
     }
-
-
 }

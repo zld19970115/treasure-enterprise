@@ -198,6 +198,16 @@ public class SharingForManagerController {
 
         sharingActivityForDtoDao.insert(dto);
 
+        /*
+        SharingActivityExtendsEntity sharingActivityExtendsEntity = new SharingActivityExtendsEntity();
+        if(dto.getSaId() != null){
+            sharingActivityExtendsEntity.setSaeId(dto.getSaId());
+        }else{
+
+        }
+        sharingActivityExtendsDao.insert(sharingActivityExtendsEntity);
+        */
+
         return new Result().ok("added new record");
     }
     @Login

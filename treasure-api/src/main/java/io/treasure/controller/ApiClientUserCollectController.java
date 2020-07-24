@@ -20,10 +20,10 @@ import java.util.Map;
 
 /**
  * 用户收藏
- *
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-08-02
  */
+
 @RestController
 @RequestMapping("/api/collect")
 @Api(tags="用户收藏")
@@ -58,10 +58,7 @@ public class ApiClientUserCollectController {
     public Result save(@RequestBody ClientUserCollectDTO dto){
         //效验数据
        // ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
-
         clientUserCollectService.save(dto);
-
-
         return new Result();
     }
     @Login
@@ -106,25 +103,6 @@ public class ApiClientUserCollectController {
 
         }
         return new Result().ok("false");
-        /*
-=======
-        if(userId==null){
-            return new Result().ok("false");
-        }
->>>>>>> origin/master
-        ClientUserCollectDTO clientUserCollectDTO = clientUserCollectService.selectByUidAndMid(userId, martId);
-        if (clientUserCollectDTO!=null){
-        Integer status = clientUserCollectDTO.getStatus();
-        Integer a = 1;
-        if (a.equals(status)){
-            return new Result().ok("true");
-        }else {
-            return new Result().ok("false");
-        }
-
-        }
-        return new Result().ok("false");
-        */
 
     }
     @Login

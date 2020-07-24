@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.SQLOutput;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -31,11 +34,16 @@ public class OrderSimpleEntity{
 	private String roomName;
 	private String contactNumber;
 
+	private String originPrice;
 	public OrderSimpleEntity resetGoodId(){
 		goodId = null;
 		return this;
 	}
 
+	public OrderSimpleEntity updateOriginPrice(){
+		originPrice = new BigDecimal(originPrice).stripTrailingZeros().toPlainString();
+		return this;
+	}
 
 
 }

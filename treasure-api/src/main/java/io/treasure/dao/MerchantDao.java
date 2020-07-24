@@ -48,6 +48,8 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     Integer updateParty(@Param("id") Long id, @Param("recommend") Integer recommend);
     Integer updateSpecial(@Param("id") Long id, @Param("recommend") Integer recommend);
     List<MerchantDTO> selectbYGoods(Map<String, Object> params);
+
+    List<MerchantDTO> searchMart(Map<String, Object> params);
     List<MerchantDTO> selectBygreay(Map<String, Object> params);
     List<CategoryDTO> selectcategoryDTOS(String Value);
     List<GoodDTO> selectByMidAndValue(Long merchantId,String value);

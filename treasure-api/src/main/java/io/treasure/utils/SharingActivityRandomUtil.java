@@ -16,6 +16,7 @@ public class SharingActivityRandomUtil {
     private int minLimit;
     private int preferenceValue;
 
+
     public SharingActivityRandomUtil(int preferenceValue){
         this.preferenceValue = preferenceValue;
         maxLimit = preferenceValue*30/100;
@@ -25,6 +26,13 @@ public class SharingActivityRandomUtil {
 
     public int getRandomValue(){
         return (int)(Math.random()*(maxLimit-minLimit))+minLimit;
+    }
+
+    public int getRandomValue(int maxLimit){
+        int tmp = (int)(Math.random()*(maxLimit-minLimit))+minLimit;
+        if(tmp > maxLimit)
+            return maxLimit;
+        return tmp;
     }
 
 

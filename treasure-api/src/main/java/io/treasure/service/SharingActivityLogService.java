@@ -46,4 +46,5 @@ public interface SharingActivityLogService {
 
     List<SharingInitiatorEntity> getUnreadedLogList(long intitiatorId, int activityId);
     List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId);
+    List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId);
 }

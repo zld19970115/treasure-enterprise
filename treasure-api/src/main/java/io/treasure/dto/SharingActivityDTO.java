@@ -3,17 +3,22 @@ package io.treasure.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @ApiModel(value = "助力活动管理表")
 @Accessors(chain = true)
-public class SharingActivityDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class SharingActivityDTO implements Serializable {
 
       @NotNull(message = "活动id不能为空")
       private Integer saId;//int(10) NOT NULL AUTO_INCREMENT COMMENT '活动编号',
@@ -48,6 +53,7 @@ public class SharingActivityDTO {
       private Integer personLimit;  //活动人数高限
       private Integer rewardLimit;  //活动奖励高限
       private Integer sharingMethod;// int(2) DEFAULT '1' COMMENT '1-人数方式，2-，3-',
+
 
 
 }

@@ -8,16 +8,16 @@
 
     select * from (
                   (
-                      select mo.id,order_id,mo.status,mo.room_id,cmrps.room_name,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date ,cu.head_img,cu.id as clientid,cu.mobile as contact_number
+                      select mo.id,order_id,mo.status,mo.room_id,cmrps.room_name,'good_id',pay_money,reservation_type,eat_time,p_order_id,mo.update_date ,cu.head_img,cu.id as clientid,cu.mobile as contact_number,(mo.pay_money+mo.gift_money)as origin_price
                       from  ct_master_order mo
                                 left join ct_client_user cu on cu.mobile = mo.contact_number
                                 left join ct_merchant_room_params_set cmrps on mo.room_id = cmrps.room_id and mo.eat_time = cmrps.use_date
                       where mo.merchant_id = ${merchantId}
                         and mo.status in(4,6)
                   )
-
+                    union all
                   (
-                      select cso.id,cso.order_id,cso.status,cmo.room_id,null,good_id,cso.pay_money,cmo.reservation_type,cmo.eat_time,null,cso.update_date,ccu.head_img,ccu.id as clientid,cmo.contact_number as contact_number
+                      select cso.id,cso.order_id,cso.status,cmo.room_id,null,good_id,cso.pay_money,cmo.reservation_type,cmo.eat_time,null,cso.update_date,ccu.head_img,ccu.id as clientid,cmo.contact_number as contact_number,(cso.price * cso.quantity)as origin_price
                       from ct_slave_order cso
                                left join ct_master_order cmo on cso.order_id=cmo.order_id
                                left join ct_client_user ccu on ccu.mobile=cmo.contact_number

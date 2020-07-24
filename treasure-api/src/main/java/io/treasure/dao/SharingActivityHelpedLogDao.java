@@ -16,6 +16,11 @@ public interface SharingActivityHelpedLogDao extends BaseDao<SharingActivityHelp
     List<SharingActivityHelpedEntity> selectHelpedListCombo(@Param("initiatorId") Long initiatorId,
                                                             @Param("activityId") int activityId);
 
+    List<SharingActivityHelpedEntity> selectHelpedListComboByProposeIds(@Param("initiatorId") Long initiatorId,
+                                                            @Param("activityId") int activityId,
+                                                            @Param("proposeId")Integer proposeId);
+
+    List<SharingActivityHelpedEntity> selectHelpedListComboByProposeId(Integer proposeSequeueNo);
     List<SharingActivityHelpedEntity> selectHelpedListComboUnread(@Param("initiatorId") Long initiatorId,
                                                             @Param("activityId") int activityId);
     

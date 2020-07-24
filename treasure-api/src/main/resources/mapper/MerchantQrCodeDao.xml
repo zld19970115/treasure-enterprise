@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantQrCodeDao">
+    <resultMap type="io.treasure.entity.MerchantQrCodeEntity" id="merchantQrCodeMap">
+
+        <result property="qrUrl" column="qr_url"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="creatTime" column="creat_time"/>
+    </resultMap>
+    <insert id="insertMerchantQrCodeByMerchantId" >
+        insert into ct_merchant_qrcode (qr_url,merchant_id,creat_time)
+                                values(#{qrUrl},#{merchantId},#{creatTime})
+    </insert>
+
+
+    <select id="getMerchantQrCodeByMerchantId" resultType="io.treasure.entity.MerchantQrCodeEntity">
+        select * from ct_merchant_qrcode where merchant_id = #{merchantId}
+    </select>
+
+</mapper>

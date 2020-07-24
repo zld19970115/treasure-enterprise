@@ -21,6 +21,7 @@ import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.ProposeSharingActivityVo;
 import io.treasure.vo.HelpSharingActivityVo;
+import lombok.AllArgsConstructor;
 import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -66,6 +67,8 @@ public class SharingActivityController {
     private DistributionRewardServiceImpl distributionRewardService;
     @Autowired
     private QRCodeService qrCodeService;
+    @Autowired
+    private SharingRewardGoodsRecordService sharingRewardGoodsRecordService;
 
     @PostMapping("startRelay")
     @ApiOperation("发起助力")
@@ -74,7 +77,7 @@ public class SharingActivityController {
         Long id = vo.getId();
         Integer saId = vo.getSaId();
         System.out.println("get requestBody info(id,said):"+id+","+saId);
-        //1、检查活动是否存在
+        //1、检查活动是否存在(只输入活动id)
         SharingActivityEntity saItem = sharingActivityService.getOneById(saId, false);
         if(saItem == null){
             return new Result().error("活动("+saId+")不存在！");
@@ -108,7 +111,6 @@ public class SharingActivityController {
             map.put("helpers",helpedListComboUnread);
         }
         map.put("body",saItem.getHelpersNum());
-
 
         ClientUserEntity clientUser = clientUserService.getClientUser(id);
         String headImage = null;
@@ -177,18 +179,26 @@ public class SharingActivityController {
         //发起者基本信息中添加头像
         ClientUserEntity clientUser = clientUserService.getClientUser(initiatorId);
         String headImage = null;
-        if(clientUser != null)
+        String client_name = null;
+        if(clientUser != null){
             headImage = clientUser.getHeadImg();
-        map.put("initiator_head_img",headImage);
+            client_name = clientUser.getName();
+        }
 
+        map.put("initiator_head_img",headImage);
+        map.put("client_name",client_name);
         //助力活动相关信息
         SharingInitiatorEntity currentOne = sharingInitiatorService.getCurrentOne(initiatorId, saId);
 
-        //增加查看列表
-        List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListCombo(initiatorId, saId);
-        if(helpedListCombo != null)
-            map.put("helpers",helpedListCombo);
-
+        System.out.println("当前是否已读状态"+currentOne.getReaded()+","+currentOne.getProposeId());
+        if(currentOne.getReaded() == 1){
+            //增加查看列表
+            List<SharingActivityHelpedEntity> helpedListCombo = getHelpedListComboByProposeId(initiatorId, saId,currentOne.getProposeId());
+            if(helpedListCombo != null)
+                map.put("helpers",helpedListCombo);
+        }else{
+            map.put("helpers",null);
+        }
         String finishStamp = TimeUtil.dateToStamp(currentOne.getFinishedTime());
         map.put("finishStamp",finishStamp);
 
@@ -363,8 +373,6 @@ public class SharingActivityController {
             }
         }
     }
-
-
     /**
      * @param errorMessage
      * @return
@@ -386,9 +394,12 @@ public class SharingActivityController {
             map.put("client_id",clientUser.getId());
             map.put("token",tokenService.getByUserId(clientUser.getId()).getToken());
             map.put("initiator_head_img",clientUser.getHeadImg());
+            map.put("client_name",clientUser.getName());
         }else{
             map.put("client_id",null);
             map.put("token",null);
+            map.put("initiator_head_img",null);
+            map.put("client_name",null);
         }
         System.out.println("sa_info:"+errorMessage);
         map.put("msg",errorMessage);
@@ -421,7 +432,50 @@ public class SharingActivityController {
 
         return result;
     }
+    @PostMapping("helped")
+    @ApiOperation("检查是否为本活动助力过")
+    public Result isProposer(@RequestBody HelpSharingActivityVo vo) throws Exception{
+        Result result = new Result();
 
+        String messageStr = null;
+        Long initiatorId = vo.getInitiator_id();    //发起者client_usr/id
+        Integer saId = vo.getSa_id();               //活动id
+        String mobile = vo.getMobile();
+
+        if(mobile == null ||mobile == ""|| initiatorId == null || saId == null){
+            System.out.println("request_params(mobile,initiatorId,saId):"+mobile+","+initiatorId+","+saId);
+            result.setCode(200);
+            result.setMsg("0");
+            return result;
+        }
+        ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
+        if(clientUserEntity == null){
+            result.setCode(200);
+            result.setMsg("0");
+            return result;
+        }
+
+
+        SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();
+        if(sharingDistributionParams == null){
+            sharingDistributionParams = new SharingAndDistributionParamsEntity();
+        }
+
+        SharingInitiatorEntity inProcess = sharingInitiatorService.getLastInProcessOne(initiatorId,saId);
+        if(inProcess != null){
+            int code = helperIdentification(initiatorId,mobile, null, saId, inProcess.getProposeId(), true, sharingDistributionParams);
+            if(code == 1){
+                result.setCode(200);
+                result.setMsg("1010");
+                return result;
+            }
+        }
+
+        result.setCode(200);
+        result.setMsg("0");
+        return result;
+
+    }
     /**
      * 协助助力的用户信息(参数方式)
      * @return
@@ -431,6 +485,7 @@ public class SharingActivityController {
     public Result helpRelayParam(@RequestBody HelpSharingActivityVo vo) throws Exception {
         Result result = new Result();
         result.setCode(501);
+        long creator = 0;//0表示平台发出
         //Map map = new HashMap();
         String messageStr = null;
 
@@ -470,9 +525,10 @@ public class SharingActivityController {
                 return initResult("本活动已结束，感谢参与!",null,true,initiatorId,saId,null,0);
             }
         }
+
+        creator = saItem.getCreator();
         //3,用户是否发起了此活动(活动状态为1，若活动状态没有为1的则为2的)
         SharingInitiatorEntity inProcess = sharingInitiatorService.getLastInProcessOne(initiatorId,saId);
-        //SharingInitiatorEntity inProcess = sharingInitiatorService.getOne(initiatorId,saId,1,2);
         if(inProcess == null) {//用户未发起或助力已完成
             if(alwaysRegisterSuccess){
                 ClientUserEntity proSpectiveUser = userRegistrationViaHelp(mobile,password);
@@ -497,6 +553,7 @@ public class SharingActivityController {
                 if(masterMobile != null){
                     if(masterMobile != mobile){
                         distributionRewardService.binding(saId,masterMobile,mobile);
+                        //绑定主从关系后执行后续工作;
                     }else{
                         //以后改成查看助力详情
                         return initResult("您的助力正在进行中!",mobile,true,initiatorId,saId,inProcess,0);
@@ -522,62 +579,72 @@ public class SharingActivityController {
         SharingActivityExtendsEntity extendsInfo = sharingActivityExtendsService.getExtendsInfoById(saItem.getSaId());
         int rValue = 0;
         if((completeCount+1)<allowHelpersNum){//助力未成功
+            //平台发布的助力活动
 
-            int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcess.getProposeId());
-            if(rewardSum < inProcess.getRewardValue()){
+                int rewardSum = sharingActivityLogService.getRewardSum(initiatorId,saId,inProcess.getProposeId());
+                int remainCount = inProcess.getRewardValue()- rewardSum - allowHelpersNum + completeCount+1;
+                if(rewardSum < inProcess.getRewardValue()){
 
-                int itemReward = new  SharingActivityRandomUtil(inProcess.getRewardValue()-rewardSum).getRandomValue();
-                insertSharingActivityLog(saId,initiatorId,mobile,itemReward,inProcess.getProposeId());
+                    //int itemReward = new  SharingActivityRandomUtil(inProcess.getRewardValue()-rewardSum).getRandomValue();
+                    int itemReward = new  SharingActivityRandomUtil(remainCount).getRandomValue();
+                    insertSharingActivityLog(saId,initiatorId,mobile,itemReward,inProcess.getProposeId());
 
-                //map.put("msg","助力成功："+itemReward+saItem.getRewardUnit()+"!");
-                messageStr = "助力成功："+itemReward+saItem.getRewardUnit()+"!";
-            }
-            //给用户奖励
-            rValue = extendsInfo.getHelperRewardAmount();
-            if(rValue > 0)
-                prizesHelper(saItem.getSaId(),mobile,extendsInfo.getHelperRewardType(),rValue);
+                    //map.put("msg","助力成功："+itemReward+saItem.getRewardUnit()+"!");
+                    messageStr = "助力成功："+itemReward+saItem.getRewardUnit()+"!";
+                }else{
+                    insertSharingActivityLog(saId,initiatorId,mobile,1,inProcess.getProposeId());
+                }
+                //给用户奖励
+                rValue = extendsInfo.getHelperRewardAmount();
+                if(rValue > 0)
+                    prizesHelper(saItem.getSaId(),mobile,extendsInfo.getHelperRewardType(),rValue);
 
         }else if((completeCount+1) == allowHelpersNum) {//助力成功
+            //if(creator == 0l){
+                if(inProcess.getStatus() == ESharingInitiator.IN_PROCESSING.getCode()){
 
-            if(inProcess.getStatus() == ESharingInitiator.IN_PROCESSING.getCode()){
-                //map.put("msg", "助力成功,获得：" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!");
-                messageStr = "助力成功,获得：" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!";
+                    messageStr = "助力成功,获得：" + saItem.getRewardAmount() + saItem.getRewardUnit() + "!";
 
-                //更新助力记录：获得还需助力的费用值
-                int rewardSum = sharingActivityLogService.getRewardSum(initiatorId, saId, inProcess.getProposeId());
-                if (rewardSum < saItem.getRewardAmount()) {
-                    int itemReward = saItem.getRewardAmount() - rewardSum;
+                    //更新助力记录：获得还需助力的费用值
+                    int rewardSum = sharingActivityLogService.getRewardSum(initiatorId, saId, inProcess.getProposeId());
+                    if (rewardSum < saItem.getRewardAmount()) {
+                        int itemReward = saItem.getRewardAmount() - rewardSum;
 
-                    insertSharingActivityLog(saId, initiatorId, mobile, itemReward, inProcess.getProposeId());
-                }
+                        insertSharingActivityLog(saId, initiatorId, mobile, itemReward, inProcess.getProposeId());
+                    }
 
-                //更新发起者助力状态
-                inProcess.setStatus(ESharingInitiator.COMPLETE_SUCCESS.getCode());
-                sharingInitiatorService.updateById(inProcess);//重新更新表格状态
+                    //更新发起者助力状态
+                    inProcess.setStatus(ESharingInitiator.COMPLETE_SUCCESS.getCode());
+                    sharingInitiatorService.updateById(inProcess);//重新更新表格状态
 
-                prizesInitiator(saItem, initiatorId);//给发起者奖励
+                    prizesInitiator(saItem, initiatorId);//给发起者奖励
 
-                //给用户奖励???????用户助力分享成功前是否给助力用户发奖励
-                rValue = extendsInfo.getHelperRewardAmount();
-                if (rValue > 0)
-                    prizesHelper(saItem.getSaId(), mobile, extendsInfo.getHelperRewardType(), rValue);
-            }
-            else{
-                return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
+                    //给用户奖励???????用户助力分享成功前是否给助力用户发奖励
+                    rValue = extendsInfo.getHelperRewardAmount();
+                    if (rValue > 0)
+                        prizesHelper(saItem.getSaId(), mobile, extendsInfo.getHelperRewardType(), rValue);
+               }
+               else{
+                    return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
+              }
 
-            }
-
+            //}else{
+                //给商家奖励
+              //  prizesInitiator(saItem, initiatorId);//给发起者奖励
+              //  return initResult("恭喜助力成功！",mobile,false,initiatorId,saId,inProcess,0);
+            //}
         }else if(completeCount <allPersonLimit){//成功但可继续
-            return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
-
+            if(creator == 0){
+                return continueSharing(saItem,saId,initiatorId,mobile,inProcess,extendsInfo);
+            }else{
+                return initResult("手慢了，本次活动已经完成！",mobile,true,initiatorId,saId,inProcess,0);
+            }
         }else{
             return initResult("手慢了，本次活动已经完成！",mobile,true,initiatorId,saId,inProcess,0);
         }
 
         return initResult(messageStr,mobile,false,initiatorId,saId,inProcess,rValue);
     }
-
-
 
     public Result continueSharing(SharingActivityEntity saItem,Integer saId,
                                   Long initiatorId,String mobile,
@@ -631,6 +698,11 @@ public class SharingActivityController {
                 if(rewardAmount >= 0)
                     clientUserService.addRecordGiftByUserid(initiatorId+"",rewardAmount+"");
                 break;
+
+            case 3:
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
+//sharingRewardGoodsRecordService.insertItem();
+                break;
             case 4://宝币
                 Integer rewardAmount4 = sharingActivityEntity.getRewardAmount();
                 if(rewardAmount4 >= 0)
@@ -658,6 +730,10 @@ public class SharingActivityController {
 
     }
 
+    public List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId){
+        return sharingActivityLogService.getHelpedListComboByProposeId(intitiatorId,activityId,proposeId);
+    }
+
     public List<SharingActivityHelpedEntity> getHelpedListCombo(Long intitiatorId, Integer activityId){
         return sharingActivityLogService.getHelpedListCombo(intitiatorId,activityId);
     }
@@ -665,7 +741,6 @@ public class SharingActivityController {
     public List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId){
         return sharingActivityLogService.getHelpedListComboUnread(intitiatorId,activityId);
     }
-
     //onlyEnabled是否仅查询有效的助力活动（客户，时间）
     @GetMapping("list")
     @ApiOperation("助力列表")
@@ -701,7 +776,6 @@ public class SharingActivityController {
         if (oneByMerchantIdAndStatus.size()>0){
             return new Result().error("您有助力活动未结束");
         }
-
         SharingActivityEntity sharingActivityEntity = new SharingActivityEntity();
         sharingActivityEntity.setActivityImg(sharingActivityDTO.getActivityImg());
         sharingActivityEntity.setSubject(sharingActivityDTO.getSubject());
@@ -730,10 +804,10 @@ public class SharingActivityController {
         if (oneByMerchantIdAndStatus.size()>0){
             return new Result().ok(oneByMerchantIdAndStatus);
         }else {
-
             return new Result().ok("没有助力信息");
         }
     }
+
 
 
 }
