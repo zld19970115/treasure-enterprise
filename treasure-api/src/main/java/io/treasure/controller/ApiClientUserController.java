@@ -561,6 +561,7 @@ public class ApiClientUserController {
     public Result isService(String mobile){
         QueryWrapper<BusinessManagerEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("mobile",mobile);
+        queryWrapper.eq("is_service",1);
         queryWrapper.or().eq("emergent_contact",mobile);
         Integer integer = businessManagerDao.selectCount(queryWrapper);
         int res = 0;
