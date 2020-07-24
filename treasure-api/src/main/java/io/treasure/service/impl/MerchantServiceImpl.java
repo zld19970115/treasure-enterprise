@@ -269,6 +269,7 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
             for (GoodDTO goodDTO : goodDTOS) {
                 merchantDTO.setGoodDTO(goodDTO);
+                goodDTOS.remove(goodDTO);
                 break;
             }
           if (goodDTOS.size()>0){
