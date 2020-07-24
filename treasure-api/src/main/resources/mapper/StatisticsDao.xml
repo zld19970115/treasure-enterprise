@@ -499,6 +499,10 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 1
                 and ct2.room_id = ct.room_id
+                <if test="type != null">
+                    and ct2.type = #{type}
+                </if>
+                and ct.merchant_id = #{merchantId}
             ) as oneState,
             (
                 select ct2.state from ct_merchant_room_params_set ct2
@@ -506,18 +510,30 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 2
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as twoState,
             (
                 select ct2.state from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 3
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as threeState,
             (
                 select ct2.state from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 4
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as fourState,
             (
                 select ct2.creator from ct_merchant_room_params_set ct2
@@ -525,6 +541,10 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 1
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as oneCreator,
             (
                 select ct2.creator from ct_merchant_room_params_set ct2
@@ -532,18 +552,30 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 2
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as twoCreator,
             (
                 select ct2.creator from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 3
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as threeCreator,
             (
                 select ct2.creator from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 4
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as fourCreator,
             (
                 select ct2.id from ct_merchant_room_params_set ct2
@@ -551,6 +583,10 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 1
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as oneCid,
             (
                 select ct2.id from ct_merchant_room_params_set ct2
@@ -558,18 +594,30 @@
                 date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 2
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as twoCid,
             (
                 select ct2.id from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 3
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as threeCid,
             (
                 select ct2.id from ct_merchant_room_params_set ct2
                 where date_format(ct2.use_date, '%Y-%m-%d') = #{time}
                 and ct2.room_params_id = 4
                 and ct2.room_id = ct.room_id
+        <if test="type != null">
+            and ct2.type = #{type}
+        </if>
+        and ct.merchant_id = #{merchantId}
             ) as fourCid
         from
             ct_merchant_room_params_set ct
