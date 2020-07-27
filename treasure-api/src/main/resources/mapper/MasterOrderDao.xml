@@ -458,12 +458,9 @@
 	        and ct.order_id = #{orderId}
     </select>
 
-    <select id = "selectInProcessList" resultType="io.treasure.entity.MasterOrderEntity">
-        select * from ct_master_order where status = 4 and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now() and  merchant_id =#{martId}
-    </select>
+
     <select id="getOrderByYwy" resultType="io.treasure.dto.OrderDTO">
-         select * from ct_master_order
-        where order_id=#{orderId} and status = 1
+        select * from ct_master_order where status = 4 and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now() and  merchant_id =#{martId}
 
 
     </select>

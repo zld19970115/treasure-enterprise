@@ -154,7 +154,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     MasterOrderEntity getOrderByReservationId(long reservationId);
 
-    List<MasterOrderEntity>getAuxiliaryPayOrder(String orderId,int status);
+    List<MasterOrderEntity> getAuxiliaryPayOrder(String orderId,int status);
     //设置包房
     Result setRoom(long id,long roomSetId);
     List<OrderDTO> getAffiliateOrde(String orderId);
