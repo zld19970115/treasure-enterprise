@@ -517,7 +517,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
                 wsPool.sendMessageToUser(wsByUser, 1 + "");
             }
+            //主单中有房，且仅有房
+            if(dto.getReservationType() ==  Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());//释放房间
 
+                dto.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+                //003===============更新排序状态
+                dto.setResponseStatus(2);//1表示商家已响应
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
+                wsPool.sendMessageToUser(wsByUser, 1 + "");
+            }
             if (dto.getReservationType() != 2 && dto.getPayMoney().compareTo(nu) == 1) {
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
