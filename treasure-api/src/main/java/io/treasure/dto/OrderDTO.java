@@ -137,7 +137,11 @@ public class OrderDTO implements Serializable {
 
 	@ApiModelProperty(value = "平台扣点金额")
 	private BigDecimal platformBrokerage;
-
+	private Integer bmStatus;
+	/**
+	 * 是否发过提醒短信 0---没发过 0--发过
+	 */
+	private Integer smsStatus;
 	@ApiModelProperty(value = "商户实际所得金额（扣除平台扣点不包含赠送金）")
 	private BigDecimal merchantProceeds;
 

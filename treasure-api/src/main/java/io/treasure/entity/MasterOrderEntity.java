@@ -88,6 +88,14 @@ public class MasterOrderEntity extends BaseEntity {
      * 联系人
      */
 	private String contacts;
+	/**
+	 * 业务员查看状态 0--未查看 1--已查看
+	 */
+	private Integer bmStatus;
+	/**
+	 * 是否发过提醒短信 0---没发过 0--发过
+	 */
+	private Integer smsStatus;
     /**
      * 联系电话
      */

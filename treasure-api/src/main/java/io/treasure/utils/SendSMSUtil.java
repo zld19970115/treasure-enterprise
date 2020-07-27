@@ -242,6 +242,28 @@ public class SendSMSUtil {
         return ret;
     }
     /**
+     * 商家订单三分钟未接单通知管理员
+     * @param phoneNumber     手机号
+     * @param merchantName    商户名称
+     * @param smsConfig       配置
+     * @return
+     */
+    public static boolean MerchantsToBm(String phoneNumber,String OrderId,String merchantName, SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("name",merchantName);
+        map.put("value",OrderId);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_197895067", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
+    /**
      * 商家申请提现通知平台
      * @param phoneNumber     手机号
      * @param merchantName    商户名称

@@ -16,6 +16,7 @@ import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
+import io.treasure.dao.BusinessManagerDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
@@ -99,7 +100,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private IWXConfig wxPayConfig;
     @Autowired
     private PayServiceImpl payService;
-
+    @Autowired
+    private BusinessManagerDao businessManagerDao;
     @Autowired
     private MerchantUserService merchantUserService;
 
@@ -2882,6 +2884,27 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         RoomOrderPrinterVo vo = baseDao.roomOrderPrinter(orderId);
         vo.setGoodList(baseDao.goodPrinter(vo.getOrderId()));
         return vo;
+    }
+
+    @Override
+    public PageData<OrderDTO> getOrderByYwy(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+       String mobile = (String)params.get("mobile");
+        List<OrderDTO> list = new ArrayList<>();
+        BusinessManagerDTO businessManagerDTO = businessManagerDao.selectByMobile(mobile);
+        if (businessManagerDTO!=null){
+            List<BusinessManagerTrackRecordEntity> businessManagerTrackRecordEntities = businessManagerDao.selectlogById(businessManagerDTO.getId());
+            for (BusinessManagerTrackRecordEntity businessManagerTrackRecordEntity : businessManagerTrackRecordEntities) {
+                List<OrderDTO> orderByYwy = masterOrderDao.getOrderByYwy(businessManagerTrackRecordEntity.getMchId());
+                list.addAll(orderByYwy);
+            }
+        }
+   return getPageData(list, pages.getTotal(), OrderDTO.class);
+    }
+
+    @Override
+    public void bmGet(String orderId) {
+        baseDao.bmGet(orderId);
     }
 
     @Override

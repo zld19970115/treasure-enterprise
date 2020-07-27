@@ -92,8 +92,10 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
 
     RoomOrderPrinterVo roomOrderPrinter(@Param("orderId") String orderId);
     List<GoodPrinterVo> goodPrinter(@Param("orderId") String orderId);
-
-
+    void bmGet(String orderId);
+    List<OrderDTO> selectForBm();
+    void updateSmsStatus(String orderId);
+    List<OrderDTO>  getOrderByYwy(Long martId);
     List<MasterOrderEntity> selectInProcessList(Long martId);
 
 }

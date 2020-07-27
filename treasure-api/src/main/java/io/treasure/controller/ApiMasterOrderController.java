@@ -778,16 +778,33 @@ public class ApiMasterOrderController {
         return orderList;
     }
 
-    @GetMapping("goDeachmsg")
-    @ApiOperation("接单拒单后调用deachmsg方法")
+    @GetMapping("getOrderByYwy")
+    @ApiOperation("查询该业务员下是否有商户订单3分钟未接单的订单列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "martId", value = "主订单编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", required = true, dataType="String")
     })
-    public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
-        List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
+    public  Result<PageData<OrderDTO>> getOrderByYwy(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<OrderDTO> orderByYwy = masterOrderService.getOrderByYwy(params);
+        return new Result().ok(orderByYwy);
+    }
+    @GetMapping("bmGet")
+    @ApiOperation("业务员已经查看")
+    @ApiImplicitParams({
+    })
+    public  Result bmGet( @RequestParam String orderId){
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return new Result().error("该订单没有找到");
+        }else {
+            masterOrderService.bmGet(orderId);
+            return new Result().ok("成功");
+        }
 
     }
-
     @GetMapping("roomOrderPrinter")
     @ApiOperation("房订单打印PC")
     public Result roomOrderPrinter(@RequestParam String orderId) {
