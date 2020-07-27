@@ -4,4 +4,7 @@
 <mapper namespace="io.treasure.dao.DistributionRewardLogDao">
 
 
+    <select id="selectByMaterMobile" resultType="io.treasure.entity.DistributionRewardLogEntity">
+        SELECT * FROM distribution_reward_log WHERE mobile_master =#{mobile}
+    </select>
 </mapper>
