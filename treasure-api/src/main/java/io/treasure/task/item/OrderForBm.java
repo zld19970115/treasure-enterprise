@@ -25,13 +25,13 @@ import java.util.List;
 @Service
 public class OrderForBm  extends TaskSock {
 
-    @Autowired
+    @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
-    @Autowired
+    @Autowired(required = false)
     private BusinessManagerDao businessManagerDao;
     @Autowired
     private SMSConfig smsConfig;
-    @Autowired
+    @Autowired(required = false)
     private MerchantDao merchantDao;
     //每日凌晨5点进行清台操作
     /**     因为清掉的是此前24小时的订单有可能会带来一个问题就是前几个小时的订单线下未完成的，被清掉了      */

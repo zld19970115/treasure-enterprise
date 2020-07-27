@@ -1,5 +1,6 @@
 package io.treasure.dao;
 
+import io.treasure.common.constant.Constant;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
@@ -97,5 +98,22 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     void updateSmsStatus(String orderId);
     List<OrderDTO>  getOrderByYwy(Long martId);
     List<MasterOrderEntity> selectInProcessList(Long martId);
+
+
+
+    List<MerchantOrderDTO> inProcessOrdersByMerchantId(@Param("merchantId")Long merchantId,
+                                                       @Param("page")Integer page,
+                                                       @Param("limits")Integer limit,
+                                                       @Param("orderId")String orderId,
+                                                       @Param("orderField")String orderField,
+                                                       @Param("sortMethod")String sortMethod);//
+    Integer inProcessCountByMerchantId(@Param("merchantId")Long merchantId,@Param("orderId")String orderId,
+                                       @Param("orderField")String orderField,@Param("sortMethod")String sortMethod);
+
+    List<OrderDTO> inProcessOrdersByUserId(@Param("page")Integer page, @Param("limits")Integer limit,
+                                           @Param("orderField")String orderField,@Param("sortMethod")String sortMethod,
+                                           @Param("userId")Long userId);
+    Integer inProcessCountByUserId(@Param("orderField")String orderField,@Param("sortMethod")String sortMethod,
+                                           @Param("userId")Long userId);//
 
 }

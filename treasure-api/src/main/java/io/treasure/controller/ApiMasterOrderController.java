@@ -113,10 +113,46 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
     @CrossOrigin
     @Login
     @GetMapping("ongPage")
     @ApiOperation("商户端-进行中列表(已接受订单)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> ongPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
+
+        Long merchantId = Long.parseLong(params.get("merchantId")+"");
+        Integer page = Integer.parseInt(params.get(Constant.PAGE)+"");
+        if(page == null){
+            page = 0;
+        }else{
+            if(page>0)
+                page--;
+        }
+        Integer limit = Integer.parseInt(params.get(Constant.LIMIT)+"");
+        if(limit == null){
+            limit = 10;
+        }
+        String orderId = params.get("orderId")+"";
+        String orderField = params.get(Constant.ORDER_FIELD)+"";
+        String sortMethod = params.get(Constant.ORDER)+"";
+
+        PageData<MerchantOrderDTO> merchantOrderDTOPageData = masterOrderService.selectInProcessListByMerchantId(merchantId, page, limit, orderId, orderField, sortMethod);
+        //params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
+        return new Result<PageData<MerchantOrderDTO>>().ok(merchantOrderDTOPageData);
+    }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("ongPage_bk")
+    @ApiOperation("商户端-进行中列表(已接受订单)备份")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -363,6 +399,28 @@ public class ApiMasterOrderController {
         PageData<OrderDTO> page = masterOrderService.selectPOrderIdHavePaids(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
+
+    @Login
+    @GetMapping("payFinishOrderPageCopy")
+    @ApiOperation("支付完成订单列表新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<OrderDTO>> payFinishOrderPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
+
+        Integer page = Integer.parseInt(params.get("page")+"");
+        Integer limit = Integer.parseInt(params.get("limit")+"");
+        String orderField = params.get(Constant.ORDER_FIELD)+"";
+        String sortMethod =params.get(Constant.ORDER)+"";
+        Long userId = Long.parseLong(params.get("userId")+"");
+        PageData<OrderDTO> pages = masterOrderService.selectPOrderIdHavePaidsCopy(page,limit,orderField,sortMethod,userId);
+        return new Result<PageData<OrderDTO>>().ok(pages);
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Login
     @GetMapping("cancelNopayOrderPage")

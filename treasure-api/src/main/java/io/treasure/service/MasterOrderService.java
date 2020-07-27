@@ -144,6 +144,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params);
 
+    PageData<OrderDTO> selectPOrderIdHavePaidsCopy(Integer page,Integer limit,String orderField,String sortMethod,Long userId);
+
     PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params);
 
     List<MasterOrderEntity>getAuxiliaryPayOrders(String orderId);
@@ -176,4 +178,6 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
    void bmGet(String orderId);
 
     List<MasterOrderEntity> selectInProcessList(long martId);
+
+    public PageData<MerchantOrderDTO> selectInProcessListByMerchantId(Long merchantId,Integer page,Integer limit,String orderId,String orderField,String sortMethod);
 }
