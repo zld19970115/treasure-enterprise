@@ -469,4 +469,72 @@
 
     </select>
 
+    <select id="inProcessOrdersByMerchantId" resultType="io.treasure.dto.MerchantOrderDTO">
+        select mo.* from ct_master_order mo
+        where merchant_id =#{merchantId} and
+        (
+            (
+                mo.p_order_id = '0'
+                and mo.status in (2, 6, 7)
+            )
+            or
+            (
+                mo.status not in(2,6,7)
+                and mo.p_order_id = '0'
+                and (
+                    select count(1) from ct_master_order slave
+                    where slave.status in(2,6,7)
+                    and mo.order_id  = slave.p_order_id
+                    ) >0
+            )
+        )
+        limit #{page},#{limits}
+    </select>
+    <select id="inProcessCountByMerchantId" resultType="integer">
+        select count(*)
+        from(
+            select count(*) as tmp from ct_master_order
+            where merchant_id =#{merchantId}
+              and status in (2,6,7)
+            group by eat_time,contact_number
+        ) as tmp
+
+    </select>
+
+    <select id="inProcessOrdersByUserId" resultType="io.treasure.dto.OrderDTO">
+
+        select mo.* from ct_master_order mo
+        where creator =1280022577374445570 and
+              (
+                      (
+                                  mo.p_order_id = '0'
+                              and mo.status in (2, 6, 7)
+                          )
+                      or
+                      (
+                                  mo.status not in(2,6,7)
+                              and mo.p_order_id = '0'
+                              and (
+                                      select count(1) from ct_master_order slave
+                                      where slave.status in(2,6,7)
+                                        and mo.order_id  = slave.p_order_id
+                                  ) >0
+                          )
+                  )
+        limit #{page},#{limits}
+
+    </select>
+
+    <select id="inProcessCountByUserId" resultType="integer">
+
+       select count(*)
+        from(
+            select count(*) as tmp from ct_master_order
+            where creator = #{userId}
+              and status in (2,6,7)
+            group by eat_time,contact_number
+        ) as tmp
+
+    </select>
+
 </mapper>
