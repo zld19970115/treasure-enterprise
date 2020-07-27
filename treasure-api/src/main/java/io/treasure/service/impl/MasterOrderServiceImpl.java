@@ -16,6 +16,7 @@ import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
+import io.treasure.dao.BusinessManagerDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
@@ -99,7 +100,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private IWXConfig wxPayConfig;
     @Autowired
     private PayServiceImpl payService;
-
+    @Autowired
+    private BusinessManagerDao businessManagerDao;
     @Autowired
     private MerchantUserService merchantUserService;
 
@@ -517,7 +519,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
                 wsPool.sendMessageToUser(wsByUser, 1 + "");
             }
+            //主单中有房，且仅有房
+            if(dto.getReservationType() ==  Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+                merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());//释放房间
 
+                dto.setStatus(Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue());
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+                //003===============更新排序状态
+                dto.setResponseStatus(2);//1表示商家已响应
+                baseDao.updateById(ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class));
+                WebSocket wsByUser = wsPool.getWsByUser(dto.getCreator().toString());
+                MerchantMessage merchantMessage = merchantMessageJRA.updateSpecifyField(dto.getMerchantId().toString(), EMessageUpdateType.REFUND_ORDER, SUB);
+                wsPool.sendMessageToUser(wsByUser, 1 + "");
+            }
             if (dto.getReservationType() != 2 && dto.getPayMoney().compareTo(nu) == 1) {
                 //退款
                 Result result1 = payService.refundByOrder(dto.getOrderId(), dto.getPayMoney().toString());
@@ -2870,6 +2884,27 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         RoomOrderPrinterVo vo = baseDao.roomOrderPrinter(orderId);
         vo.setGoodList(baseDao.goodPrinter(vo.getOrderId()));
         return vo;
+    }
+
+    @Override
+    public PageData<OrderDTO> getOrderByYwy(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+       String mobile = (String)params.get("mobile");
+        List<OrderDTO> list = new ArrayList<>();
+        BusinessManagerDTO businessManagerDTO = businessManagerDao.selectByMobile(mobile);
+        if (businessManagerDTO!=null){
+            List<BusinessManagerTrackRecordEntity> businessManagerTrackRecordEntities = businessManagerDao.selectlogById(businessManagerDTO.getId());
+            for (BusinessManagerTrackRecordEntity businessManagerTrackRecordEntity : businessManagerTrackRecordEntities) {
+                List<OrderDTO> orderByYwy = masterOrderDao.getOrderByYwy(businessManagerTrackRecordEntity.getMchId());
+                list.addAll(orderByYwy);
+            }
+        }
+   return getPageData(list, pages.getTotal(), OrderDTO.class);
+    }
+
+    @Override
+    public void bmGet(String orderId) {
+        baseDao.bmGet(orderId);
     }
 
     @Override

@@ -23,6 +23,8 @@
         <result property="contacts" column="contacts"/>
         <result property="responseStatus" column="response_status"/>
         <result property="contactNumber" column="contact_number"/>
+        <result property="bmStatus" column="bm_status"/>
+        <result property="smsStatus" column="sms_status"/>
         <result property="checkStatus" column="check_status"/>
         <result property="checkMode" column="check_mode"/>
         <result property="refundReason" column="refund_reason"/>
@@ -294,6 +296,13 @@
     <update id="updateOrderDeletedById">
         update  ct_master_order SET deleted = 1 where id = #{id}
     </update>
+    <update id="bmGet">
+           update  ct_master_order SET bm_status = 1 where order_id =#{orderId}
+
+    </update>
+    <update id="updateSmsStatus">
+         update  ct_master_order SET sms_status = 1 where order_id =#{orderId}
+    </update>
     <insert id="insertPayMode">
         insert into ct_order_paymode(order_id,paymode)value(#{orderId},#{payfs})
     </insert>
@@ -450,7 +459,17 @@
     </select>
 
     <select id = "selectInProcessList" resultType="io.treasure.entity.MasterOrderEntity">
-        select * from ct_master_order where status in(2,7)
+        select * from ct_master_order where status = 4 and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now() and  merchant_id =#{martId}
+    </select>
+    <select id="getOrderByYwy" resultType="io.treasure.dto.OrderDTO">
+         select * from ct_master_order
+        where order_id=#{orderId} and status = 1
+
+
+    </select>
+    <select id="selectForBm" resultType="io.treasure.dto.OrderDTO">
+           select * from ct_master_order where status = 4 and sms_status = 0  and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now()
+
     </select>
 
 </mapper>

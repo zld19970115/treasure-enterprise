@@ -172,8 +172,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     RoomOrderPrinterVo roomOrderPrinter(String orderId);
 
-
-
+    PageData<OrderDTO>  getOrderByYwy(Map<String, Object> params);
+   void bmGet(String orderId);
 
     List<MasterOrderEntity> selectInProcessList(long martId);
 }

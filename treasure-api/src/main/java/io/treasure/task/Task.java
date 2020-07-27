@@ -5,6 +5,7 @@ import io.treasure.entity.SharingActivityExtendsEntity;
 import io.treasure.service.QRCodeService;
 import io.treasure.service.impl.QRcodeServiceImpl;
 import io.treasure.task.item.OrderClear;
+import io.treasure.task.item.OrderForBm;
 import io.treasure.utils.ObjectUtil;
 import io.treasure.utils.TimeUtil;
 import org.junit.Test;
@@ -20,6 +21,8 @@ public class Task {
     @Autowired
     private OrderClear orderClear;
 
+    @Autowired
+    private OrderForBm orderForBm;
 
     //处理次数记录
     private int taskInProcess = 0;
@@ -36,8 +39,11 @@ public class Task {
         //1,自动清台任务+加销奖励
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
+        if (orderForBm.isInProcess()==false){
+            orderForBm.getOrderByYwy();
+        }
 
-    }
+   }
 
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
