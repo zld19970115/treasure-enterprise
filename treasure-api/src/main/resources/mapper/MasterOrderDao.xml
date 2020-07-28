@@ -460,9 +460,21 @@
 
 
     <select id="getOrderByYwy" resultType="io.treasure.dto.OrderDTO">
-        select * from ct_master_order where status = 4 and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now() and  merchant_id =#{martId}
-
-
+        SELECT
+            o.*,
+            ct.`name` as merchant_name,
+            ct.tel as merchant_tel
+        FROM
+            ct_master_order o
+        LEFT JOIN
+            ct_merchant ct on o.merchant_id = ct.id
+        WHERE
+            o.STATUS = 4
+        AND DATE_ADD(
+            o.create_date,
+            INTERVAL 3 MINUTE
+        ) > now()
+        and  o.merchant_id = #{martId}
     </select>
     <select id="selectForBm" resultType="io.treasure.dto.OrderDTO">
            select * from ct_master_order where status = 4 and sms_status = 0  and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now()
