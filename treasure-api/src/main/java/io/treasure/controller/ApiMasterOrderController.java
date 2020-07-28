@@ -421,7 +421,10 @@ public class ApiMasterOrderController {
         String sPage = params.get("page")+"";
         if(sPage == null)
             sPage="0";
-        Integer page = Integer.parseInt(sPage);
+        int page = Integer.parseInt(sPage);
+        if(page > 0){
+            page --;
+        }
         String sLimit = params.get("limit")+"";
         if(sLimit == null)
             sLimit = "0";
