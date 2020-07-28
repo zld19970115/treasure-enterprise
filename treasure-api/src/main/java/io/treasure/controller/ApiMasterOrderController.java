@@ -129,14 +129,20 @@ public class ApiMasterOrderController {
     public Result<PageData<MerchantOrderDTO>> ongPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
 
         Long merchantId = Long.parseLong(params.get("merchantId")+"");
-        Integer page = Integer.parseInt(params.get(Constant.PAGE)+"");
+        String tmp = params.get("page")+"";
+        if(tmp == null)
+            tmp ="0";
+        Integer page = Integer.parseInt(tmp);
         if(page == null){
             page = 0;
         }else{
             if(page>0)
                 page--;
         }
-        Integer limit = Integer.parseInt(params.get(Constant.LIMIT)+"");
+        String tmp1 = params.get(Constant.LIMIT)+"";
+        if(tmp1 == null)
+            tmp1 = "10";
+        Integer limit = Integer.parseInt(tmp1);
         if(limit == null){
             limit = 10;
         }
@@ -412,11 +418,18 @@ public class ApiMasterOrderController {
     })
     public Result<PageData<OrderDTO>> payFinishOrderPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
 
-        Integer page = Integer.parseInt(params.get("page")+"");
-        Integer limit = Integer.parseInt(params.get("limit")+"");
+        String sPage = params.get("page")+"";
+        if(sPage == null)
+            sPage="0";
+        Integer page = Integer.parseInt(sPage);
+        String sLimit = params.get("limit")+"";
+        if(sLimit == null)
+            sLimit = "0";
+        Integer limit = Integer.parseInt(sLimit);
         String orderField = params.get(Constant.ORDER_FIELD)+"";
         String sortMethod =params.get(Constant.ORDER)+"";
         Long userId = Long.parseLong(params.get("userId")+"");
+        System.out.println("userId:"+userId);
         PageData<OrderDTO> pages = masterOrderService.selectPOrderIdHavePaidsCopy(page,limit,orderField,sortMethod,userId);
         return new Result<PageData<OrderDTO>>().ok(pages);
     }
