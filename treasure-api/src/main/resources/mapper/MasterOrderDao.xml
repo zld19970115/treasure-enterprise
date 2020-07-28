@@ -504,7 +504,7 @@
     <select id="inProcessOrdersByUserId" resultType="io.treasure.dto.OrderDTO">
 
         select mo.* from ct_master_order mo
-        where creator =1280022577374445570 and
+        where creator =#{userId} and
               (
                       (
                                   mo.p_order_id = '0'
