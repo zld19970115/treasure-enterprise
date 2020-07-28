@@ -33,7 +33,7 @@
          select * from business_manager where status in (1,2) and deleted = 0
     </select>
     <select id="selectByMobile" resultType="io.treasure.dto.BusinessManagerDTO">
-        select * from business_manager where status in (1,2) and deleted = 0 where mobile = #{mobile}
+        select * from business_manager where status in (1,2) and deleted = 0 and mobile = #{mobile}
     </select>
     <select id="selectlogById" resultType="io.treasure.entity.BusinessManagerTrackRecordEntity">
         select * from business_manager_track_record where bm_id = #{id}
