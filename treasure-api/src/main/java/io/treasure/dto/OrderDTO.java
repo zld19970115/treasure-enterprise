@@ -155,4 +155,5 @@ public class OrderDTO implements Serializable {
 	private String merchantName;
 	@ApiModelProperty(value = "商户联系方式")
 	private String merchantTel;
+
 }
