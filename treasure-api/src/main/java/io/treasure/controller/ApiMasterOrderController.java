@@ -116,7 +116,7 @@ public class ApiMasterOrderController {
 
     @CrossOrigin
     @Login
-    @GetMapping("ongPage")
+    @GetMapping("ongPageCopy")
     @ApiOperation("商户端-进行中列表(已接受订单)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -151,7 +151,7 @@ public class ApiMasterOrderController {
 
     @CrossOrigin
     @Login
-    @GetMapping("ongPage_bk")
+    @GetMapping("ongPage")
     @ApiOperation("商户端-进行中列表(已接受订单)备份")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
