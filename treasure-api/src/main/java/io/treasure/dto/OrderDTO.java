@@ -151,4 +151,8 @@ public class OrderDTO implements Serializable {
 	private Integer evaluateYesOrNo;
 	@ApiModelProperty(value = "优惠卷ID 不使用为null")
 	private Long couponId;
+	@ApiModelProperty(value = "商户名称")
+	private String merchantName;
+	@ApiModelProperty(value = "商户联系方式")
+	private String merchantTel;
 }
