@@ -2985,6 +2985,13 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     s.setPOrderYorN(1);//没有从单
                 }
             }
+            Integer moStatus = s.getStatus();
+
+
+            //2,4,6,7 ====>>20表示只有从单没有主单
+            if(moStatus != 2 &&moStatus != 4 &&moStatus != 6 &&moStatus != 7)
+                s.setStatus(20);
+
         }
         return getPageData(allMainOrder, pages, OrderDTO.class);
     }
