@@ -521,15 +521,15 @@
               (
                       (
                                   mo.p_order_id = '0'
-                              and mo.status in (2, 6, 7)
+                              and mo.status in (2,4,6,7)
                           )
                       or
                       (
-                                  mo.status not in(2,6,7)
+                                  mo.status not in(2,4,6,7)
                               and mo.p_order_id = '0'
                               and (
                                       select count(1) from ct_master_order slave
-                                      where slave.status in(2,6,7)
+                                      where slave.status in(2,4,6,7)
                                         and mo.order_id  = slave.p_order_id
                                   ) >0
                           )
