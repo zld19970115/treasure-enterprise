@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -265,6 +266,18 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
 //            list.addAll(list1);
 //        }
 
+        //迟（临时修改）：查询商家菜品
+        for (MerchantDTO merchantDTO : list) {
+            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValueCopy(merchantDTO.getId(), (String) params.get("value"));
+            //更新搜索菜品
+            if(goodDTOS.size()>0){
+                merchantDTO.setGoodDTO(goodDTOS.get(0));
+                goodDTOS.remove(0);
+            }
+            if(goodDTOS.size()>0)
+                merchantDTO.setGoodDTOs(goodDTOS);
+        }
+        /*
         for (MerchantDTO merchantDTO : list) {
             List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
             for (GoodDTO goodDTO : goodDTOS) {
@@ -272,13 +285,15 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
                 goodDTOS.remove(goodDTO);
                 break;
             }
-          if (goodDTOS.size()>0){
-              List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
-              goodDTOS.removeAll(goodDTOS1);
-              goodDTOS.addAll(goodDTOS1);
-          }
+            if (goodDTOS.size()>0){
+                List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
+                goodDTOS.removeAll(goodDTOS1);
+                goodDTOS.addAll(goodDTOS1);
+            }
             merchantDTO.setGoodDTOs(goodDTOS);
-        }
+        }*/
+
+
 
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }

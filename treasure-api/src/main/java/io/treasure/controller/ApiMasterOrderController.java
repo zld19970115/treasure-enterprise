@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
@@ -208,6 +209,62 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("income_list")
+    @ApiOperation("商户端-订单营收明细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long"),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = false, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = false, dataType="int") ,
+            @ApiImplicitParam(name = "creator",value="client_user_id",paramType = "query",required = false,dataType = "Long"),
+            @ApiImplicitParam(name = "startTime",value="就餐开始时间",paramType = "query",required = false,dataType = "date"),
+            @ApiImplicitParam(name = "stopTime",value="就餐结束时间",paramType = "query",required = false,dataType = "date")
+    })
+    public Result finishPageCopy(Long merchantId,Integer page,Integer limit,Long creator,Date startTime,Date stopTime){
+
+        int pageTmp = page==null?0:page;
+        if(pageTmp >0)
+            pageTmp --;
+        int limitTmp = limit==null?10:limit;
+        QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("check_status",1);
+        queryWrapper.in("status",2,7);
+
+
+        if(merchantId != null)
+            queryWrapper.eq("merchant_id",merchantId);
+        if(creator != null)
+            queryWrapper.eq("creator",creator);
+
+        if(startTime != null){
+
+        }
+
+    //   Date startTime = startTime==null?new Date():startTime;
+     //   Date stopTimeTmp = stopTime
+
+        //时间处理
+        if(stopTime != null){
+            queryWrapper.between("eat_time",startTime,stopTime);
+        }else{
+            queryWrapper.ge("eat_time",startTime);//大于
+        }
+
+        Page<MasterOrderEntity> record = new Page<MasterOrderEntity>(pageTmp,limitTmp);
+        IPage<MasterOrderEntity> orders = masterOrderDao.selectPage(record, queryWrapper);
+
+        if(orders == null)
+            return new Result().error("nothing");
+
+       // Double finishedTotal = masterOrderDao.getFinishedTotal(merchantId,creator,startTimeTmp,stopTime);
+       // System.out.println("finishedTotal:"+finishedTotal);
+
+        return new Result().ok(orders);
+    }
+
+
     @CrossOrigin
     @Login
     @GetMapping("calcelPage")

@@ -1,6 +1,5 @@
 package io.treasure.dao;
 
-import io.treasure.common.constant.Constant;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.MerchantOrderDTO;
@@ -8,6 +7,7 @@ import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.GoodPrinterVo;
+import io.treasure.vo.IncomeVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -115,5 +115,11 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
                                            @Param("userId")Long userId);
     Integer inProcessCountByUserId(@Param("orderField")String orderField,@Param("sortMethod")String sortMethod,
                                            @Param("userId")Long userId);//
+
+
+    double getFinishedTotal(@Param("merchantId")Long merchantId,
+                              @Param("creator")Long creator,
+                              @Param("startTime")Date startTime,
+                              @Param("stopTime")Date stopTime);
 
 }

@@ -450,5 +450,86 @@ public class MerchantWithdrawController {
     }
 
 
+    /**
+     * 根据 条件查询所有提现信息列表
+     * @return
+     */
+    @CrossOrigin
+    @Login
+    @GetMapping("/list_sum_combo")
+    @ApiOperation(value = "分类提现列表与汇总",tags = "按不同方式显示提现记录和汇总信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="merchantId",value = "商户id",dataType = "long",defaultValue = "0",paramType = "query",required = false),
+            @ApiImplicitParam(name = "startTime",value="开始时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name ="stopTime",value = "结束时间",dataType = "date",paramType = "query",required = false),
+            @ApiImplicitParam(name="type",value = "1微信;2支付宝;3银行卡",dataType = "int",paramType = "query",required = false),
+            @ApiImplicitParam(name="timeMode",value = "默认精确;1精度(天)",dataType = "int",paramType = "query",required=false),
+            @ApiImplicitParam(name="index",value = "页码",dataType = "int",defaultValue = "1",paramType = "query",required = false),
+            @ApiImplicitParam(name="itemNum",value = "页数",dataType = "int",defaultValue = "10",paramType = "query",required = false)
+    })
+    public Result requireItemsCombo(Long merchantId,Date startTime,Date stopTime,
+                               Integer type,Integer timeMode,Integer index,Integer itemNum) throws ParseException {
+
+        QueryWrapper<MerchantWithdrawEntity> mweqw = new QueryWrapper<>();
+        if(timeMode != null){
+            if(timeMode == 1){
+                if(startTime != null)
+                    startTime = paseYMD(startTime);//ymdt转ymd
+
+                if(stopTime != null)
+                    stopTime = paseYMD(stopTime);//ymdt转ymd
+            }
+        }
+
+        if(merchantId != null)
+            mweqw.eq("merchant_id",merchantId);
+        if(startTime != null && stopTime != null){
+            mweqw.between("create_date",startTime,stopTime);
+        }else if(startTime != null){
+            mweqw.ge("create_date",startTime);//大于
+        }else if(stopTime != null){
+
+            mweqw.le("create_date",stopTime);
+        }
+        if(type != null)
+            mweqw.eq("type",type);
+
+        PagePlus<MerchantWithdrawEntity> map = new PagePlus<MerchantWithdrawEntity>(index,itemNum);
+        map.setCurrent(index);
+        map.setSize(itemNum);
+        IPage<MerchantWithdrawEntity> merchantWithdrawEntityIPage = merchantWithdrawDao.selectPage(map, mweqw);
+        //merchantWithdrawEntityIPage.getRecords().forEach(System.out::println);
+
+        //汇总
+        if(merchantWithdrawEntityIPage == null)
+            return null;
+
+        //更新附加内容
+        List<MerchantWithdrawEntity> records = merchantWithdrawEntityIPage.getRecords();
+        Double wxSumMoney = 0d;
+        Double  aliSumMoney = 0d;
+        Double cardSumMoney = 0d;
+
+        for(int i=0;i<records.size();i++){
+            MerchantWithdrawEntity item = records.get(i);
+            if(item.getType() != null){
+                if(item.getType()== 1){
+                    wxSumMoney = wxSumMoney+item.getMoney();
+                }else if(item.getType()== 2){
+                    aliSumMoney = aliSumMoney+item.getMoney();
+                }else if(item.getType() == 3){
+                    cardSumMoney = cardSumMoney+item.getMoney();
+                }
+            }
+        }
+        //System.out.println("总页数"+map.getTotal());
+        map.setAliMoney(aliSumMoney);
+        map.setCardMoney(cardSumMoney);
+        map.setWxMoney(wxSumMoney);
+
+        return new Result().ok(merchantWithdrawEntityIPage);
+        //return new Result().ok(merchantWithdrawEntityIPage.getRecords());
+    }
+
 
 }

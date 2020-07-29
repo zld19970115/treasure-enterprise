@@ -549,4 +549,27 @@
 
     </select>
 
+    <select id="getFinishedTotal" resultType="double">
+        select sum(merchant_proceeds) from ct_master_order
+        where check_status = 1
+        and status in(2,7)
+        and merchant_id = #{merchantId}
+        <if test="creator != null and creator !=''">
+            and creator = #{creator}
+        </if>
+        <if test="startTime != null and startTime !=''">
+
+            and DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T') >=
+            DATE_FORMAT(#{startTime},'%Y %m %d %T')
+
+        </if>
+        <if test="stopTime !=null and stopTime != ''">
+
+            and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >=
+            DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T')
+
+        </if>
+
+    </select>
+
 </mapper>

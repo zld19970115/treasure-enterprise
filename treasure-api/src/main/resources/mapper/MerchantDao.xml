@@ -243,6 +243,31 @@
         from  ct_good
         where  mart_id = #{merchantId} and name like  CONCAT('%',#{value},'%') and status =1
     </select>
+    <select id="selectByMidAndValueCopy" resultType="io.treasure.dto.GoodDTO">
+        select * from ct_good
+        where name like  CONCAT('%',#{value},'%')
+        and mart_id=${merchantId}
+        and status = 1
+        union all
+        (select *
+         from ct_good
+         where id not in (
+             select id
+             from ct_good
+             where name like  CONCAT('%',#{value},'%')
+         )
+           and (select count(1)
+                from ct_good
+                where name like  CONCAT('%',#{value},'%')
+                and mart_id = ${merchantId}
+                and status = 1
+               )in(1,2)
+           and mart_id = ${merchantId}
+           and status = 1
+         order by show_in_hot desc
+         limit 0,2
+        )
+    </select>
     <select id="selectByMidAndSales" resultType="io.treasure.dto.GoodDTO">
         select *
         from  ct_good
