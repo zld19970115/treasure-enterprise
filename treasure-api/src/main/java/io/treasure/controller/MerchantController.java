@@ -25,6 +25,8 @@ import io.treasure.service.MerchantQrCodeService;
 import io.treasure.service.MerchantService;
 import io.treasure.service.MerchantUserService;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.AttachCategoryPlusVo;
+import io.treasure.vo.AttachCategoryVo;
 import io.treasure.vo.PagePlus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -751,5 +753,38 @@ public class MerchantController {
     public Result<PageData<MerchantDTO>> searchMart(@ApiIgnore @RequestParam Map<String, Object> params){
         PageData<MerchantDTO> page = merchantService.searchMart(params);
         return new Result<PageData<MerchantDTO>>().ok(page);
+    }
+
+    @PutMapping("attach_category")
+    @ApiOperation("附加分类")
+    public Result attachCategoryByName(@RequestBody AttachCategoryVo vo){
+        String msg = null;
+        int res = merchantService.attachCategoryByName(vo.getId(),vo.getName());
+        if(res == -1){
+            msg="目标分类不存在";
+        }else if(res == -2){
+            msg="目标商户不存在";
+        }else if(res == 1){
+            msg="附加完成";
+        }else{
+            msg="该分类已经存在了";
+        }
+        return new Result().ok(msg);
+    }
+    @PutMapping("attach_category_plus")
+    @ApiOperation("附加分类")
+    public Result attachCategoryByNamePlus(@RequestBody AttachCategoryPlusVo vo){
+        String msg = null;
+        int res = merchantService.attachCategoryByNamePlus(vo.getMerchantName(),vo.getName());
+        if(res == -1){
+            msg="目标分类不存在";
+        }else if(res == -2){
+            msg="目标商户不存在";
+        }else if(res == 1){
+            msg="附加完成";
+        }else{
+            msg="该分类已经存在了";
+        }
+        return new Result().ok(msg);
     }
 }

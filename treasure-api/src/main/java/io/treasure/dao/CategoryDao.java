@@ -20,6 +20,8 @@ public interface CategoryDao extends BaseDao<CategoryEntity> {
 
     List<CategoryEntity> getListById(List<Long> id);
 
+    List<CategoryEntity> getListByIds(List<Long> id);
+
     List<CategoryPageDto> pageList(Map<String, Object> params);
 
 }

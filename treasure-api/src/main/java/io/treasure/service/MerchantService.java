@@ -1,5 +1,6 @@
 package io.treasure.service;
 
+import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.common.utils.Result;
@@ -47,4 +48,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     Integer updateSpecial(Long id, Integer recommend);
     PageData<MerchantDTO> search(Map<String, Object> params);
     PageData<MerchantDTO> searchMart(Map<String, Object> params);
+
+    int attachCategoryByName(Long merchantId,String categoryName);
+    int attachCategoryByNamePlus(String merchantName,String categoryName);
 }

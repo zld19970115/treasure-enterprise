@@ -71,6 +71,10 @@ public class CategoryServiceImpl extends CrudServiceImpl<CategoryDao, CategoryEn
     public List<CategoryEntity> getListById(List<Long> id) {
         return baseDao.getListById(id);
     }
+    @Override
+    public List<CategoryEntity> getListByIds(List<Long> id) {
+        return baseDao.getListByIds(id);
+    }
 
     @Override
     public PageData<CategoryPageDto> pageList(Map<String, Object> params) {

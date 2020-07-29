@@ -2,18 +2,23 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
+import io.swagger.annotations.ApiImplicitParam;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.CategoryDao;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.jra.impl.UserSearchJRA;
+import io.treasure.service.CategoryService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.service.MerchantRoomService;
 import io.treasure.service.MerchantService;
@@ -21,9 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 商户表
@@ -39,6 +42,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     private UserSearchJRA userSearchJRA;
     @Autowired
     private MerchantRoomService merchantRoomService;
+
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
+
+    @Autowired(required = false)
+    private CategoryDao categoryDao;
 
     /**
      * 删除
@@ -418,4 +427,67 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         wrapper.eq(StringUtils.isNotBlank(merchantId), "id", merchantId);
         return wrapper;
     }
+
+
+
+    public int attachCategoryByName(Long merchantId,String categoryName){
+        QueryWrapper<CategoryEntity> queryWrapperCategory = new QueryWrapper<>();
+        queryWrapperCategory.eq("name",categoryName);
+        List<CategoryEntity> categoryEntities = categoryDao.selectList(queryWrapperCategory);
+        CategoryEntity ceItem = null;
+        if(categoryEntities.size()>0){
+            ceItem = categoryEntities.get(0);
+        }
+        Long ceId = null;
+        if(ceItem == null)
+            return -1;
+
+        ceId = ceItem.getId();
+        MerchantEntity merchantEntity = merchantDao.selectById(merchantId);
+        if(merchantEntity == null)
+            return -2;
+
+        String categoryid = merchantEntity.getCategoryid();
+
+        if(!categoryid.contains(ceId+"")){
+            merchantEntity.setCategoryid(categoryid+","+ceId);
+            merchantDao.updateById(merchantEntity);//附加分类
+            return 1;//附加
+        }
+        return 0;//不需要附加
+    }
+
+    public int attachCategoryByNamePlus(String merchantName,String categoryName){
+        QueryWrapper<CategoryEntity> queryWrapperCategory = new QueryWrapper<>();
+        queryWrapperCategory.eq("name",categoryName);
+        List<CategoryEntity> categoryEntities = categoryDao.selectList(queryWrapperCategory);
+        CategoryEntity ceItem = null;
+        if(categoryEntities.size()>0){
+            ceItem = categoryEntities.get(0);
+        }
+        Long ceId = null;
+        if(ceItem == null)
+            return -1;
+
+        ceId = ceItem.getId();
+        QueryWrapper<MerchantEntity> qw = new QueryWrapper<>();
+        qw.eq("name",merchantName);
+        List<MerchantEntity> merchantEntitys = merchantDao.selectList(qw);
+        MerchantEntity merchantEntity = null;
+        if(merchantEntitys.size()>0)
+            merchantEntity = merchantEntitys.get(0);
+
+        if(merchantEntity == null)
+            return -2;
+
+        String categoryid = merchantEntity.getCategoryid();
+
+        if(!categoryid.contains(ceId+"")){
+            merchantEntity.setCategoryid(categoryid+","+ceId);
+            merchantDao.updateById(merchantEntity);//附加分类
+            return 1;//附加
+        }
+        return 0;//不需要附加
+    }
+
 }
