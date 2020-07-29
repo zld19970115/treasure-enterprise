@@ -28,6 +28,7 @@ import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.utils.EMsgCode;
+import io.treasure.utils.TimeUtil;
 import io.treasure.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -219,10 +220,10 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = false, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = false, dataType="int") ,
             @ApiImplicitParam(name = "creator",value="client_user_id",paramType = "query",required = false,dataType = "Long"),
-            @ApiImplicitParam(name = "startTime",value="就餐开始时间",paramType = "query",required = false,dataType = "date"),
-            @ApiImplicitParam(name = "stopTime",value="就餐结束时间",paramType = "query",required = false,dataType = "date")
+            @ApiImplicitParam(name = "startTime",value="就餐开始时间",paramType = "query",required = false,dataType = "String"),
+            @ApiImplicitParam(name = "stopTime",value="就餐结束时间",paramType = "query",required = false,dataType = "String")
     })
-    public Result finishPageCopy(Long merchantId,Integer page,Integer limit,Long creator,Date startTime,Date stopTime){
+    public Result finishPageCopy(Long merchantId,Integer page,Integer limit,Long creator,String startTime,String stopTime) throws ParseException {
 
         int pageTmp = page==null?0:page;
         if(pageTmp >0)
@@ -232,25 +233,21 @@ public class ApiMasterOrderController {
         queryWrapper.eq("check_status",1);
         queryWrapper.in("status",2,7);
 
-
         if(merchantId != null)
             queryWrapper.eq("merchant_id",merchantId);
         if(creator != null)
             queryWrapper.eq("creator",creator);
 
-        if(startTime != null){
-
-        }
-
-    //   Date startTime = startTime==null?new Date():startTime;
-     //   Date stopTimeTmp = stopTime
+        startTime = startTime+" 00:00:00";
+        stopTime = stopTime+" 23:59:59";
+        Long start = TimeUtil.simpleDateFormat.parse(startTime).getTime()-1;
+        Long stop = TimeUtil.simpleDateFormat.parse(stopTime).getTime()+1;
+        Date startTimeDate = new Date(start);
+        Date stopTimeDate = new Date(stop);
 
         //时间处理
-        if(stopTime != null){
-            queryWrapper.between("eat_time",startTime,stopTime);
-        }else{
-            queryWrapper.ge("eat_time",startTime);//大于
-        }
+        queryWrapper.ge("eat_time",startTimeDate);
+        queryWrapper.le("eat_time",stopTimeDate);
 
         Page<MasterOrderEntity> record = new Page<MasterOrderEntity>(pageTmp,limitTmp);
         IPage<MasterOrderEntity> orders = masterOrderDao.selectPage(record, queryWrapper);
