@@ -475,6 +475,7 @@
             INTERVAL 3 MINUTE
         ) > now()
         and  o.merchant_id = #{martId}
+        order by o.bm_status asc
     </select>
     <select id="selectForBm" resultType="io.treasure.dto.OrderDTO">
            select * from ct_master_order where status = 4 and sms_status = 0  and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now()
