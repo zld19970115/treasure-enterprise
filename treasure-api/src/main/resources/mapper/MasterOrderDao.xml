@@ -470,15 +470,15 @@
             ct_merchant ct on o.merchant_id = ct.id
         WHERE
             o.STATUS = 4
-        AND DATE_ADD(
+        AND now() > DATE_ADD(
             o.create_date,
             INTERVAL 3 MINUTE
-        ) > now()
+        )
         and  o.merchant_id = #{martId}
         order by o.bm_status asc
     </select>
     <select id="selectForBm" resultType="io.treasure.dto.OrderDTO">
-           select * from ct_master_order where status = 4 and sms_status = 0  and DATE_ADD(create_date,INTERVAL 3 MINUTE) > now()
+           select * from ct_master_order where status = 4 and sms_status = 0  and now() > DATE_ADD(create_date,INTERVAL 3 MINUTE)
 
     </select>
 
