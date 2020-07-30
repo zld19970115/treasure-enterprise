@@ -907,7 +907,7 @@ public class ApiMasterOrderController {
     }
 
     @GetMapping("getOrderByYwy")
-    @ApiOperation("查询该业务员下是否有商户订单3分钟未接单的订单列表")
+    @ApiOperation("查询该业务员下是否有商户订单2分钟未接单的订单列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
