@@ -233,7 +233,7 @@ public class MerchantController {
             entity.setUpdater(Long.parseLong(updater));
             entity.setIdcardBackImg(idcardBackImg);
             entity.setIdcardFrontImg(idcardFrontImg);
-            entity.setStatus(1);
+            //entity.setStatus(1);
             merchantService.update(entity);
             return new Result();
         }else{
