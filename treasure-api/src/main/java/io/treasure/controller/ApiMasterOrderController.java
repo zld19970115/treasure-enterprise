@@ -246,8 +246,8 @@ public class ApiMasterOrderController {
         Date stopTimeDate = new Date(stop);
 
         //时间处理
-        queryWrapper.ge("eat_time",startTimeDate);
-        queryWrapper.le("eat_time",stopTimeDate);
+        queryWrapper.gt("eat_time",startTimeDate);
+        queryWrapper.lt("eat_time",stopTimeDate);
 
         Page<MasterOrderEntity> record = new Page<MasterOrderEntity>(pageTmp,limitTmp);
         IPage<MasterOrderEntity> orders = masterOrderDao.selectPage(record, queryWrapper);
