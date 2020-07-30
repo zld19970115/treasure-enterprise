@@ -130,4 +130,8 @@ public class GoodEntity extends BaseEntity {
 	 * 排序
 	 */
 	private Integer rank;
+
+	private String simplePyName;
+
+	private String fullPyName;
 }

@@ -30,6 +30,8 @@
         <result property="icon" column="icon"/>
         <result property="favorablePrice" column="favorable_price"/>
         <result property="stock" column="stock"/>
+        <result property="simplePyName" column="simple_py_name"/>
+        <result property="fullPyName" column="full_py_name"/>
     </resultMap>
     <select id="getByNameAndMerchantId" parameterType="io.treasure.entity.MerchantEntity" resultType="io.treasure.dto.GoodDTO">
         select * from ct_good  where mart_id=#{martId} and name=#{name}  and status!=9 order by id desc
