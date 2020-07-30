@@ -1,9 +1,8 @@
 package io.treasure.utils;
 
-import cn.hutool.core.comparator.PinyinComparator;
+
 import cn.hutool.core.util.PinyinUtil;
 import org.junit.Test;
-import sun.nio.cs.UnicodeEncoder;
 
 public class Utf8ToPinyinUtil {
 
@@ -17,7 +16,6 @@ public class Utf8ToPinyinUtil {
         String pinyinStr = null;
         char[] signChar = chineseString.toCharArray();
         Character character = Character.valueOf(signChar[0]);
-        PinyinComparator pinyinComparator = new PinyinComparator();
         String haha = PinyinUtil.getAllFirstLetter("中国人");
         String xx = PinyinUtil.getPinYin("铁板酸菜五花肉");
 
