@@ -320,6 +320,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             list.removeAll(list1);
             list.addAll(list1);
         }
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
+        }
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
 
