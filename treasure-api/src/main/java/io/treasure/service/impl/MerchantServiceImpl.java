@@ -9,6 +9,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.CategoryDao;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dao.MerchantUserRoleDao;
 import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
@@ -16,11 +17,10 @@ import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
 import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantUserEntity;
+import io.treasure.entity.MerchantUserRoleEntity;
 import io.treasure.jra.impl.UserSearchJRA;
-import io.treasure.service.CategoryService;
-import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.service.MerchantRoomService;
-import io.treasure.service.MerchantService;
+import io.treasure.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +47,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
 
     @Autowired(required = false)
     private CategoryDao categoryDao;
+
+    @Autowired(required = false)
+    private MerchantUserService merchantUserService;
+
+    @Autowired(required = false)
+    private MerchantUserRoleDao merchantUserRoleDao;
 
     /**
      * 删除
@@ -237,6 +243,13 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     @Override
     public Integer AuditMerchantStatus(Long id) {
         baseDao.updateAuditById(id,2);
+        MerchantUserEntity merchantUser = merchantUserService.selectByMerchantId(id);
+        if(merchantUser != null) {
+            MerchantUserRoleEntity e = new MerchantUserRoleEntity();
+            e.setUserId(merchantUser.getId());
+            e.setRoleId(1278886982954143745L);
+            merchantUserRoleDao.insert(e);
+        }
         return 1;
     }
 
