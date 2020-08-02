@@ -371,5 +371,4 @@ public class GoodController {
         return null;
     }
 
-
 }
