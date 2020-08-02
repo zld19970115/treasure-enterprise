@@ -224,7 +224,7 @@
        select m.* ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+
         COS(#{latitude}*PI()/180)*COS(lat*PI()/180)*POW(SIN((#{longitude}*PI()/180-log*PI()/180)/2),2)))*1000))/1000,2) AS distance
         from ct_merchant m left join  ct_good g  on ( find_in_set(m.id,g.mart_id) )
-          where 1 = 1
+          where 1 = 1 and g.status = 1
         <if test="value != null and value!='' ">
             and  g.name  like  CONCAT('%',#{value},'%')
         </if>
@@ -241,12 +241,37 @@
     <select id="selectByMidAndValue" resultType="io.treasure.dto.GoodDTO">
         select *
         from  ct_good
-        where  mart_id = #{merchantId} and name like  CONCAT('%',#{value},'%')
+        where  mart_id = #{merchantId} and name like  CONCAT('%',#{value},'%') and status =1
+    </select>
+    <select id="selectByMidAndValueCopy" resultType="io.treasure.dto.GoodDTO">
+        select * from ct_good
+        where name like  CONCAT('%',#{value},'%')
+        and mart_id=${merchantId}
+        and status = 1
+        union all
+        (select *
+         from ct_good
+         where id not in (
+             select id
+             from ct_good
+             where name like  CONCAT('%',#{value},'%')
+         )
+           and (select count(1)
+                from ct_good
+                where name like  CONCAT('%',#{value},'%')
+                and mart_id = ${merchantId}
+                and status = 1
+               )in(1,2)
+           and mart_id = ${merchantId}
+           and status = 1
+         order by show_in_hot desc
+         limit 0,2
+        )
     </select>
     <select id="selectByMidAndSales" resultType="io.treasure.dto.GoodDTO">
         select *
         from  ct_good
-        where  mart_id = #{merchantId} order by sales limit 0,2
+        where  mart_id = #{merchantId} and status =1 order by sales limit 0,2
     </select>
     <select id="selectBygreay" resultType="io.treasure.dto.MerchantDTO">
         select * ,ROUND((ROUND(6378.138*2*ASIN(SQRT(POW(SIN((#{latitude}*PI()/180-lat*PI()/180)/2),2)+

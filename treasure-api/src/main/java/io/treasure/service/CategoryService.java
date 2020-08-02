@@ -23,4 +23,7 @@ public interface CategoryService extends CrudService<CategoryEntity, CategoryDTO
 
     PageData<CategoryPageDto> pageList(Map<String, Object> params);
 
+    List<CategoryEntity> getListByIds(List<Long> id);
+
+
 }

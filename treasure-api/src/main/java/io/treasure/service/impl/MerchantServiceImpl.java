@@ -2,27 +2,30 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.ApiImplicitParam;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.CategoryDao;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dao.MerchantUserRoleDao;
 import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.Common;
+import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantUserEntity;
+import io.treasure.entity.MerchantUserRoleEntity;
 import io.treasure.jra.impl.UserSearchJRA;
-import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.service.MerchantRoomService;
-import io.treasure.service.MerchantService;
+import io.treasure.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 商户表
@@ -38,6 +41,18 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     private UserSearchJRA userSearchJRA;
     @Autowired
     private MerchantRoomService merchantRoomService;
+
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
+
+    @Autowired(required = false)
+    private CategoryDao categoryDao;
+
+    @Autowired(required = false)
+    private MerchantUserService merchantUserService;
+
+    @Autowired(required = false)
+    private MerchantUserRoleDao merchantUserRoleDao;
 
     /**
      * 删除
@@ -228,6 +243,13 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     @Override
     public Integer AuditMerchantStatus(Long id) {
         baseDao.updateAuditById(id,2);
+        MerchantUserEntity merchantUser = merchantUserService.selectByMerchantId(id);
+        if(merchantUser != null) {
+            MerchantUserRoleEntity e = new MerchantUserRoleEntity();
+            e.setUserId(merchantUser.getId());
+            e.setRoleId(1278886982954143745L);
+            merchantUserRoleDao.insert(e);
+        }
         return 1;
     }
 
@@ -265,19 +287,34 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
 //            list.addAll(list1);
 //        }
 
+        //迟（临时修改）：查询商家菜品
+        for (MerchantDTO merchantDTO : list) {
+            List<GoodDTO> goodDTOS = baseDao.selectByMidAndValueCopy(merchantDTO.getId(), (String) params.get("value"));
+            //更新搜索菜品
+            if(goodDTOS.size()>0){
+                merchantDTO.setGoodDTO(goodDTOS.get(0));
+                goodDTOS.remove(0);
+            }
+            if(goodDTOS.size()>0)
+                merchantDTO.setGoodDTOs(goodDTOS);
+        }
+        /*
         for (MerchantDTO merchantDTO : list) {
             List<GoodDTO> goodDTOS = baseDao.selectByMidAndValue(merchantDTO.getId(),(String) params.get("value"));
             for (GoodDTO goodDTO : goodDTOS) {
                 merchantDTO.setGoodDTO(goodDTO);
+                goodDTOS.remove(goodDTO);
                 break;
             }
-          if (goodDTOS.size()>0){
-              List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
-              goodDTOS.removeAll(goodDTOS1);
-              goodDTOS.addAll(goodDTOS1);
-          }
+            if (goodDTOS.size()>0){
+                List<GoodDTO> goodDTOS1 = baseDao.selectByMidAndSales(merchantDTO.getId());
+                goodDTOS.removeAll(goodDTOS1);
+                goodDTOS.addAll(goodDTOS1);
+            }
             merchantDTO.setGoodDTOs(goodDTOS);
-        }
+        }*/
+
+
 
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
@@ -294,6 +331,12 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             List<MerchantDTO> list1 = baseDao.selectBygreay(params);
             list.removeAll(list1);
             list.addAll(list1);
+        }
+        for (MerchantDTO s:list) {
+            int availableRoomsDesk = merchantRoomService.selectCountDesk(s.getId());
+            int availableRooms = merchantRoomService.selectCountRoom(s.getId());
+            s.setRoomNum(availableRooms);
+            s.setDesk(availableRoomsDesk);
         }
         return getPageData(list, page.getTotal(), MerchantDTO.class);
     }
@@ -402,4 +445,67 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
         wrapper.eq(StringUtils.isNotBlank(merchantId), "id", merchantId);
         return wrapper;
     }
+
+
+
+    public int attachCategoryByName(Long merchantId,String categoryName){
+        QueryWrapper<CategoryEntity> queryWrapperCategory = new QueryWrapper<>();
+        queryWrapperCategory.eq("name",categoryName);
+        List<CategoryEntity> categoryEntities = categoryDao.selectList(queryWrapperCategory);
+        CategoryEntity ceItem = null;
+        if(categoryEntities.size()>0){
+            ceItem = categoryEntities.get(0);
+        }
+        Long ceId = null;
+        if(ceItem == null)
+            return -1;
+
+        ceId = ceItem.getId();
+        MerchantEntity merchantEntity = merchantDao.selectById(merchantId);
+        if(merchantEntity == null)
+            return -2;
+
+        String categoryid = merchantEntity.getCategoryid();
+
+        if(!categoryid.contains(ceId+"")){
+            merchantEntity.setCategoryid(categoryid+","+ceId);
+            merchantDao.updateById(merchantEntity);//附加分类
+            return 1;//附加
+        }
+        return 0;//不需要附加
+    }
+
+    public int attachCategoryByNamePlus(String merchantName,String categoryName){
+        QueryWrapper<CategoryEntity> queryWrapperCategory = new QueryWrapper<>();
+        queryWrapperCategory.eq("name",categoryName);
+        List<CategoryEntity> categoryEntities = categoryDao.selectList(queryWrapperCategory);
+        CategoryEntity ceItem = null;
+        if(categoryEntities.size()>0){
+            ceItem = categoryEntities.get(0);
+        }
+        Long ceId = null;
+        if(ceItem == null)
+            return -1;
+
+        ceId = ceItem.getId();
+        QueryWrapper<MerchantEntity> qw = new QueryWrapper<>();
+        qw.eq("name",merchantName);
+        List<MerchantEntity> merchantEntitys = merchantDao.selectList(qw);
+        MerchantEntity merchantEntity = null;
+        if(merchantEntitys.size()>0)
+            merchantEntity = merchantEntitys.get(0);
+
+        if(merchantEntity == null)
+            return -2;
+
+        String categoryid = merchantEntity.getCategoryid();
+
+        if(!categoryid.contains(ceId+"")){
+            merchantEntity.setCategoryid(categoryid+","+ceId);
+            merchantDao.updateById(merchantEntity);//附加分类
+            return 1;//附加
+        }
+        return 0;//不需要附加
+    }
+
 }

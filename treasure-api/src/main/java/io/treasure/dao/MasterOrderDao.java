@@ -7,6 +7,7 @@ import io.treasure.dto.OrderDTO;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.GoodPrinterVo;
+import io.treasure.vo.IncomeVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.RoomOrderPrinterVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -92,8 +93,33 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
 
     RoomOrderPrinterVo roomOrderPrinter(@Param("orderId") String orderId);
     List<GoodPrinterVo> goodPrinter(@Param("orderId") String orderId);
-
-
+    void bmGet(String orderId);
+    List<OrderDTO> selectForBm();
+    void updateSmsStatus(String orderId);
+    List<OrderDTO>  getOrderByYwy(Long martId);
     List<MasterOrderEntity> selectInProcessList(Long martId);
+
+
+
+    List<MerchantOrderDTO> inProcessOrdersByMerchantId(@Param("merchantId")Long merchantId,
+                                                       @Param("page")Integer page,
+                                                       @Param("limits")Integer limit,
+                                                       @Param("orderId")String orderId,
+                                                       @Param("orderField")String orderField,
+                                                       @Param("sortMethod")String sortMethod);//
+    Integer inProcessCountByMerchantId(@Param("merchantId")Long merchantId,@Param("orderId")String orderId,
+                                       @Param("orderField")String orderField,@Param("sortMethod")String sortMethod);
+
+    List<OrderDTO> inProcessOrdersByUserId(@Param("page")Integer page, @Param("limits")Integer limit,
+                                           @Param("orderField")String orderField,@Param("sortMethod")String sortMethod,
+                                           @Param("userId")Long userId);
+    Integer inProcessCountByUserId(@Param("orderField")String orderField,@Param("sortMethod")String sortMethod,
+                                           @Param("userId")Long userId);//
+
+
+    double getFinishedTotal(@Param("merchantId")Long merchantId,
+                              @Param("creator")Long creator,
+                              @Param("startTime")Date startTime,
+                              @Param("stopTime")Date stopTime);
 
 }

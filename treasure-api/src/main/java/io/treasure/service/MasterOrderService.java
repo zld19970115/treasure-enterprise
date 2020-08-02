@@ -144,6 +144,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     PageData<OrderDTO> selectPOrderIdHavePaids(Map<String, Object> params);
 
+    PageData<OrderDTO> selectPOrderIdHavePaidsCopy(Integer page,Integer limit,String orderField,String sortMethod,Long userId);
+
     PageData<OrderDTO> selectAgreeRefundOrders(Map<String, Object> params);
 
     List<MasterOrderEntity>getAuxiliaryPayOrders(String orderId);
@@ -154,7 +156,7 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     MasterOrderEntity getOrderByReservationId(long reservationId);
 
-    List<MasterOrderEntity>getAuxiliaryPayOrder(String orderId,int status);
+    List<MasterOrderEntity> getAuxiliaryPayOrder(String orderId,int status);
     //设置包房
     Result setRoom(long id,long roomSetId);
     List<OrderDTO> getAffiliateOrde(String orderId);
@@ -172,8 +174,10 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     RoomOrderPrinterVo roomOrderPrinter(String orderId);
 
-
-
+    PageData<OrderDTO>  getOrderByYwy(Map<String, Object> params);
+   void bmGet(String orderId);
 
     List<MasterOrderEntity> selectInProcessList(long martId);
+
+    public PageData<MerchantOrderDTO> selectInProcessListByMerchantId(Long merchantId,Integer page,Integer limit,String orderId,String orderField,String sortMethod);
 }

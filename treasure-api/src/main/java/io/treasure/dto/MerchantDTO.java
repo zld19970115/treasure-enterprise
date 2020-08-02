@@ -176,6 +176,7 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "特色")
 	private Integer special;
 	private List<GoodDTO> goodDTOs;
+
 	@ApiModelProperty(value = "推荐菜")
 	private GoodDTO goodDTO;
 	@Override

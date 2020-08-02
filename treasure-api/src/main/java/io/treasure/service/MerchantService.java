@@ -47,4 +47,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     Integer updateSpecial(Long id, Integer recommend);
     PageData<MerchantDTO> search(Map<String, Object> params);
     PageData<MerchantDTO> searchMart(Map<String, Object> params);
+
+    int attachCategoryByName(Long merchantId,String categoryName);
+    int attachCategoryByNamePlus(String merchantName,String categoryName);
 }

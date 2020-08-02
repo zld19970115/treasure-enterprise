@@ -23,6 +23,8 @@
         <result property="contacts" column="contacts"/>
         <result property="responseStatus" column="response_status"/>
         <result property="contactNumber" column="contact_number"/>
+        <result property="bmStatus" column="bm_status"/>
+        <result property="smsStatus" column="sms_status"/>
         <result property="checkStatus" column="check_status"/>
         <result property="checkMode" column="check_mode"/>
         <result property="refundReason" column="refund_reason"/>
@@ -294,6 +296,13 @@
     <update id="updateOrderDeletedById">
         update  ct_master_order SET deleted = 1 where id = #{id}
     </update>
+    <update id="bmGet">
+           update  ct_master_order SET bm_status = 1 where order_id =#{orderId}
+
+    </update>
+    <update id="updateSmsStatus">
+         update  ct_master_order SET sms_status = 1 where order_id =#{orderId}
+    </update>
     <insert id="insertPayMode">
         insert into ct_order_paymode(order_id,paymode)value(#{orderId},#{payfs})
     </insert>
@@ -449,8 +458,119 @@
 	        and ct.order_id = #{orderId}
     </select>
 
-    <select id = "selectInProcessList" resultType="io.treasure.entity.MasterOrderEntity">
-        select * from ct_master_order where status in(2,7)
+
+    <select id="getOrderByYwy" resultType="io.treasure.dto.OrderDTO">
+        SELECT
+            o.*,
+            ct.`name` as merchant_name,
+            ct.tel as merchant_tel
+        FROM
+            ct_master_order o
+        LEFT JOIN
+            ct_merchant ct on o.merchant_id = ct.id
+        WHERE
+            o.STATUS = 4
+        AND now() > DATE_ADD(
+            o.create_date,
+            INTERVAL 2 MINUTE
+        )
+        and  o.merchant_id = #{martId}
+        order by o.bm_status asc
+    </select>
+    <select id="selectForBm" resultType="io.treasure.dto.OrderDTO">
+           select * from ct_master_order where status = 4 and sms_status = 0  and now() > DATE_ADD(create_date,INTERVAL 2 MINUTE)
+
+    </select>
+
+    <select id="inProcessOrdersByMerchantId" resultType="io.treasure.dto.MerchantOrderDTO">
+        select mo.* from ct_master_order mo
+        where merchant_id =#{merchantId} and
+        (
+            (
+                mo.p_order_id = '0'
+                and mo.status in (2, 6, 7)
+            )
+            or
+            (
+                mo.status not in(2,6,7)
+                and mo.p_order_id = '0'
+                and (
+                    select count(1) from ct_master_order slave
+                    where slave.status in(2,6,7)
+                    and mo.order_id  = slave.p_order_id
+                    ) >0
+            )
+        )
+        limit #{page},#{limits}
+    </select>
+    <select id="inProcessCountByMerchantId" resultType="integer">
+        select count(*)
+        from(
+            select count(*) as tmp from ct_master_order
+            where merchant_id =#{merchantId}
+              and status in (2,6,7)
+            group by eat_time,contact_number
+        ) as tmp
+
+    </select>
+
+    <select id="inProcessOrdersByUserId" resultType="io.treasure.dto.OrderDTO">
+
+        select mo.* from ct_master_order mo
+        where creator =#{userId} and
+              (
+                      (
+                                  mo.p_order_id = '0'
+                              and mo.status in (2,4,6,7)
+                          )
+                      or
+                      (
+                                  mo.status not in(2,4,6,7)
+                              and mo.p_order_id = '0'
+                              and (
+                                      select count(1) from ct_master_order slave
+                                      where slave.status in(2,4,6,7)
+                                        and mo.order_id  = slave.p_order_id
+                                  ) >0
+                          )
+                  )
+        limit #{page},#{limits}
+
+    </select>
+
+    <select id="inProcessCountByUserId" resultType="integer">
+
+       select count(*)
+        from(
+            select count(*) as tmp from ct_master_order
+            where creator = #{userId}
+              and status in (2,6,7)
+            group by eat_time,contact_number
+        ) as tmp
+
+    </select>
+
+    <select id="getFinishedTotal" resultType="double">
+        select sum(merchant_proceeds) from ct_master_order
+        where check_status = 1
+        and status in(2,7)
+        and merchant_id = #{merchantId}
+        <if test="creator != null and creator !=''">
+            and creator = #{creator}
+        </if>
+        <if test="startTime != null and startTime !=''">
+
+            and DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T') >=
+            DATE_FORMAT(#{startTime},'%Y %m %d %T')
+
+        </if>
+        <if test="stopTime !=null and stopTime != ''">
+
+            and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >=
+            DATE_FORMAT(ct_master_order.eat_time,'%Y %m %d %T')
+
+        </if>
+
     </select>
 
 </mapper>

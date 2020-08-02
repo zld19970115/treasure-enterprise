@@ -22,7 +22,7 @@
         <result property="deleted" column="deleted"/>
     </resultMap>
     <insert id="binding">
-
+       INSERT INTO business_manager_track_record(bm_id,mch_id,official_entry_time,status) VALUE(#{bmId},#{mchId},now(),1);
 
     </insert>
     <select id="getByNameAndPassWord" resultType="io.treasure.dto.BusinessManagerDTO">
@@ -32,9 +32,15 @@
     <select id="listPage" resultType="io.treasure.dto.BusinessManagerDTO">
          select * from business_manager where status in (1,2) and deleted = 0
     </select>
-
-
-
+    <select id="selectByMobile" resultType="io.treasure.dto.BusinessManagerDTO">
+        select * from business_manager where status in (1,2) and deleted = 0 and mobile = #{mobile}
+    </select>
+    <select id="selectlogById" resultType="io.treasure.entity.BusinessManagerTrackRecordEntity">
+        select * from business_manager_track_record where bm_id = #{id}
+    </select>
+    <select id="selectByMartId" resultType="io.treasure.entity.BusinessManagerTrackRecordEntity">
+         select * from business_manager_track_record where mch_id = #{martId}
+    </select>
 
 
 </mapper>

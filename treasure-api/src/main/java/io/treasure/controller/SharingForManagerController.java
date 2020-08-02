@@ -70,6 +70,7 @@ public class SharingForManagerController {
 
         QueryWrapper<SharingActivityLogEntity> saqw = new QueryWrapper<>();
 
+
         if(sal_id != null)
             saqw.eq("sal_id",sal_id);
         if(activity_id != null)

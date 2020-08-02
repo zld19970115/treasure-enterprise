@@ -76,11 +76,13 @@
     </select>
 
     <select id="selectInProcessCount" resultType="integer" >
-
-        select count(1) from ct_master_order
-            where merchant_id = #{merchantId}
-            and status in (2,7)
-            and p_order_id = '0'
+        select count(*)
+            from(
+                select count(*) as tmp from ct_master_order
+                where merchant_id =#{merchantId}
+                and status in (2,6,7)
+                group by eat_time,contact_number
+            ) as tmp
     </select>
 
 </mapper>

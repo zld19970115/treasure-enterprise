@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
@@ -27,6 +28,7 @@ import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
 import io.treasure.utils.EMsgCode;
+import io.treasure.utils.TimeUtil;
 import io.treasure.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -113,10 +115,52 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("ongPageCopy")
+    @ApiOperation("商户端-进行中列表(已接受订单)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> ongPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
+
+        Long merchantId = Long.parseLong(params.get("merchantId")+"");
+        String tmp = params.get("page")+"";
+        if(tmp == null)
+            tmp ="0";
+        Integer page = Integer.parseInt(tmp);
+        if(page == null){
+            page = 0;
+        }else{
+            if(page>0)
+                page--;
+        }
+        String tmp1 = params.get(Constant.LIMIT)+"";
+        if(tmp1 == null)
+            tmp1 = "10";
+        Integer limit = Integer.parseInt(tmp1);
+        if(limit == null){
+            limit = 10;
+        }
+        String orderId = params.get("orderId")+"";
+        String orderField = params.get(Constant.ORDER_FIELD)+"";
+        String sortMethod = params.get(Constant.ORDER)+"";
+
+        PageData<MerchantOrderDTO> merchantOrderDTOPageData = masterOrderService.selectInProcessListByMerchantId(merchantId, page, limit, orderId, orderField, sortMethod);
+        //params.put("status", Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue());
+        return new Result<PageData<MerchantOrderDTO>>().ok(merchantOrderDTOPageData);
+    }
+
     @CrossOrigin
     @Login
     @GetMapping("ongPage")
-    @ApiOperation("商户端-进行中列表(已接受订单)")
+    @ApiOperation("商户端-进行中列表(已接受订单)备份")
     @ApiImplicitParams({
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
@@ -166,6 +210,58 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("income_list")
+    @ApiOperation("商户端-订单营收明细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="Long"),
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = false, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = false, dataType="int") ,
+            @ApiImplicitParam(name = "creator",value="client_user_id",paramType = "query",required = false,dataType = "Long"),
+            @ApiImplicitParam(name = "startTime",value="就餐开始时间",paramType = "query",required = false,dataType = "String"),
+            @ApiImplicitParam(name = "stopTime",value="就餐结束时间",paramType = "query",required = false,dataType = "String")
+    })
+    public Result finishPageCopy(Long merchantId,Integer page,Integer limit,Long creator,String startTime,String stopTime) throws ParseException {
+
+        int pageTmp = page==null?0:page;
+        if(pageTmp >0)
+            pageTmp --;
+        int limitTmp = limit==null?10:limit;
+        QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("check_status",1);
+        queryWrapper.in("status",2,7);
+
+        if(merchantId != null)
+            queryWrapper.eq("merchant_id",merchantId);
+        if(creator != null)
+            queryWrapper.eq("creator",creator);
+
+        startTime = startTime+" 00:00:00";
+        stopTime = stopTime+" 23:59:59";
+        Long start = TimeUtil.simpleDateFormat.parse(startTime).getTime()-1;
+        Long stop = TimeUtil.simpleDateFormat.parse(stopTime).getTime()+1;
+        Date startTimeDate = new Date(start);
+        Date stopTimeDate = new Date(stop);
+
+        //时间处理
+        queryWrapper.gt("eat_time",startTimeDate);
+        queryWrapper.lt("eat_time",stopTimeDate);
+
+        Page<MasterOrderEntity> record = new Page<MasterOrderEntity>(pageTmp,limitTmp);
+        IPage<MasterOrderEntity> orders = masterOrderDao.selectPage(record, queryWrapper);
+
+        if(orders == null)
+            return new Result().error("nothing");
+
+       // Double finishedTotal = masterOrderDao.getFinishedTotal(merchantId,creator,startTimeTmp,stopTime);
+       // System.out.println("finishedTotal:"+finishedTotal);
+
+        return new Result().ok(orders);
+    }
+
+
     @CrossOrigin
     @Login
     @GetMapping("calcelPage")
@@ -363,6 +459,38 @@ public class ApiMasterOrderController {
         PageData<OrderDTO> page = masterOrderService.selectPOrderIdHavePaids(params);
         return new Result<PageData<OrderDTO>>().ok(page);
     }
+
+    @Login
+    @GetMapping("payFinishOrderPageCopy")
+    @ApiOperation("支付完成订单列表新")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result<PageData<OrderDTO>> payFinishOrderPageCopy(@ApiIgnore @RequestParam Map<String, Object> params){
+
+        String sPage = params.get("page")+"";
+        if(sPage == null)
+            sPage="0";
+        int page = Integer.parseInt(sPage);
+        if(page > 0){
+            page --;
+        }
+        String sLimit = params.get("limit")+"";
+        if(sLimit == null)
+            sLimit = "0";
+        Integer limit = Integer.parseInt(sLimit);
+        String orderField = params.get(Constant.ORDER_FIELD)+"";
+        String sortMethod =params.get(Constant.ORDER)+"";
+        Long userId = Long.parseLong(params.get("userId")+"");
+        System.out.println("userId:"+userId);
+        PageData<OrderDTO> pages = masterOrderService.selectPOrderIdHavePaidsCopy(page,limit,orderField,sortMethod,userId);
+        return new Result<PageData<OrderDTO>>().ok(pages);
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Login
     @GetMapping("cancelNopayOrderPage")
@@ -778,16 +906,33 @@ public class ApiMasterOrderController {
         return orderList;
     }
 
-    @GetMapping("goDeachmsg")
-    @ApiOperation("接单拒单后调用deachmsg方法")
+    @GetMapping("getOrderByYwy")
+    @ApiOperation("查询该业务员下是否有商户订单2分钟未接单的订单列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "martId", value = "主订单编号", paramType = "query", required = true, dataType="long")
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", required = true, dataType="String")
     })
-    public void goDeachmsg(@ApiIgnore @RequestParam long martId) {
-        List<MasterOrderEntity> masterOrderEntities = masterOrderService.selectByMasterIdAndStatus(martId);
+    public  Result<PageData<OrderDTO>> getOrderByYwy(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageData<OrderDTO> orderByYwy = masterOrderService.getOrderByYwy(params);
+        return new Result().ok(orderByYwy);
+    }
+    @GetMapping("bmGet")
+    @ApiOperation("业务员已经查看")
+    @ApiImplicitParams({
+    })
+    public  Result bmGet( @RequestParam String orderId){
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return new Result().error("该订单没有找到");
+        }else {
+            masterOrderService.bmGet(orderId);
+            return new Result().ok("成功");
+        }
 
     }
-
     @GetMapping("roomOrderPrinter")
     @ApiOperation("房订单打印PC")
     public Result roomOrderPrinter(@RequestParam String orderId) {

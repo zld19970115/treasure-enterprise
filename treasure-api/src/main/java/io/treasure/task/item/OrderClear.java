@@ -56,9 +56,7 @@ public class OrderClear extends TaskCommon implements IOrderClear {
         }
         clearOrderDao.clearMasterOrders(specifyDateTime[0],specifyDateTime[1]);
         freeProcessLock();  //释放程序锁
-
     }
-
     //分销奖励
     public void distributionReward(String timeStart,String timeStop){
         List<DistributionVo> distributionVos = clearOrderDao.distributionList(timeStart,timeStop);

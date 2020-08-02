@@ -25,7 +25,11 @@ public class MasterOrderSimpleServiceImpl implements MasterOrderSimpleService {
         List<OrderSimpleEntity> orderSimpleEntities = masterOrderSimpleDao.queryByOrder(merchantId, index, pageNumber);
         for(int i=0;i<orderSimpleEntities.size();i++){
             if(orderSimpleEntities.get(i).getGoodId().equals("good_id"))
+            //更新订单商品信息
             orderSimpleEntities.set(i,orderSimpleEntities.get(i).resetGoodId());
+            //更新订单总价
+            orderSimpleEntities.set(i,orderSimpleEntities.get(i).updateOriginPrice());
+
         }
         return orderSimpleEntities;
 
