@@ -13,6 +13,7 @@ public class ClientLevelRuleServiceImpl {
     @Autowired(required = false)
     private ClientLevelRuleDao clientLevelRuleDao;
 
+
     //基本参数设置
 
     public ClientLevelRuleEntity getClientLevelRuleEntity(){

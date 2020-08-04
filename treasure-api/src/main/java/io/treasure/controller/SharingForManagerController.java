@@ -21,6 +21,7 @@ import io.treasure.vo.PagePlus;
 import io.treasure.vo.SharingActivityComboVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
@@ -355,4 +356,35 @@ public class SharingForManagerController {
 
         return new Result().ok(sharingRecords);
     }
+
+    @Autowired(required = false)
+    private DistributionParamsDao distributionParamsDao;
+
+    @GetMapping("/dp_item")
+    @ApiOperation(value = "获取分销参数列表",tags = "获取分销参数列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="id",value = "id（非空表示查一项）",dataType = "Long",paramType = "query",required = false),
+    })
+    public Result getDistributionParams(Long id){
+        System.out.println("hh"+id);
+        QueryWrapper<DistributionParamsEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("sa_id",id);
+
+        List<DistributionParamsEntity> distributionParamsEntities = distributionParamsDao.selectList(queryWrapper);
+        return new Result().ok(distributionParamsEntities);
+    }
+
+
+    @Login
+    @PostMapping("/dp_item")
+    @ApiOperation("更新分销系统参数")
+    public Result updateDistributionParamsById(@RequestBody DistributionParamsEntity entity){
+
+        distributionParamsDao.updateById(entity);
+        return new Result().ok("update complete");
+    }
+
+
+
+
 }

@@ -94,7 +94,21 @@ public class ClientUserDTO implements Serializable {
 
 	@ApiModelProperty(value = "注册方式1手机号 2微信号")
 	private String way;
+	@ApiModelProperty(value = "收款支付宝账户")
+	private String aliAccountNumber;
+	/**
+	 * 支付宝收款人真实姓名
+	 */
+	@ApiModelProperty(value = "支付宝收款人真实姓名")
+	private String aliAccountRealname;
+	/**
+	 * 收款微信openid
+	 */
+	@ApiModelProperty(value = "收款微信openid")
+	private String wxAccountOpenid;
 
+	@ApiModelProperty(value = " 微信绑定方式 1---小程序 2---app")
+	private Integer wxStatus;
 	@ApiModelProperty(value = "更新时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -1,14 +1,9 @@
 package io.treasure.task;
 
-import io.treasure.dto.SharingActivityExtendsDTO;
-import io.treasure.entity.SharingActivityExtendsEntity;
-import io.treasure.service.QRCodeService;
-import io.treasure.service.impl.QRcodeServiceImpl;
+import io.treasure.task.item.InitGoodsDatabase;
 import io.treasure.task.item.OrderClear;
 import io.treasure.task.item.OrderForBm;
-import io.treasure.utils.ObjectUtil;
 import io.treasure.utils.TimeUtil;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,6 +18,9 @@ public class Task {
 
     @Autowired
     private OrderForBm orderForBm;
+
+    @Autowired
+    private InitGoodsDatabase initGoodsDatabase;
 
     //处理次数记录
     private int taskInProcess = 0;
@@ -39,10 +37,16 @@ public class Task {
         //1,自动清台任务+加销奖励
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
+
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
         }
 
+        /*  更新拼音列
+       if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
+           initGoodsDatabase.initGoodsPy();
+       }
+       */
    }
 
     //=========================基本状态锁定===============================
@@ -62,7 +66,6 @@ public class Task {
     public void resetAllCounter(){
         orderClear.resetTaskCounter();
     }
-
 
     public void sssest() throws Exception{
         long timeStamp = 1598917869000L;

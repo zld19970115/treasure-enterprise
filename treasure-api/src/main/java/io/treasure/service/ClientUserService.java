@@ -25,7 +25,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     boolean isRegister(String tel);
 
     ClientUserEntity getByMobile(String mobile);
-
+    void updateWX(String userId);
     Map<String, Object> login(LoginDTO dto);
 
     ClientUserEntity getUserByPhone(String mobile);

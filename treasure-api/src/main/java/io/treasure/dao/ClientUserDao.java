@@ -2,7 +2,6 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.ClientUserDTO;
-import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,7 +27,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     void updateCID(@Param("clientId") String clientId, @Param("mobile") String mobile);
     ClientUserEntity getClientUser(Long id);
     ClientUserEntity  selectByMobile(String mobile);
-
+    void updateWX(String userId);
     //添加一项
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator,
                                          @Param("gift") String gift);
