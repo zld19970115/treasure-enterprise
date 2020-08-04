@@ -42,11 +42,11 @@ public class Task {
             orderForBm.getOrderByYwy();
         }
         System.out.println("schedule 。。。 。。。");
-        /*  更新拼音列*/
+        /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.initGoodsPy();
        }
-       /**/
+       */
    }
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
