@@ -49,6 +49,9 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     PageData<OrderDTO> listPage(Map<String, Object> params);
     //商户端订单列表
     PageData<MerchantOrderDTO> listMerchantPage(Map<String, Object> params);
+
+    PageData<MerchantOrderDTO> finishPagePC(Map<String, Object> params);
+    PageData<MerchantOrderDTO> calcelPagePC(Map<String, Object> params);
     //预约列表
     PageData<MerchantOrderDTO> listMerchantPage2(Map<String, Object> params);
     List<MasterOrderEntity>  selectByUserId(long userId);
@@ -65,6 +68,8 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     PageData<MerchantOrderDTO> listMerchantPages(Map<String, Object> params);
 
     PageData<MerchantOrderDTO> listMerchantPagesPC(Map<String, Object> params);
+
+    PageData<MerchantOrderDTO> allListPC(Map<String, Object> params);
     /**
      * 优惠卷
      * @param dct

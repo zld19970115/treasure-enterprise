@@ -76,6 +76,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public void updateWX(String userId) {
+        baseDao.updateWX(userId);
+    }
+
+    @Override
     public Map<String, Object> login(LoginDTO dto) {
         ClientUserEntity user = getByMobile(dto.getMobile());
         AssertUtils.isNull(user, ErrorCode.ACCOUNT_PASSWORD_ERROR);

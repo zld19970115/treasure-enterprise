@@ -2848,6 +2848,136 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    public PageData<MerchantOrderDTO> allListPC(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        String status = params.get("status").toString();//"2";
+        if (StringUtils.isNotBlank(status)) {
+            String[] str = status.split(",");
+            params.put("statusStr", str);
+        }
+        String merchantId = (String) params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+//            boolean contains = merchantId.contains(",");
+//            if(contains){
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+//            }else{
+//                String[] str = merchantId.split(",");
+//                str.
+//                params.put("merchantIdStr", str);
+//            }
+
+        } else {
+            params.put("merchantId", null);
+        }
+        List<MerchantOrderDTO> list = baseDao.listMerchantPC(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal payMoney = orderDTO.getPayMoney();
+            BigDecimal giftMoney = orderDTO.getGiftMoney();
+            BigDecimal a = payMoney.add(giftMoney);
+            if (orderDTO.getStatus() == 8) {
+                a = new BigDecimal("0");
+            }
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() || orderEntity.getStatus() == Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue() || orderEntity.getStatus() == Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue() || orderEntity.getStatus() == Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()) {
+                    BigDecimal giftMoneys = orderEntity.getGiftMoney();
+                    BigDecimal payMoneys = orderEntity.getPayMoney();
+                    a = a.add(payMoneys.add(giftMoneys));
+                }
+            }
+            orderDTO.setPayMoney(a);
+        }
+        return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
+
+    @Override
+    public PageData<MerchantOrderDTO> finishPagePC(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        String status = params.get("status").toString();//"2";
+        if (StringUtils.isNotBlank(status)) {
+            String[] str = status.split(",");
+            params.put("statusStr", str);
+        }
+        String merchantId = (String) params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+//            boolean contains = merchantId.contains(",");
+//            if(contains){
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+//            }else{
+//                String[] str = merchantId.split(",");
+//                str.
+//                params.put("merchantIdStr", str);
+//            }
+
+        } else {
+            params.put("merchantId", null);
+        }
+        List<MerchantOrderDTO> list = baseDao.listMerchantPC(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal payMoney = orderDTO.getPayMoney();
+            BigDecimal giftMoney = orderDTO.getGiftMoney();
+            BigDecimal a = payMoney.add(giftMoney);
+            if (orderDTO.getStatus() == 8) {
+                a = new BigDecimal("0");
+            }
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                if (orderEntity.getStatus() == Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()) {
+                    BigDecimal giftMoneys = orderEntity.getGiftMoney();
+                    BigDecimal payMoneys = orderEntity.getPayMoney();
+                    a = a.add(payMoneys.add(giftMoneys));
+                }
+            }
+            orderDTO.setPayMoney(a);
+        }
+        return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
+
+    @Override
+    public PageData<MerchantOrderDTO> calcelPagePC(Map<String, Object> params) {
+        IPage<MasterOrderEntity> pages = getPage(params, Constant.CREATE_DATE, false);
+        String status = params.get("status").toString();//"2";
+        if (StringUtils.isNotBlank(status)) {
+            String[] str = status.split(",");
+            params.put("statusStr", str);
+        }
+        String merchantId = (String) params.get("merchantId");
+        if (StringUtils.isNotBlank(merchantId) && StringUtils.isNotEmpty(merchantId)) {
+//            boolean contains = merchantId.contains(",");
+//            if(contains){
+            String[] str = merchantId.split(",");
+            params.put("merchantIdStr", str);
+//            }else{
+//                String[] str = merchantId.split(",");
+//                str.
+//                params.put("merchantIdStr", str);
+//            }
+
+        } else {
+            params.put("merchantId", null);
+        }
+        List<MerchantOrderDTO> list = baseDao.listMerchantPC(params);
+        for (MerchantOrderDTO orderDTO : list) {
+            BigDecimal payMoney = orderDTO.getPayMoney();
+            BigDecimal giftMoney = orderDTO.getGiftMoney();
+            BigDecimal a = payMoney.add(giftMoney);
+            if (orderDTO.getStatus() == 8) {
+                a = new BigDecimal("0");
+            }
+            List<MasterOrderEntity> masterOrderEntities1 = baseDao.selectBYPOrderId(orderDTO.getOrderId());
+            for (MasterOrderEntity orderEntity : masterOrderEntities1) {
+                BigDecimal giftMoneys = orderEntity.getGiftMoney();
+                BigDecimal payMoneys = orderEntity.getPayMoney();
+                a = a.add(payMoneys.add(giftMoneys));
+            }
+            orderDTO.setPayMoney(a);
+        }
+        return getPageData(list, pages.getTotal(), MerchantOrderDTO.class);
+    }
+
+    @Override
     public BigDecimal getPlatformBalance() {
         return baseDao.getPlatformBalance();
     }

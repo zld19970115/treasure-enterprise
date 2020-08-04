@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
+import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.StatisticsDao;
 import io.treasure.dto.*;
 import io.treasure.entity.CategoryEntity;
@@ -33,6 +34,9 @@ public class StatisticsServiceImpl
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired(required = false)
+    private MasterOrderDao masterOrderDao;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -474,7 +478,11 @@ public class StatisticsServiceImpl
 
     @Override
     public FmisHomeVo merchantPcHome(Map<String, Object> params) {
-        return baseDao.fmisHome(params);
+        FmisHomeVo vo = baseDao.fmisHome(params);
+        Map<String, Object> m = new HashMap<>();
+        Integer c = masterOrderDao.listMerchantPCCount(params);
+        vo.setPOrderCount(c);
+        return vo;
     }
 
     @Override

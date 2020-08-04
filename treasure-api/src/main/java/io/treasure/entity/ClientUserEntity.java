@@ -116,6 +116,22 @@ public class ClientUserEntity extends BaseEntity {
     /**
      * 更新者
      */
+	/**
+	 * 收款支付宝账户
+	 */
+	private String aliAccountNumber;
+	/**
+	 * 支付宝收款人真实姓名
+	 */
+	private String aliAccountRealname;
+	/**
+	 * 收款微信openid
+	 */
+	private String wxAccountOpenid;
+	/**
+	 * 微信绑定方式 1---小程序 2---app
+	 */
+	private Integer wxStatus;
 	@TableField(fill=FieldFill.INSERT_UPDATE)
 	private Long updater;
 	/**
