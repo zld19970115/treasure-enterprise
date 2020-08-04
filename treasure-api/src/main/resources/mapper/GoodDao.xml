@@ -89,8 +89,9 @@
         and mart_id =#{merchantId}  and outside in (1,2)
     </select>
 
+    <!--,icon,full_py_name-->
     <select id="selectDishesMenu" resultType="io.treasure.vo.SimpleDishesVo">
-        select name,icon,full_py_name from ct_good
+        select name from ct_good
         <where>
             full_py_name like CONCAT(${startLetter},'%')
             or simple_py_name like CONCAT(${startLetter},'%')
@@ -176,28 +177,5 @@
                 </if>
         </where>
     </select>
-
-    <!--
-
-    #查询所有包含此菜品的商家列表
-select cm.id,cm.mobile,cm.name,
-       cm.address,cm.brief,cm.businessHours as business_hours,
-       cm.headUrl as head_url,cm.score,cm.log,cm.lat,cm.delivery_area,
-       cm.remark,cm.closeShopHours as close_shop_hours,cm.monetary,
-       cm.monthy_sales,cm.party,cm.special,sum(price) total_price
-from ct_good
-left join ct_merchant cm
-on ct_good.mart_id = cm.id
-where mart_id in (
-      select mart_id
-      from ct_good
-      where ct_good.name in ('水煮肉片', '锅包肉')
-      group by mart_id
-      having count(1) >=2
-)
-and ct_good.name in('水煮肉片', '锅包肉')
-group by mart_id
-order by total_price asc;
-    -->
 
 </mapper>

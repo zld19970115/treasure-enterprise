@@ -10,8 +10,6 @@ import java.util.Map;
 
 public class MyPingyInUtil {
 
-
-
     //转成拼音
     static String toPyViaChar(char chineseChar,boolean firstWordOnly){
 

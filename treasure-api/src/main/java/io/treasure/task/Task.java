@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public abstract class Task {
+public class Task {
 
     @Autowired
     private OrderClear orderClear;
@@ -25,7 +25,7 @@ public abstract class Task {
     private int taskInProcess = 0;
 
     @Scheduled(fixedDelay = 5000)
-    public void TaskManager() throws Exception {
+    public void TaskManager(){
         if(isInProcess()) return;
         lockedTask();//
 
@@ -40,12 +40,11 @@ public abstract class Task {
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
         }
-        System.out.println("schedule 。。。 。。。");
-        /*  更新拼音列*/
+        /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.initGoodsPy();
        }
-       /**/
+       */
    }
     //=========================基本状态锁定===============================
     public boolean isInProcess(){

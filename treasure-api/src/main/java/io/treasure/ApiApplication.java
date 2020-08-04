@@ -9,7 +9,6 @@
 
 package io.treasure;
 import com.alipay.api.java_websocket.WebSocketImpl;
-import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.catalina.connector.Connector;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
