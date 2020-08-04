@@ -7,11 +7,10 @@ import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 
 @Component
-public class Task {
+public abstract class Task {
 
     @Autowired
     private OrderClear orderClear;
@@ -41,14 +40,13 @@ public class Task {
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
         }
-
-        /*  更新拼音列
+        System.out.println("schedule 。。。 。。。");
+        /*  更新拼音列*/
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.initGoodsPy();
        }
-       */
+       /**/
    }
-
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
         if(taskInProcess >0)

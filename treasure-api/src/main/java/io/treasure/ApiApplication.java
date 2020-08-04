@@ -9,7 +9,9 @@
 
 package io.treasure;
 import com.alipay.api.java_websocket.WebSocketImpl;
+import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.catalina.connector.Connector;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +26,9 @@ import io.treasure.utils.MyWebScoket;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * treasure-api

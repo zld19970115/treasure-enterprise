@@ -103,6 +103,18 @@
         limit #{page},#{num}
     </select>
 
+    <select id="selectDishesMenuCount" resultType="io.treasure.vo.SimpleDishesVo">
+        select full_py_name from ct_good
+        <where>
+            full_py_name like CONCAT(${startLetter},'%')
+            or simple_py_name like CONCAT(${startLetter},'%')
+            or full_py_name > ${startLetter}
+
+        </where>
+        group by name
+    </select>
+
+
     <select id="selectMchViaWholePrice" resultType="io.treasure.vo.SpecifyMerchantVo" parameterType="io.treasure.dto.MerchantQueryDto">
         select cm.id,cm.mobile,cm.name,
                cm.address,cm.brief,cm.businessHours as business_hours,
