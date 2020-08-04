@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.UserWithdrawDao">
+
+    <resultMap type="io.treasure.entity.UserWithdrawEntity" id="UserWithdrawMap">
+
+        <result property="id" column="id"/>
+        <result property="money" column="money"/>
+        <result property="type" column="type"/>
+        <result property="way" column="way"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="createDate" column="create_date"/>
+        <result property="creator" column="creator"/>
+        <result property="updater" column="updater"/>
+        <result property="verify" column="verify"/>
+        <result property="verifyDate" column="verify_date"/>
+        <result property="verifyReason" column="verify_reason"/>
+        <result property="verifyState" column="verify_state"/>
+    </resultMap>
+    <update id="updateStatusById" parameterType="io.treasure.entity.MerchantWithdrawEntity">
+        update ct_merchant_withdraw set status=#{status} where id=#{id}
+    </update>
+    <update id="verify" parameterType="io.treasure.entity.MerchantWithdrawEntity">
+        update ct_merchant_withdraw
+        set verify_state=#{verifyState},
+        verify_reason=#{verifyReason},
+        verify_date=#{verifyDate},
+        verify=#{verify} ,
+        updater=#{verify}
+        where id=#{id}
+    </update>
+    <select id="selectTotalCath" resultType="java.math.BigDecimal">
+        SELECT SUM(merchant_proceeds)
+        FROM ct_master_order
+        WHERE merchant_id = #{martId} AND status IN (2,4,7,10) and check_status = 1
+    </select>
+    <select id="selectAlreadyCash" resultType="java.lang.Double">
+        SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state= 2
+    </select>
+    <select id="selectByMartId" resultType="java.lang.Double">
+         SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1,2)
+    </select>
+    <select id="selectWaitByMartId" resultType="java.lang.Double">
+         SELECT SUM(money)   FROM  ct_merchant_withdraw where merchant_id = #{martId} and verify_state in(1)
+    </select>
+    <select id="selectPoByMartID" parameterType="io.treasure.entity.MerchantWithdrawEntity" resultType="io.treasure.entity.MerchantWithdrawEntity">
+              SELECT *  FROM  ct_merchant_withdraw where merchant_id = #{martId}
+    </select>
+    <select id="selectOrderByMartID" resultType="io.treasure.entity.MasterOrderEntity">
+        select * from  ct_master_order where 1=1 and merchant_id = #{merchantId}
+    </select>
+    <select id="listPage" resultType="io.treasure.dto.UserWithdrawDTO">
+        select draw.*,user.userName userName,user.mobile userMobile,user.name  nickName
+        from ct_user_withdraw draw
+        left join ct_client_user user on user.id=draw.user_id
+        where 1=1
+        <if test="status != null">
+            and draw.status = #{status}
+        </if>
+        <if test="verifyState != null">
+            and draw.verify_state = #{verifyState}
+        </if>
+        <if test="userId != null">
+            and draw.user_id =  #{userId}
+        </if>
+    </select>
+    <select id="selectWithStatus" resultType="java.lang.String">
+select param_value from sys_params where id=1144988823431553026
+    </select>
+    <select id="selectPointMoney" resultType="java.math.BigDecimal">
+          SELECT SUM(platform_brokerage)
+        FROM ct_master_order
+        WHERE merchant_id = #{martId} AND status IN (2,4,7,10) and check_status = 1
+    </select>
+    <select id="selectByUserIdAndStasus" resultType="io.treasure.dto.UserWithdrawDTO">
+         SELECT *  FROM  ct_user_withdraw where user_id = #{userId} and verify_state = 1
+
+    </select>
+    <select id="selectByUserIdAndalready" resultType="io.treasure.dto.UserWithdrawDTO">
+         SELECT *  FROM  ct_user_withdraw where user_id = #{userId} and verify_state in (1,2)
+
+    </select>
+
+    <!--    根据商户id(有，无)时间范围(时分秒)，时间方式，精确，精确到天为2,按支付方式进行查询-->
+    <select id="selectByObject" resultType="io.treasure.entity.MerchantWithdrawEntity" parameterType="io.treasure.dto.QueryWithdrawDto">
+        select * from ct_merchant_withdraw
+
+        <where>
+            <if test="merchantId != null and merchantId !=''">
+                and merchant_id = #{merchantId}
+            </if>
+
+            <choose>
+                <when test="queryType != null and queryType != ''">
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+                    </if>
+                </when>
+                <otherwise>
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(update_date,'%Y %m %d')
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+
+        </where>
+    </select>
+    <!--    分类汇总-->
+    <select id="selectTotalByType" resultType="double" parameterType="io.treasure.dto.QueryWithdrawDto">
+        select sum(money) from ct_merchant_withdraw
+        <where>
+            <if test="merchantId != null and merchantId !=''and groupByType != 2">
+                and merchant_id = #{merchantId}
+            </if>
+            <choose>
+                <when test="queryType != null and queryType != ''">
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d %T') >= DATE_FORMAT(#{startTime},'%Y %m %d %T')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d %T') >= DATE_FORMAT(update_date,'%Y %m %d %T')
+                    </if>
+                </when>
+                <otherwise>
+                    <if test="startTime != null and startTime != ''">
+                        and DATE_FORMAT(update_date,'%Y %m %d') >= DATE_FORMAT(#{startTime},'%Y %m %d')
+                    </if>
+                    <if test="stopTime != null and stopTime != ''">
+                        and DATE_FORMAT(#{stopTime},'%Y %m %d') >= DATE_FORMAT(update_date,'%Y %m %d')
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="type != null and type != ''and groupByType != 3">
+                and type = #{type}
+            </if>
+            <if test="verifyState != null and verifyState != ''">
+                and verify_state = #{verifyState}
+            </if>
+            <choose>
+                <when test="groupByType == 1 and verifyState != null and verifyState != ''">
+                    group by verify_state
+                </when>
+                <when test="groupByType == 2 and merchantId != null and merchantId != ''">
+                    group by merchant_id
+                </when>
+                <when test="groupByType == 3 and type != null and type != ''">
+                    group by type
+                </when>
+                <when test="groupByType == 4 and verify != null verify != ''">
+                    group by verify
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="getMerchanWithDrawAll"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+                mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw , ct_merchant cm
+    </select>
+    <select id="getMerchanWithDrawByMerchantId"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select mw.id,cm.name,cm.total_cash,cm.mobile,mw.money,mw.type,mw.way,mw.status,mw.remark,
+        mw.create_date,mw.creator,mw.verify,mw.verify_date,mw.verify_reason,mw.verify_state from ct_merchant_withdraw mw
+        LEFT JOIN
+        ct_merchant cm on cm.id = mw.merchant_id
+        <where>
+            <if test="mobile != null and mobile!='' ">
+                and  cm.mobile like  CONCAT('%',${mobile},'%')
+            </if>
+            <if test="verifyState != null and verifyState!='' ">
+                and  mw.verify_state = ${verifyState}
+            </if>
+            <if test="createDateTop != null and createDateTop.trim() != ''">
+                <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+            </if>
+            <if test="createDateDown != null and createDateDown.trim() != ''">
+                <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+            </if>
+            <if test="merchantId != null and merchantId!='' ">
+                and  mw.merchant_id= cm.id
+            </if>
+            <if test="type != null and type!='' ">
+                and  mw.type = #{type}
+            </if>
+        </where>
+        order by mw.create_date desc
+    </select>
+
+    <select id="getMerchanWithDrawByMerchantIdTotalRow"  resultType="io.treasure.dto.MerchantWithdrawDTO">
+        select IFNULL(sum(mw.money),0) as money from ct_merchant_withdraw mw
+        LEFT JOIN
+        ct_merchant cm on cm.id = mw.merchant_id
+        <where>
+            <if test="mobile != null and mobile!='' ">
+                and  cm.mobile like  CONCAT('%',${mobile},'%')
+            </if>
+            <if test="verifyState != null and verifyState!='' ">
+                and  mw.verify_state = ${verifyState}
+            </if>
+            <if test="createDateTop != null and createDateTop.trim() != ''">
+                <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') >= #{createDateTop} ]]>
+            </if>
+            <if test="createDateDown != null and createDateDown.trim() != ''">
+                <![CDATA[ and date_format(mw.create_date, '%Y-%m-%d') <= #{createDateDown} ]]>
+            </if>
+            <if test="merchantId != null and merchantId!='' ">
+                and  mw.merchant_id= cm.id
+            </if>
+            <if test="type != null and type!='' ">
+                and  mw.type = #{type}
+            </if>
+        </where>
+    </select>
+</mapper>

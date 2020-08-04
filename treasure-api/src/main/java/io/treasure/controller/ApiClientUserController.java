@@ -25,17 +25,13 @@ import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.RecordGiftDTO;
-import io.treasure.entity.BusinessManagerEntity;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.TokenEntity;
-import io.treasure.service.ClientUserService;
-import io.treasure.service.MasterOrderService;
-import io.treasure.service.RecordGiftService;
-import io.treasure.service.TokenService;
+import io.treasure.dto.UserWithdrawDTO;
+import io.treasure.entity.*;
+import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -68,7 +64,8 @@ public class ApiClientUserController {
     private RecordGiftService recordGiftService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
-
+    @Autowired
+    private UserWithdrawService userWithdrawService;
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -569,5 +566,160 @@ public class ApiClientUserController {
             res = integer;
         return new Result().ok(res);
     }
+    @CrossOrigin
+    @Login
+    @PutMapping("inserZFB")
+    @ApiOperation("绑定商户支付宝")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "ali_account_number", value = "收款支付宝账户", paramType = "query", required = false, dataType = "string"),
+            @ApiImplicitParam(name = "ali_account_realname", value = "支付宝收款人真实姓名", paramType = "query", required = false, dataType = "string")
+    })
+    public Result inserZFB(@ApiIgnore @RequestParam Map<String, Object> params){
+        String martId = (String) params.get("martId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(martId);
+        if (clientUserEntity==null){
+            return new Result().ok("没有该用户");
+        }
+        if (clientUserEntity.getAliAccountNumber()!=null||clientUserEntity.getAliAccountRealname()!=null){
+            return new Result().ok("1");//已绑定支付宝
+        }
+        String ali_account_number = (String) params.get("ali_account_number");
+        String ali_account_realname = (String) params.get("ali_account_realname");
+        if (ali_account_number!=null&&ali_account_realname!=null){
+            clientUserEntity.setAliAccountNumber(ali_account_number);
+            clientUserEntity.setAliAccountRealname(ali_account_realname);
+            clientUserService.updateById(clientUserEntity);
+            return new Result().ok("绑定成功");
+        }
 
+
+        return new Result().ok("0");//未绑定支付宝
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("inserWX")
+    @ApiOperation("绑定用户微信")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "wx_account_openid", value = "收款微信openid", paramType = "query", required = false, dataType = "string"),
+            @ApiImplicitParam(name = "status", value = "APP/VX", paramType = "query", required = true, dataType = "string")
+    })
+    public Result inserWX(@ApiIgnore @RequestParam Map<String, Object> params){
+        String userId = (String) params.get("userId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity==null){
+            return new Result().ok("没有该用户");
+        }
+        if (StringUtils.isNotBlank(clientUserEntity.getWxAccountOpenid())){
+            return new Result().ok("1");//已绑定微信
+        }
+        String wx_account_openid = (String) params.get("wx_account_openid");
+        String status = (String) params.get("status");
+        if (wx_account_openid!=null){
+            if ("VX".equals(status) || status == "VX"){
+                clientUserEntity.setWxStatus(1);
+            }else {
+                clientUserEntity.setWxStatus(2);
+            }
+            clientUserEntity.setWxAccountOpenid(wx_account_openid);
+            clientUserService.updateById(clientUserEntity);
+            return new Result().ok(clientUserEntity.getMobile());
+        }
+        return new Result().ok("0");//未绑定微信
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("deleltWX")
+    @ApiOperation("解除绑定用户微信")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType = "long")
+    })
+    public Result deleltWX(@ApiIgnore @RequestParam Map<String, Object> params){
+        String userId = (String) params.get("userId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity==null){
+            return new Result().error("没有该用户");
+        }
+        clientUserService.updateWX(userId);
+        return new Result().ok("解绑成功");//未绑定微信
+    }
+    @Login
+    @GetMapping("deleltWXByCode")
+    @ApiOperation("用户解绑验证码(返回验证码)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tel", value = "手机号", required = true, paramType = "query")
+    })
+    public Result deleltWXByCode(String tel) {
+        Result result = SendSMSUtil.sendCodeFordeletWx(tel, smsConfig);
+        return result;
+    }
+
+    @CrossOrigin
+    @Login
+    @PutMapping("selectWx")
+    @ApiOperation("查询用户是否绑定微信提现openid")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType = "long")
+    })
+    public Result selectWx(@ApiIgnore @RequestParam Map<String, Object> params){
+        String userId = (String) params.get("userId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        Map map = new HashMap();
+        if (clientUserEntity==null){
+            return new Result().error("没有该用户");
+        }
+        if (clientUserEntity.getWxAccountOpenid()!=null){
+            map.put("status",1);
+            map.put("userId",clientUserEntity.getMobile());
+            return new Result().ok(map);//绑定微信
+        }else {
+            map.put("status",2);
+            return new Result().ok(map);//未绑定微信
+        }
+    }
+    @Login
+    @GetMapping("getCoin")
+    @ApiOperation("获取可提现现金余额和已提现余额")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType="Long")
+    })
+    public Result getCoin(@RequestParam Long userId){
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        Map map = new HashMap();
+        if (clientUserEntity==null){
+            return new Result().error("没有该用户");
+        }
+
+        map.put("can",clientUserEntity.getCoin());
+        List<UserWithdrawDTO> userWithdrawDTOS = userWithdrawService.selectByUserIdAndalready(userId);
+        Double d = 0.00;
+        for (UserWithdrawDTO userWithdrawDTO : userWithdrawDTOS) {
+            d = d + userWithdrawDTO.getMoney();
+        }
+        map.put("already",d);
+        return new Result().ok(map);
+    }
+    @Login
+    @GetMapping("CoinToBalance")
+    @ApiOperation("现金兑换宝币")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType="Long")
+    })
+    public Result CoinToBalance(@RequestParam Long userId){
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        Map map = new HashMap();
+        if (clientUserEntity==null){
+            return new Result().error("没有该用户");
+        }
+
+        map.put("can",clientUserEntity.getCoin());
+        List<UserWithdrawDTO> userWithdrawDTOS = userWithdrawService.selectByUserIdAndalready(userId);
+        Double d = 0.00;
+        for (UserWithdrawDTO userWithdrawDTO : userWithdrawDTOS) {
+            d = d + userWithdrawDTO.getMoney();
+        }
+        map.put("already",d);
+        return new Result().ok(map);
+    }
 }
