@@ -20,6 +20,7 @@ import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ApiGoodService;
 import io.treasure.service.TokenService;
+import io.treasure.utils.MyPingyInUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -108,6 +109,10 @@ public class ApiGoodController {
             dto.setOffShelveBy(dto.getCreator());
             dto.setOffShelveTime(new Date());
         }
+        if (dto.getName() != null){
+            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(dto.getName()));
+            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(dto.getName()));
+        }
         dto.setCreateDate(new Date());
         apigoodService.save(dto);
         return new Result();
@@ -135,6 +140,14 @@ public class ApiGoodController {
                 dto.setOffShelveBy(dto.getCreator());
                 dto.setOffShelveTime(new Date());
             }
+        }
+
+        if (dto.getName() != null){
+            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(dto.getName()));
+            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(dto.getName()));
+        }else{
+            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(data.getName()));
+            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(data.getName()));
         }
         dto.setUpdateDate(new Date());
         apigoodService.update(dto);

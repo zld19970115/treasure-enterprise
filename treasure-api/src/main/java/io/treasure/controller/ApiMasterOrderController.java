@@ -231,7 +231,7 @@ public class ApiMasterOrderController {
         int limitTmp = limit==null?10:limit;
         QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper();
         queryWrapper.eq("check_status",1);
-        queryWrapper.in("status",2,7);
+        queryWrapper.in("status",10);
 
         if(merchantId != null)
             queryWrapper.eq("merchant_id",merchantId);

@@ -15,7 +15,7 @@ public class DistributionParamsEntity {
 
     @TableId
     private int id;
-    private int sa_id;
+    private int saId;
     private int radio;
 
 }
