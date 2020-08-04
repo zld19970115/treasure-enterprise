@@ -1,15 +1,9 @@
 package io.treasure.utils;
 
-
-import cn.hutool.core.util.PinyinUtil;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MyPingyInUtil {
-
 
 
     //转成拼音
@@ -19,6 +13,12 @@ public class MyPingyInUtil {
         if(charCode>=19968 && charCode<=40869){
 
             String[] strings = PinyinHelper.toHanyuPinyinStringArray(chineseChar);
+
+            if(charCode == 15878){
+                if(firstWordOnly)
+                    return "k";
+                return "kao";
+            }
             if(strings != null && strings.length >0){
                 String tmp = strings[0];
                 if(tmp.length()>1){
@@ -27,7 +27,6 @@ public class MyPingyInUtil {
                     }else{
                         tmp = tmp.substring(0,tmp.length()-1);
                     }
-
                 }
                 return tmp;
             }else{
