@@ -22,6 +22,7 @@ import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -271,6 +272,27 @@ public class MerchantUserController {
         if(null!=user){
             return new Result().error("此注册账号已存在，请换个账号重新注册!");
         }
+        merchantUserService.insert(entity);
+        return new Result().ok(entity.getId());
+    }
+
+    @CrossOrigin
+    @PostMapping("registerPC")
+    @ApiOperation("注册PC")
+    public Result registerPC(@RequestBody MerchantUserRegisterDTO dto){
+        if(Strings.isBlank(dto.getMobile()) || Strings.isBlank(dto.getNewPassword())) {
+            return new Result().error("账号和密码不能为空!");
+        }
+        MerchantUserEntity user = merchantUserService.getByMobiles(dto.getMobile());
+        if(null!=user){
+            return new Result().error("此注册账号已存在，请换个账号重新注册!");
+        }
+        String nPassword= DigestUtils.sha256Hex(dto.getNewPassword());
+        MerchantUserEntity entity=new MerchantUserEntity();
+        entity.setPassword(nPassword);
+        entity.setMobile(dto.getMobile());
+        entity.setCreateDate(new Date());
+        entity.setStatus(Common.STATUS_ON.getStatus());
         merchantUserService.insert(entity);
         return new Result().ok(entity.getId());
     }
