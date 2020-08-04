@@ -122,4 +122,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
                               @Param("startTime")Date startTime,
                               @Param("stopTime")Date stopTime);
 
+    Integer listMerchantPCCount(Map params);
+
 }

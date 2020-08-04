@@ -193,6 +193,28 @@ public class ApiMasterOrderController {
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPagesPC(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("allListPC")
+    @ApiOperation("商户端-全部订单PC")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> allListPC(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status",Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+","+
+                Constants.OrderStatus.PAYORDER.getValue()+","+Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTREFUSESREFUNDORDER.getValue()+","
+                +Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()+","+Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue());
+        params.put("ispOrderId", "1");
+        PageData<MerchantOrderDTO> page = masterOrderService.allListPC(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
+
     @CrossOrigin
     @Login
     @GetMapping("finishPage")
@@ -208,6 +230,44 @@ public class ApiMasterOrderController {
     public Result<PageData<MerchantOrderDTO>> finishPage(@ApiIgnore @RequestParam Map<String, Object> params){
         params.put("status", Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+"");
         PageData<MerchantOrderDTO> page = masterOrderService.listMerchantPage(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("finishPagePC")
+    @ApiOperation("商户端-已完成列表(翻台)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> finishPagePC(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue()+"");
+        params.put("ispOrderId", "1");
+        PageData<MerchantOrderDTO> page = masterOrderService.finishPagePC(params);
+        return new Result<PageData<MerchantOrderDTO>>().ok(page);
+    }
+
+    @CrossOrigin
+    @Login
+    @GetMapping("calcelPagePC")
+    @ApiOperation("商户端-拒绝订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "merchantId", value = "商户编号", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "query", dataType="String")
+    })
+    public Result<PageData<MerchantOrderDTO>> calcelPagePC(@ApiIgnore @RequestParam Map<String, Object> params){
+        params.put("status", Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()+"");
+        params.put("ispOrderId", "1");
+        PageData<MerchantOrderDTO> page = masterOrderService.calcelPagePC(params);
         return new Result<PageData<MerchantOrderDTO>>().ok(page);
     }
 
