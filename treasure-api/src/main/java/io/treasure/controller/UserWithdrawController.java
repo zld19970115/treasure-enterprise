@@ -62,6 +62,11 @@ public class UserWithdrawController {
         if (money>coin.doubleValue()){
             return new Result().error("提现金额不足");
         }
+       String  vs = clientUserService.selectZSCoinTotx();
+        double v = Double.parseDouble(vs);
+          if (money<v){
+              return new Result().error("提现金额不足"+v+"元");
+          }
         if(money<1 || money >5000){
             return new Result().error("提现范围在1~5000元");
         }

@@ -104,6 +104,16 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public String selectZSCoinTotx() {
+        return baseDao.selectZSCoinTotx();
+    }
+
+    @Override
+    public String selectCoinToBalance() {
+        return baseDao.selectCoinToBalance();
+    }
+
+    @Override
     public ClientUserEntity getUserByPhone(String mobile) {
        return baseDao.getUserByPhone(mobile);
     }

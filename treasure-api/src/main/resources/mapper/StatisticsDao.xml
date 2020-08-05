@@ -661,6 +661,7 @@
         sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney
         from ct_days_together ctdt
          left join ct_merchant ctm on ctm.id = ctdt.merchant_id
+        LEFT JOIN ct_merchant_user mu on mu.merchantId = ctdt.merchant_id
          <where>
             <if test="startDate != null and startDate.trim() != ''">
                 and date_format(ctdt.pay_date, '%Y-%m-%d') &gt;= #{startDate}
@@ -671,6 +672,12 @@
             <if test="payType != null and payType.trim() != ''">
                 and ctdt.pay_type = #{payType}
             </if>
+             <if test="name != null and name.trim() != ''">
+                 and ctm.`name` like CONCAT('%',#{name},'%')
+             </if>
+             <if test="mobile != null and mobile.trim() != ''">
+                 and mu.mobile like CONCAT('%',#{mobile},'%')
+             </if>
          </where>
         group by ctdt.id
     </select>
@@ -755,12 +762,19 @@
         case when sdd.incident_type = 8 then (select ctmo.order_id from ct_master_order ctmo where ctmo.refund_id = sdd.order_id) else '' end as torderId
     FROM
 	    stats_day_detail sdd
+        LEFT JOIN ct_merchant_user mu on mu.merchantId = sdd.pay_merchant_id
 	    <where>
             <if test="startDate != null and startDate.trim() != ''">
                 <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') >= #{startDate} ]]>
             </if>
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="name != null and name.trim() != ''">
+                and sdd.pay_merchant_name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mu.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
