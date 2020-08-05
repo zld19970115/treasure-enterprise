@@ -132,5 +132,12 @@
     <select id="selectLogOffCount" resultType="integer">
          select count(1) from ct_client_user where mobile=#{mobile}
     </select>
+    <select id="selectZSCoinTotx" resultType="java.lang.String">
+
+        select  param_value from  sys_params where id = 1144988823431552232
+    </select>
+    <select id="selectCoinToBalance" resultType="java.lang.String">
+         select  param_value from  sys_params where id = 1144988823433333434
+    </select>
 
 </mapper>

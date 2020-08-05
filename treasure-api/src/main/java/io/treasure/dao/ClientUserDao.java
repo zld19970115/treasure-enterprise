@@ -31,7 +31,8 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     //添加一项
     void subtractGiftByMasterOrderCreate(@Param("creator") Long creator,
                                          @Param("gift") String gift);
-
+    String selectZSCoinTotx();
+    String selectCoinToBalance();
    // List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
     List<ClientUserEntity> selectZhuXiao(String mobile);
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
