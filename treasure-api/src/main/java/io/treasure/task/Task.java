@@ -49,10 +49,6 @@ public class Task {
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
         }
-
-        if(clientMemberGradeAssessment.isInProcess() == false && orderClear.getTaskCounter()<1){
-            clientMemberGradeAssessment.updateGrade(20);
-        }
         /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.initGoodsPy();
