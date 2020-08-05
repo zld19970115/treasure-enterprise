@@ -65,6 +65,25 @@ public class DishesMenuController {
     }
 
 
+    @GetMapping("mcount")
+    @ApiOperation("菜单数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="startLetter",value="关键字",paramType = "query",dataType = "String")
+    })
+    public Result dishesMenuCount(@ApiIgnore @RequestParam Map<String, Object> params){
+        String startLetter = params.get("startLetter")+"";
+        if(startLetter == null){
+            startLetter = "'1'";
+        }else{
+            startLetter = "'"+startLetter+"'";
+        }
+
+
+        Integer integer = goodDao.selectDishesMenuCount(startLetter).size();
+
+        return new Result().ok(integer);
+    }
+
 
     public Result getOrderGroup(List<SimpleDishesVo> gList){
 

@@ -110,8 +110,8 @@ public class ApiGoodController {
             dto.setOffShelveTime(new Date());
         }
         if (dto.getName() != null){
-            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(dto.getName()));
-            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(dto.getName()));
+            dto.setFullPyName(MyPingyInUtil.toPyString(dto.getName(),false));
+            dto.setSimplePyName(MyPingyInUtil.toPyString(dto.getName(),true));
         }
         dto.setCreateDate(new Date());
         apigoodService.save(dto);
@@ -143,11 +143,11 @@ public class ApiGoodController {
         }
 
         if (dto.getName() != null){
-            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(dto.getName()));
-            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(dto.getName()));
+            dto.setFullPyName(MyPingyInUtil.toPyString(dto.getName(),false));
+            dto.setSimplePyName(MyPingyInUtil.toPyString(dto.getName(),true));
         }else{
-            dto.setFullPyName(MyPingyInUtil.toFullPinyinString(data.getName()));
-            dto.setSimplePyName(MyPingyInUtil.toAbbreviatePinyinString(data.getName()));
+            dto.setFullPyName(MyPingyInUtil.toPyString(dto.getName(),false));
+            dto.setSimplePyName(MyPingyInUtil.toPyString(dto.getName(),true));
         }
         dto.setUpdateDate(new Date());
         apigoodService.update(dto);

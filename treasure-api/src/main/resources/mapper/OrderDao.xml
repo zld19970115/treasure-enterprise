@@ -3,6 +3,7 @@
 
 <mapper namespace="io.treasure.dao.OrderDao">
 
+    
     <!--    所有新订单-->
     <select id="selectNewOrderCount" resultType="integer">
 

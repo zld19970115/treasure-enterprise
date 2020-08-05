@@ -49,6 +49,9 @@ public interface GoodDao extends BaseDao<GoodEntity> {
                                           @Param("page") int page,
                                           @Param("num") int num,
                                           @Param("inList") String inList);
+
+    List<SimpleDishesVo> selectDishesMenuCount(@Param("startLetter") String startLetter);
+
     List<SpecifyMerchantVo> selectMchViaWholePrice(MerchantQueryDto dto);
 
     //数值除以总项数
