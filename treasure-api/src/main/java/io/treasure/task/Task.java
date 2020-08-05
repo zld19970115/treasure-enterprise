@@ -1,5 +1,6 @@
 package io.treasure.task;
 
+import io.treasure.task.item.ClientMemberGradeAssessment;
 import io.treasure.task.item.InitGoodsDatabase;
 import io.treasure.task.item.OrderClear;
 import io.treasure.task.item.OrderForBm;
@@ -21,6 +22,9 @@ public class Task {
     private OrderForBm orderForBm;
     @Autowired
     private InitGoodsDatabase initGoodsDatabase;
+    @Autowired
+    private ClientMemberGradeAssessment clientMemberGradeAssessment;
+
     //处理次数记录
     private int taskInProcess = 0;
 
@@ -41,7 +45,14 @@ public class Task {
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
         }
-        System.out.println("schedule 。。。 。。。");
+
+        if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
+            clientMemberGradeAssessment.updateGrade(20);
+        }
+
+        if(clientMemberGradeAssessment.isInProcess() == false && orderClear.getTaskCounter()<1){
+            clientMemberGradeAssessment.updateGrade(20);
+        }
         /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.initGoodsPy();
