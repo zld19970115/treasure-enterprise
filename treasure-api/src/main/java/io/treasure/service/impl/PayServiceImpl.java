@@ -23,6 +23,7 @@ import io.treasure.jra.impl.MerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
+import io.treasure.task.item.ClientMemberGradeAssessment;
 import io.treasure.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -98,6 +99,8 @@ public class PayServiceImpl implements PayService {
 
     @Autowired
     private UserTransactionDetailsService userTransactionDetailsService;
+    @Autowired
+    private ClientMemberGradeAssessment clientMemberGradeAssessment;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -308,6 +311,7 @@ public class PayServiceImpl implements PayService {
         }
 
         if (chargeCashDTO.getStatus() != 1) {
+            //=========================
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
             return mapRtn;
@@ -349,6 +353,7 @@ public class PayServiceImpl implements PayService {
         clientUserEntity.setGift(gift);
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
 
@@ -361,6 +366,10 @@ public class PayServiceImpl implements PayService {
         entiry.setBalance(balance);
         entiry.setUserId(clientUserEntity.getId());
         userTransactionDetailsService.insert(entiry);
+
+        //1----更新用户分级内容
+        clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
+
         return mapRtn;
     }
 
@@ -1025,6 +1034,9 @@ public class PayServiceImpl implements PayService {
         entiry.setBalance(balance);
         entiry.setUserId(clientUserEntity.getId());
         userTransactionDetailsService.insert(entiry);
+
+        //1----更新用户分级内容
+        clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
         return mapRtn;
 
     }
