@@ -87,6 +87,7 @@ public class SharingActivityController {
             }
         }
 
+
         //2、初始化数据
         SharingInitiatorEntity siEntity = new SharingInitiatorEntity();
         siEntity.setSaId(saId);
@@ -99,6 +100,11 @@ public class SharingActivityController {
         siEntity.setQrCode(initQRCode(id+""));
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
+
+        Integer helpersNum =  saItem.getHelpersNum();
+        Integer rewardAmount = saItem.getRewardAmount();
+        map.put("helpersNum",helpersNum);
+        map.put("rewardAmount",rewardAmount);
 
         List<SharingInitiatorEntity> unreadedLogList = sharingActivityLogService.getUnreadedLogList(id, saId);
 
@@ -167,7 +173,7 @@ public class SharingActivityController {
     }
 //=====================================================================================================
 
-    public Result initSharingActivityInfo(Long initiatorId,int saId,String msg,boolean isError,int helperNum)throws Exception{
+    public Result initSharingActivityInfo(SharingActivityEntity saItem,Long initiatorId,int saId,String msg,boolean isError,int helperNum)throws Exception{
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
 
@@ -205,8 +211,18 @@ public class SharingActivityController {
             map.put("helpers",null);
         }
         String finishStamp = TimeUtil.dateToStamp(currentOne.getFinishedTime());
-        map.put("finishStamp",finishStamp);
 
+        Integer helpersNum =  null;
+        Integer rewardAmount = null;
+        if(saItem != null){
+            helpersNum =  saItem.getHelpersNum();
+            rewardAmount = saItem.getRewardAmount();
+        }
+
+        map.put("helpersNum",helpersNum);
+        map.put("rewardAmount",rewardAmount);
+
+        map.put("finishStamp",finishStamp);
         map.put("body",helperNum);
         result.setData(map);
 
@@ -229,11 +245,11 @@ public class SharingActivityController {
         SharingActivityEntity saItem = sharingActivityService.getOneById(saId, false);
         int helpersNum = 0;
         if(saItem == null){
-            return initSharingActivityInfo(id,saId,"活动("+saId+")不存在！",true,0);
+            return initSharingActivityInfo(null,id,saId,"活动("+saId+")不存在！",true,0);
         }else{
             helpersNum = saItem.getHelpersNum();
             if(saItem.getCloseDate().getTime()<= new Date().getTime()){
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已结束！",true,helpersNum);
+                return initSharingActivityInfo(saItem,id,saId,saItem.getSubject()+"活动已结束！",true,helpersNum);
             }
 
         }
@@ -241,12 +257,12 @@ public class SharingActivityController {
         val currentOne = sharingInitiatorService.getCurrentOne(vo.getId(), vo.getSaId());
         switch(currentOne.getStatus()){
             case 1:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动进行中！",false,helpersNum);
+                return initSharingActivityInfo(saItem,id,saId,saItem.getSubject()+"活动进行中！",false,helpersNum);
             case 2:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动已经成功！",false,helpersNum);
+                return initSharingActivityInfo(saItem,id,saId,saItem.getSubject()+"活动已经成功！",false,helpersNum);
 
             default:
-                return initSharingActivityInfo(id,saId,saItem.getSubject()+"活动未成功！",true,helpersNum);
+                return initSharingActivityInfo(saItem,id,saId,saItem.getSubject()+"活动未成功！",true,helpersNum);
 
         }
 

@@ -39,7 +39,7 @@ public class DishesMenuJRA implements IDishesMenuJRA {
     public void add(String dishesName) {
         String s = MyPingyInUtil.toCharPyString(dishesName);
 
-        //jedis.sadd(UserSearchSet.fieldName,userId);
+       jedis.sadd(UserSearchSet.fieldName,s);
     }
 
     public boolean isExistMember(String userId,String value) {
