@@ -96,7 +96,9 @@ public class SharingActivityController {
         siEntity.setStatus(ESharingInitiator.IN_PROCESSING.getCode());
         siEntity.setStartTime(saItem.getOpenDate());
         siEntity.setFinishedTime(saItem.getCloseDate());
-        siEntity.setQrCode(initQRCode(id+""));
+        //初始化二维码
+        //siEntity.setQrCode(initQRCode(id+""));
+
         Result result = new Result();
         Map<String,Object> map = new HashMap<>();
 
@@ -129,9 +131,9 @@ public class SharingActivityController {
         map.put("client_name",clientName);
         map.put("initiator_head_img",headImage);
 
-        boolean b = sharingInitiatorService.insertOne(siEntity);
-        if(b){
-            map.put("sharing",siEntity);
+        SharingInitiatorEntity sharingInitiatorEntity = sharingInitiatorService.insertOne(siEntity);
+        if(sharingInitiatorEntity!= null){
+            map.put("sharing",sharingInitiatorEntity);
             String finishStamp = TimeUtil.dateToStamp(saItem.getCloseDate());
             map.put("finishStamp",finishStamp);
             result.setMsg("成功发起："+saItem.getSubject()+"活动");

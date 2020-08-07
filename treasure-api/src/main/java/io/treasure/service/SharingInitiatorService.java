@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SharingInitiatorService {
 
-    boolean insertOne(SharingInitiatorEntity sharingInitiatorEntity);
+    SharingInitiatorEntity insertOne(SharingInitiatorEntity sharingInitiatorEntity) throws Exception;
 
     SharingInitiatorEntity getCurrentOne(Long intitiatorId, Integer saId);
 

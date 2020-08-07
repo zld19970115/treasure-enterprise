@@ -8,6 +8,7 @@ import io.treasure.dao.SharingInitiatorDao;
 import io.treasure.enm.ESharingInitiator;
 import io.treasure.entity.SharingActivityEntity;
 import io.treasure.entity.SharingInitiatorEntity;
+import io.treasure.service.QRCodeService;
 import io.treasure.service.SharingActivityService;
 import io.treasure.service.SharingInitiatorService;
 import io.treasure.utils.TimeUtil;
@@ -15,10 +16,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SharingInitiatorServiceImpl implements SharingInitiatorService {
@@ -27,18 +25,29 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     private SharingInitiatorDao sharingInitiatorDao;
     @Autowired
     private SharingActivityService sharingActivityService;
+    @Autowired
+    private QRCodeService qrCodeService;
 
+
+    public String initQRCode(String client_id)throws Exception{
+
+        String url ="https://jubaoapp.com:8443";
+        Map<String,String> map = new HashMap<>();
+        map.put("id",client_id);
+        //map.put("saId","777");
+        return qrCodeService.generateQrAndUrl(url,map);
+    }
     /**
      * @param sharingInitiatorEntity    //发起活动
      * @return
      */
     @Override
-    public boolean insertOne(SharingInitiatorEntity sharingInitiatorEntity){
+    public SharingInitiatorEntity insertOne(SharingInitiatorEntity sharingInitiatorEntity) throws Exception {
 
         //检查助力状态
         SharingInitiatorEntity inProcessingObject = getOne(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), true);
         if(inProcessingObject != null){
-            return true;
+            return inProcessingObject;      //当前助力活动已经存在
         }else{
             //成功次数
             Integer successTimes = getCount(sharingInitiatorEntity.getInitiatorId(), sharingInitiatorEntity.getSaId(), ESharingInitiator.COMPLETE_SUCCESS.getCode());
@@ -50,10 +59,11 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
 
             //无进行中的助力活动，且参加次数未超限
             if(successTimes<allowSuccessTimes){
+                sharingInitiatorEntity.setQrCode(initQRCode(sharingInitiatorEntity.getInitiatorId()+""));
                 sharingInitiatorDao.insert(sharingInitiatorEntity);     //插入新记录(活动编号)
-                return true;
+                return sharingInitiatorEntity;
             }else{
-                return false;//参加活动次数超限
+                return null;//参加活动次数超限
             }
         }
     }

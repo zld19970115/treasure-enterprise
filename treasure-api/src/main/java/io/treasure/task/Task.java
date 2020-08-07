@@ -28,7 +28,6 @@ public class Task {
     //处理次数记录
     private int taskInProcess = 0;
 
-
     @Scheduled(fixedDelay = 5000)
     public void TaskManager() throws Exception {
         if(isInProcess()) return;
@@ -49,11 +48,11 @@ public class Task {
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
         }
-        /*  更新拼音列*/
+        /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
            initGoodsDatabase.updateRedis();
        }
-       /**/
+       */
 
    }
     //=========================基本状态锁定===============================
