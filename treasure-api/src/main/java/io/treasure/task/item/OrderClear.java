@@ -13,6 +13,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 定时清台
+ */
 @Service
 public class OrderClear extends TaskCommon implements IOrderClear {
 

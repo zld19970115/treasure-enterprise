@@ -1,12 +1,16 @@
 package io.treasure.task;
 
+import io.treasure.task.item.ClientMemberGradeAssessment;
 import io.treasure.task.item.InitGoodsDatabase;
 import io.treasure.task.item.OrderClear;
 import io.treasure.task.item.OrderForBm;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 
 @Component
@@ -14,18 +18,19 @@ public class Task {
 
     @Autowired
     private OrderClear orderClear;
-
     @Autowired
     private OrderForBm orderForBm;
-
     @Autowired
     private InitGoodsDatabase initGoodsDatabase;
+    @Autowired
+    private ClientMemberGradeAssessment clientMemberGradeAssessment;
 
     //处理次数记录
     private int taskInProcess = 0;
 
+
     @Scheduled(fixedDelay = 5000)
-    public void TaskManager(){
+    public void TaskManager() throws Exception {
         if(isInProcess()) return;
         lockedTask();//
 
@@ -39,6 +44,10 @@ public class Task {
 
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
+        }
+
+        if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
+            clientMemberGradeAssessment.updateGrade(20);
         }
         /*  更新拼音列
        if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){

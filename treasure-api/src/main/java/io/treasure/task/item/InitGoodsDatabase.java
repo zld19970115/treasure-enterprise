@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 商品pinyin标志列
+ */
 @Component
 public class InitGoodsDatabase extends TaskCommon {
 
@@ -27,16 +30,16 @@ public class InitGoodsDatabase extends TaskCommon {
             String name = item.getName();
             System.out.println("当前正在处理：第"+i+"条记录!");
             if(name != null){
-                //if(item.getFullPyName() == null || item.getFullPyName() ==""){
+                if(item.getFullPyName() == null || item.getFullPyName() ==""){
                     String s = MyPingyInUtil.toPyString(name,false);
                     if(s.length()>30){
                         s.substring(0,30);
                     }
                     item.setFullPyName(s);
-                //}
+                }
 
                 //if(item.getSimplePyName()== null || item.getSimplePyName()=="")
-                    item.setSimplePyName(MyPingyInUtil.toPyString(name,true));
+                    item.setSimplePyName(MyPingyInUtil.toCharPyString(name));
                 goodDao.updateById(item);
             }
         }

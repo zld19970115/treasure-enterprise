@@ -27,7 +27,8 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     ClientUserEntity getByMobile(String mobile);
     void updateWX(String userId);
     Map<String, Object> login(LoginDTO dto);
-
+    String  selectZSCoinTotx();
+    String  selectCoinToBalance();
     ClientUserEntity getUserByPhone(String mobile);
 
     ClientUserEntity getUserByOpenId(String openId);

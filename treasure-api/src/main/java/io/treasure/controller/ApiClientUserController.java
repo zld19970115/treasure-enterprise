@@ -576,10 +576,10 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "ali_account_realname", value = "支付宝收款人真实姓名", paramType = "query", required = false, dataType = "string")
     })
     public Result inserZFB(@ApiIgnore @RequestParam Map<String, Object> params){
-        String martId = (String) params.get("martId");
-        ClientUserEntity clientUserEntity = clientUserService.selectById(martId);
+        String userId = (String) params.get("userId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         if (clientUserEntity==null){
-            return new Result().ok("没有该用户");
+            return new Result().error("没有该用户");
         }
         if (clientUserEntity.getAliAccountNumber()!=null||clientUserEntity.getAliAccountRealname()!=null){
             return new Result().ok("1");//已绑定支付宝
@@ -700,26 +700,32 @@ public class ApiClientUserController {
         map.put("already",d);
         return new Result().ok(map);
     }
-    @Login
-    @GetMapping("CoinToBalance")
-    @ApiOperation("现金兑换宝币")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", required = true, dataType="Long")
-    })
-    public Result CoinToBalance(@RequestParam Long userId){
-        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
-        Map map = new HashMap();
-        if (clientUserEntity==null){
-            return new Result().error("没有该用户");
-        }
 
-        map.put("can",clientUserEntity.getCoin());
-        List<UserWithdrawDTO> userWithdrawDTOS = userWithdrawService.selectByUserIdAndalready(userId);
-        Double d = 0.00;
-        for (UserWithdrawDTO userWithdrawDTO : userWithdrawDTOS) {
-            d = d + userWithdrawDTO.getMoney();
+    @Login
+    @GetMapping("/CoinToBalance")
+    @ApiOperation("现金兑换宝币")
+    public Result CoinToBalance(@RequestParam Long userId, @RequestParam BigDecimal coin){
+
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity==null){
+            return  new Result().error("没有找到该用户，请稍后再试");
         }
-        map.put("already",d);
-        return new Result().ok(map);
+        BigDecimal coin1 = clientUserEntity.getCoin();
+        BigDecimal balance = clientUserEntity.getBalance();
+        if (coin1.compareTo(coin)==-1){
+            return  new Result().error("现金不足");
+        }
+        String ctob = clientUserService.selectCoinToBalance();
+        double v = Double.parseDouble(ctob);
+        double v1 = coin.doubleValue();
+        if (v1<v){
+            return  new Result().error("现金不足"+v+"元");
+        }
+        BigDecimal subtract = coin1.subtract(coin);
+        BigDecimal add = balance.add(coin);
+        clientUserEntity.setCoin(subtract);
+        clientUserEntity.setBalance(add);
+        clientUserService.updateById(clientUserEntity);
+        return  new Result().ok("兑换成功");
     }
 }
