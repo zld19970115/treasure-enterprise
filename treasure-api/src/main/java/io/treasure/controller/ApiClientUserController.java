@@ -576,10 +576,10 @@ public class ApiClientUserController {
             @ApiImplicitParam(name = "ali_account_realname", value = "支付宝收款人真实姓名", paramType = "query", required = false, dataType = "string")
     })
     public Result inserZFB(@ApiIgnore @RequestParam Map<String, Object> params){
-        String martId = (String) params.get("martId");
-        ClientUserEntity clientUserEntity = clientUserService.selectById(martId);
+        String userId = (String) params.get("userId");
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         if (clientUserEntity==null){
-            return new Result().ok("没有该用户");
+            return new Result().error("没有该用户");
         }
         if (clientUserEntity.getAliAccountNumber()!=null||clientUserEntity.getAliAccountRealname()!=null){
             return new Result().ok("1");//已绑定支付宝
