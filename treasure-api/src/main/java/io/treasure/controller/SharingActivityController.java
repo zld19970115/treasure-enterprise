@@ -146,10 +146,11 @@ public class SharingActivityController {
     }
 
     public String initQRCode(String client_id)throws Exception{
-        String url ="https://jubaoapp.com:8443/treasure-api/sharing_activitys/Readed";
+
+        String url ="https://jubaoapp.com:8443";
         Map<String,String> map = new HashMap<>();
-        map.put("client_id",client_id);
-        map.put("sharingId","777");
+        map.put("id",client_id);
+        //map.put("saId","777");
         return qrCodeService.generateQrAndUrl(url,map);
     }
 
