@@ -264,7 +264,7 @@ public class SharingForManagerController {
     @ApiOperation(value = "分销关系记录表",tags = "分销关系表查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name ="id",value = "id（非空表示查一项）",dataType = "Long",paramType = "query",required = false),
-            @ApiImplicitParam(name = "mobile_master",value="团队组长电话",dataType = "String",paramType = "query",required = false),
+                @ApiImplicitParam(name = "mobile_master",value="团队组长电话",dataType = "String",paramType = "query",required = false),
             @ApiImplicitParam(name="mobile_slaver",value = "成员电话",dataType = "String",paramType = "query",required = false),
             @ApiImplicitParam(name="status",value = "1有效，其它失效",dataType = "Integer",paramType = "query",required = false),
             @ApiImplicitParam(name="sa_id",value = "活动编号",dataType = "Integer",paramType = "query",required = false),
@@ -290,12 +290,12 @@ public class SharingForManagerController {
             saqw.eq("sa_id",sa_id);
         //时间处理
         if(startTime != null && stopTime != null){
-            saqw.le("union_start_time",startTime);
-            saqw.ge("union_expire_time",stopTime);
+            saqw.ge("union_start_time",startTime);
+            saqw.le("union_start_time",stopTime);
         }else if(startTime != null){
-            saqw.le("union_start_time",startTime);
+            saqw.ge("union_start_time",startTime);
         }else if(stopTime != null){
-            saqw.ge("union_expire_time",stopTime);
+            saqw.le("union_start_time",stopTime);
         }
 
         Page<DistributionRelationshipEntity> record = new Page<DistributionRelationshipEntity>(index,itemNum);
@@ -343,12 +343,12 @@ public class SharingForManagerController {
             saqw.eq("reward_amount",reward_amount);
         //时间处理
         if(startTime != null && stopTime != null){
-            saqw.le("consume_time",startTime);
-            saqw.ge("consume_time",stopTime);
+            saqw.ge("consume_time",startTime);
+            saqw.le("consume_time",stopTime);
         }else if(startTime != null){
-            saqw.le("consume_time",startTime);
+            saqw.ge("consume_time",startTime);
         }else if(stopTime != null){
-            saqw.ge("consume_time",stopTime);
+            saqw.le("consume_time",stopTime);
         }
 
         Page<DistributionRewardLogEntity> record = new Page<DistributionRewardLogEntity>(index,itemNum);
@@ -368,7 +368,6 @@ public class SharingForManagerController {
             @ApiImplicitParam(name ="id",value = "id（非空表示查一项）",dataType = "Long",paramType = "query",required = false),
     })
     public Result getDistributionParams(Long id){
-        System.out.println("hh"+id);
         QueryWrapper<DistributionParamsEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("sa_id",id);
 
