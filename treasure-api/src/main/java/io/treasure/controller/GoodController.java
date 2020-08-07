@@ -21,6 +21,7 @@ import io.treasure.enm.Common;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.jra.impl.DishesMenuJRA;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.GoodService;
 import io.treasure.service.MerchantService;
@@ -49,6 +50,9 @@ public class GoodController {
     private MerchantService merchantService;//商户
     @Autowired
     private GoodCategoryService goodCategoryService;//分类
+
+    @Autowired
+    private DishesMenuJRA dishesMenuJRA;
 
     @CrossOrigin
     @Login
@@ -114,6 +118,8 @@ public class GoodController {
         if(dto.getStatus()==Common.STATUS_ON.getStatus()){//启用
             dto.setShelveTime(new Date());
             dto.setShelveBy(dto.getCreator());
+            //a-添加商品
+            dishesMenuJRA.add(dto.getName());
         }else if(dto.getStatus()==Common.STATUS_OFF.getStatus()){//禁用
             dto.setOffShelveBy(dto.getCreator());
             dto.setOffShelveTime(new Date());
@@ -128,6 +134,7 @@ public class GoodController {
         if(dto.getOutPrice()!=null){
             dto.setPrice(dto.getOutPrice());
         }
+
         goodService.save(dto);
         return new Result();
     }
@@ -150,9 +157,20 @@ public class GoodController {
             if(dto.getStatus()==Common.STATUS_ON.getStatus()){//启用
                 dto.setShelveTime(new Date());
                 dto.setShelveBy(dto.getCreator());
+                //b-添加商品
+                dishesMenuJRA.add(dto.getName());
+
             }else if(dto.getStatus()==Common.STATUS_OFF.getStatus()){//禁用
                 dto.setOffShelveBy(dto.getCreator());
                 dto.setOffShelveTime(new Date());
+                //c-删除商品
+                dishesMenuJRA.delOne(dto.getName());
+            }
+        }
+        if(dto.getStatus()==Common.STATUS_ON.getStatus()){
+            if(!data.getName().equals(dto.getName())){
+                //c-修改商品名称
+                dishesMenuJRA.update(data.getName(),dto.getName());
             }
         }
         if(dto.getRank()!=null){
@@ -182,6 +200,8 @@ public class GoodController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
+                //c-删除商品
+                dishesMenuJRA.delOne(goodDto.getName());
                 goodService.remove(id,Common.STATUS_DELETE.getStatus());
             }else {
                 return new Result().error("没有找到菜品的店铺!");
@@ -212,6 +232,8 @@ public class GoodController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
+                //c-上架商品
+                dishesMenuJRA.add(goodDto.getName());
                 goodService.on(id,Common.STATUS_ON.getStatus());
             }else{
                 return new Result().error("没有获取到菜品的店铺!");
@@ -241,7 +263,9 @@ public class GoodController {
         if(merchantId>0){
             MerchantDTO merchantDto= merchantService.get(merchantId);
             if(merchantDto!=null){
-                    goodService.off(id,Common.STATUS_OFF.getStatus());
+                //c-删除商品
+                dishesMenuJRA.delOne(goodDto.getName());
+                goodService.off(id,Common.STATUS_OFF.getStatus());
             }else{
                 return new Result().error("没有获取到菜品的店铺!");
             }
@@ -306,6 +330,8 @@ public class GoodController {
         goodDTO.setCreateDate(new Date());
         goodDTO.setCreator(creator);
         goodService.save(goodDTO);
+        //c-上架商品
+        dishesMenuJRA.add(dto.getName());
         return new Result();
     }
     @GetMapping("goodSorting")

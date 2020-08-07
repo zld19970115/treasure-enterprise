@@ -23,8 +23,8 @@ public class MyRedisPool {
                     jedisPoolConfig.setMaxIdle(60);
                     jedisPoolConfig.setMaxWaitMillis(100 * 1000);
                     jedisPoolConfig.setTestOnBorrow(true);
-
-                    jedisPool = new JedisPool(jedisPoolConfig, "47.105.143.248", 6379);
+                                                            //47.105.143.248
+                    jedisPool = new JedisPool(jedisPoolConfig, "118.190.203.107", 6379);
 
                 }
             }

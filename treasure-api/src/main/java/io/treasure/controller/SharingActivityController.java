@@ -87,7 +87,6 @@ public class SharingActivityController {
             }
         }
 
-
         //2、初始化数据
         SharingInitiatorEntity siEntity = new SharingInitiatorEntity();
         siEntity.setSaId(saId);

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.MerchantQueryDto;
+import io.treasure.jra.impl.DishesMenuJRA;
 import io.treasure.service.DishesMenuService;
 import io.treasure.utils.MyPingyInUtil;
 import io.treasure.vo.*;
@@ -33,8 +34,38 @@ public class DishesMenuController {
     @Autowired(required = false)
     private GoodDao goodDao;
 
-    //@CrossOrigin
-    //@Login
+    @Autowired
+    private DishesMenuJRA dishesMenuJRA;
+
+    @GetMapping("mlist_redis")
+    @ApiOperation("菜单列表nosql")
+    public Result dishesMenuRedis(){
+        List<GoodsGroup> allList = dishesMenuJRA.getAllList();
+
+        return new Result().ok(allList);
+    }
+    /*
+    @GetMapping("mlist_redis_add")
+    @ApiOperation("菜单列表nosql")
+    @ApiImplicitParam(name="dname",value="菜名",paramType = "query",dataType = "String")
+    public Result addDishesMenu(@ApiIgnore @RequestParam String dname){
+        dishesMenuJRA.add(dname);
+        return new Result().ok("成功");
+    }
+
+    @GetMapping("mlist_redis_update")
+    @ApiOperation("菜单列表nosql")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dname",value="菜名",paramType = "query",dataType = "String"),
+            @ApiImplicitParam(name="nname",value="菜名",paramType = "query",dataType = "String")
+    })
+
+    public Result updateDishesMenu(@ApiIgnore @RequestParam String dname,String nname){
+        dishesMenuJRA.update(dname,nname);
+        return new Result().ok("成功");
+    }
+    */
+
     @GetMapping("mlist")
     @ApiOperation("菜单列表")
     @ApiImplicitParams({
@@ -56,7 +87,7 @@ public class DishesMenuController {
         if(page >0)
             page --;
         if(!inList.equals("list")){
-           inList = null;
+            inList = null;
         }
         List<SimpleDishesVo> list = dishesMenuService.getList(startLetter, page, num, inList);
         if(inList != null){
