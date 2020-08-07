@@ -9,6 +9,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dao.GoodDao;
 import io.treasure.dto.MerchantQueryDto;
 import io.treasure.service.DishesMenuService;
+import io.treasure.utils.MyPingyInUtil;
 import io.treasure.vo.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,18 +78,106 @@ public class DishesMenuController {
         }else{
             startLetter = "'"+startLetter+"'";
         }
-
-
         Integer integer = goodDao.selectDishesMenuCount(startLetter).size();
 
         return new Result().ok(integer);
     }
 
+    public List<Integer> updateMap(List<SimpleDishesVo> gList,int step){
+        int differentCounter = 0;         //不同计数器
+        int diffFlag = 0;                //不同值出现的位置
+        boolean isSame = true;           //与前一次检测的值相同
+        boolean isContain = false;       //是否包含内容
+        int lastIndex = 0;               //上一次检测的位置
+        int checkIndex = 0;              //检测位置
+        boolean scanDetail = false;      //详细扫描
+        String sLetter = "a";//97a-->122z
+        String currentChar = null;
+        Map<String,String> map = new HashMap<>();
+
+        for(int i=0;i<gList.size();i++){
+            if((gList.size())>=checkIndex+step){
+                if(isSame){
+                    if(differentCounter <= 0){
+                        checkIndex= checkIndex+step;
+                    }else{
+                        differentCounter--;
+                    }
+                }else{
+
+                    if(checkIndex%step==0 && diffFlag != checkIndex ){
+                        diffFlag = checkIndex;
+                        differentCounter = step-1;
+                        if(checkIndex>step){
+                            checkIndex=checkIndex+1-step;
+                        }
+                    }
+                    else
+                    {
+                        //更新不同数组索引值
+                        if(isContain){
+                            map.put(currentChar,lastIndex+""+checkIndex);
+                        }
+                        checkIndex++;
+                        differentCounter--;
+                    }
+                }
+            }else{
+                //索引保护
+                if(checkIndex < (gList.size()-1)){
+
+                    //更新不同数组索引值
+
+
+                    checkIndex++;
+                }else{
+                    break;
+                }
+            }
+            System.out.println("check_pos:"+checkIndex);
+            char c = gList.get(checkIndex).getName().charAt(0);
+            String letter = MyPingyInUtil.toPyString(c+"",true);
+
+
+        }
+
+        /*
+            select group_concat(name)  from ct_good
+            where status != 1
+         */
+
+        return null;
+    }
 
     public Result getOrderGroup(List<SimpleDishesVo> gList){
 
         List<GoodsGroup> res = new ArrayList<>();
         String tmpName = null;
+        GoodsGroup numbicGoodGroup = null;
+
+        updateMap(gList,20);
+        //检查数字分组
+        /*
+        for(int n=0;n<gList.size();n++){
+            String gname = gList.size()>0?gList.get(0).getName():null;
+            int nameValue = gname.equals(null)?200:PinyinUtil.getFirstLetter(gname.charAt(0));
+
+            if(nameValue <= 59){
+                if(numbicGoodGroup == null){
+                    numbicGoodGroup = new GoodsGroup();
+                    numbicGoodGroup.setName("#");
+                    List<SimpleDishesVo> list0 = new ArrayList<SimpleDishesVo>();
+                    numbicGoodGroup.setList(list0);
+                }
+                List<SimpleDishesVo> list1 = numbicGoodGroup.getList();
+                list1.add(gList.get(n));
+                numbicGoodGroup.setList(list1);
+                gList.remove(n);
+            }else{
+                break;
+            }
+        }
+        */
         for(int i=97;i<123;i++){
             for(int j=0;(j<gList.size()+2);j++){
                 if(gList.size()>0){
@@ -120,6 +209,11 @@ public class DishesMenuController {
                 res.add(goodsGroup1);
             }
         }
+
+        //添加数字分组
+        //if(numbicGoodGroup != null){
+         //   res.add(numbicGoodGroup);
+        //}
         List<GoodsGroup> result = new ArrayList<>();
         List<String> indexs = new ArrayList<>();
         for(int i = 0;i<res.size();i++){

@@ -5,13 +5,6 @@ import org.junit.Test;
 
 public class MyPingyInUtil {
 
-    @Test
-    public void test(){
-        for(int i=15878;i<19968;i++){
-            System.out.print((char)i+"="+toPyViaChar((char)i,false));
-        }
-
-    }
 
     //转成拼音
     static String toPyViaChar(char chineseChar,boolean firstWordOnly){
@@ -46,10 +39,19 @@ public class MyPingyInUtil {
     public static String toPyString(String chineseStr,boolean firstWordOnly){
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<chineseStr.length();i++){
+
             String tmp = toPyViaChar(chineseStr.charAt(i),firstWordOnly);
             sb.append(tmp);
         }
         return sb.toString();
+    }
+
+    public static String toCharPyString(String chineseStr){
+
+        if(chineseStr.length()<=0)
+            return "#";
+        String tmp = toPyViaChar(chineseStr.charAt(0),true);
+        return tmp;
     }
 
 

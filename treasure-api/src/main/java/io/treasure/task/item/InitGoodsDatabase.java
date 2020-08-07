@@ -38,8 +38,8 @@ public class InitGoodsDatabase extends TaskCommon {
                     item.setFullPyName(s);
                 }
 
-                if(item.getSimplePyName()== null || item.getSimplePyName()=="")
-                    item.setSimplePyName(MyPingyInUtil.toPyString(name,true));
+                //if(item.getSimplePyName()== null || item.getSimplePyName()=="")
+                    item.setSimplePyName(MyPingyInUtil.toCharPyString(name));
                 goodDao.updateById(item);
             }
         }
