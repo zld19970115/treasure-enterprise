@@ -10,15 +10,15 @@ public class MyPingyInUtil {
     static String toPyViaChar(char chineseChar,boolean firstWordOnly){
 
         int charCode = (int)chineseChar;
+        if(charCode == 15878){
+            if(firstWordOnly)
+                return "k";
+            return "kao";
+        }
         if(charCode>=19968 && charCode<=40869){
 
             String[] strings = PinyinHelper.toHanyuPinyinStringArray(chineseChar);
 
-            if(charCode == 15878){
-                if(firstWordOnly)
-                    return "k";
-                return "kao";
-            }
             if(strings != null && strings.length >0){
                 String tmp = strings[0];
                 if(tmp.length()>1){
@@ -39,10 +39,19 @@ public class MyPingyInUtil {
     public static String toPyString(String chineseStr,boolean firstWordOnly){
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<chineseStr.length();i++){
+
             String tmp = toPyViaChar(chineseStr.charAt(i),firstWordOnly);
             sb.append(tmp);
         }
         return sb.toString();
+    }
+
+    public static String toCharPyString(String chineseStr){
+
+        if(chineseStr.length()<=0)
+            return "#";
+        String tmp = toPyViaChar(chineseStr.charAt(0),true);
+        return tmp;
     }
 
 

@@ -91,16 +91,8 @@
 
     <select id="selectDishesMenu" resultType="io.treasure.vo.SimpleDishesVo">
         select name,icon,full_py_name from ct_good
-        <where>
-            full_py_name like CONCAT(${startLetter},'%')
-            or simple_py_name like CONCAT(${startLetter},'%')
-            <if test="inList != null and inList !=''">
-                or full_py_name > ${startLetter}
-            </if>
-        </where>
         group by name
         order by full_py_name asc
-        limit #{page},#{num}
     </select>
 
     <select id="selectDishesMenuCount" resultType="io.treasure.vo.SimpleDishesVo">

@@ -17,6 +17,8 @@ import io.treasure.dao.*;
 import io.treasure.dto.MasterOrderDTO;
 import io.treasure.dto.SharingActivityDTO;
 import io.treasure.entity.*;
+import io.treasure.service.ClientMemberGradeAssessmentService;
+import io.treasure.task.item.ClientMemberGradeAssessment;
 import io.treasure.vo.PagePlus;
 import io.treasure.vo.SharingActivityComboVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -382,6 +384,7 @@ public class SharingForManagerController {
         distributionParamsDao.updateById(entity);
         return new Result().ok("update complete");
     }
+
 
 
 
