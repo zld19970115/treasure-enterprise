@@ -8,6 +8,8 @@ import com.alipay.api.request.AlipayFundTransUniTransferRequest;
 import com.alipay.api.response.AlipayFundTransUniTransferResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.exception.RenException;
 import io.treasure.common.page.PageData;
@@ -29,6 +31,7 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.UserWithdrawService;
 import io.treasure.utils.AdressIPUtil;
+import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,6 +120,19 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
         IPage<UserWithdrawEntity> pages=getPage(params, Constant.CREATE_DATE,false);
         List<UserWithdrawDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), UserWithdrawDTO.class);
+    }
+
+    @Override
+    public PageTotalRowData<UserWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<UserWithdrawDTO> page = (Page) baseDao.getMerchanWithDrawByMerchantId(params);
+        Map map = new HashMap();
+        if(page.getResult() != null && page.getResult().size() > 0) {
+            UserWithdrawDTO vo = baseDao.getMerchanWithDrawByMerchantIdTotalRow(params);
+            map.put("money",vo.getMoney());
+        }
+        List<UserWithdrawDTO> list = baseDao.getMerchanWithDrawByMerchantId(params);
+        return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
     }
 
     @Transactional(rollbackFor = Exception.class)

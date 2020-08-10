@@ -15,4 +15,6 @@ public interface UserWithdrawDao extends BaseDao<UserWithdrawEntity> {
     List<UserWithdrawDTO> selectByUserIdAndStasus(long UserId);
     List<UserWithdrawDTO> listPage(Map<String, Object> params);
     List<UserWithdrawDTO> selectByUserIdAndalready(long UserId);
+    List<UserWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params);
+    UserWithdrawDTO getMerchanWithDrawByMerchantIdTotalRow(Map<String, Object> params);
 }

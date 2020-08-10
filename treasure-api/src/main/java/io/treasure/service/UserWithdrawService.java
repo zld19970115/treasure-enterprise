@@ -8,6 +8,7 @@ import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.entity.UserWithdrawEntity;
+import io.treasure.vo.PageTotalRowData;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -18,4 +19,6 @@ public interface UserWithdrawService extends CrudService<UserWithdrawEntity, Use
    List<UserWithdrawDTO> selectByUserIdAndalready(long UserId);
    Result audit(UserWithdrawDTO dto, HttpServletRequest request) throws AlipayApiException;
    PageData<UserWithdrawDTO> listPage(Map<String, Object> params);
+
+   PageTotalRowData<UserWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params);
 }

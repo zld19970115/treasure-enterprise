@@ -23,6 +23,7 @@ import io.treasure.service.ClientUserService;
 import io.treasure.service.UserWithdrawService;
 import io.treasure.service.impl.MerchantServiceImpl;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.PageTotalRowData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -192,7 +193,22 @@ public class UserWithdrawController {
         UserWithdrawDTO data = userWithdrawService.get(id);
         return new Result<UserWithdrawDTO>().ok(data);
     }
-
+    @GetMapping("getMerchanWithDrawByMerchantId")
+    @ApiOperation("根据手机号/日期查询商户提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.ORDER_FIELD, value = "排序字段", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = Constant.ORDER, value = "排序方式，可选值(asc、desc)", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "mobile", value = "手机号", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateTop", value = "记录开始日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "createDateDown", value = "记录截止日期", paramType = "query", dataType="String"),
+            @ApiImplicitParam(name = "verifyState", value = "状态类型", paramType = "query", dataType="int"),
+    })
+    public Result<PageTotalRowData<UserWithdrawDTO>> getMerchanWithDrawByMerchantId(@ApiIgnore @RequestParam Map<String, Object> params){
+        PageTotalRowData<UserWithdrawDTO> page = userWithdrawService.getMerchanWithDrawByMerchantId(params);
+        return new Result<PageTotalRowData<UserWithdrawDTO>>().ok(page);
+    }
 
 
 }
