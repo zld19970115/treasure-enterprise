@@ -207,7 +207,8 @@ public class ClientMemberGradeAssessment extends TaskCommon implements IClientMe
         @Override
         public boolean isOnTime(){
                 ClientMemberGradeAssessmentEntity ruleEntity = clientMemberGradeAssessmentService.getRule();
-
+                if(ruleEntity== null)
+                        return false;
                 if(TimeUtil.isOnMothDay(ruleEntity.getAssessmentTime())){
                      if(TimeUtil.isOnTime(ruleEntity.getAssessmentTime(),30)){
                              return true;

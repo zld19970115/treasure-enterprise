@@ -71,6 +71,7 @@ public class Task {
 
     public void resetAllCounter(){
         orderClear.resetTaskCounter();
+        clientMemberGradeAssessment.resetAllTaskCounter();
     }
 
     public void sssest() throws Exception{

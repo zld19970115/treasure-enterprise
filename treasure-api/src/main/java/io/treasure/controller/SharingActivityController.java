@@ -688,6 +688,7 @@ public class SharingActivityController {
         switch(extendsInfo.getHelperRewardType()){
             case 1://代付金额
                 unitStrng = "代付金";
+                //帮得10元代付金，发起成功得50元代付金
                 break;
             case 2://商品
                 unitStrng = "件";
@@ -794,10 +795,12 @@ public class SharingActivityController {
         result.setMsg("成功");
         return result;
     }
-    @GetMapping("getMerchantActivity")
-    @ApiOperation("商家生成助力")
-    public Result getMerchantActivity(@RequestBody SharingActivityDTO sharingActivityDTO){
-        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(sharingActivityDTO.getRewardMchId(), new Date());
+
+    //==================================================================================================================
+    @PostMapping("mch_propose_sa")
+    @ApiOperation("商家发布助力活动")
+    public Result mchProposeSharingActivity(@RequestBody SharingActivityDTO sharingActivityDTO){
+        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getListByMerchantIdAndStatus(sharingActivityDTO.getRewardMchId(),null);
         if (oneByMerchantIdAndStatus.size()>0){
             return new Result().error("您有助力活动未结束");
         }
@@ -815,23 +818,31 @@ public class SharingActivityController {
         sharingActivityEntity.setRewardMchId(sharingActivityDTO.getRewardMchId());
         sharingActivityEntity.setInStoreOnly(sharingActivityDTO.getInStoreOnly());
         sharingActivityEntity.setRewardUnit(sharingActivityDTO.getRewardUnit());
-        sharingActivityEntity.setHelperSuccess("助力成功");
-        sharingActivityEntity.setWinningWords("成功获得奖励");
+
+        sharingActivityEntity.setHelperSuccess(sharingActivityDTO.getHelperSuccess());
+        sharingActivityEntity.setWinningWords(sharingActivityDTO.getWinningWords());
         sharingActivityEntity.setOpenDate(sharingActivityDTO.getOpenDate());
         sharingActivityEntity.setCloseDate(sharingActivityDTO.getCloseDate());
         sharingActivityService.insertOne(sharingActivityEntity);
         return new Result().ok("生成成功！");
     }
-    @GetMapping("getActivityByMerchant")
+
+    /**
+     * 获取商家助力活动列表内容
+     * @param merchantId
+     * @return
+     */
+    @GetMapping("mch_sa_list")
     @ApiOperation("根据商家获取去助力")
-    public Result getActivityByMerchant(long merchantId){
-        List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getOneByMerchantIdAndStatus(merchantId, new Date());
-        if (oneByMerchantIdAndStatus.size()>0){
-            return new Result().ok(oneByMerchantIdAndStatus);
+    public Result listByMerchant(long merchantId){
+        List<SharingActivityEntity> list = sharingActivityService.getListByMerchantIdAndStatus(merchantId,null);
+        if (list.size()>0){
+            return new Result().ok(list);
         }else {
             return new Result().ok("没有助力信息");
         }
     }
+
 
 
 

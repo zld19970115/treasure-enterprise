@@ -17,6 +17,7 @@ public class SharingRewardGoodsRecordServiceImpl implements SharingRewardGoodsRe
     @Autowired(required = false)
     private SharingRewardGoodsRecordDao sharingRewardGoodsRecordDao;
 
+
     @Override
     public void insertItem(SharingRewardGoodsRecordEntity expectantEntity) {
         sharingRewardGoodsRecordDao.insert(expectantEntity);
