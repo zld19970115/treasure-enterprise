@@ -12,8 +12,10 @@
 
         where activity_id = ${activityId}
         and initiator_id = ${initiatorId}
-
         and propose_sequeue_no = ${proposeId}
+        order by create_pmt desc
+        limit 0,#{helpersNum}
+
     </select>
     <select id="selectHelpedListCombo" resultType="io.treasure.entity.SharingActivityHelpedEntity">
 
@@ -46,7 +48,7 @@
             and readed = 1
             )
             order by create_pmt desc
-            limit 0,10
+            limit 0,#{helpersNum}
 
     </select>
 

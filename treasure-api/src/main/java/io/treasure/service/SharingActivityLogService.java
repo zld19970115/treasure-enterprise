@@ -45,6 +45,6 @@ public interface SharingActivityLogService {
     int getHelpedCountForCurrentSharing(long intitiatorId,int activityId,int proposeSequeueNo,String mobile);
 
     List<SharingInitiatorEntity> getUnreadedLogList(long intitiatorId, int activityId);
-    List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId);
-    List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId);
+    List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId,Integer helpersNum);
+    List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId,Integer helpersNum);
 }

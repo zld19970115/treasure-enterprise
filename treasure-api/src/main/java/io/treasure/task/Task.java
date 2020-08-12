@@ -1,16 +1,10 @@
 package io.treasure.task;
 
-import io.treasure.task.item.ClientMemberGradeAssessment;
-import io.treasure.task.item.InitGoodsDatabase;
-import io.treasure.task.item.OrderClear;
-import io.treasure.task.item.OrderForBm;
+import io.treasure.task.item.*;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import java.util.Date;
 
 @Component
@@ -48,11 +42,6 @@ public class Task {
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
         }
-        /*  更新拼音列
-       if(initGoodsDatabase.isInProcess() == false && orderClear.getTaskCounter()<1){
-           initGoodsDatabase.updateRedis();
-       }
-       */
 
    }
     //=========================基本状态锁定===============================
@@ -89,4 +78,5 @@ public class Task {
         long sec = ((timeDiff%day)%hour)%min;
         System.out.println("当前时间:"+days+"天,"+hours+"时，"+mins+"分，"+sec+"妙");
     }
+
 }

@@ -13,13 +13,13 @@ import java.util.Date;
 @TableName("sharing_reward_goods_record")
 public class SharingRewardGoodsRecordEntity {
     @TableId
-    private Long csrId;
-    private Long clientId;
-    private Integer status;
-    private Integer activityId;
-    private Long merchantId;
-    private Long goodsId;
-    private Integer goodsNum;
-    private Date expireTime;
-    private Date updatePmt;
+    private Long csrId;         //id
+    private Long clientId;      //客户id
+    private Integer status;     //状态
+    private Integer activityId; //活动id
+    private Long merchantId;    //商家id
+    private Long goodsId;       //商品id
+    private Integer goodsNum;   //商品数量
+    private Date expireTime;    //过期时间
+    private Date updatePmt;     //更新时间
 }

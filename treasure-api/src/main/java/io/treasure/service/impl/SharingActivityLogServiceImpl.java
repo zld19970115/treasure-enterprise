@@ -176,13 +176,13 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
         return sharingActivityHelpedLogDao.selectHelpedListCombo(intitiatorId, activityId);
     }
     @Override
-    public List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId){
-        return sharingActivityHelpedLogDao.selectHelpedListComboByProposeIds(intitiatorId, activityId,proposeId);
+    public List<SharingActivityHelpedEntity> getHelpedListComboByProposeId(Long intitiatorId, Integer activityId,Integer proposeId,Integer helpersNum){
+        return sharingActivityHelpedLogDao.selectHelpedListComboByProposeIds(intitiatorId, activityId,proposeId,helpersNum);
     }
     @Override
-    public List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId){
+    public List<SharingActivityHelpedEntity> getHelpedListComboUnread(Long intitiatorId, Integer activityId,Integer helpersNum){
 
-        return sharingActivityHelpedLogDao.selectHelpedListComboUnread(intitiatorId, activityId);
+        return sharingActivityHelpedLogDao.selectHelpedListComboUnread(intitiatorId, activityId,helpersNum);
     }
 
     @Override

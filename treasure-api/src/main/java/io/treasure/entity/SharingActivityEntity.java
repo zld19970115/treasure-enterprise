@@ -38,7 +38,7 @@ public class SharingActivityEntity {
       private Integer repeatableTimes;// int(2) DEFAULT '0' COMMENT '重复参与活动次数',
       private Integer personLimit;  //活动人数高限
       private Integer rewardLimit;  //活动奖励高限
-      private Integer sharingMethod;// int(2) DEFAULT '1' COMMENT '1-人数方式，2-，3-',
+      private Integer sharingMethod;// int(2) DEFAULT '1' COMMENT '1-标准模式，2-无限模式,
       private Integer radio;
 
 }
