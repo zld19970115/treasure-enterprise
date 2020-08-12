@@ -124,7 +124,6 @@ public class SharingActivityPlusController {
         map.put("sharing",sharingInitiatorEntity);
         map.put("finishStamp",finishStamp);
 
-
         result.setData(map);
 
         if(sharingInitiatorEntity!= null){
