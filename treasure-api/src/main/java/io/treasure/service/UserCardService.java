@@ -13,7 +13,7 @@ public interface UserCardService extends CrudService<CardInfoEntity, CardInfoDTO
     Result selectByIdAndPassword(long id , String password,long userId);
 
     PageData<CardInfoDTO> pageList(Map map);
-
+     List<CardInfoDTO>  selectByNoCode();
     Result openCard(List<Long> ids,Long userId);
 
 }

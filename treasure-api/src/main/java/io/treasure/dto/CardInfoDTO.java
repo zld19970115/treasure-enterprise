@@ -42,6 +42,8 @@ public class CardInfoDTO {
      */
     @ApiModelProperty(value = "分类ID")
     private Integer status;
+    @ApiModelProperty(value = "二维码")
+    private String code;
     /**
      * 开卡时间
      */

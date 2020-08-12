@@ -29,6 +29,7 @@ import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.*;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.LevelVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -727,5 +728,53 @@ public class ApiClientUserController {
         clientUserEntity.setBalance(add);
         clientUserService.updateById(clientUserEntity);
         return  new Result().ok("兑换成功");
+    }
+
+
+
+    @GetMapping("/getBlanceforLevelList")
+    @ApiOperation("根据会员等级获取可领取列表")
+    public Result getBlanceforLevelList(@RequestParam Long userId){
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity==null){
+            return  new Result().error("没有找到该用户，请稍后再试");
+        }
+        Integer level = clientUserEntity.getLevel();
+
+        if (level==1){
+            return  new Result().error("您的会员级别不足，请升级后再试");
+        }
+       List list = new ArrayList();
+        List<LevelStatusEntity> levelStatusEntities = clientUserService.selectLevelStatus(userId);
+        for (Integer i = 2; i <= level; i++) {
+            LevelVo vo = new LevelVo();
+            vo.setLevel(i);
+            BigDecimal bigDecimal = clientUserService.selectBlanceForLevel(i);
+            vo.setBlance(bigDecimal);
+            for (LevelStatusEntity levelStatusEntity : levelStatusEntities) {
+                if (levelStatusEntity.getLeveled() == i){
+                    vo.setStatus(1);
+                }
+            }
+            list.add(vo);
+        }
+        return  new Result().ok(list);
+    }
+
+    @GetMapping("/getBlanceforLevel")
+    @ApiOperation("根据会员等级获取宝币")
+    public Result getBlanceforLevel(@RequestParam Long userId,@RequestParam Integer level, @RequestParam BigDecimal balance) {
+
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity == null) {
+            return new Result().error("没有找到该用户，请稍后再试");
+        }
+        clientUserService.insertLevelStatus(userId, level, balance);
+        BigDecimal clientUserEntityBalance = clientUserEntity.getBalance();
+        BigDecimal add = balance.add(clientUserEntityBalance);
+        clientUserEntity.setBalance(add);
+        clientUserService.updateById(clientUserEntity);
+        return new Result().ok("成功");
+
     }
 }

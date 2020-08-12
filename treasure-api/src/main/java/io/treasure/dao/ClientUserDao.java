@@ -3,6 +3,7 @@ package io.treasure.dao;
 import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.LevelStatusEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,6 +26,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     void updateOpenid(@Param("openId") String openId, @Param("mobile") String mobile);
     void updateUnionid(@Param("openId") String openId, @Param("mobile") String mobile);
     void updateCID(@Param("clientId") String clientId, @Param("mobile") String mobile);
+    void insertLevelStatus(@Param("userId")Long userId, @Param("level")Integer level, @Param("balance")BigDecimal balance);
     ClientUserEntity getClientUser(Long id);
     ClientUserEntity  selectByMobile(String mobile);
     void updateWX(String userId);
@@ -33,6 +35,8 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
                                          @Param("gift") String gift);
     String selectZSCoinTotx();
     String selectCoinToBalance();
+    List<LevelStatusEntity> selectLevelStatus(long userId);
+    BigDecimal selectBlanceForLevel(int level);
    // List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
     List<ClientUserEntity> selectZhuXiao(String mobile);
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);
