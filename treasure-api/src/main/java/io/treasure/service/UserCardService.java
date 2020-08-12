@@ -15,5 +15,6 @@ public interface UserCardService extends CrudService<CardInfoEntity, CardInfoDTO
     PageData<CardInfoDTO> pageList(Map map);
      List<CardInfoDTO>  selectByNoCode();
     Result openCard(List<Long> ids,Long userId);
+   void updateCode(String s ,long id);
 
 }
