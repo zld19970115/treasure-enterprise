@@ -28,7 +28,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     @Autowired
     private QRCodeService qrCodeService;
 
-
+    @Override
     public String initQRCode(String client_id)throws Exception{
 
         String url ="https://jubaoapp.com:8443";

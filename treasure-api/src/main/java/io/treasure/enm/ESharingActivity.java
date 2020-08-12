@@ -1,9 +1,9 @@
 package io.treasure.enm;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 public class ESharingActivity {
-
 
     public enum MemberHelper{
         NEW_USER_ONLY(1),       //仅新用户有效
@@ -20,26 +20,12 @@ public class ESharingActivity {
 
     }
 
-    public enum SharingMethod{
-        PEOPLE_NUM_MODE(1),     //人数模式
-        UNDEFINE(2);            //暂时未定义
-
-        private int code;
-
-        SharingMethod(int code){
-            this.code = code;
-        }
-        public int getCode(){
-            return this.code;
-        }
-
-    }
-
     public enum RewardType{
 
         FREE_GOLD_TYPE(1),      //代付金方式
         GOODS_TYPE(2),          //商品方式
-        DISHES_TYPE(3);         //菜品方式
+        DISHES_TYPE(3),         //菜品方式
+        COINS_JUBAO(4);         //宝币
 
         private int code;
         RewardType(int code){
@@ -56,6 +42,19 @@ public class ESharingActivity {
 
         private int code;
         InStoreOnly(int code){
+            this.code = code;
+        }
+        public int getCode(){
+            return this.code;
+        }
+    }
+
+    public enum  SharingMethod{
+        STANDARD_METHOD(1), //标准模式
+        INFINITE_METHOD(2); //无限
+
+        private int code;
+        SharingMethod(int code){
             this.code = code;
         }
         public int getCode(){
