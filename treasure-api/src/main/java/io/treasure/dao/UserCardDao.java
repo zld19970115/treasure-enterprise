@@ -17,5 +17,5 @@ public interface UserCardDao  extends BaseDao<CardInfoEntity> {
     List<CardInfoDTO> pageList(Map params);
 
     int openCard(@Param("ids") List<Long> ids,@Param("userId") Long userId);
-
+    List<CardInfoDTO> selectByNoCode();
 }

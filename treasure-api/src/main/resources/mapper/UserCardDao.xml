@@ -48,6 +48,9 @@
         </where>
         order by ct.create_date desc
     </select>
+    <select id="selectByNoCode" resultType="io.treasure.dto.CardInfoDTO">
+          SELECT * FROM ct_card_info where status in (1,2) and code = null
+    </select>
 
     <update id="openCard">
         update ct_card_info set

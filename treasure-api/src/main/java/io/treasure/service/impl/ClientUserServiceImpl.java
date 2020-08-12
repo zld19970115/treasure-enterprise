@@ -16,6 +16,7 @@ import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.LevelStatusEntity;
 import io.treasure.entity.RecordGiftEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
@@ -114,8 +115,23 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public List<LevelStatusEntity> selectLevelStatus(long userId) {
+        return baseDao.selectLevelStatus(userId);
+    }
+
+    @Override
+    public BigDecimal selectBlanceForLevel(int level) {
+        return baseDao.selectBlanceForLevel(level);
+    }
+
+    @Override
     public ClientUserEntity getUserByPhone(String mobile) {
        return baseDao.getUserByPhone(mobile);
+    }
+
+    @Override
+    public void insertLevelStatus(Long userId, Integer level, BigDecimal balance) {
+        baseDao.insertLevelStatus(userId,level,balance);
     }
 
     @Override

@@ -52,6 +52,10 @@ public class MerchantQrCodeServiceImpl extends CrudServiceImpl<MerchantQrCodeDao
 //        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
 //        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
         String content = ("https://jubaoapp.com:8443/treasure-api/pages/reserve/reserve?shopid=" + merchantId + "&type=1");
+//
+//        String content = ("https://jubaoapp.com:8888/pages/tabBar/personal/invest/invest?id=" + merchantId);
+
+
         //获取一个二维码图片
         System.out.println("https://api.jubaoapp.com:8443/treasure-api/pages/reserve/reserve?shopid=" + merchantId + "&type=1");
         BitMatrix bitMatrix = qrCodeFactory.CreatQrImage(content);
