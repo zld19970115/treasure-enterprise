@@ -123,12 +123,20 @@ public class SharingActivityPlusController {
         String finishStamp = TimeUtil.dateToStamp(saItem.getCloseDate());
         map.put("sharing",sharingInitiatorEntity);
         map.put("finishStamp",finishStamp);
+
+
         result.setData(map);
 
-        if(sharingInitiatorEntity!= null)
-            return result.ok("成功发起："+saItem.getSubject()+"活动");
+        if(sharingInitiatorEntity!= null){
+            result.setMsg("成功发起："+saItem.getSubject()+"活动");
+            result.setCode(200);
+            return result;
+        }
 
-        return result.error("活动发起失败，请稍后重试！");
+        result.setMsg("活动发起失败，请稍后重试！");
+        result.setData(map);
+        result.setCode(500);
+        return result;
     }
 
     @GetMapping("sReaded")

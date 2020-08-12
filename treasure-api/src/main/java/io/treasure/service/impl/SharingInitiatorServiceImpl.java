@@ -29,9 +29,11 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
     private QRCodeService qrCodeService;
 
     @Override
-    public String initQRCode(String client_id)throws Exception{
-
+    public String initQRCode(String client_id,Integer saId)throws Exception{
         String url ="https://jubaoapp.com:8443";
+        if(saId != 777){
+            url="https://jubaoapp.com:666";
+        }
         Map<String,String> map = new HashMap<>();
         map.put("id",client_id);
         //map.put("saId","777");
@@ -59,7 +61,7 @@ public class SharingInitiatorServiceImpl implements SharingInitiatorService {
 
             //无进行中的助力活动，且参加次数未超限
             if(successTimes<allowSuccessTimes){
-                sharingInitiatorEntity.setQrCode(initQRCode(sharingInitiatorEntity.getInitiatorId()+""));
+                sharingInitiatorEntity.setQrCode(initQRCode(sharingInitiatorEntity.getInitiatorId()+"",sharingInitiatorEntity.getSaId()));
                 sharingInitiatorDao.insert(sharingInitiatorEntity);     //插入新记录(活动编号)
                 return sharingInitiatorEntity;
             }else{

@@ -8,7 +8,7 @@ import java.util.List;
 public interface SharingInitiatorService {
 
 
-    String initQRCode(String client_id)throws Exception;
+    String initQRCode(String client_id,Integer saId)throws Exception;
     SharingInitiatorEntity insertOne(SharingInitiatorEntity sharingInitiatorEntity) throws Exception;
 
     SharingInitiatorEntity getCurrentOne(Long intitiatorId, Integer saId);
