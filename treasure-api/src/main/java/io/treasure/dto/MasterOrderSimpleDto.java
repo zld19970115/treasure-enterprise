@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -57,5 +58,7 @@ public class MasterOrderSimpleDto extends MasterOrderExtendsDto {
 	 */
 	@TableField(fill= FieldFill.INSERT_UPDATE)
 	private Date updateDate;
+
+	private BigDecimal pay_coins;
 
 }

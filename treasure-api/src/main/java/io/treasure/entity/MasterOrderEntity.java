@@ -164,6 +164,8 @@ public class MasterOrderEntity extends BaseEntity {
 	 */
 	private BigDecimal merchantProceeds;
 
+	private BigDecimal pay_coins;
+
 
 
 }
