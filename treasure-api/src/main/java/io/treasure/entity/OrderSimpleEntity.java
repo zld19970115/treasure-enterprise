@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.Test;
-
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.util.Date;
