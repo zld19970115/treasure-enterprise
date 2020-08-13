@@ -679,7 +679,7 @@ public class PayServiceImpl implements PayService {
         reqData.put("out_refund_no", refundNo);
 
 
-        BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+        BigDecimal total = refundAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         java.text.DecimalFormat df = new java.text.DecimalFormat("0");
         reqData.put("total_fee", df.format(total));
         refundAmount = new BigDecimal("1.50");
