@@ -106,7 +106,7 @@ public class PayServiceImpl implements PayService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
-
+        System.out.println("当前回调的数值为："+total_amount);
         MasterOrderEntity masterOrderEntity = masterOrderDao.selectByOrderId(out_trade_no);
         //        if(masterOrderEntity.getStatus()!=1){
 ////            mapRtn.put("return_code", "SUCCESS");
@@ -133,7 +133,12 @@ public class PayServiceImpl implements PayService {
         }
         /****************************************************************************************/
         try {
-            if (masterOrderEntity.getPayMoney().compareTo(total_amount) != 0) {
+
+            BigDecimal payMoney = masterOrderEntity.getPayMoney();
+            BigDecimal payCoins = masterOrderEntity.getPayCoins();
+            payMoney = payMoney.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+            System.out.println("与发来的值进行对比(payMoney,total_amount)："+payMoney+","+total_amount);
+            if (payMoney.compareTo(total_amount) != 0) {
                 System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
                 throw new Exception("wx_pay_fail:code01");
             }
