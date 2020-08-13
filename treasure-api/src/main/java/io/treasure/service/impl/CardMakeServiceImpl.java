@@ -86,8 +86,8 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
             List<CardInfoDTO> cardInfoDTOS = userCardService.selectByNoCode();
             for (CardInfoDTO cardInfoDTO : cardInfoDTOS) {
                 String s = insertMerchantQrCodeByMerchantId(cardInfoDTO.getId());
-                cardInfoDTO.setCode(s);
-                userCardService.update(cardInfoDTO);
+
+                userCardService.updateCode(s,cardInfoDTO.getId());
             }
 
 
@@ -103,11 +103,11 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
 //        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
 //        String content = ("https://jubaoapp.com:8443/treasure-api/pages/reserve/reserve?shopid=" + merchantId + "&type=1");
 //
-        String content = ("https://jubaoapp.com:8888/pages/tabBar/personal/invest/invest?id=" + id);
+        String content = ("https://jubaoapp.com:8888?id=" + id);
 
 
         //获取一个二维码图片
-        System.out.println("https://jubaoapp.com:8888/pages/tabBar/personal/invest/invest?id=" + id);
+        System.out.println("https://jubaoapp.com:8888?id=" + id);
         BitMatrix bitMatrix = qrCodeFactory.CreatQrImage(content);
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
 

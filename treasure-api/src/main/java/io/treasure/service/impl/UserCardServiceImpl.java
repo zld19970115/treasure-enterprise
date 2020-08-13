@@ -92,4 +92,9 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         return new Result().ok(userCardDao.openCard(ids,userId));
     }
 
+    @Override
+    public void updateCode(String s, long id) {
+        baseDao.updateCode(s,id);
+    }
+
 }

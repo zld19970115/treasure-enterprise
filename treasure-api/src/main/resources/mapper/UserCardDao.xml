@@ -49,7 +49,7 @@
         order by ct.create_date desc
     </select>
     <select id="selectByNoCode" resultType="io.treasure.dto.CardInfoDTO">
-          SELECT * FROM ct_card_info where status in (1,2) and code = null
+          SELECT * FROM ct_card_info where status in (1,2) and code = '0'
     </select>
 
     <update id="openCard">
@@ -61,5 +61,11 @@
         <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </update>
+    <update id="updateCode">
+        update ct_card_info set
+       code = #{s}
+        where id = #{id}
+
     </update>
 </mapper>
