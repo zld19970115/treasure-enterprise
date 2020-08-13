@@ -119,4 +119,7 @@ public class MasterOrderDTO implements Serializable {
 	@ApiModelProperty(value = "商户实际所得金额（扣除平台扣点不包含赠送金）")
 	private BigDecimal merchantProceeds;
 
+	@ApiModelProperty(value = "宝币支付金额")
+	private BigDecimal pay_coins;
+
 }

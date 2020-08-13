@@ -3,6 +3,7 @@ package io.treasure.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.junit.Test;
@@ -33,6 +34,7 @@ public class OrderSimpleEntity{
 	private String headImg;
 	private String icon;
 	private String clientid;
+	private BigDecimal pay_coins;
 
 
 	private String contactNumber;
