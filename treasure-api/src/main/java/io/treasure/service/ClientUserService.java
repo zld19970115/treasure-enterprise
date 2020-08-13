@@ -7,8 +7,10 @@ import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.LevelStatusEntity;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,8 +31,10 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     Map<String, Object> login(LoginDTO dto);
     String  selectZSCoinTotx();
     String  selectCoinToBalance();
+    List<LevelStatusEntity> selectLevelStatus(long userId);
+    BigDecimal selectBlanceForLevel(int level);
     ClientUserEntity getUserByPhone(String mobile);
-
+    void insertLevelStatus(Long userId, Integer level, BigDecimal balance);
     ClientUserEntity getUserByOpenId(String openId);
 
     void updateOpenid(String openId, String mobile);

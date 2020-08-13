@@ -488,7 +488,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         String clientId = clientUserDTO.getClientId();
         if (null != dto) {
             List<OrderDTO> affiliateOrde = baseDao.getAffiliateOrde(dto.getOrderId());//查子单
-
+            //处理先菜后房中的房单
             for (OrderDTO orderDTO : affiliateOrde) {
                 if (affiliateOrde.size() == 1 && orderDTO.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue()) {
                     merchantRoomParamsSetService.updateStatus(orderDTO.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
@@ -507,7 +507,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     }
                 }
             }
-            //主单中有房，且仅有房
+            //只订房
             if(dto.getReservationType() ==  Constants.ReservationType.ONLYROOMRESERVATION.getValue() && affiliateOrde.size()==0){
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());//释放房间
 
@@ -544,6 +544,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     } else {
                         OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
                         BigDecimal giftMoney = order.getGiftMoney();
+                        BigDecimal pay_coins = order.getPayCoins();
                         BigDecimal num = new BigDecimal("0");
                         if (giftMoney.compareTo(num) == 1) {
 //                    BigDecimal gift = clientUserDTO.getGift();
@@ -551,6 +552,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                    clientUserService.update(clientUserDTO);
                             BigDecimal gift = clientUserDTO.getGift();
                             BigDecimal abc = giftMoney.add(gift).setScale(2, BigDecimal.ROUND_DOWN);
+                            clientUserDTO.setGift(abc);
+                            clientUserService.update(clientUserDTO);
+                        }
+                        if (pay_coins.compareTo(num) == 1) {
+                            BigDecimal balance = clientUserDTO.getBalance();
+                            BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
                             clientUserDTO.setGift(abc);
                             clientUserService.update(clientUserDTO);
                         }

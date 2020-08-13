@@ -3,10 +3,9 @@ package io.treasure.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.Test;
-
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.util.Date;
@@ -33,6 +32,7 @@ public class OrderSimpleEntity{
 	private String headImg;
 	private String icon;
 	private String clientid;
+	private BigDecimal payCoins;
 
 
 	private String contactNumber;

@@ -28,7 +28,7 @@ public interface SharingActivityService {
      * @return
      */
     List<SharingActivityEntity> getList(boolean enableOnly);
-    List<SharingActivityEntity> getOneByMerchantIdAndStatus(long MerchantId,Date now);
+    List<SharingActivityEntity> getListByMerchantIdAndStatus(long MerchantId,Date now);
     void insertOne(SharingActivityEntity sharingActivityEntity);
     void updateOne(SharingActivityEntity sharingActivityEntity);
 }

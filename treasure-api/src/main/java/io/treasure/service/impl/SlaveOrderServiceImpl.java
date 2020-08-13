@@ -150,7 +150,12 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         Result result = new Result();
         Long goodId = slaveOrderDTO.getGoodId();
         String orderId = slaveOrderDTO.getOrderId();
-
+        MasterOrderEntity masterOrderEntity1 = masterOrderService.selectByOrderId(orderId);
+        BigDecimal payCoins = masterOrderEntity1.getPayCoins();
+        BigDecimal nu = new BigDecimal("0");
+        if (payCoins.compareTo(nu)==1){
+            result.error("此菜品内含有宝币支付无法退菜，请选择整单退款");
+        }
         //用户申请退的数量
         BigDecimal quantity = slaveOrderDTO.getQuantity();
         SlaveOrderDTO allGoods = this.getAllGoods(orderId, goodId);

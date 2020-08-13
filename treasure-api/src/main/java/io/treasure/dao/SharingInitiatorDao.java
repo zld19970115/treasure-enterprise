@@ -5,6 +5,8 @@ import io.treasure.entity.SharingInitiatorEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface SharingInitiatorDao extends BaseDao<SharingInitiatorEntity> {
 
@@ -20,6 +22,5 @@ public interface SharingInitiatorDao extends BaseDao<SharingInitiatorEntity> {
     void updateSuccessStatus(@Param("proposeId") Integer proposeId,@Param("helpedNum") Integer helpedNum);
 
     SharingInitiatorEntity getLastOne(@Param("intitiatorId")Long intitiatorId,@Param("saId")Integer saId);
-
 
 }

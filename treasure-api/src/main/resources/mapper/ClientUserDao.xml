@@ -33,6 +33,9 @@
         <result property="updater" column="updater"/>
         <result property="clientId" column="client_id"/>
     </resultMap>
+    <insert id="insertLevelStatus">
+        INSERT INTO ct_level_status (user_id, leveled,blance) VALUES (#{userId}, #{level},#{balance})
+    </insert>
     <select id="getUserByMobile" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where mobile = #{value} and status=1
     </select>
@@ -138,6 +141,12 @@
     </select>
     <select id="selectCoinToBalance" resultType="java.lang.String">
          select  param_value from  sys_params where id = 1144988823433333434
+    </select>
+    <select id="selectLevelStatus" resultType="io.treasure.entity.LevelStatusEntity">
+        select * from  ct_level_status where user_id = #{userId}
+    </select>
+    <select id="selectBlanceForLevel" resultType="java.math.BigDecimal">
+          select blance from  ct_level_blance where  level = #{level}
     </select>
 
 </mapper>

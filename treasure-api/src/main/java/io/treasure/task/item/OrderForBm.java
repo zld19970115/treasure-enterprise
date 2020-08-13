@@ -41,10 +41,13 @@ public class OrderForBm  extends TaskSock {
         List<OrderDTO> orderDTOS = masterOrderDao.selectForBm();
         for (OrderDTO orderDTO : orderDTOS) {
             BusinessManagerTrackRecordEntity businessManagerTrackRecordEntity = businessManagerDao.selectByMartId(orderDTO.getMerchantId());
-            BusinessManagerEntity businessManagerEntity = businessManagerDao.selectById(businessManagerTrackRecordEntity.getBmId());
-            MerchantEntity merchantEntity = merchantDao.selectById(orderDTO.getMerchantId());
-            SendSMSUtil.MerchantsToBm(businessManagerEntity.getMobile(),orderDTO.getOrderId(), merchantEntity.getName(), smsConfig);
-            masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
+            if(businessManagerTrackRecordEntity!=null){
+                BusinessManagerEntity businessManagerEntity = businessManagerDao.selectById(businessManagerTrackRecordEntity.getBmId());
+                MerchantEntity merchantEntity = merchantDao.selectById(orderDTO.getMerchantId());
+                SendSMSUtil.MerchantsToBm(businessManagerEntity.getMobile(),orderDTO.getOrderId(), merchantEntity.getName(), smsConfig);
+                masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
+            }
+
         }
         freeProcessLock();  //释放程序锁
     }

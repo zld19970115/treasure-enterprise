@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.google.zxing.WriterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -9,6 +10,7 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
+import io.treasure.dto.BusinessManagerDTO;
 import io.treasure.dto.CardInfoDTO;
 import io.treasure.dto.CardMakeDTO;
 import io.treasure.entity.CardMakeEntity;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +70,7 @@ public class UserCardController {
 
     @PostMapping("/makeCard")
     @ApiOperation("制卡")
-    public Result makeCard(@RequestBody CardMakeEntity dto) {
+    public Result makeCard(@RequestBody CardMakeEntity dto) throws IOException, WriterException {
         return cardMakeService.makeCard(dto);
     }
 
@@ -76,5 +79,17 @@ public class UserCardController {
     public Result openCard(@RequestParam String ids,@RequestParam Long userId) {
         return new Result().ok(userCardService.openCard(JSON.parseArray(ids).toJavaList(Long.class),userId));
     }
-
+    @GetMapping("getById")
+    @ApiOperation("详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType = "long")
+    })
+    public Result<CardInfoDTO> get(Long id){
+        if(id>0){
+            CardInfoDTO cardInfoDTO = userCardService.get(id);
+            return new Result<CardInfoDTO>().ok(cardInfoDTO);
+        }else{
+            return new Result<CardInfoDTO>().error(null);
+        }
+    }
 }

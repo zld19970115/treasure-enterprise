@@ -42,6 +42,7 @@ public class CardMakeEntity extends BaseEntity {
     /**
      * 更新者
      */
+	private String code;
 	private Long updater;
     /**
      * 更新时间

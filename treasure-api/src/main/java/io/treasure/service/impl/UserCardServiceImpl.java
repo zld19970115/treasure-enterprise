@@ -51,14 +51,14 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         if (cardInfoEntity.getStatus()==9){
             return new Result().error("该卡密已删除");
         }
-        BigDecimal a = new BigDecimal("500");
+        BigDecimal a = new BigDecimal("2000");
 
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         if (clientUserEntity==null){
             return new Result().error("请登录");
           }
         if( clientUserEntity.getGift().compareTo(a)==1){
-            return new Result().error("代付金余额大于500不可充值");
+            return new Result().error("代付金余额大于2000不可充值");
         }
         BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getGift());
         clientUserEntity.setGift(money);
@@ -83,8 +83,18 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     }
 
     @Override
+    public List<CardInfoDTO> selectByNoCode() {
+        return baseDao.selectByNoCode();
+    }
+
+    @Override
     public Result openCard(List<Long> ids,Long userId) {
         return new Result().ok(userCardDao.openCard(ids,userId));
+    }
+
+    @Override
+    public void updateCode(String s, long id) {
+        baseDao.updateCode(s,id);
     }
 
 }

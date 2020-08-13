@@ -71,8 +71,9 @@ public class SharingActivityServiceImpl implements SharingActivityService {
     }
 
     @Override
-    public List<SharingActivityEntity> getOneByMerchantIdAndStatus(long MerchantId,Date now) {
-        return sharingActivityDao.getOneByMerchantIdAndStatus(MerchantId,now);
+    public List<SharingActivityEntity> getListByMerchantIdAndStatus(long MerchantId,Date now) {
+        Date d = now==null?new Date():now;
+        return sharingActivityDao.getListByMerchantIdAndStatus(MerchantId,d);
     }
 
     @Override
@@ -84,5 +85,6 @@ public class SharingActivityServiceImpl implements SharingActivityService {
 
         sharingActivityDao.updateById(sharingActivityEntity);
     }
+
 
 }
