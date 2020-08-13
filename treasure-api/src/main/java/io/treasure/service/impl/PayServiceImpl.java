@@ -133,7 +133,12 @@ public class PayServiceImpl implements PayService {
         }
         /****************************************************************************************/
         try {
-            if (masterOrderEntity.getPayMoney().compareTo(total_amount) != 0) {
+
+            BigDecimal payMoney = masterOrderEntity.getPayMoney();
+            BigDecimal payCoins = masterOrderEntity.getPayCoins();
+            BigDecimal realyPayMoney = payMoney.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+
+            if (realyPayMoney.compareTo(total_amount) != 0) {
                 System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
                 throw new Exception("wx_pay_fail:code01");
             }
