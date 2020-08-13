@@ -95,6 +95,10 @@ public class ApiWXJSAPIPayController {
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换
         BigDecimal totalAmount = new BigDecimal(total_fee);
+        BigDecimal payCoins = masterOrderEntity.getPayCoins();
+        totalAmount = totalAmount.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+        System.out.println("jsapi:"+totalAmount);
+
         BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         java.text.DecimalFormat df=new java.text.DecimalFormat("0");
         data.put("total_fee",df.format(total));
