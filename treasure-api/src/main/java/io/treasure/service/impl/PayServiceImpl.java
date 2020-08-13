@@ -632,11 +632,13 @@ public class PayServiceImpl implements PayService {
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
         BigDecimal pay_coins = masterOrderEntity.getPayCoins();
+        System.out.println(pay_coins+"pay_coins");
         BigDecimal refundAmount = new BigDecimal(refund_fee);
+        System.out.println(refundAmount+"未减");
         if (pay_coins.compareTo(nu)==1){
             refundAmount = refundAmount.subtract(pay_coins);
         }
-
+        System.out.println(refundAmount+"已经减");
         SlaveOrderDTO slaveOrderDTO = null;
         Long userId = masterOrderEntity.getCreator();
         if (masterOrderEntity.getCheckStatus() == 1) {
