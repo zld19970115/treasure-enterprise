@@ -383,7 +383,12 @@ public class PayServiceImpl implements PayService {
         // 实付金额，单位为分，只能为整数
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
+        BigDecimal nu = new BigDecimal("0");
+        BigDecimal pay_coins = masterOrderEntity.getPayCoins();
         BigDecimal refundAmount = new BigDecimal(refund_fee);
+        if (pay_coins.compareTo(nu)==1){
+            refundAmount = refundAmount.subtract(pay_coins);
+        }
         SlaveOrderDTO slaveOrderDTO = null;
         Long userId = masterOrderEntity.getCreator();
         if (masterOrderEntity.getCheckStatus() == 1) {
@@ -412,7 +417,9 @@ public class PayServiceImpl implements PayService {
 //            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if (payMoney.compareTo(refundAmount) != 0) {
+
+           BigDecimal apayMoney = payMoney.subtract(pay_coins);
+            if (apayMoney.compareTo(refundAmount) != 0) {
                 return result.error("退款金额不一致，无法退款！");
             }
         }
@@ -610,10 +617,16 @@ public class PayServiceImpl implements PayService {
         Result result = new Result();
         MasterOrderEntity masterOrderEntity = masterOrderDao.selectByOrderId(orderNo);
         // 订单总金额，单位为分，只能为整数
+        BigDecimal nu = new BigDecimal("0");
         BigDecimal totalAmount = masterOrderEntity.getTotalMoney();
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
+        BigDecimal pay_coins = masterOrderEntity.getPayCoins();
         BigDecimal refundAmount = new BigDecimal(refund_fee);
+        if (pay_coins.compareTo(nu)==1){
+            refundAmount = refundAmount.subtract(pay_coins);
+        }
+
         SlaveOrderDTO slaveOrderDTO = null;
         Long userId = masterOrderEntity.getCreator();
         if (masterOrderEntity.getCheckStatus() == 1) {
@@ -642,7 +655,8 @@ public class PayServiceImpl implements PayService {
 //            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if (payMoney.compareTo(refundAmount) != 0) {
+            BigDecimal apayMoney = payMoney.subtract(pay_coins);
+            if (apayMoney.compareTo(refundAmount) != 0) {
                 return result.error("退款金额不一致，无法退款！");
             }
         }
@@ -725,7 +739,12 @@ public class PayServiceImpl implements PayService {
         BigDecimal totalAmount = masterOrderEntity.getTotalMoney();
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
+        BigDecimal nu = new BigDecimal("0");
+        BigDecimal pay_coins = masterOrderEntity.getPayCoins();
         BigDecimal refundAmount = new BigDecimal(refund_fee);
+        if (pay_coins.compareTo(nu)==1){
+            refundAmount = refundAmount.subtract(pay_coins);
+        }
         SlaveOrderDTO slaveOrderDTO = null;
         Long userId = masterOrderEntity.getCreator();
         if (masterOrderEntity.getCheckStatus() == 1) {
@@ -754,7 +773,8 @@ public class PayServiceImpl implements PayService {
 //            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
 //                return result.error("不是退款订单,无法退款！");
 //            }
-            if (payMoney.compareTo(refundAmount) != 0) {
+            BigDecimal apayMoney = payMoney.subtract(pay_coins);
+            if (apayMoney.compareTo(refundAmount) != 0) {
                 return result.error("退款金额不一致，无法退款！");
             }
         }
