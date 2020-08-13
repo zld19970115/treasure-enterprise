@@ -860,29 +860,170 @@
     </select>
 
     <select id="merchantPage" resultType="io.treasure.vo.MerchantPageVo">
-        select * from ct_merchant
+        SELECT * FROM (
+        SELECT
+        ct.*, IFNULL(c5.money, 0) AS money, IFNULL(c7.money, 0) AS money2
+        FROM
+        ct_merchant ct
+        LEFT JOIN (
+        SELECT
+        c2.merchant_id,
+        CASE
+        WHEN c2.check_status = 1
+        AND c2.`status` = 10 THEN
+        IFNULL(
+        SUM(c2.total_money) + SUM(c3.total_money),
+        0
+        )
+        ELSE
+        IFNULL(SUM(c3.total_money), 0)
+        END AS money
+        FROM
+        (
+        SELECT
+        c.order_id,
+        c.total_money,
+        c.eat_time,
+        c.check_status,
+        c.`status`,
+        c.merchant_id
+        FROM
+        (
+        SELECT
+        c1.creator,
+        c1.order_id,
+        c1.total_money,
+        c1.eat_time,
+        c1.check_status,
+        c1.`status`,
+        c1.merchant_id
+        FROM
+        ct_master_order AS c1
+        WHERE
+        c1.p_order_id = '0'
+        <if test="startDate2 != null and startDate2.trim() != ''">
+            <![CDATA[ and date_format(c1.eat_time, '%Y-%m-%d') >= #{startDate2} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(c1.eat_time, '%Y-%m-%d') <= #{endDate2} ]]>
+        </if>
+        AND (
+        (
+        c1.`status` = 10
+        AND c1.check_status = 1
+        )
+        OR (
+        SELECT
+        1
+        FROM
+        ct_master_order AS c4
+        WHERE
+        c4.p_order_id = c1.order_id
+        AND c4.check_status = 1
+        AND c4.`status` = 10
+        LIMIT 1
+        ) > 0
+        )
+        ORDER BY
+        c1.eat_time ASC
+        ) AS c
+        GROUP BY
+        c.creator,c.merchant_id
+        ) c2
+        LEFT JOIN ct_master_order c3 ON c2.order_id = c3.p_order_id
+        AND c3.check_status = 1
+        AND c3.`status` = 10
+        GROUP BY
+        c2.merchant_id
+        ) AS c5 ON ct.id = c5.merchant_id
+        LEFT JOIN (
+        SELECT
+        c2.merchant_id,
+        CASE
+        WHEN c2.check_status = 1
+        AND c2.`status` = 10 THEN
+        IFNULL(
+        SUM(c2.total_money) + SUM(c3.total_money),
+        0
+        )
+        ELSE
+        IFNULL(SUM(c3.total_money), 0)
+        END AS money
+        FROM
+        (
+
+        SELECT
+        c1.creator,
+        c1.order_id,
+        c1.total_money,
+        c1.eat_time,
+        c1.check_status,
+        c1.`status`,
+        c1.merchant_id
+        FROM
+        ct_master_order AS c1
+        WHERE
+        c1.p_order_id = '0'
+        <if test="startDate2 != null and startDate2.trim() != ''">
+            <![CDATA[ and date_format(c1.eat_time, '%Y-%m-%d') >= #{startDate2} ]]>
+        </if>
+        <if test="endDate != null and endDate.trim() != ''">
+            <![CDATA[ and date_format(c1.eat_time, '%Y-%m-%d') <= #{endDate2} ]]>
+        </if>
+        AND (
+        (
+        c1.`status` = 10
+        AND c1.check_status = 1
+        )
+        OR (
+        SELECT
+        1
+        FROM
+        ct_master_order AS c4
+        WHERE
+        c4.p_order_id = c1.order_id
+        AND c4.check_status = 1
+        AND c4.`status` = 10
+        LIMIT 1
+        ) > 0
+        )
+        ORDER BY
+        c1.eat_time ASC
+        ) c2
+        LEFT JOIN ct_master_order c3 ON c2.order_id = c3.p_order_id
+        AND c3.check_status = 1
+        AND c3.`status` = 10
+        GROUP BY
+        c2.merchant_id
+        ) AS c7 ON ct.id = c7.merchant_id
+        ) as c6
         <where>
             <if test="name != null and name.trim() != ''">
-                and name like CONCAT('%',#{name},'%')
+                and c6.name like CONCAT('%',#{name},'%')
             </if>
             <if test="mobile != null and mobile.trim() != ''">
-                and mobile like CONCAT('%',#{mobile},'%')
+                and c6.mobile like CONCAT('%',#{mobile},'%')
             </if>
             <if test="startDate != null and startDate.trim() != ''">
-                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+                <![CDATA[ and date_format(c6.create_date, '%Y-%m-%d') >= #{startDate} ]]>
             </if>
             <if test="endDate != null and endDate.trim() != ''">
-                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+                <![CDATA[ and date_format(c6.create_date, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
             <if test="auditStatus != null">
-                and auditStatus = #{auditStatus}
+                and c6.auditStatus = #{auditStatus}
             </if>
-
+            <if test="money != null">
+                and c6.money >= #{money}
+            </if>
+            <if test="money2 != null">
+                and c6.money2 >= #{money2}
+            </if>
             <if test="id != null">
-               and id = #{id}
+                and c6.id = #{id}
             </if>
         </where>
-        ORDER BY create_date desc
+        ORDER BY c6.create_date desc
     </select>
 
     <select id="userChartByDay" resultType="io.treasure.vo.EChartInfoVo">

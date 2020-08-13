@@ -11,6 +11,7 @@ import io.treasure.dto.ChargeCashDTO;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.RecordGiftDTO;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -48,11 +49,23 @@ public class RecordGiftController {
     })
     public Result insertRecordGiftAdmin(@ApiIgnore @RequestParam Map<String,Object> params){
         Date date = new Date();
+        ClientUserEntity u = clientUserService.getClientUser(Long.parseLong(params.get("userId")+""));
         params.put("createDate",date);
-        int i = recordGiftService.insertRecordGiftAdmin(params);
-        if (i==1){
+        if((params.get("type")+"").equals("1")) {
+            params.put("balanceGift",u.getBalance().add(new BigDecimal((String) params.get("useGift"))));
+            params.put("status",11);
+        } else {
+            params.put("balanceGift",u.getGift().add(new BigDecimal((String) params.get("useGift"))));
+            params.put("status",5);
+        }
+            int i = recordGiftService.insertRecordGiftAdmin(params);
+        if (i==1) {
             //更新用户表里的代付金余额
-            clientUserService.addRecordGiftByUserid((String) params.get("userId"), (String) params.get("useGift"));
+            if((params.get("type")+"").equals("1")) {
+                clientUserService.addBalanceByUserid((String) params.get("userId"), (String) params.get("useGift"));
+            } else {
+                clientUserService.addRecordGiftByUserid((String) params.get("userId"), (String) params.get("useGift"));
+            }
             return new Result().ok("赠送成功");
         }else {
             return new Result().error("赠送失败");

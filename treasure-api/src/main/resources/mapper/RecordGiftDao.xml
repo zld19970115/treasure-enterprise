@@ -24,9 +24,9 @@
     </select>
 
     <insert id="insertRecordGiftAdmin">
-        insert into ct_record_gift (user_id,transferred_mobile,use_gift,status,create_date,creator )
+        insert into ct_record_gift (user_id,transferred_mobile,use_gift,balance_gift,status,create_date,creator )
          VALUES
-        ( #{userId},#{transferredMobile},#{useGift},5,#{createDate},#{creator});
+        ( #{userId},#{transferredMobile},#{useGift},#{balanceGift},#{status},#{createDate},#{creator});
     </insert>
 
     <select id="getAllRecordGoht" resultType="io.treasure.dto.RecordGiftDTO">
