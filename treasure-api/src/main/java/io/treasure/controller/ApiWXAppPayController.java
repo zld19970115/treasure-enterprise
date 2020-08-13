@@ -119,10 +119,11 @@ public class ApiWXAppPayController {
         BigDecimal totalAmount = new BigDecimal(total_fee);
 
         BigDecimal payCoins = masterOrderEntity.getPayCoins();
-        System.out.println("totalAmount0"+totalAmount);
+        System.out.println("totalAmount0=="+totalAmount);
         //减掉宝币支付的费用用
         totalAmount = totalAmount.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-        System.out.println("totalAmount1"+totalAmount);
+        System.out.println("totalAmount1=="+totalAmount);
+
         BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         java.text.DecimalFormat df=new java.text.DecimalFormat("0");
         data.put("total_fee",df.format(total));
@@ -131,12 +132,16 @@ public class ApiWXAppPayController {
         data.put("trade_type", "APP");//支付类型
         data.put("attach","ZF");//订单附加信息 (业务需要数据，自定义的)
 
-//        signXml = WXPayUtil.generateSignedXml(data, Configure.getKey(),SignType.MD5);
-//        String result = HttpRequest.sendPost(url, signXml);
         Map<String, String> orderInfo= wxPay.unifiedOrder(data);
+        System.out.println("total_fee:"+df.format(total));
+        for(Map.Entry<String,String> s:orderInfo.entrySet()){
+            System.out.println("一签:"+s.getKey()+","+s.getValue());
+        }
+        System.out.println();
         boolean rtn = orderInfo.get("return_code").equals(WXPayConstants.SUCCESS) && orderInfo.get("result_code").equals(WXPayConstants.SUCCESS);
 
         if(rtn) {
+            System.out.println("通过一签");
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("appid", wxPayConfig.getAppID());
             params.put("partnerid", wxPayConfig.getMchID());
@@ -208,9 +213,13 @@ public class ApiWXAppPayController {
          * }
          */
         log.info(reqData.toString());
+        for(Map.Entry<String,String> s:reqData.entrySet()){
+            System.out.println("收到回调reqData："+s.getKey()+","+s.getValue());
+        }
 
         // 特别提醒：商户系统对于支付结果通知的内容一定要做签名验证,并校验返回的订单金额是否与商户侧的订单金额一致，防止数据泄漏导致出现“假通知”，造成资金损失。
         boolean signatureValid = wxPay.isPayResultNotifySignatureValid(reqData);
+        System.out.println("验签结果："+signatureValid);
         if (signatureValid) {
             /**
              * 注意：同样的通知可能会多次发送给商户系统。商户系统必须能够正确处理重复的通知。
