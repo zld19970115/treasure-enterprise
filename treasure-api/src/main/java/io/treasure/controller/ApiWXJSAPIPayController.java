@@ -95,7 +95,9 @@ public class ApiWXJSAPIPayController {
         data.put("fee_type", "CNY");
         //因为是外币，这里做汇率转换
         BigDecimal totalAmount = new BigDecimal(total_fee);
+        System.out.println("totalAmount:"+totalAmount);
         BigDecimal payCoins = masterOrderEntity.getPayCoins();
+        System.out.println("payCoins:"+payCoins);
         totalAmount = totalAmount.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         System.out.println("jsapi:"+totalAmount);
 

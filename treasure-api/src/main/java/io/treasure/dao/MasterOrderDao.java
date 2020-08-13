@@ -124,4 +124,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
 
     Integer listMerchantPCCount(Map params);
 
+    MasterOrderEntity payCoinsSumByOrderId(String orderId);
+
 }

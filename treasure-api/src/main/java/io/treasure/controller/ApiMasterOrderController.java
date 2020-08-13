@@ -452,6 +452,33 @@ public class ApiMasterOrderController {
         return new Result<PageData<OrderDTO>>().ok(page);
     }
 
+    //@Login
+    @GetMapping("can_use_coins")
+    @ApiOperation("可用宝币数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "订单号", paramType = "query", dataType="String") ,
+            @ApiImplicitParam(name = "userId", value = "用户编码", paramType = "query",required=true, dataType="Long")
+    })
+    public Result canUseCoins(@ApiIgnore @RequestParam Map<String, Object> params){
+        String orderId = params.get("orderId")+"";
+        Long userId = Long.parseLong(params.get("userId")+"");
+
+        BigDecimal canUseCoins = new BigDecimal("50");
+        MasterOrderEntity masterOrderEntity = masterOrderDao.payCoinsSumByOrderId(orderId);
+        if(masterOrderEntity == null)
+            return new Result().ok("0");
+        BigDecimal paidCoins = masterOrderEntity.getPayCoins();
+        if(paidCoins.compareTo(canUseCoins)>=0)
+            return new Result().ok("0");
+        BigDecimal subtract = canUseCoins.subtract(paidCoins);
+
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        BigDecimal balance = clientUserEntity.getBalance();
+        if(balance.compareTo(subtract)>=0)
+            return new Result().ok(subtract);
+        return new Result().ok(balance);
+    }
+
     @Login
     @GetMapping("noPayOrderPage")
     @ApiOperation("未支付订单列表")

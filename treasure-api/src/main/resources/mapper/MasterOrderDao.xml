@@ -666,4 +666,14 @@
 
     </select>
 
+    <select id="payCoinsSumByOrderId" resultType="io.treasure.entity.MasterOrderEntity">
+        select sum(pay_coins) as pay_coins from ct_master_order
+        where status in (2,4,7) and
+        (
+            order_id = #{orderId}
+            or p_order_id = #{orderId}
+        )
+
+    </select>
+
 </mapper>
