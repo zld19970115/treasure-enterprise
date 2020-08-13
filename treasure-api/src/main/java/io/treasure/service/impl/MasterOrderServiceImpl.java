@@ -558,7 +558,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         if (pay_coins.compareTo(num) == 1) {
                             BigDecimal balance = clientUserDTO.getBalance();
                             BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
-                            clientUserDTO.setGift(abc);
+                            clientUserDTO.setBalance(abc);
                             clientUserService.update(clientUserDTO);
                         }
                         if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
