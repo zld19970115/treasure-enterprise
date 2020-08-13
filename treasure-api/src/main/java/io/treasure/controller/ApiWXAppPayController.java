@@ -81,18 +81,7 @@ public class ApiWXAppPayController {
         Result result = new Result();
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
         MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
-//        // 防止微信支付失败重新支付失败
-//        String tmpOrderId =generalGrowUpOrderId(orderNo);
-//        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(orderNo);
-//        orderDTO.setOrderId(tmpOrderId);
-//        for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
-//            slaveOrderEntity.setOrderId(tmpOrderId);
-//            slaveOrderService.updateById(slaveOrderEntity);
-//        }
-//
-//        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
-//        masterOrderEntity.setOrderId(tmpOrderId);
-//        masterOrderService.updateById(masterOrderEntity);-
+
 
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
@@ -121,6 +110,7 @@ public class ApiWXAppPayController {
         BigDecimal payCoins = masterOrderEntity.getPayCoins();
         System.out.println("totalAmount0=="+totalAmount);
         //减掉宝币支付的费用用
+        System.out.println("payCoins=="+payCoins);
         totalAmount = totalAmount.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         System.out.println("totalAmount1=="+totalAmount);
 
