@@ -740,7 +740,9 @@ public class ApiClientUserController {
             return  new Result().error("没有找到该用户，请稍后再试");
         }
         Integer level = clientUserEntity.getLevel();
-
+         if (level==null){
+             return  new Result().error("您不是会员，请消费后重试");
+         }
         if (level==1){
             return  new Result().error("您的会员级别不足，请升级后再试");
         }
