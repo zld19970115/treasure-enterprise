@@ -750,9 +750,13 @@ public class ApiClientUserController {
         List<LevelStatusEntity> levelStatusEntities = clientUserService.selectLevelStatus(userId);
         for (Integer i = 2; i <= level; i++) {
             LevelVo vo = new LevelVo();
+
             vo.setLevel(i);
             BigDecimal bigDecimal = clientUserService.selectBlanceForLevel(i);
+
             vo.setBlance(bigDecimal);
+            String picture = clientUserService.selectpictureForLevel(i);
+            vo.setPicture(picture);
             for (LevelStatusEntity levelStatusEntity : levelStatusEntities) {
                 if (levelStatusEntity.getLeveled() == i){
                     vo.setStatus(1);

@@ -125,6 +125,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
+    public String selectpictureForLevel(int level) {
+        return baseDao.selectpictureForLevel(level);
+    }
+
+    @Override
     public ClientUserEntity getUserByPhone(String mobile) {
        return baseDao.getUserByPhone(mobile);
     }

@@ -37,6 +37,7 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     String selectCoinToBalance();
     List<LevelStatusEntity> selectLevelStatus(long userId);
     BigDecimal selectBlanceForLevel(int level);
+    String selectpictureForLevel(int level);
    // List<ClientUserEntity> selectListByCondition(QueryClientUserDto queryClientUserDto);
     List<ClientUserEntity> selectZhuXiao(String mobile);
     List<ClientUserDTO> getRecordUserAll(Map<String, Object> params);

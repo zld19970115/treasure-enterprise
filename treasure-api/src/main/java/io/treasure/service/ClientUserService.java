@@ -33,6 +33,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
     String  selectCoinToBalance();
     List<LevelStatusEntity> selectLevelStatus(long userId);
     BigDecimal selectBlanceForLevel(int level);
+    String selectpictureForLevel(int level);
     ClientUserEntity getUserByPhone(String mobile);
     void insertLevelStatus(Long userId, Integer level, BigDecimal balance);
     ClientUserEntity getUserByOpenId(String openId);
