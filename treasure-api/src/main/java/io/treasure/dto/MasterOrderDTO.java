@@ -120,6 +120,6 @@ public class MasterOrderDTO implements Serializable {
 	private BigDecimal merchantProceeds;
 
 	@ApiModelProperty(value = "宝币支付金额")
-	private BigDecimal pay_coins;
+	private BigDecimal payCoins;
 
 }

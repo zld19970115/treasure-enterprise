@@ -32,7 +32,7 @@ public class OrderSimpleEntity{
 	private String headImg;
 	private String icon;
 	private String clientid;
-	private BigDecimal pay_coins;
+	private BigDecimal payCoins;
 
 
 	private String contactNumber;

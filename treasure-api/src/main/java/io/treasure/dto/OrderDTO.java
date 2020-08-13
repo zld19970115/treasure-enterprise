@@ -116,7 +116,7 @@ public class OrderDTO implements Serializable {
 	private  BigDecimal Ppaymoney;
 
 	@ApiModelProperty(value = "宝币支付金额")
-	private BigDecimal pay_coins;
+	private BigDecimal payCoins;
 
 	@ApiModelProperty(value = "订单菜品")
 	private List<SlaveOrderEntity> slaveOrder;
