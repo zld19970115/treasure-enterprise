@@ -144,4 +144,8 @@ public class MerchantPageVo {
     @ApiModelProperty(value = "特色")
     private Integer special;
 
+    private BigDecimal money;
+
+    private BigDecimal money2;
+
 }

@@ -293,6 +293,11 @@ public class PayServiceImpl implements PayService {
             }
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
+        //更新用户宝币数量
+        BigDecimal balance = clientUserEntity.getBalance();
+        balance = balance.subtract(masterOrderEntity.getPayCoins());
+        clientUserEntity.setBalance(balance);
+        clientUserService.updateById(clientUserEntity);
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
