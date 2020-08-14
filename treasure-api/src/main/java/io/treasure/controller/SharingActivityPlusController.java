@@ -300,6 +300,7 @@ public class SharingActivityPlusController {
 
         ClientUserEntity prospectiveUser = new ClientUserEntity();
         prospectiveUser.setMobile(mobile);
+        prospectiveUser.setLevel(1);
         prospectiveUser.setUsername(mobile);
         String signedPassword = DigestUtils.sha256Hex(password);
         prospectiveUser.setPassword(signedPassword);
@@ -354,7 +355,7 @@ public class SharingActivityPlusController {
     public boolean allowUserHelp(String mobile,Integer saId,Integer proposeId,
                                  int allowHelpedTimes,int months,Long initiatorId) throws ParseException {
 
-        int helpedCount = sharingActivityLogService.getHelpedCount(mobile, getSpecifyMonthDate(0), getSpecifyMonthDate(months));
+        int helpedCount = sharingActivityLogService.getHelpedCount(mobile,saId,getSpecifyMonthDate(0), getSpecifyMonthDate(months));
 
         //1超出规定时间表内的助力次数
         if(allowHelpedTimes<=helpedCount)
