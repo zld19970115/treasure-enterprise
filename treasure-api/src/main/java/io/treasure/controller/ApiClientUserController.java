@@ -196,6 +196,7 @@ public class ApiClientUserController {
         ValidatorUtils.validateEntity(dto);
         Map map = new HashMap();
         ClientUserEntity user = new ClientUserEntity();
+        user.setLevel(1);
         user.setMobile(dto.getMobile());
         user.setUsername(dto.getMobile());
         user.setPassword(DigestUtils.sha256Hex(dto.getPassword()));
