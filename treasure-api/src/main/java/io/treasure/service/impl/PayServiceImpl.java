@@ -12,6 +12,7 @@ import io.treasure.common.utils.ConvertUtils;
 import io.treasure.common.utils.Result;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
+import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
@@ -65,6 +66,8 @@ public class PayServiceImpl implements PayService {
     StimmeService stimmeService;
     @Autowired
     ClientUserServiceImpl clientUserService;
+    @Autowired(required = false)
+    ClientUserDao clientUserDao;
     @Autowired
     ChargeCashService chargeCashService;
     @Autowired
@@ -663,12 +666,6 @@ public class PayServiceImpl implements PayService {
             }
         } else {
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
             BigDecimal apayMoney = payMoney.subtract(pay_coins);
             if (apayMoney.compareTo(refundAmount) != 0) {
                 return result.error("退款金额不一致，无法退款！");
@@ -962,6 +959,28 @@ public class PayServiceImpl implements PayService {
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         //System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser);
         wsPool.sendMessageToUser(wsByUser, 2 + "");
+
+        //扣除用户的宝币
+        //System.out.println("position 4 : "+masterOrderEntity.toString());
+        //更新用户宝币数量
+
+        ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
+        BigDecimal balance = clientUserEntity.getBalance();
+        balance = balance.subtract(masterOrderEntity.getPayCoins());
+        clientUserEntity.setBalance(balance);
+
+        if(balance.compareTo(new BigDecimal("0"))<0){
+            clientUserEntity.setBalance(new BigDecimal("0"));
+            System.out.println("订单"+out_trade_no+"用户宝币余额不足");
+
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            mapRtn.put("return_code", "FAIL");
+            mapRtn.put("return_msg", "支付失败！请联系管理员！【非法操作-宝币不足】");
+            return mapRtn;
+        }
+
+        clientUserService.updateById(clientUserEntity);
+
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
