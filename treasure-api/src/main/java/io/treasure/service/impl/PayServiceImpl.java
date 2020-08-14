@@ -439,7 +439,7 @@ public class PayServiceImpl implements PayService {
         // 商户订单号
         model.setOutTradeNo(orderNo);
         // 退款金额
-        model.setRefundAmount(refund_fee);
+        model.setRefundAmount(String.valueOf(refundAmount));
         // 退款原因
         model.setRefundReason("无理由退货");
         // 退款订单号(同一个订单可以分多次部分退款，当分多次时必传)
@@ -634,11 +634,13 @@ public class PayServiceImpl implements PayService {
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         //退款金额
         BigDecimal pay_coins = masterOrderEntity.getPayCoins();
+        System.out.println(pay_coins+"pay_coins");
         BigDecimal refundAmount = new BigDecimal(refund_fee);
+        System.out.println(refundAmount+"未减");
         if (pay_coins.compareTo(nu)==1){
             refundAmount = refundAmount.subtract(pay_coins);
         }
-
+        System.out.println(refundAmount+"已经减");
         SlaveOrderDTO slaveOrderDTO = null;
         Long userId = masterOrderEntity.getCreator();
         if (masterOrderEntity.getCheckStatus() == 1) {
@@ -679,10 +681,10 @@ public class PayServiceImpl implements PayService {
         reqData.put("out_refund_no", refundNo);
 
 
-        BigDecimal total = totalAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
+        BigDecimal total = refundAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         java.text.DecimalFormat df = new java.text.DecimalFormat("0");
         reqData.put("total_fee", df.format(total));
-
+//        refundAmount = new BigDecimal("1.50");
         BigDecimal refund = refundAmount.multiply(new BigDecimal(100));  //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         reqData.put("refund_fee", df.format(refund));
         // 退款异步通知地址
