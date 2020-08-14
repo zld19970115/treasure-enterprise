@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 /**
  * 支付宝-APP支付 控制器.
  */
@@ -84,7 +86,12 @@ public class ApiAliAppPayController  {
         // 支付超时时间（根据项目需要填写）
         model.setTimeoutExpress("30m");
         // 支付金额（项目中实际订单的需要支付的金额，金额的获取与操作请放在服务端完成，相对安全）
-        model.setTotalAmount(totalAmount);
+        //1------修改支付费用
+        BigDecimal payCoins = orderDTO.getPayCoins();
+        BigDecimal finalTotalAmount = new BigDecimal(totalAmount);
+        finalTotalAmount = finalTotalAmount.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+
+        model.setTotalAmount(finalTotalAmount+"");
         model.setProductCode("QUICK_MSECURITY_PAY");
         alipayRequest.setBizModel(model);
         // 支付成功后支付宝异步通知的接收地址url
