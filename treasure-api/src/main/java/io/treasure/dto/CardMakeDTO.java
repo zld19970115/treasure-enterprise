@@ -47,6 +47,4 @@ public class CardMakeDTO implements Serializable {
 	private Date updateDate;
 
 	private String username;
-
-
 }
