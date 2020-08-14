@@ -189,10 +189,11 @@ public class ClientMemberGradeAssessment extends TaskCommon implements IClientMe
                 QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("creator",userId);
                 queryWrapper.eq("status",10);
+                queryWrapper.in("pay_mode",2,3);
                 queryWrapper.between("eat_time",dates.get(0),dates.get(1));
                 queryWrapper.gt("pay_money",0);
                 queryWrapper.gt("merchant_proceeds",0);
-                queryWrapper.select("sum(pay_money-pay_coins) as pay_money");
+                queryWrapper.select("sum(pay_money - pay_coins) as pay_money");
                 queryWrapper.groupBy("creator");
 
                 MasterOrderEntity masterOrderEntity = masterOrderDao.selectOne(queryWrapper);
