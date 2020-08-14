@@ -743,25 +743,29 @@ public class ApiClientUserController {
          if (level==null){
              return  new Result().error("您不是会员，请消费后重试");
          }
-        if (level==1){
-            return  new Result().error("您的会员级别不足，请升级后再试");
-        }
+//        if (level==1){
+//            return  new Result().error("您的会员级别不足，请升级后再试");
+//        }
        List list = new ArrayList();
         List<LevelStatusEntity> levelStatusEntities = clientUserService.selectLevelStatus(userId);
-        for (Integer i = 2; i <= level; i++) {
+        for (Integer i = 2; i <= 5; i++) {
             LevelVo vo = new LevelVo();
-
+            if (i<=level){
+                for (LevelStatusEntity levelStatusEntity : levelStatusEntities) {
+                    if (levelStatusEntity.getLeveled() == i){
+                        vo.setStatus(1);
+                    }
+                }
+            }else {
+                vo.setStatus(2);
+            }
             vo.setLevel(i);
             BigDecimal bigDecimal = clientUserService.selectBlanceForLevel(i);
 
             vo.setBlance(bigDecimal);
             String picture = clientUserService.selectpictureForLevel(i);
             vo.setPicture(picture);
-            for (LevelStatusEntity levelStatusEntity : levelStatusEntities) {
-                if (levelStatusEntity.getLeveled() == i){
-                    vo.setStatus(1);
-                }
-            }
+
             list.add(vo);
         }
         return  new Result().ok(list);
