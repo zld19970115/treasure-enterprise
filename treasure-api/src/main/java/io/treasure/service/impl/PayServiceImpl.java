@@ -663,12 +663,6 @@ public class PayServiceImpl implements PayService {
             }
         } else {
             //退单
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.USERAPPLYREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.PAYORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
-//            if(masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
-//                return result.error("不是退款订单,无法退款！");
-//            }
             BigDecimal apayMoney = payMoney.subtract(pay_coins);
             if (apayMoney.compareTo(refundAmount) != 0) {
                 return result.error("退款金额不一致，无法退款！");
