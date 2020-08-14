@@ -437,7 +437,7 @@ public class PayServiceImpl implements PayService {
         // 商户订单号
         model.setOutTradeNo(orderNo);
         // 退款金额
-        model.setRefundAmount(refund_fee);
+        model.setRefundAmount(String.valueOf(refundAmount));
         // 退款原因
         model.setRefundReason("无理由退货");
         // 退款订单号(同一个订单可以分多次部分退款，当分多次时必传)
