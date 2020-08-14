@@ -1823,6 +1823,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result caleclUpdate(long id, long verify, Date date, String verify_reason) {
         MasterOrderDTO dto = get(id);
         int status = dto.getStatus();
@@ -1861,6 +1862,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             BigDecimal addgif = gift.add(gif);
             clientUserDTO.setGift(addgif);
             clientUserService.update(clientUserDTO);
+
+
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                 //同时将包房或者桌设置成未使用状态
                 merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
@@ -1874,7 +1877,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 if (result1.success()) {
                     boolean b = (boolean) result1.getData();
                     if (!b) {
-                        return new Result().error("支付失败！");
+                        return new Result().error("退款失败！");
+                    }else {
+                        OrderDTO order = masterOrderService.getOrder(dto.getOrderId());
+                        BigDecimal pay_coins = order.getPayCoins();
+                        BigDecimal num = new BigDecimal("0");
+                        if (pay_coins.compareTo(num) == 1) {
+                            BigDecimal balance = clientUserDTO.getBalance();
+                            BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
+                            clientUserDTO.setBalance(abc);
+                            clientUserService.update(clientUserDTO);
+                        }
+
                     }
                 } else {
                     return new Result().error(result1.getMsg());
