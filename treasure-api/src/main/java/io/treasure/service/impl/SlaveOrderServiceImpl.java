@@ -154,13 +154,13 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
         BigDecimal payCoins = masterOrderEntity1.getPayCoins();
         BigDecimal nu = new BigDecimal("0");
         if (payCoins.compareTo(nu)==1){
-            result.error("此菜品内含有宝币支付无法退菜，请选择整单退款");
+           return result.error("此菜品内含有宝币支付无法退菜，请选择整单退款");
         }
         //用户申请退的数量
         BigDecimal quantity = slaveOrderDTO.getQuantity();
         SlaveOrderDTO allGoods = this.getAllGoods(orderId, goodId);
         if (allGoods.getStatus() != Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue() && allGoods.getStatus() != Constants.OrderStatus.PAYORDER.getValue()) {
-            result.error("此菜品无法退菜！");
+            return result.error("此菜品无法退菜！");
         }
         if (allGoods.getStatus() == 2) {
             //此订单菜品总数量
@@ -171,13 +171,13 @@ public class SlaveOrderServiceImpl extends CrudServiceImpl<SlaveOrderDao, SlaveO
                 } else if (allGoods.getStatus() == Constants.OrderStatus.PAYORDER.getValue()) {
                     this.updateSlaveOrderStatus(Constants.OrderStatus.MERCHANTREFUSALORDER.getValue(), orderId, goodId);
                     if (allGoods.getCreator() == null) {
-                        result.error("此菜品无法退菜！无创建用户信息！");
+                        return   result.error("此菜品无法退菜！无创建用户信息！");
                     }
                     if (allGoods.getPayMoney().compareTo(new BigDecimal(0)) == 0) {
-                        result.error("此菜品价格为0元，无法退菜！");
+                        return   result.error("此菜品价格为0元，无法退菜！");
                     }
                 } else {
-                    result.error("此菜品无法退菜！【菜品状态错误】");
+                    return   result.error("此菜品无法退菜！【菜品状态错误】");
                 }
             }
 //            if (quantity1.compareTo(quantity) == 1) {
