@@ -319,7 +319,7 @@ public class SharingActivityController {
     public boolean allowUserHelp(String mobile,Integer saId,Integer proposeId,
                                  int allowHelpedTimes,int months,Long initiatorId) throws ParseException {
 
-        int helpedCount = sharingActivityLogService.getHelpedCount(mobile, getSpecifyMonthDate(0), getSpecifyMonthDate(months));
+        int helpedCount = sharingActivityLogService.getHelpedCount(mobile,saId,getSpecifyMonthDate(0), getSpecifyMonthDate(months));
 
         //1超出规定时间表内的助力次数
         if(allowHelpedTimes<=helpedCount)

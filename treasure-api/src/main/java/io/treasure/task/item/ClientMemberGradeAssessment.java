@@ -180,8 +180,6 @@ public class ClientMemberGradeAssessment extends TaskCommon implements IClientMe
                 return res;
         }
 
-
-
         @Override
         public int getChargePayMoneySum(Long userId, Date assessmentTime,int timeRang) throws ParseException {
                 List<Date> dates = TimeUtil.generatorTimeRangeParams(assessmentTime, timeRang);

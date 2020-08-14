@@ -84,12 +84,13 @@ public class SharingActivityLogServiceImpl implements SharingActivityLogService 
     }
 
     @Override
-    public int getHelpedCount(String mobile, Date start, Date stop){
+    public int getHelpedCount(String mobile,int activityId, Date start, Date stop){
         int res = 0;
 
         QueryWrapper<SharingActivityLogEntity> sae = new QueryWrapper<>();
         sae.between("create_pmt",start,stop);
         sae.eq("helper_mobile",mobile);
+        sae.eq("activity_id",activityId);
 
         Integer helpCountxx = sharingActivityLogDao.selectCount(sae);
 

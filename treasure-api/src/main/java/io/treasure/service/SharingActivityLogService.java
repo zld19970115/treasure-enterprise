@@ -36,7 +36,7 @@ public interface SharingActivityLogService {
 
     Integer getRewardSum(long intitiatorId, int activityId,int proposeSequeueNo);
     int getHelpedCount(String mobile);
-    int getHelpedCount(String mobile, Date start, Date stop);
+    int getHelpedCount(String mobile,int activityId,Date start, Date stop);
     SharingActivityLogEntity getOne(Long initiatorId,Integer activityId,Integer proposeSequeueNo,String helperMobile);
 
     List<SharingActivityLogEntity> getHelpedList(long intitiatorId, Integer activityId,Integer proposeSequeueNo);
