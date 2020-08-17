@@ -255,7 +255,7 @@ public class SendSMSUtil {
         map.put("name",merchantName);
         map.put("value",OrderId);
         String template= JSON.toJSONString(map);
-        String data=send.send(phoneNumber, "聚宝科技", "SMS_197895067", template);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_199807822", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
