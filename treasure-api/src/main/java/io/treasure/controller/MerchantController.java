@@ -20,10 +20,7 @@ import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.SharingActivityLogEntity;
-import io.treasure.service.CategoryService;
-import io.treasure.service.MerchantQrCodeService;
-import io.treasure.service.MerchantService;
-import io.treasure.service.MerchantUserService;
+import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.AttachCategoryPlusVo;
 import io.treasure.vo.AttachCategoryVo;
@@ -52,6 +49,8 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantUserService merchantUserService;
+    @Autowired
+    BusinessManagerService businessManagerService;
     //店铺分类
     @Autowired
     private CategoryService categoryService;
@@ -134,7 +133,9 @@ public class MerchantController {
         dto.setStatus(Common.STATUS_CLOSE.getStatus());
         dto.setCreateDate(new Date());
         dto.setAuditstatus(Audit.STATUS_NO.getStatus());
+
         merchantService.save(dto);
+
 
         //修改创建者的商户信息
         MerchantUserDTO user=merchantUserService.get(dto.getCreator());
@@ -143,6 +144,9 @@ public class MerchantController {
         String merchantId=user.getMerchantid();
         user.setMerchantid(String.valueOf(entity.getId()));
         merchantUserService.update(user);
+        if (dto.getBmId()!=null){
+            businessManagerService.binding(dto.getBmId(),merchantId);
+        }
 //        merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(entity.getId()));
         String mobile = merchantService.selectOfficialMobile();
         SendSMSUtil.MerchantsSettlement(mobile, dto.getName(), smsConfig);

@@ -78,7 +78,8 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "备注")
 	private String remark;
-
+	@ApiModelProperty(value = "业务员Id")
+	private Integer bmId;
 	@ApiModelProperty(value = "状态 0=冻结,1=正常")
 	private Integer status;
 

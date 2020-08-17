@@ -36,13 +36,13 @@ public class BusinessManagerServiceImpl  extends CrudServiceImpl<BusinessManager
 
     @Override
     public PageData<BusinessManagerDTO> listPage(Map<String, Object> params) {
-        IPage<BusinessManagerEntity> pages=getPage(params, Constant.CREATE_DATE,false);
+        IPage<BusinessManagerEntity> pages=getPage(params, (String) params.get("orderField"),false);
         List<BusinessManagerDTO> list=baseDao.listPage(params);
         return getPageData(list,pages.getTotal(), BusinessManagerDTO.class);
     }
 
     @Override
-    public void binding(int bmId, long mchId) {
+    public void binding(int bmId, String mchId) {
 
 
         baseDao.binding(bmId,mchId);
