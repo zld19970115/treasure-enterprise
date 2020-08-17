@@ -44,9 +44,10 @@ public class OrderForBm  extends TaskSock {
                 BusinessManagerEntity businessManagerEntity = businessManagerDao.selectById(businessManagerTrackRecordEntity.getBmId());
                 MerchantEntity merchantEntity = merchantDao.selectById(orderDTO.getMerchantId());
                 boolean b = SendSMSUtil.MerchantsToBm(businessManagerEntity.getMobile(), orderDTO.getOrderId(), merchantEntity.getName(), smsConfig);
-                System.out.println(businessManagerEntity.getMobile()+orderDTO.getOrderId()+merchantEntity.getName());
-                System.out.println("发送短信++++++++++++++++++++++"+b);
-                masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
+               if (b==true){
+                   masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
+               }
+
             }
 
         }
