@@ -258,6 +258,7 @@ public class SendSMSUtil {
         String data=send.send(phoneNumber, "聚宝科技", "SMS_199807822", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
+        System.out.println(code+"code+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if("OK".equals(code)){
             ret=true;
         }
