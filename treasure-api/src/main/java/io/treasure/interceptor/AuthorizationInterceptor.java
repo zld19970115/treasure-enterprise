@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private TokenService tokenService;
-
     public static final String USER_KEY = "userId";
 
     @Override

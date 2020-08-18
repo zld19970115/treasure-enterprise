@@ -42,6 +42,7 @@ import java.util.Map;
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-07-28
  */
+
 @Service
 public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, ClientUserEntity, ClientUserDTO> implements ClientUserService {
     @Autowired
@@ -50,7 +51,6 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     private RecordGiftService recordGiftService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
-
 
     @Override
     public QueryWrapper<ClientUserEntity> getWrapper(Map<String, Object> params){
@@ -61,7 +61,6 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
 
         return wrapper;
     }
-
 
     @Override
     public boolean isRegister(String tel) {

@@ -1,21 +1,14 @@
 package io.treasure.utils;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.annotation.BaseQueryWrapperCondition;
-import io.treasure.dto.SharingActivityExtendsDTO;
+import io.treasure.annotation.ObjExtends;
 import io.treasure.entity.SharingActivityExtendsEntity;
 import org.junit.Test;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class QueryWrapperUtil<T> {
@@ -35,8 +28,8 @@ public class QueryWrapperUtil<T> {
 
         Field[] fields = aClass.getDeclaredFields();
         for (Field field : fields) {
-            BaseQueryWrapperCondition annotation = field.getAnnotation(BaseQueryWrapperCondition.class);
-            if (field.getAnnotation(BaseQueryWrapperCondition.class) != null) {
+            ObjExtends annotation = field.getAnnotation(ObjExtends.class);
+            if (field.getAnnotation(ObjExtends.class) != null) {
                 String defaultValue = annotation.defaultValue();
                 String queryMethod = annotation.queryMethod();
                 String filedName = field.getName();//字段名

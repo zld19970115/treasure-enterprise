@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -737,8 +738,20 @@ public class SharingActivityPlusController {
                 break;
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
-                if(balance >= 0)
-                    clientUserService.addBalanceByUserid(initiatorId+"",balance+"");
+                ///////////////////////////
+                ///////////////////////////
+                BigDecimal balanceLimit = new BigDecimal("200");
+                ClientUserEntity clientUserEntity = clientUserDao.selectById(initiatorId);
+                BigDecimal resBalance = clientUserEntity.getBalance();
+                if(balance >= 0 && resBalance.compareTo(balanceLimit)<0){
+
+                    if((resBalance.add(new BigDecimal(balance+""))).compareTo(balanceLimit) >= 0){
+                        clientUserEntity.setBalance(balanceLimit);
+                        clientUserDao.updateById(clientUserEntity);
+                    }else{
+                        clientUserService.addBalanceByUserid(initiatorId+"",balance+"");
+                    }
+                }
                 break;
 
         }
@@ -759,8 +772,19 @@ public class SharingActivityPlusController {
                     clientUserService.addRecordGiftByUserid(id+"",rewardValue+"");
                 break;
             case 4://宝币
-                if(rewardValue > 0)
-                    clientUserService.addBalanceByUserid(id+"",rewardValue+"");
+
+                BigDecimal balanceLimit = new BigDecimal("200");
+                ClientUserEntity clientUserEntity = clientUserDao.selectById(id);
+                BigDecimal resBalance = clientUserEntity.getBalance();
+                if(rewardValue >= 0 && resBalance.compareTo(balanceLimit)<0){
+
+                    if((resBalance.add(new BigDecimal(rewardValue+""))).compareTo(balanceLimit) >= 0){
+                        clientUserEntity.setBalance(balanceLimit);
+                        clientUserDao.updateById(clientUserEntity);
+                    }else{
+                        clientUserService.addBalanceByUserid(id+"",rewardValue+"");
+                    }
+                }
                 break;
         }
 

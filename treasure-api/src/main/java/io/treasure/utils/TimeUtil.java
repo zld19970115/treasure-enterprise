@@ -127,5 +127,32 @@ public class TimeUtil {
         return res;
     }
 
+    //取得月初时间
+    public static Date getMonthStart(Date date) throws ParseException {
+        Date res = date==null?new Date():date;
+        String format = sdfYm.format(res);
+        return simpleDateFormat.parse(format+"-01 00:00:00");
+    }
+    //取得月末时间
+    public static Date getMonthEnd(Date date) throws ParseException {
+        Date res = date==null?new Date():date;
+        String format = sdfYm.format(res);
+        String[] split = format.split("-");
+        if("12".equals(split[1])){
+           int  year = Integer.parseInt(split[0]);
+           year++;
+           format = year+"-01";
+        }else{
+            int month = Integer.parseInt(split[1])+1;
+            if(month<10){
+                format = split[0]+"-0"+month;
+            }else{
+                format = split[0]+"-"+month;
+            }
+        }
+        long time = simpleDateFormat.parse(format + "-01 00:00:00").getTime()-24*60*60*1000;
+        return new Date(time);
+    }
+
 
 }

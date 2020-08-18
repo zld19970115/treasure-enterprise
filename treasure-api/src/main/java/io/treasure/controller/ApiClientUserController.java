@@ -786,6 +786,5 @@ public class ApiClientUserController {
         clientUserEntity.setBalance(add);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("成功");
-
     }
 }

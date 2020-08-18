@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.sms.SMSSend;
 import io.treasure.common.utils.Result;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -285,7 +287,6 @@ public class SendSMSUtil {
         }
         return ret;
     }
-
 
     /**
      * 获取验证码

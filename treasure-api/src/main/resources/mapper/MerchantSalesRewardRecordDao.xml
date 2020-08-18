@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantSalesRewardRecordDao">
+
+
+    <select id="reward_mch_list" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.vo.RewardMchList">
+        select merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceeds
+        from ct_master_order
+        <where>
+            <if test="minValue != null and minValue != ''">
+                and rewared_value >= #{minValue}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and eat_time >= #{startTime}
+            </if>
+            <if test="stopTime != null and stopTime != ''">
+                and #{stopTime} >= eat_time
+            </if>
+        </where>
+        group by merchant_id
+        order by sales_volume desc, order_volume desc
+        limit #{index},#{pageNum}
+    </select>
+
+</mapper>

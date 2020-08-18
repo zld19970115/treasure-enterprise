@@ -123,10 +123,10 @@ public class ApiWXAppPayController {
         data.put("attach","ZF");//订单附加信息 (业务需要数据，自定义的)
 
         Map<String, String> orderInfo= wxPay.unifiedOrder(data);
-        System.out.println("total_fee:"+df.format(total));
-        for(Map.Entry<String,String> s:orderInfo.entrySet()){
-            System.out.println("一签:"+s.getKey()+","+s.getValue());
-        }
+//        System.out.println("total_fee:"+df.format(total));
+//        for(Map.Entry<String,String> s:orderInfo.entrySet()){
+//            System.out.println("一签:"+s.getKey()+","+s.getValue());
+//        }
         System.out.println();
         boolean rtn = orderInfo.get("return_code").equals(WXPayConstants.SUCCESS) && orderInfo.get("result_code").equals(WXPayConstants.SUCCESS);
 

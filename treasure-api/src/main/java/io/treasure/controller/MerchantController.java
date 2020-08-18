@@ -497,7 +497,6 @@ public class MerchantController {
           map.put("status",2);
           return new Result().ok(map);//未绑定微信
       }
-
     }
 
 
