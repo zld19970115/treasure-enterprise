@@ -14,6 +14,7 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.BusinessManagerDTO;
 import io.treasure.enm.Common;
 import io.treasure.service.BusinessManagerService;
+import io.treasure.task.item.OrderForBm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -25,7 +26,8 @@ import java.util.Map;
 @RequestMapping("/businessManager")
 @Api(tags="业务员表")
 public class BusinessManagerController {
-
+    @Autowired
+    private OrderForBm orderForBm;
     @Autowired
     BusinessManagerService businessManagerService;
     @CrossOrigin
@@ -113,7 +115,14 @@ public class BusinessManagerController {
             @ApiImplicitParam(name = "mchId", value = "商户id", paramType = "query", required = true, dataType = "long")
     })
     public Result binding(@ApiIgnore @RequestParam int bmId , long  mchId){
-        businessManagerService.binding(bmId,mchId);
+      //  businessManagerService.binding(bmId,mchId);
+        return new Result().ok("绑定成功！");
+    }
+    @GetMapping("text")
+    @ApiOperation("1111")
+
+    public Result text(){
+        orderForBm.getOrderByYwy();
         return new Result().ok("绑定成功！");
     }
 }

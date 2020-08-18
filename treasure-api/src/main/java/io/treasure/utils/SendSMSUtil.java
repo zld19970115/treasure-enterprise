@@ -255,11 +255,13 @@ public class SendSMSUtil {
         SMSSend send=new SMSSend(smsConfig);
         Map map=new HashMap();
         map.put("name",merchantName);
-        map.put("value",OrderId);
+        String pwd = OrderId.substring(OrderId.length() - 6);
+        map.put("value",pwd);
         String template= JSON.toJSONString(map);
-        String data=send.send(phoneNumber, "聚宝科技", "SMS_197895067", template);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_199807822", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
+        System.out.println(code+"code+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if("OK".equals(code)){
             ret=true;
         }
