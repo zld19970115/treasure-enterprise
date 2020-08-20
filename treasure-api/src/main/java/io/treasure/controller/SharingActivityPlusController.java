@@ -460,7 +460,19 @@ public class SharingActivityPlusController {
         Integer helpersNum = saItem.getHelpersNum();
 
         SharingInitiatorEntity sharingInitiator =  sharingInitiatorService.getCurrentOne(clientUser.getId(), saId);
+        if(sharingInitiator == null){
+            map.put("client_id",clientId);
+            map.put("token",token);
+            map.put("initiator_head_img",headImg);
+            map.put("client_name",clientName);
+            map.put("helpers",null);
+            map.put("helperReward",null);
+            map.put("finishStamp",null);         //增加时间戮
+            map.put("initiatorEntity",null);
 
+            result.setData(map);
+            return result;
+        }
         List<SharingActivityHelpedEntity> helpedListCombo = null;
         Long initiatorId = sharingInitiator.getInitiatorId();
         Integer activityId = sharingInitiator.getSaId();
@@ -478,7 +490,7 @@ public class SharingActivityPlusController {
         map.put("initiator_head_img",headImg);
         map.put("client_name",clientName);
         map.put("helpers",helpedListCombo);
-        map.put("helperReward",rewardValue);
+        map.put("helperReward",1);
         map.put("finishStamp",finishStamp);         //增加时间戮
         map.put("initiatorEntity",sharingInitiator);
 
