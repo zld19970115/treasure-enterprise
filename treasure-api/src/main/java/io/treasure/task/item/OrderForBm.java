@@ -36,7 +36,7 @@ public class OrderForBm  extends TaskSock {
     //每日凌晨5点进行清台操作
     /**     因为清掉的是此前24小时的订单有可能会带来一个问题就是前几个小时的订单线下未完成的，被清掉了      */
     public void getOrderByYwy() {
-
+        System.out.println("执行了+++++++++++++++++++++++++++++");
             //更新执行程序计数器
             List<OrderDTO> orderDTOS = masterOrderDao.selectForBm();
             for (OrderDTO orderDTO : orderDTOS) {

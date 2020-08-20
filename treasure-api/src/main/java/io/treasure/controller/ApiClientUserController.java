@@ -40,10 +40,8 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +50,7 @@ import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.text.ParseException;
 import java.util.*;
@@ -258,29 +257,50 @@ public class ApiClientUserController {
     @GetMapping("getMobile")
     @ApiOperation("解密并且获取用户手机号码")
     public @ResponseBody String deciphering(String encrypdata,
-                                            String ivdata, String sessionkey)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-                                            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+                                            String ivdata, String sessionkey,
+                                            HttpServletRequest request) {
+        Decoder decoder = Base64.getDecoder();
 
-        byte[] encrypData = Base64Utils.decodeFromString(encrypdata);
-        byte[] ivData = Base64Utils.decodeFromString(ivdata);
-        byte[] sessionKey = Base64Utils.decodeFromString(sessionkey);
-        String resultString = null;
-        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivData);
-        SecretKeySpec keySpec = new SecretKeySpec(sessionKey, "AES");
+        byte[] encrypData = decoder.decode(encrypdata);
+        byte[] ivData = decoder.decode(ivdata);
+        byte[] sessionKey = decoder.decode(sessionkey);
+        String str="";
         try {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+            str = decrypt(sessionKey,ivData,encrypData);
         } catch (Exception e) {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+// TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        JSONObject object = JSONObject.parseObject(resultString);
-        // 拿到手机号码
-        String phone = object.getString("phoneNumber");
-        return phone;
+
+        System.out.println(str);
+        return str;
+
+    }
+    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
+//        // 生成一个可信任的随机数源
+//        SecureRandom sr = new SecureRandom();
+//
+//        // 从原始密钥数据创建DESKeySpec对象
+//        DESKeySpec dks = new DESKeySpec(key);
+//
+//        // 创建一个密钥工厂，然后用它把DESKeySpec转换成SecretKey对象
+//        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+//        SecretKey securekey = keyFactory.generateSecret(dks);
+//
+//        // Cipher对象实际完成解密操作
+//        Cipher cipher = Cipher.getInstance("DES");
+//
+//        // 用密钥初始化Cipher对象
+//        cipher.init(Cipher.DECRYPT_MODE, securekey, sr);
+//
+//        return new String(cipher.doFinal(encData),"UTF-8");
+
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+        //解析解密后的字符串
+        return new String(cipher.doFinal(encData),"UTF-8");
     }
 
 //

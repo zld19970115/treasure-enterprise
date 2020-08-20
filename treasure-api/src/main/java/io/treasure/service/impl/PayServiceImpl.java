@@ -363,14 +363,14 @@ public class PayServiceImpl implements PayService {
 
         //1----更新用户分级内容
         clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
-        RecordGiftEntity recordGiftEntity = new RecordGiftEntity();
-        recordGiftEntity.setCreateDate(new Date());
-        recordGiftEntity.setCreator(clientUserEntity.getId());
-        recordGiftEntity.setUserId(clientUserEntity.getId());
-        recordGiftEntity.setStatus(12);
-        recordGiftEntity.setBalanceGift(clientUserEntity.getGift());
-        recordGiftEntity.setUseGift(chargeCashSetEntity.getChangeGift());
-        recordGiftService.insert(recordGiftEntity);
+//        RecordGiftEntity recordGiftEntity = new RecordGiftEntity();
+//        recordGiftEntity.setCreateDate(new Date());
+//        recordGiftEntity.setCreator(clientUserEntity.getId());
+//        recordGiftEntity.setUserId(clientUserEntity.getId());
+//        recordGiftEntity.setStatus(12);
+//        recordGiftEntity.setBalanceGift(clientUserEntity.getGift());
+//        recordGiftEntity.setUseGift(chargeCashSetEntity.getChangeGift());
+//        recordGiftService.insert(recordGiftEntity);
         return mapRtn;
     }
 
@@ -1046,14 +1046,14 @@ public class PayServiceImpl implements PayService {
 
         //1----更新用户分级内容
         clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
-        RecordGiftEntity recordGiftEntity = new RecordGiftEntity();
-        recordGiftEntity.setCreateDate(new Date());
-        recordGiftEntity.setCreator(clientUserEntity.getId());
-        recordGiftEntity.setUserId(clientUserEntity.getId());
-        recordGiftEntity.setStatus(12);
-        recordGiftEntity.setBalanceGift(clientUserEntity.getGift());
-        recordGiftEntity.setUseGift(chargeCashSetEntity.getChangeGift());
-        recordGiftService.insert(recordGiftEntity);
+//        RecordGiftEntity recordGiftEntity = new RecordGiftEntity();
+//        recordGiftEntity.setCreateDate(new Date());
+//        recordGiftEntity.setCreator(clientUserEntity.getId());
+//        recordGiftEntity.setUserId(clientUserEntity.getId());
+//        recordGiftEntity.setStatus(12);
+//        recordGiftEntity.setBalanceGift(clientUserEntity.getGift());
+//        recordGiftEntity.setUseGift(chargeCashSetEntity.getChangeGift());
+//        recordGiftService.insert(recordGiftEntity);
         return mapRtn;
 
     }
