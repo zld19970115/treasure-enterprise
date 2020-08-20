@@ -258,6 +258,7 @@ public class SendSMSUtil {
         Map map=new HashMap();
         map.put("name",merchantName);
         String pwd = OrderId.substring(OrderId.length() - 6);
+        System.out.println(pwd+"pwd+++++++++++++++++++++++++++++++++++++++++++");
         map.put("value",pwd);
         String template= JSON.toJSONString(map);
         String data=send.send(phoneNumber, "聚宝科技", "SMS_199807822", template);
