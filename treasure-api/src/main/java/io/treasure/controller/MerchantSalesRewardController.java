@@ -13,8 +13,13 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
+import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.common.validator.group.AddGroup;
 import io.treasure.dao.*;
 import io.treasure.dto.GoodDTO;
+import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.enm.Common;
+import io.treasure.enm.WithdrawEnm;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
@@ -22,16 +27,23 @@ import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantSalesRewardService;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.UserWithdrawService;
+import io.treasure.task.item.WithdrawCommissionForMerchant;
+import io.treasure.utils.AdressIPUtil;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.utils.TimeUtil;
+import io.treasure.vo.MchRewardUpdateQuery;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +67,14 @@ public class MerchantSalesRewardController {
 
     @Autowired
     private SMSConfig smsConfig;
+
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
+    @Autowired
+    private UserWithdrawService userWithdrawService;
+
+    @Autowired
+    private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
 
     @CrossOrigin
     @Login
@@ -82,7 +102,18 @@ public class MerchantSalesRewardController {
         merchantSalesRewardService.insertOne(entity);
         return new Result().ok("插入完成");
     }
+    //===============================================第二部分记录CRUD===========================================
+    @CrossOrigin
+    @Login
+    @GetMapping("reward_log")
+    @ApiOperation("奖励记录(单条)")
+    @ApiImplicitParam(name = "id", value = "记录编号", paramType = "query", required = true, dataType="Long")
 
+    public Result getRecord(@RequestParam Long id) throws ParseException {
+
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectById(id);
+        return new Result().ok(entity);
+    }
     @CrossOrigin
     @Login
     @GetMapping("reward_logs")
@@ -91,16 +122,13 @@ public class MerchantSalesRewardController {
             @ApiImplicitParam(name ="mId", value = "商户id", paramType = "query",required = false, dataType="long") ,
             @ApiImplicitParam(name = "rewardValue",value = "奖励值",required = false, paramType = "query", dataType="int"),
             @ApiImplicitParam(name = "outline",value="摘要",paramType = "query",required = false,dataType = "int"),
-            @ApiImplicitParam(name = "createPmt",value="创建时间",paramType = "query",required = false,dataType = "date"),
-            @ApiImplicitParam(name = "startTime", value = "开始时间", paramType = "query", required = false, dataType="date") ,
-            @ApiImplicitParam(name = "stopTime", value = "结束时间", paramType = "query",required = false, dataType="date") ,
             @ApiImplicitParam(name = "minValue", value = "最小值", paramType = "query",required = false, dataType="int") ,
             @ApiImplicitParam(name = "index",value="页码",paramType = "query",required = false,dataType = "int"),
             @ApiImplicitParam(name = "pagesNum",value="页数",paramType = "query",required = false,dataType = "int")
     })
 
-    public Result<IPage<MerchantSalesRewardRecordEntity>> getRecords(Long mId,Integer rewardValue,String outline,
-                                                                     Date createPmt,Date startTime,Date stopTime,Integer minValue,
+    public Result<IPage<MerchantSalesRewardRecordEntity>> getRecords(Long mId,Integer rewardValue,
+                                                                     String outline,Integer minValue,
                                                                      Integer index,Integer pagesNum) throws ParseException {
 
         MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
@@ -114,18 +142,8 @@ public class MerchantSalesRewardController {
             entity.setRewardValue(rewardValue);
         if(outline != null)
             entity.setOutline(outline);
-        if(createPmt != null)
-            entity.setCreatePmt(createPmt);
-        if(startTime != null)
-            vo.setStartTime(startTime);
-        if(stopTime != null)
-            vo.setStopTime(stopTime);
         if(minValue != null)
             vo.setMinValue(minValue.doubleValue());
-        if(startTime == null && stopTime == null && createPmt == null){
-            Date currentMonthStart = TimeUtil.getMonthStart(null);
-            Date currentMonthStop = TimeUtil.getMonthEnd(null);
-        }
         vo.setMerchantSalesRewardRecordEntity(entity);
         Integer indexs = index == null?0:index;
         Integer pagesNums = pagesNum==null?10:pagesNum;
@@ -140,69 +158,14 @@ public class MerchantSalesRewardController {
 
     @CrossOrigin
     @Login
-    @GetMapping("reward_log")
-    @ApiOperation("奖励记录(单条)")
-    @ApiImplicitParam(name = "id", value = "记录编号", paramType = "query", required = true, dataType="Long")
-
-    public Result getRecord(@RequestParam Long id) throws ParseException {
-
-        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectById(id);
-        return new Result().ok(entity);
-    }
-
-
-    @CrossOrigin
-    @Login
     @GetMapping("reward_cash")
     @ApiOperation("查询待提总现金额")
     @ApiImplicitParam(name = "id", value = "记录编号", paramType = "query", required = true, dataType="Long")
 
-    public Result getRewardCash(@RequestParam Long id) throws ParseException {
+    public Result getRewardCash(@RequestParam Long id){
 
-        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("sum(reward_value) as reward_value");
-        queryWrapper.eq("m_id",id);
-        queryWrapper.eq("cash_out_status",1);
-
-        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
-        return new Result().ok(entity);
-    }
-
-    @Autowired(required = false)
-    private MerchantDao merchantDao;
-    @Autowired
-    private UserWithdrawService userWithdrawService;
-
-    @CrossOrigin
-    @Login
-    @PutMapping("reward_cash")
-    @ApiOperation("商家佣金提现")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "商户id", paramType = "query", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "method", value = "提现方式", paramType = "query",required = true, dataType="int")
-    })
-    public Result mchWithDraw(@RequestParam Long id,Integer method) throws ParseException {
-
-        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("sum(reward_value) as reward_value");
-        queryWrapper.eq("m_id",id);
-        queryWrapper.eq("cash_out_status",1);
-
-        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
-        Integer canWithDraw = entity.getRewardValue();//可提现金额
-
-
-        boolean withDrawResult = false;
-        if(method == 2){
-            //userWithdrawService.AliMerchantCommissionWithDraw();
-        }else{
-            //userWithdrawService.wxMerchantCommissionWithDraw();
-        }
-
-        //执行提现操作
-
-
-        return new Result().ok(entity);
+        String notWithdrawRewardAmount = merchantSalesRewardService.getNotWithdrawRewardAmount(id);
+        return new Result().ok(notWithdrawRewardAmount);
     }
 
     @CrossOrigin
@@ -219,17 +182,24 @@ public class MerchantSalesRewardController {
     @PostMapping("reward_log")
     @ApiOperation("增加商户返现记录(单条)")
     public Result insertRecord(@RequestBody  MerchantSalesRewardRecordEntity entity){
-        merchantSalesRewardService.insertRecord(entity);
-        return new Result().ok("添加记录成功");
+        //增加校验
+        Long mId = entity.getMId();
+        String amount = merchantSalesRewardService.getNotWithdrawRewardAmount(mId);
+        if(amount.equals(entity.getRewardValue().toString())){
+            merchantSalesRewardService.insertRecord(entity);
+            return new Result().ok("添加记录成功");
+        }
+        return new Result().ok("添加金额与实际金额不符");
     }
 
     @CrossOrigin
     @Login
     @PostMapping("reward_logs")
-    @ApiOperation("增加商户返现记录(自动增加)")
-    public Result insertRecords(@RequestBody  List<RewardMchList> list){
-
-        merchantSalesRewardService.insertBatchRecords(list);
+    @ApiOperation("增加商户返现记录(增加多条)")
+    public Result insertRecords(@RequestBody  List<Long> mchIds){
+        //增加校验
+        List<RewardMchList> rewardMchList = merchantSalesRewardService.getRewardMchList(mchIds);
+        merchantSalesRewardService.insertBatchRecords(rewardMchList);
         return new Result().ok("添加记录成功");
     }
 
@@ -241,24 +211,12 @@ public class MerchantSalesRewardController {
 
             @ApiImplicitParam(name = "ranking", value = "名次", paramType = "query",required = false, dataType="int") ,
             @ApiImplicitParam(name = "minValue", value = "最小值", paramType = "query",required = false, dataType="int") ,
-            @ApiImplicitParam(name = "yearMonth",value="指定时间",paramType = "query",required = false,dataType = "string"),
             @ApiImplicitParam(name = "index",value="页码",paramType = "query",required = false,dataType = "int"),
             @ApiImplicitParam(name = "pagesNum",value="页数",paramType = "query",required = false,dataType = "int")
     })
-    public Result getRewardMchList(Integer ranking,Integer minValue,String yearMonth,Integer index,Integer pagesNum) throws ParseException {
-
-        Date monthStart = null;
-        Date monthStop = null;
-        if(yearMonth != null){
-            String[] split = yearMonth.split("-");
-            String tTime = split[0]+"-"+split[1]+"-01 00:00:00";
-            Date parse = TimeUtil.simpleDateFormat.parse(tTime);
-            monthStart = TimeUtil.getMonthStart(parse);
-            monthStop = TimeUtil.getMonthEnd(parse);
-        }else{
-            monthStart = TimeUtil.getMonthStart(null);
-            monthStop = TimeUtil.getMonthEnd(null);
-        }
+    public Result getRewardMchList(Integer ranking,Integer minValue,Integer index,Integer pagesNum) throws ParseException {
+        //!!!!!!!!!!!!!!!!!!!
+        Date monthStop =  TimeUtil.getMonthEnd(null);
 
         MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
         if(ranking != null){
@@ -266,7 +224,6 @@ public class MerchantSalesRewardController {
         }
         if(minValue != null)
             vo.setMinValue(minValue.doubleValue());
-        vo.setStartTime(monthStart);
         vo.setStopTime(monthStop);
 
         Integer indexs = index == null?0:index;
@@ -280,6 +237,137 @@ public class MerchantSalesRewardController {
 
         List<RewardMchList> rewardMchList = merchantSalesRewardService.getRewardMchList(vo);
         return new Result().ok(rewardMchList);
+    }
+    //=========================================================================================
+    @Autowired
+    private SendSMSUtil sendSMSUtil;
+
+    @Login
+    @PostMapping("apply_for")
+    @ApiOperation("申请提现")
+    public Result save(@RequestBody List<MerchantSalesRewardRecordEntity> entities,@RequestParam HttpServletRequest request){
+
+        if(entities.size()==0)
+            return new Result().ok("no content");
+
+        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
+        List<Long> ids = new ArrayList<>();
+        for(int i=0;i<entities.size();i++){
+            Long id = entities.get(i).getId();
+            ids.add(id);
+
+            MerchantEntity merchantEntity = merchantDao.selectById(entities.get(i).getMId());
+            String ipAddress= AdressIPUtil.getClientIpAddress(request);
+            if(ipAddress != null){
+                merchantEntity.setAddress(ipAddress);
+                merchantDao.updateById(merchantEntity);
+            }
+        }
+        mchRewardUpdateQuery.setIds(ids);
+        mchRewardUpdateQuery.setStatus(3);//申请提现
+        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
+
+        //给平台发送提现申请消息
+        if(entities.size()== 1){
+            MerchantSalesRewardRecordEntity entity = entities.get(0);
+            Integer status = entity.getStatus();
+            if(status == 3){
+                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+                if(merchantEntity != null){
+                    String fee = "0";
+                    BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
+                    value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
+                    sendSMSUtil.commissionNotify("15303690053",merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
+                }
+            }
+        }else if(entities.size()> 1){
+            sendSMSUtil.commissionNotify("15303690053","多位商家","X", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
+        }
+
+        return new Result().ok("success");
+    }
+    @CrossOrigin
+    @Login
+    @PutMapping("refuse")
+    @ApiOperation("拒绝提现")
+    public Result refuse(@RequestBody List<MerchantSalesRewardRecordEntity> entities){
+
+        if(entities.size()==0)
+            return new Result().ok("no content");
+
+        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
+        List<Long> ids = new ArrayList<>();
+        for(int i=0;i<entities.size();i++){
+            Long id = entities.get(i).getId();
+            ids.add(id);
+        }
+        mchRewardUpdateQuery.setIds(ids);
+        mchRewardUpdateQuery.setStatus(2);
+        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
+        List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
+        for(int i=0;i<entities.size();i++){
+            MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
+            Integer status = entity.getStatus();
+            if(status == 2){
+                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+                if(merchantEntity != null){
+                    String fee = "0";
+                    BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
+                    value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
+                    sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
+                }
+            }
+        }
+        return new Result().ok("refused");
+    }
+
+    @CrossOrigin
+    @Login
+    @PutMapping("agree")
+    @ApiOperation("同意提现")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
+            @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
+    })
+    public Result agree(@RequestBody List<MerchantSalesRewardRecordEntity> entities){
+
+        if(entities.size()==0)
+            return new Result().ok("no content");
+
+        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
+        List<Long> ids = new ArrayList<>();
+        for(int i=0;i<entities.size();i++){
+            Long id = entities.get(i).getId();
+            ids.add(id);
+        }
+        mchRewardUpdateQuery.setIds(ids);
+        mchRewardUpdateQuery.setStatus(1);
+        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
+
+        //执行提现操作
+        withdrawCommissionForMerchant.setForceRunOnce(true);
+        withdrawCommissionForMerchant.resetTaskCounter();
+
+        return new Result().ok("agreed");
+    }
+    public Result rewardCash(@RequestParam Long id,Integer method) throws ParseException {
+
+        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("sum(reward_value) as reward_value");
+        queryWrapper.eq("m_id",id);
+        queryWrapper.eq("cash_out_status",1);
+        queryWrapper.eq("status",1);
+
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
+        Integer canWithDraw = entity.getRewardValue();//可提现金额
+
+        boolean withDrawResult = false;
+
+        //执行提现操作
+        return new Result().ok(entity);
     }
 
 }

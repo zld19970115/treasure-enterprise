@@ -156,7 +156,6 @@ public class MerchantWithdrawController {
             return new Result().error("提现范围在1~5000元");
         }
 
-//
 //        if((int)money != money){
 //            return new Result().error("请输入整数");
 //        }
