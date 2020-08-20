@@ -283,41 +283,41 @@ public class ApiClientUserController {
         return phone;
     }
 
-
-    public static String getWxMiniPhone(String sessionkey, String iv, String encryptedData)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
-
-        byte[] encrypData = Base64Utils.decodeFromString(encryptedData);
-        byte[] ivData = Base64Utils.decodeFromString(iv);
-        byte[] sessionKey = Base64Utils.decodeFromString(sessionkey);
-        String resultString = null;
-        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivData);
-        SecretKeySpec keySpec = new SecretKeySpec(sessionKey, "AES");
-        try {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
-        } catch (Exception e) {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
-        }
-        JSONObject object = JSONObject.parseObject(resultString);
-        // 拿到手机号码
-        String phone = object.getString("phoneNumber");
-        return phone;
-    }
-
-
-    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
-        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        //解析解密后的字符串
-        return new String(cipher.doFinal(encData),"UTF-8");
-    }
+//
+//    public static String getWxMiniPhone(String sessionkey, String iv, String encryptedData)
+//            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+//            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+//
+//        byte[] encrypData = Base64Utils.decodeFromString(encryptedData);
+//        byte[] ivData = Base64Utils.decodeFromString(iv);
+//        byte[] sessionKey = Base64Utils.decodeFromString(sessionkey);
+//        String resultString = null;
+//        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivData);
+//        SecretKeySpec keySpec = new SecretKeySpec(sessionKey, "AES");
+//        try {
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+//        } catch (Exception e) {
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+//        }
+//        JSONObject object = JSONObject.parseObject(resultString);
+//        // 拿到手机号码
+//        String phone = object.getString("phoneNumber");
+//        return phone;
+//    }
+//
+//
+//    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
+//        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
+//        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+//        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//        //解析解密后的字符串
+//        return new String(cipher.doFinal(encData),"UTF-8");
+//    }
     @Login
     @PutMapping("editPassword")
     @ApiOperation("修改密码")
