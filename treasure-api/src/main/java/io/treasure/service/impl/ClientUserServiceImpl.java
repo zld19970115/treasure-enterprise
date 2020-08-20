@@ -81,16 +81,22 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
-    public Result login(String mobie) {
-        ClientUserEntity user = getByMobile(mobie);
+    public Result login(String mobile,String unionid) {
+        ClientUserEntity user = getByMobile(mobile);
         Map<String, Object> map = new HashMap<>(2);
        if (user==null){
-           user.setLevel(1);
-           user.setMobile(mobie);
-           user.setUsername(mobie);
-           user.setCreateDate(new Date());
-           baseDao.insert(user);
-           ClientUserEntity userByPhone1 = baseDao.getUserByPhone(mobie);
+           ClientUserEntity user1 =  new ClientUserEntity();
+           user1.setLevel(1);
+           user1.setMobile(mobile);
+           user1.setUsername(mobile);
+           user1.setGift(new BigDecimal("50"));
+           user1.setCreateDate(new Date());
+           if (unionid!=null){
+               user1.setUnionid(unionid);
+           }
+
+           baseDao.insert(user1);
+           ClientUserEntity userByPhone1 = baseDao.getUserByPhone(mobile);
            tokenService.createToken(userByPhone1.getId());
            map.put("user", userByPhone1);
            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());

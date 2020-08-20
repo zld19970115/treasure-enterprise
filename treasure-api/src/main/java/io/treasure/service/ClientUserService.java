@@ -28,7 +28,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     ClientUserEntity getByMobile(String mobile);
     void updateWX(String userId);
-    Result login(String mobie);
+    Result login(String mobile,String unionid);
     String  selectZSCoinTotx();
     String  selectCoinToBalance();
     List<LevelStatusEntity> selectLevelStatus(long userId);

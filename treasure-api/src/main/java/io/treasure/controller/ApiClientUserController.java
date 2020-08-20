@@ -220,13 +220,13 @@ public class ApiClientUserController {
     @PostMapping("userLogin")
     @ApiOperation("用户登录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cid", value = "个推ID", required = true, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "mobie", value = "手机号", required = true, paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "unionid", value = "unionid", required = true, paramType = "query", dataType = "String")
     })
-    public Result login(String mobie, String cid) {
+    public Result login(String mobile,String unionid) {
         //用户登录
-        Result  result = clientUserService.login(mobie);
-        clientUserService.updateCID(cid, mobie);
+        Result  result = clientUserService.login(mobile,unionid);
+     //   clientUserService.updateCID(cid, mobile);
         return new Result().ok(result);
     }
 
@@ -263,6 +263,7 @@ public class ApiClientUserController {
 // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         System.out.println(str);
         return str;
 
