@@ -230,10 +230,12 @@ public class MerchantSalesRewardController {
         Integer pagesNums = pagesNum==null?10:pagesNum;
         if(indexs >0)
             indexs --;
-        index = index * pagesNums;
+        indexs = indexs * pagesNums;
+        System.out.println("index,pagesNums:"+index+","+pagesNums);
 
         vo.setIndex(indexs);
         vo.setPagesNum(pagesNums);
+
 
         List<RewardMchList> rewardMchList = merchantSalesRewardService.getRewardMchList(vo);
         return new Result().ok(rewardMchList);
@@ -287,6 +289,7 @@ public class MerchantSalesRewardController {
 
         return new Result().ok("success");
     }
+
     @CrossOrigin
     @Login
     @PutMapping("refuse")
