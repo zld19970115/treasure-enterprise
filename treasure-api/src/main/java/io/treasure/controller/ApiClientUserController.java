@@ -37,10 +37,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.security.spec.AlgorithmParameterSpec;
 import java.text.ParseException;
 import java.util.*;
+import java.util.Base64.Decoder;
 
 
 /**
@@ -190,7 +195,7 @@ public class ApiClientUserController {
     }
 
     @PostMapping("userRegister")
-    @ApiOperation("用户注册")
+    @ApiOperation("用户注册(已删除)")
     public Result userRegister(@RequestBody ClientUserDTO dto) {
         //表单校验
         ValidatorUtils.validateEntity(dto);
@@ -215,16 +220,14 @@ public class ApiClientUserController {
     @PostMapping("userLogin")
     @ApiOperation("用户登录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cid", value = "个推ID", required = true, paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "cid", value = "个推ID", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "mobie", value = "手机号", required = true, paramType = "query", dataType = "String")
     })
-    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto, String cid) {
-        //表单校验
-        ValidatorUtils.validateEntity(dto);
-
+    public Result login(String mobie, String cid) {
         //用户登录
-        Map<String, Object> map = clientUserService.login(dto);
-        clientUserService.updateCID(cid, dto.getMobile());
-        return new Result().ok(map);
+        Result  result = clientUserService.login(mobie);
+        clientUserService.updateCID(cid, mobie);
+        return new Result().ok(result);
     }
 
     @Login
@@ -234,7 +237,44 @@ public class ApiClientUserController {
         tokenService.expireToken(userId);
         return new Result();
     }
+    /**
+     * 解密并且获取用户手机号码
+     * @param encrypdata
+     * @param ivdata
+     * @param sessionkey
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("getMobile")
+    @ApiOperation("解密并且获取用户手机号码")
+    public @ResponseBody String deciphering(String encrypdata,
+                                            String ivdata, String sessionkey,
+                                            HttpServletRequest request) {
+        Decoder decoder = Base64.getDecoder();
 
+        byte[] encrypData = decoder.decode(encrypdata);
+        byte[] ivData = decoder.decode(ivdata);
+        byte[] sessionKey = decoder.decode(sessionkey);
+        String str="";
+        try {
+            str = decrypt(sessionKey,ivData,encrypData);
+        } catch (Exception e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(str);
+        return str;
+
+    }
+    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+        //解析解密后的字符串
+        return new String(cipher.doFinal(encData),"UTF-8");
+    }
     @Login
     @PutMapping("editPassword")
     @ApiOperation("修改密码")

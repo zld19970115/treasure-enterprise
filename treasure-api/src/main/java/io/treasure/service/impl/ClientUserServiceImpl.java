@@ -81,26 +81,32 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
-    public Map<String, Object> login(LoginDTO dto) {
-        ClientUserEntity user = getByMobile(dto.getMobile());
-        AssertUtils.isNull(user, ErrorCode.ACCOUNT_PASSWORD_ERROR);
-
-        //密码错误
-        if(!user.getPassword().equals(DigestUtils.sha256Hex(dto.getPassword()))){
-            throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
-        }
-//        if(user.getStatus()==9){
-//            throw new RenException(14000,"用户已注销");
-//        }
-        //获取登录token
-        TokenEntity tokenEntity = tokenService.createToken(user.getId());
-
+    public Result login(String mobie) {
+        ClientUserEntity user = getByMobile(mobie);
         Map<String, Object> map = new HashMap<>(2);
-        map.put("user",user);
-        map.put("token", tokenEntity.getToken());
-        map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
+       if (user==null){
+           user.setLevel(1);
+           user.setMobile(mobie);
+           user.setUsername(mobie);
+           user.setCreateDate(new Date());
+           baseDao.insert(user);
+           ClientUserEntity userByPhone1 = baseDao.getUserByPhone(mobie);
+           tokenService.createToken(userByPhone1.getId());
+           map.put("user", userByPhone1);
+           TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+           map.put("token", byUserId.getToken());
+           map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
+           return new Result().ok(map);
+       }else {
+           //获取登录token
+           TokenEntity tokenEntity = tokenService.createToken(user.getId());
+           map.put("user",user);
+           map.put("token", tokenEntity.getToken());
+           map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
 
-        return map;
+           return new Result().ok(map);
+       }
+
     }
 
     @Override
