@@ -38,6 +38,9 @@
         <result property="party" column="party"/>
         <result property="special" column="special"/>
         <result property="mchIp" column="mch_ip"/>
+        <result property="commissionWithdraw" column="commission_withdraw"/>
+        <result property="commissionAudit" column="commission_audit"/>
+        <result property="commissionNotWithdraw" column="commission_not_withdraw"/>
     </resultMap>
 
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">

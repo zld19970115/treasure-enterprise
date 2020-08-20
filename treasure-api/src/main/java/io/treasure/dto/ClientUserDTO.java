@@ -130,16 +130,6 @@ public class ClientUserDTO implements Serializable {
 	@ApiModelProperty(value = "个推客户Id")
 	private String clientId;
 
-	//未提现佣金
-	@ApiModelProperty(value = "未提现佣金")
-	private BigDecimal commissionNotWithdraw;
-	//审核佣金
-	@ApiModelProperty(value = "审核佣金")
-	private BigDecimal commissionAudit;
-	//已提现佣金
-	@ApiModelProperty(value = "已提现佣金")
-	private BigDecimal commissionWithdraw;
-
 	public void setGift(BigDecimal gift){
 		System.out.println("the gift current value:"+gift);
 		this.gift = gift;

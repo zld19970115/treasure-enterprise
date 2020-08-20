@@ -139,14 +139,6 @@ public class ClientUserEntity extends BaseEntity {
 	 */
 	private String clientId;
 
-	//未提现佣金
-	private BigDecimal commissionNotWithdraw;
-	//审核佣金
-	private BigDecimal commissionAudit;
-	//已提现佣金
-	private BigDecimal commissionWithdraw;
-
-
 	public void setGiftAnotherWay(BigDecimal gift){
 		this.gift = gift;
 	}

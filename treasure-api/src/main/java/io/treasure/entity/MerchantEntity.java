@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -229,6 +230,9 @@ public class MerchantEntity implements Serializable {
 	private Integer special;
 
 	private String mchIp;
+	private BigDecimal commissionNotWithdraw;
+	private BigDecimal commissionAudit;
+	private BigDecimal commissionWithdraw;
 
 	
 }
