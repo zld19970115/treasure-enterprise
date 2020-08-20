@@ -15,24 +15,21 @@ public class Task {
     @Autowired
     private OrderForBm orderForBm;
     @Autowired
-    private InitGoodsDatabase initGoodsDatabase;
-    @Autowired
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
     @Autowired
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
-
     //处理次数记录
     private int taskInProcess = 0;
 
+    int i=0;
     @Scheduled(fixedDelay = 5000)
-    public void TaskManager() throws Exception {
-        if(isInProcess()) return;
-        lockedTask();//
+    public void TaskManager(){
 
         //0,复位所有定时任务
         if(TimeUtil.resetTaskStatusTime()){
             resetAllCounter();
         }
+        System.out.println("times:"+i);
         //1,自动清台任务+加销奖励
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);

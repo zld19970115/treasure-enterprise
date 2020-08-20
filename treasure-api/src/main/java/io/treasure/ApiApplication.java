@@ -9,8 +9,10 @@
 
 package io.treasure;
 import com.alipay.api.java_websocket.WebSocketImpl;
+import io.treasure.task.Task;
 import org.apache.catalina.connector.Connector;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,12 +41,15 @@ import java.util.regex.Pattern;
 
 @EnableScheduling
 @EnableTransactionManagement
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 @SpringBootApplication
 @ServletComponentScan
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ApiApplication extends SpringBootServletInitializer {
 	@Value("${server.http.port}")
 	private Integer port;
+
+	@Autowired
+	private Task task;
 	@Bean
 	public ServletWebServerFactory servletContainer() {
 		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
@@ -76,6 +81,12 @@ public class ApiApplication extends SpringBootServletInitializer {
 		s.start();
 		System.out.println("websocket启动成功");
 	}
+
+//	@Scheduled(fixedDelay = 5000)
+//	public void schedule(){
+//		task.TaskManager();
+//		System.out.println("hh");
+//	}
 
 
 }
