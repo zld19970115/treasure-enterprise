@@ -8,6 +8,7 @@ import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.LevelStatusEntity;
+import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,6 +60,8 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     //宝币
     void addBalanceByUserid(String userId, String baobi);
+
+    Result appLoginCheck(AppLoginCheckVo vo);
 
 
 

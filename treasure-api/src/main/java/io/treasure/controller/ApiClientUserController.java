@@ -30,6 +30,7 @@ import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.*;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.LevelVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -868,5 +869,19 @@ public class ApiClientUserController {
         clientUserEntity.setBalance(add);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("成功");
+    }
+
+
+    @PostMapping("app_login_check")
+    @ApiOperation("APP用户登录验证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "unionid", value = "unionid", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "headIcon", value = "头像", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "nickName", value = "昵称", required = false, paramType = "query", dataType = "String")
+    })
+    public Result appLogin(@RequestBody AppLoginCheckVo vo) {
+        Result  result = clientUserService.appLoginCheck(vo);
+        return new Result().ok(result);
     }
 }

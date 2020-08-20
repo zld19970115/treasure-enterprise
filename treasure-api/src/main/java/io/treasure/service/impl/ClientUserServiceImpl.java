@@ -22,6 +22,7 @@ import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
+import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.MerchantAccountVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -308,6 +309,100 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if (tmp != null)
             res = tmp;
         return res;
+    }
+
+    private ClientUserEntity registerDefault(ClientUserEntity user){
+        BigDecimal rewardRegister = new BigDecimal("50");
+        user.setLevel(1);
+        user.setGift(new BigDecimal("50"));
+        return user;
+    }
+    private Result userRegister(AppLoginCheckVo vo){
+        Map<String, Object> map = new HashMap<>(2);
+        ClientUserEntity user =  new ClientUserEntity();
+        user.setLevel(1);
+        user.setMobile(vo.getMobile());
+        if(vo.getNickName() != null){
+            user.setUsername(vo.getNickName());
+        }else{
+            user.setUsername(vo.getMobile());
+        }
+        if(vo.getHeadIcon() != null){
+            user.setHeadImg(vo.getHeadIcon());
+        }
+        if(vo.getUnionid() != null){
+            user.setUnionid(vo.getUnionid());
+        }
+        user.setGift(new BigDecimal("50"));
+        user.setCreateDate(new Date());
+        baseDao.insert(user);
+
+        ClientUserEntity userByPhone = baseDao.getUserByPhone(vo.getMobile());
+        tokenService.createToken(userByPhone.getId());
+        map.put("user", userByPhone);
+        TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+        map.put("token", byUserId.getToken());
+        map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
+        return new Result().ok(map);
+    }
+    private Result loginSuccess(ClientUserEntity user){
+
+        Map<String, Object> map = new HashMap<>(2);
+        TokenEntity tokenEntity = tokenService.createToken(user.getId());
+        map.put("user",user);
+        map.put("token", tokenEntity.getToken());
+        map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
+
+        return new Result().ok(map);
+    }
+
+    @Override
+    public Result appLoginCheck(AppLoginCheckVo vo) {
+        String mobile = vo.getMobile();
+        String unionid = vo.getUnionid();
+        String headIcon = vo.getHeadIcon();
+        String nickName = vo.getNickName();
+        if(mobile != null){
+            ClientUserEntity user = clientUserDao.getUserByMobile(mobile);
+            if(user != null){
+                int updateFlag = 0;
+                if(headIcon != null){
+                    if(user.getHeadImg().equals(null)){
+                        user.setHeadImg(headIcon);
+                        updateFlag++;
+                    }
+                }
+                if(nickName != null){
+                    if(user.getUsername()==user.getMobile()){
+                        user.setUsername(nickName);
+                        updateFlag++;
+                    }
+                }
+                if(updateFlag>0){
+                    updateFlag=0;
+                    clientUserDao.updateById(user);
+                }
+                return loginSuccess(user);
+            }else{
+                //走注册流程
+                return userRegister(vo);
+            }
+        }
+
+        if(unionid != null){
+            QueryWrapper<ClientUserEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("unionid",unionid);
+            List<ClientUserEntity> user = clientUserDao.selectList(queryWrapper);
+            if(user.size()<0){
+                if(user.size()<1){
+                    System.out.println("用户帐号："+user.get(0).toString()+"重复，请及时处理！");
+                }
+                return loginSuccess(user.get(0));
+            }else{
+                return new Result().error("failure");
+            }
+        }
+        return new Result().error("failure");
     }
 
 }
