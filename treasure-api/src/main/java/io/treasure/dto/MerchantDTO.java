@@ -180,6 +180,9 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "推荐菜")
 	private GoodDTO goodDTO;
+
+	private String mchIp;
+
 	@Override
 	public boolean equals(Object obj) {
 		MerchantDTO u = (MerchantDTO) obj;

@@ -32,6 +32,11 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
         <result property="clientId" column="client_id"/>
+
+        <result property="commissionWithdraw" column="commission_withdraw"/>
+        <result property="commissionAudit" column="commission_audit"/>
+        <result property="commissionNotWithdraw" column="commission_not_withdraw"/>
+
     </resultMap>
     <insert id="insertLevelStatus">
         INSERT INTO ct_level_status (user_id, leveled,blance) VALUES (#{userId}, #{level},#{balance})

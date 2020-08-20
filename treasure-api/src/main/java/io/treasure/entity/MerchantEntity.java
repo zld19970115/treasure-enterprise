@@ -228,5 +228,7 @@ public class MerchantEntity implements Serializable {
 
 	private Integer special;
 
+	private String mchIp;
+
 	
 }

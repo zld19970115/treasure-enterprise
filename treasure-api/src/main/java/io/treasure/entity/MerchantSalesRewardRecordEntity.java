@@ -22,6 +22,8 @@ public class MerchantSalesRewardRecordEntity {
     private Integer preferenceVolume;
     private Integer method;
     private Integer cashOutStatus;
+    private Integer status;
+    private String auditComment;
     private Date withDrawTime;
     private Date createPmt;
 

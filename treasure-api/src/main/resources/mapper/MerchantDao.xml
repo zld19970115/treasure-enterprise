@@ -37,7 +37,9 @@
         <result property="depost" column="depost"/>
         <result property="party" column="party"/>
         <result property="special" column="special"/>
+        <result property="mchIp" column="mch_ip"/>
     </resultMap>
+
     <update id="updateStatusById" parameterType="io.treasure.entity.MerchantEntity">
         update ct_merchant set status=#{status} where id=#{id}
     </update>

@@ -22,5 +22,25 @@
         order by sales_volume desc, order_volume desc
         limit #{index},#{pageNum}
     </select>
+    <select id="getRewardMchList" parameterType="list" resultType="io.treasure.vo.RewardMchList">
+        select merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceeds
+        from ct_master_order
+        <where>
+            merchant_id in
+            <foreach collection="list" item="mIds" separator="," open="(" close=")">
+                #{mIds,jdbcType = BIGINT}
+            </foreach>
+        </where>
+
+    </select>
+    <update id="updateStatusByIds" parameterType="io.treasure.vo.MchRewardUpdateQuery">
+        update merchant_sales_reward_record set status = #{status},audit_comment = #{comment}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" separator="," open="(" close=")">
+                #{ids,jdbcType = BIGINT}
+            </foreach>
+        </where>
+    </update>
 
 </mapper>

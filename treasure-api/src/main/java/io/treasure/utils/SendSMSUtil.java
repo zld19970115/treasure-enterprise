@@ -8,6 +8,7 @@ import io.treasure.common.sms.SMSSend;
 import io.treasure.common.utils.Result;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.Map;
 /**
  * 短信工具类
  */
+@Component
 public class SendSMSUtil {
 
     /**
@@ -406,5 +408,70 @@ public class SendSMSUtil {
             result.error(-3,"验证码不一致");
         }
         return result;
+    }
+
+    @Autowired
+    private SMSConfig smsConfig;
+    private static String processDeadCode ="SMS_200190332";//服务程序宕机
+    private static String commissionWithdrawSuccessCode = "SMS_200185322";//佣金成功
+    private static String commissionWithdrawFailuredCode = "SMS_200190315";//佣金有误会
+    private static String commissionService = "SMS_200175495";//佣金提现申请
+    private static String signName = "聚宝科技";
+
+    public enum CommissionNotifyType{
+        SUCESS_NOTIFY,
+        DENIED_NOTIFY,
+        REQUIRE_NOTIFY,
+        SERVICE_NOTIFY;
+    }
+    public boolean commissionNotify(String mobile,String mchName,String value,CommissionNotifyType type) {
+
+        SMSSend sms=new SMSSend(smsConfig);
+
+        Map map=new HashMap();
+        map.put("name",mchName);//商户名
+        map.put("value",value);//
+        String template= JSON.toJSONString(map);
+
+        String templateCode = null;
+        switch(type){
+            case SUCESS_NOTIFY:
+                templateCode = commissionWithdrawSuccessCode;
+                break;
+            case DENIED_NOTIFY:
+                templateCode = commissionWithdrawFailuredCode;
+                break;
+            case SERVICE_NOTIFY:
+                templateCode = commissionService;
+                break;
+        }
+
+        String data=sms.send(mobile, signName, templateCode, template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            return true;
+        }
+        System.out.println("Commission sms:"+data);
+        return false;
+    }
+
+    public boolean serviceNotify(String mobile,String serverName,String processName) {
+
+        SMSSend sms=new SMSSend(smsConfig);
+
+        Map map=new HashMap();
+        map.put("sname",serverName);
+        map.put("pname",processName);
+
+        String template= JSON.toJSONString(map);
+        String data=sms.send(mobile, signName, processDeadCode, template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            return true;
+        }
+        System.out.println("Service sms:"+data);
+        return false;
     }
 }

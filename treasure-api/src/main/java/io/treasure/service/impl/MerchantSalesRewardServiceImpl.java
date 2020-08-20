@@ -1,22 +1,29 @@
 package io.treasure.service.impl;
 
+import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.treasure.common.exception.RenException;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantSalesRewardDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
+import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.service.MerchantSalesRewardService;
+import io.treasure.utils.AdressIPUtil;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
 import lombok.Data;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,10 +77,10 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
 
         if(vo.getMinValue() != null)
             queryWrapper.le("reward_value",vo.getMinValue());//须测
-        if(vo.getStartTime() != null)
-            queryWrapper.ge("create_pmt",vo.getStartTime());
-        if(vo.getStopTime() != null)
-            queryWrapper.le("create_pmt",vo.getStopTime());
+//        if(vo.getStartTime() != null)
+//            queryWrapper.ge("create_pmt",vo.getStartTime());
+//        if(vo.getStopTime() != null)
+//            queryWrapper.le("create_pmt",vo.getStopTime());
 
         Page<MerchantSalesRewardRecordEntity> map = new Page<MerchantSalesRewardRecordEntity>(vo.getIndex(),vo.getPagesNum());
         IPage<MerchantSalesRewardRecordEntity> pages = merchantSalesRewardRecordDao.selectPage(map,queryWrapper);
@@ -86,9 +93,19 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         return list;
     }
 
+    public List<RewardMchList> getRewardMchList(List<Long> mIds){
+        List<RewardMchList> rewardMchList = merchantSalesRewardRecordDao.getRewardMchList(mIds);
+        return rewardMchList;
+    }
+
     @Override
     public void delRecord(Long id){
-        merchantSalesRewardRecordDao.deleteById(id);
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectById(id);
+        if(entity != null){
+            if(entity.getCashOutStatus()== 2){//2表示已提现
+                merchantSalesRewardRecordDao.deleteById(id);
+            }
+        }
     }
 
     @Override
@@ -110,6 +127,9 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
             targetItem.setPreferenceVolume(Integer.parseInt(s));
 
             String merchantProceed = new BigDecimal(rewardMchList.getMerchantProceed()).setScale(0, BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
+
+            //重新获取需要要反现的记录列表
+
             targetItem.setRewardValue(Integer.parseInt(merchantProceed));
 
             targetItem.setCreatePmt(new Date());
@@ -129,5 +149,53 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         }
         return 1;
     }
+
+    public String getNotWithdrawRewardAmount(Long mchId){
+
+        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("sum(reward_value) as reward_value");
+        queryWrapper.eq("m_id",mchId);
+        queryWrapper.eq("cash_out_status",1);
+
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
+        if(entity != null){
+            return entity.getRewardValue().toString();
+        }
+        return "0";
+    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public Result audit(UserWithdrawDTO dto, HttpServletRequest request) throws AlipayApiException {
+//        Result result=new Result();
+//        Date date = new Date();
+//        int state=dto.getVerifyState();
+//        if(state==1){
+//            throw new RenException("审核状态不正确！！！");
+//        }else{
+//            dto.setVerifyDate(date);
+//        }
+//        if(state==2){
+//            int type=dto.getType();
+//            String orderNumber=dto.getId().toString();
+//            Long userId=dto.getUserId();
+//            String amount=dto.getMoney().toString();
+//            String ipAddress= AdressIPUtil.getClientIpAddress(request);
+//            if(type==1){
+//                result=this.wxWithdraw(orderNumber,userId,amount,ipAddress,dto);
+//            }else if(type==2){
+//                result=this.aliWithdraw(orderNumber,userId,amount,dto);
+//            }
+//        } else {
+//
+//            ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getUserId());
+//            BigDecimal coin = clientUserEntity.getCoin();
+//            java.math.BigDecimal bd1 = new java.math.BigDecimal( dto.getMoney());
+//            coin = coin.add(bd1);
+//            clientUserEntity.setCoin(coin);
+//            clientUserService.updateById(clientUserEntity);
+//            this.update(dto);
+//        }
+//        return result;
+//    }
 
 }

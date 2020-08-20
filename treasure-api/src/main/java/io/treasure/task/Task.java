@@ -18,6 +18,8 @@ public class Task {
     private InitGoodsDatabase initGoodsDatabase;
     @Autowired
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
+    @Autowired
+    private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
 
     //处理次数记录
     private int taskInProcess = 0;
@@ -38,10 +40,12 @@ public class Task {
         if (orderForBm.isInProcess()==false){
             orderForBm.getOrderByYwy();
         }
-
+        //更新用户级别相关信息
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
         }
+        //自动执行用户提现相关操作
+        
 
    }
     //=========================基本状态锁定===============================
@@ -61,22 +65,8 @@ public class Task {
     public void resetAllCounter(){
         orderClear.resetTaskCounter();
         clientMemberGradeAssessment.resetAllTaskCounter();
+        withdrawCommissionForMerchant.resetAllTaskCounter();
     }
 
-    public void sssest() throws Exception{
-        long timeStamp = 1598917869000L;
-
-        String s = TimeUtil.dateToStamp(new Date());
-        long timeDiff = timeStamp - Long.parseLong(s);
-
-        int day = 1000*60*60*24;
-        int hour = 1000*60*60;
-        int min = 1000*60;
-        long days = timeDiff/day;
-        long hours = (timeDiff%day)/hour;
-        long mins = ((timeDiff%day)%hour)/min;
-        long sec = ((timeDiff%day)%hour)%min;
-        System.out.println("当前时间:"+days+"天,"+hours+"时，"+mins+"分，"+sec+"妙");
-    }
 
 }
