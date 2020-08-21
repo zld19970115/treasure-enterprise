@@ -27,4 +27,8 @@
         <result property="serviceCharge" column="service_charge"/>
     </resultMap>
 
+    <select id="orderCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM `stats_day_detail` where order_id = #{orderId}
+    </select>
+
 </mapper>

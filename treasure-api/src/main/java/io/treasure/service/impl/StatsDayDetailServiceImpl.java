@@ -405,6 +405,11 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
     }
 
     @Override
+    public int orderCount(String orderId) {
+        return 0;
+    }
+
+    @Override
     public int insertRefundGood(MasterOrderDTO dto) {
         MasterOrderDTO dtos=dto;
         int num=0;

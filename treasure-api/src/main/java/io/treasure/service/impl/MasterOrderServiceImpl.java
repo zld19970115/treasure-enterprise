@@ -260,11 +260,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             userTransactionDetailsService.insert(entiry);
         }
 
-        statsDayDetailService.insertFinishUpdate(dto);
-        List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
-        for (MasterOrderDTO mod : orderByFinance) {
-            statsDayDetailService.insertFinishUpdate(mod);
-        }
         Date date = new Date();
         if (null != dto) {
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
@@ -312,6 +307,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         if (o.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || o.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                             merchantRoomParamsSetService.updateStatus(o.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                         }
+                    }
+                }
+
+                if(statsDayDetailService.orderCount(dto.getOrderId()) == 0) {
+                    statsDayDetailService.insertFinishUpdate(dto);
+                    List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
+                    for (MasterOrderDTO mod : orderByFinance) {
+                        statsDayDetailService.insertFinishUpdate(mod);
                     }
                 }
             } else {
