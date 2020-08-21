@@ -576,9 +576,9 @@ public class SharingActivityPlusController {
                 return initResult(clientUserEntity,saItem,"邀请更多好友为我助力！！",true,false);
             }
         }
-//        else{
-//            return initResult(null,saItem,"发起者id有误！！",true,false);
-//        }
+        else{
+            return initResult(null,saItem,"发起者id有误！！",true,false);
+        }
 
         //1,系统参数
         SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();

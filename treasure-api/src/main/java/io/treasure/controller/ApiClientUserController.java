@@ -891,16 +891,11 @@ public class ApiClientUserController {
         return new Result().ok("成功");
     }
 
-
     @PostMapping("app_login_check")
     @ApiOperation("APP用户登录验证")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile", value = "手机号", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "unionid", value = "unionid", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "headIcon", value = "头像", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "nickName", value = "昵称", required = false, paramType = "query", dataType = "String")
-    })
     public Result appLogin(@RequestBody AppLoginCheckVo vo) {
+
+        //System.out.println("mobile,headIcon,nickName:"+vo.getUnionid()+","+vo.getHeadIcon()+","+vo.getNickName());
         Result  result = clientUserService.appLoginCheck(vo);
         return new Result().ok(result);
     }
