@@ -476,7 +476,6 @@ public class SharingActivityPlusController {
         List<SharingActivityHelpedEntity> helpedListCombo = null;
         Long initiatorId = sharingInitiator.getInitiatorId();
         Integer activityId = sharingInitiator.getSaId();
-        Integer rewardValue = sharingInitiator.getRewardValue();
         Date date = sharingInitiator.getFinishedTime();
         String finishStamp = TimeUtil.dateToStamp(date);
 
@@ -485,12 +484,17 @@ public class SharingActivityPlusController {
             helpedListCombo = getHelperList(sharingInitiator,sharingMethod,helpersNum,isHelper);
         }
 
+        Integer helperRewardAmount = 1;
+                SharingActivityExtendsEntity extendsInfoById = sharingActivityExtendsService.getExtendsInfoById(saId);
+        if(extendsInfoById != null) {
+            helperRewardAmount = extendsInfoById.getHelperRewardAmount();
+        }
         map.put("client_id",clientId);
         map.put("token",token);
         map.put("initiator_head_img",headImg);
         map.put("client_name",clientName);
         map.put("helpers",helpedListCombo);
-        map.put("helperReward",1);
+        map.put("helperReward",helperRewardAmount);
         map.put("finishStamp",finishStamp);         //增加时间戮
         map.put("initiatorEntity",sharingInitiator);
 
@@ -568,13 +572,13 @@ public class SharingActivityPlusController {
         ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
         if(clientUserEntity != null){
             if(clientUserEntity.getMobile().equals(mobile)){
-
                 //自己不能给自己助力
                 return initResult(clientUserEntity,saItem,"邀请更多好友为我助力！！",true,false);
             }
-        }else{
-            return initResult(null,saItem,"发起者id有误！！",true,false);
         }
+//        else{
+//            return initResult(null,saItem,"发起者id有误！！",true,false);
+//        }
 
         //1,系统参数
         SharingAndDistributionParamsEntity sharingDistributionParams = sharingAndDistributionParamsService.getSharingDistributionParams();

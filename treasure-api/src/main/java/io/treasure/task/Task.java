@@ -21,7 +21,6 @@ public class Task {
     //处理次数记录
     private int taskInProcess = 0;
 
-    int i=0;
     @Scheduled(fixedDelay = 5000)
     public void TaskManager(){
 
@@ -29,7 +28,6 @@ public class Task {
         if(TimeUtil.resetTaskStatusTime()){
             resetAllCounter();
         }
-        System.out.println("times:"+i);
         //1,自动清台任务+加销奖励
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
@@ -42,7 +40,6 @@ public class Task {
             clientMemberGradeAssessment.updateGrade(20);
         }
         //自动执行用户提现相关操作
-        
 
    }
     //=========================基本状态锁定===============================
