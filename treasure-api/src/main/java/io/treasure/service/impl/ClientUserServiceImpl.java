@@ -105,6 +105,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
            map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
            return new Result().ok(map);
        }else {
+           if (unionid!=null){
+               user.setUnionid(unionid);
+               baseDao.updateById(user);
+           }
+
            //获取登录token
            TokenEntity tokenEntity = tokenService.createToken(user.getId());
            map.put("user",user);
