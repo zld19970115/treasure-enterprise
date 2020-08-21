@@ -54,4 +54,8 @@ public class StatSdayDetailPageVo {
 
     private String torderId;
 
+    private BigDecimal realityMoneyNew;
+
+    private BigDecimal yePaymoney;
+
 }

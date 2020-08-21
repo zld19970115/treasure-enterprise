@@ -308,6 +308,8 @@ public class StatisticsServiceImpl
                 map.put("platformBrokerage",vo.getPlatformBrokerage());
                 map.put("serviceChanrge",vo.getServiceChanrge());
                 map.put("platformRealityMoney",vo.getPlatformRealityMoney());
+                map.put("payCoins",vo.getPayCoins());
+                map.put("realityMoneyNew",vo.getRealityMoneyNew());
             }
         }
         return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);
@@ -339,6 +341,8 @@ public class StatisticsServiceImpl
                 map.put("wxPaymoney",vo.getWxPaymoney());
                 map.put("aliPaymoney",vo.getAliPaymoney());
                 map.put("serviceCharge",vo.getServiceCharge());
+                map.put("realityMoneyNew",vo.getRealityMoneyNew());
+                map.put("yePaymoney",vo.getYePaymoney());
             }
         }
         return new PageTotalRowData<StatSdayDetailPageVo>(page.getResult(),page.getTotal(),map);
@@ -353,6 +357,25 @@ public class StatisticsServiceImpl
     public PageData<MerchantPageVo> merchantPage(Map<String, Object> params) {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<MerchantPageVo> page = (Page) baseDao.merchantPage(params);
+        List<MerchantPageVo> list = page.getResult();
+        for(MerchantPageVo vo : list) {
+            if(Strings.isNotBlank(vo.getCategoryid())) {
+                String[] ids = vo.getCategoryid().split(",");
+                List<Long> l = new ArrayList<Long>();
+                for(String str : ids) {
+                    l.add(Long.parseLong(str));
+                }
+                String names = categoryService.getListById(l).stream().map(CategoryEntity::getName).collect(Collectors.joining(","));
+                vo.setCategoryName(names);
+            }
+        }
+        return new PageData<MerchantPageVo>(page.getResult(),page.getTotal());
+    }
+
+    @Override
+    public PageData<MerchantPageVo> smsMerchantPage(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<MerchantPageVo> page = (Page) baseDao.smsMerchantPage(params);
         List<MerchantPageVo> list = page.getResult();
         for(MerchantPageVo vo : list) {
             if(Strings.isNotBlank(vo.getCategoryid())) {

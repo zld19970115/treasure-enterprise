@@ -41,6 +41,7 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     MerchantAccountVo getMerchantAccountPageTotalRow(MerchantAccountDto dto);
     FmisHomeVo fmisHome(Map<String, Object> params);
     List<MerchantPageVo> merchantPage(Map<String, Object> params);
+    List<MerchantPageVo> smsMerchantPage(Map<String, Object> params);
     List<EChartInfoVo> userChartByDay(Map<String, Object> params);
     List<EChartInfoVo> userChartByYear(Map<String, Object> params);
     List<EChartInfoVo> merchantChartByDay(Map<String, Object> params);

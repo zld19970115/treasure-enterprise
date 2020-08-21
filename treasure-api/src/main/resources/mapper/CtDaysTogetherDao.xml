@@ -15,7 +15,7 @@
         <result property="realityMoney" column="reality_money"/>
         <result property="merchantDiscountAmount" column="merchant_discount_amount"/>
         <result property="giftMoney" column="gift_money"/>
-
+        <result property="payCoins" column="pay_coins"/>
     </resultMap>
 
     <select id="getDateAndMerid" resultType="io.treasure.entity.CtDaysTogetherEntity">
@@ -30,7 +30,8 @@
 	        service_chanrge,
 	        reality_money,
 	        merchant_discount_amount,
-	        gift_money
+	        gift_money,
+	        pay_coins
         FROM
 	        ct_days_together
         WHERE
