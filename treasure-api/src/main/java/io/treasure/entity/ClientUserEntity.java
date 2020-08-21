@@ -58,7 +58,6 @@ public class ClientUserEntity extends BaseEntity {
     /**
      * 密码
      */
-	@JSONField(serialize=false)
 	private String password;
     /**
      * 手机号

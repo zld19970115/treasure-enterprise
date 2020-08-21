@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
+import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.SharingActivityLogDao;
 import io.treasure.dto.SharingActivityDTO;
 import io.treasure.enm.ESharingActivity;
@@ -64,6 +65,9 @@ public class SharingActivityPlusController {
     private QRCodeService qrCodeService;
     @Autowired
     private SharingRewardGoodsRecordService sharingRewardGoodsRecordService;
+    @Autowired(required = false)
+    private RecordGiftDao recordGiftDao;
+    private BigDecimal balanceLimit = new BigDecimal("200");
 
     @PostMapping("startRelay")
     @ApiOperation("发起助力")
@@ -456,11 +460,22 @@ public class SharingActivityPlusController {
         Integer helpersNum = saItem.getHelpersNum();
 
         SharingInitiatorEntity sharingInitiator =  sharingInitiatorService.getCurrentOne(clientUser.getId(), saId);
+        if(sharingInitiator == null){
+            map.put("client_id",clientId);
+            map.put("token",token);
+            map.put("initiator_head_img",headImg);
+            map.put("client_name",clientName);
+            map.put("helpers",null);
+            map.put("helperReward",null);
+            map.put("finishStamp",null);         //增加时间戮
+            map.put("initiatorEntity",null);
 
+            result.setData(map);
+            return result;
+        }
         List<SharingActivityHelpedEntity> helpedListCombo = null;
         Long initiatorId = sharingInitiator.getInitiatorId();
         Integer activityId = sharingInitiator.getSaId();
-        Integer rewardValue = sharingInitiator.getRewardValue();
         Date date = sharingInitiator.getFinishedTime();
         String finishStamp = TimeUtil.dateToStamp(date);
 
@@ -469,12 +484,17 @@ public class SharingActivityPlusController {
             helpedListCombo = getHelperList(sharingInitiator,sharingMethod,helpersNum,isHelper);
         }
 
+        Integer helperRewardAmount = 1;
+                SharingActivityExtendsEntity extendsInfoById = sharingActivityExtendsService.getExtendsInfoById(saId);
+        if(extendsInfoById != null) {
+            helperRewardAmount = extendsInfoById.getHelperRewardAmount();
+        }
         map.put("client_id",clientId);
         map.put("token",token);
         map.put("initiator_head_img",headImg);
         map.put("client_name",clientName);
         map.put("helpers",helpedListCombo);
-        map.put("helperReward",rewardValue);
+        map.put("helperReward",helperRewardAmount);
         map.put("finishStamp",finishStamp);         //增加时间戮
         map.put("initiatorEntity",sharingInitiator);
 
@@ -552,11 +572,11 @@ public class SharingActivityPlusController {
         ClientUserEntity clientUserEntity = clientUserService.getClientUser(initiatorId);
         if(clientUserEntity != null){
             if(clientUserEntity.getMobile().equals(mobile)){
-
                 //自己不能给自己助力
                 return initResult(clientUserEntity,saItem,"邀请更多好友为我助力！！",true,false);
             }
-        }else{
+        }
+        else{
             return initResult(null,saItem,"发起者id有误！！",true,false);
         }
 
@@ -661,7 +681,7 @@ public class SharingActivityPlusController {
                 inProcess.setStatus(ESharingInitiator.COMPLETE_SUCCESS.getCode());                          //更新发起者助力状态
                 sharingInitiatorService.updateById(inProcess);                                              //重新更新表格状态
                 insertSharingActivityLog(saId, initiatorId, mobile, finalReward, inProcess.getProposeId());                     //更新助力记录：获得还需助力的费用值
-                prizesInitiator(saItem, initiatorId);                                                                           //给发起者奖励
+                prizesInitiator(saItem, clientUserEntity);                                                                           //给发起者奖励
                 prizesHelper(mobile, extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount());  //给助力用户发奖励
                 messageStr =  getHelpedSuccessMessage(extendsInfo);                          //更新成功消息
 
@@ -713,12 +733,12 @@ public class SharingActivityPlusController {
     }
 
     //给发起者发奖金
-    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,Long initiatorId){
+    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator){
+        Long initiatorId = initiator.getId();
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
-                if(gift >= 0)
-                    clientUserService.addRecordGiftByUserid(initiatorId+"",gift+"");
+                updateBalanceRecord(initiator,gift,4);
                 break;
 
             case 3://奖励菜品    怎样给商家展示或者到商家使用
@@ -738,25 +758,11 @@ public class SharingActivityPlusController {
                 break;
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
-                ///////////////////////////
-                ///////////////////////////
-                BigDecimal balanceLimit = new BigDecimal("200");
-                ClientUserEntity clientUserEntity = clientUserDao.selectById(initiatorId);
-                BigDecimal resBalance = clientUserEntity.getBalance();
-                if(balance >= 0 && resBalance.compareTo(balanceLimit)<0){
-
-                    if((resBalance.add(new BigDecimal(balance+""))).compareTo(balanceLimit) >= 0){
-                        clientUserEntity.setBalance(balanceLimit);
-                        clientUserDao.updateById(clientUserEntity);
-                    }else{
-                        clientUserService.addBalanceByUserid(initiatorId+"",balance+"");
-                    }
-                }
+                updateBalanceRecord(initiator,balance,4);
                 break;
 
         }
     }
-
 
     //给助力者发奖金
     private void prizesHelper(String mobile,int rewardType,int rewardValue){
@@ -768,26 +774,64 @@ public class SharingActivityPlusController {
         switch(rewardType)
         {
             case 1://代付金
-                if(rewardValue > 0)
-                    clientUserService.addRecordGiftByUserid(id+"",rewardValue+"");
+                updateBalanceRecord(clientUser,rewardValue,1);
                 break;
             case 4://宝币
-
-                BigDecimal balanceLimit = new BigDecimal("200");
-                ClientUserEntity clientUserEntity = clientUserDao.selectById(id);
-                BigDecimal resBalance = clientUserEntity.getBalance();
-                if(rewardValue >= 0 && resBalance.compareTo(balanceLimit)<0){
-
-                    if((resBalance.add(new BigDecimal(rewardValue+""))).compareTo(balanceLimit) >= 0){
-                        clientUserEntity.setBalance(balanceLimit);
-                        clientUserDao.updateById(clientUserEntity);
-                    }else{
-                        clientUserService.addBalanceByUserid(id+"",rewardValue+"");
-                    }
-                }
+                updateBalanceRecord(clientUser,rewardValue,4);
                 break;
         }
+    }
 
+
+    public void updateBalanceRecord(ClientUserEntity client,Integer value,int type){
+
+        if(type == 4)//宝币
+        {
+            BigDecimal resBalance = client.getBalance();
+            //奖励值大于0并且原始值小于宝币限值
+            if(value >= 0 && resBalance.compareTo(balanceLimit)<0){
+
+                if((resBalance.add(new BigDecimal(value+""))).compareTo(balanceLimit) >= 0){
+                    client.setBalance(balanceLimit);
+                    clientUserDao.updateById(client);
+
+                    BigDecimal amount = new BigDecimal("0");
+                    amount = balanceLimit.subtract(resBalance);
+                    //代付金为6宝币为13
+                    addRecordFromRecordGift(client,13,amount,balanceLimit);
+
+
+                }else{
+                    clientUserService.addBalanceByUserid(client.getId()+"",value+"");
+                    //代付金为6宝币为13
+                    BigDecimal balance = new BigDecimal(value+"");
+                    balance = resBalance.add(balance);
+                    addRecordFromRecordGift(client,13,new BigDecimal(value),balance);
+                }
+            }
+        }else if(type == 1)
+        {
+            if(value >= 0)
+                clientUserService.addRecordGiftByUserid(client.getId()+"",value+"");
+
+            //更新调用参数
+            BigDecimal bd1 = new BigDecimal(value + "");
+            BigDecimal balance = client.getGift();
+            balance = balance.add(bd1);
+
+            //代付金为6宝币为13
+            addRecordFromRecordGift(client,6,bd1,balance);
+        }
+    }
+
+    public void addRecordFromRecordGift(ClientUserEntity client,int status,BigDecimal amount,BigDecimal balance){
+        RecordGiftEntity recordGiftEntity = new RecordGiftEntity();
+        recordGiftEntity.setUserId(client.getId());//受益人
+        recordGiftEntity.setUseGift(amount);
+        recordGiftEntity.setBalanceGift(balance);
+        recordGiftEntity.setStatus(status);
+        recordGiftEntity.setCreateDate(new Date());
+        recordGiftDao.insert(recordGiftEntity);
     }
     //onlyEnabled是否仅查询有效的助力活动（客户，时间）
     @GetMapping("list")

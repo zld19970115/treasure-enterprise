@@ -17,5 +17,5 @@ public interface BusinessManagerDao  extends BaseDao<BusinessManagerEntity> {
    void binding(int bmId, String mchId);
     BusinessManagerDTO selectByMobile(String mobile);
   List<BusinessManagerTrackRecordEntity> selectlogById(long id);
-    List<BusinessManagerTrackRecordEntity>  selectByMartId(long martId);
+    BusinessManagerTrackRecordEntity  selectByMartId(long martId);
 }

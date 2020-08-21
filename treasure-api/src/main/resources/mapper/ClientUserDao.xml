@@ -32,6 +32,7 @@
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
         <result property="clientId" column="client_id"/>
+
     </resultMap>
     <insert id="insertLevelStatus">
         INSERT INTO ct_level_status (user_id, leveled,blance) VALUES (#{userId}, #{level},#{balance})

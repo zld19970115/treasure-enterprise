@@ -22,6 +22,7 @@ import io.treasure.entity.TokenEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
+import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.MerchantAccountVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -81,26 +82,43 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
-    public Map<String, Object> login(LoginDTO dto) {
-        ClientUserEntity user = getByMobile(dto.getMobile());
-        AssertUtils.isNull(user, ErrorCode.ACCOUNT_PASSWORD_ERROR);
-
-        //密码错误
-        if(!user.getPassword().equals(DigestUtils.sha256Hex(dto.getPassword()))){
-            throw new RenException(ErrorCode.ACCOUNT_PASSWORD_ERROR);
-        }
-//        if(user.getStatus()==9){
-//            throw new RenException(14000,"用户已注销");
-//        }
-        //获取登录token
-        TokenEntity tokenEntity = tokenService.createToken(user.getId());
-
+    public Result login(String mobile,String unionid) {
+        ClientUserEntity user = getByMobile(mobile);
         Map<String, Object> map = new HashMap<>(2);
-        map.put("user",user);
-        map.put("token", tokenEntity.getToken());
-        map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
+       if (user==null){
+           ClientUserEntity user1 =  new ClientUserEntity();
+           user1.setLevel(1);
+           user1.setMobile(mobile);
+           user1.setUsername(mobile);
+           user1.setGift(new BigDecimal("50"));
+           user1.setCreateDate(new Date());
+           if (unionid!=null){
+               user1.setUnionid(unionid);
+           }
 
-        return map;
+           baseDao.insert(user1);
+           ClientUserEntity userByPhone1 = baseDao.getUserByPhone(mobile);
+           tokenService.createToken(userByPhone1.getId());
+           map.put("user", userByPhone1);
+           TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
+           map.put("token", byUserId.getToken());
+           map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
+           return new Result().ok(map);
+       }else {
+           if (unionid!=null){
+               user.setUnionid(unionid);
+               baseDao.updateById(user);
+           }
+
+           //获取登录token
+           TokenEntity tokenEntity = tokenService.createToken(user.getId());
+           map.put("user",user);
+           map.put("token", tokenEntity.getToken());
+           map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
+
+           return new Result().ok(map);
+       }
+
     }
 
     @Override
@@ -296,6 +314,108 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if (tmp != null)
             res = tmp;
         return res;
+    }
+
+    private ClientUserEntity registerDefault(ClientUserEntity user){
+        BigDecimal rewardRegister = new BigDecimal("50");
+        user.setLevel(1);
+        user.setGift(new BigDecimal("50"));
+        return user;
+    }
+    private Result userRegister(AppLoginCheckVo vo){
+        Map<String, Object> map = new HashMap<>(2);
+        ClientUserEntity user =  new ClientUserEntity();
+        user.setLevel(1);
+        user.setMobile(vo.getMobile());
+        if(vo.getNickName() != null){
+            user.setUsername(vo.getNickName());
+        }else{
+            user.setUsername(vo.getMobile());
+        }
+        if(vo.getHeadIcon() != null){
+            user.setHeadImg(vo.getHeadIcon());
+        }
+        if(vo.getUnionid() != null){
+            user.setUnionid(vo.getUnionid());
+        }
+        user.setGift(new BigDecimal("50"));
+        user.setCreateDate(new Date());
+        baseDao.insert(user);
+
+        ClientUserEntity userByPhone = baseDao.getUserByPhone(vo.getMobile());
+
+        tokenService.createToken(userByPhone.getId());
+        map.put("user", userByPhone);
+        TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
+        map.put("token", byUserId.getToken());
+        map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
+        return new Result().ok(map);
+    }
+    private Result loginSuccess(ClientUserEntity user){
+
+        Map<String, Object> map = new HashMap<>(2);
+        TokenEntity tokenEntity = tokenService.createToken(user.getId());
+        map.put("user",user);
+        map.put("token", tokenEntity.getToken());
+        map.put("expire", tokenEntity.getExpireDate().getTime() - System.currentTimeMillis());
+
+        return new Result().ok(map);
+    }
+
+    public ClientUserEntity atachUserInfo(ClientUserEntity user,AppLoginCheckVo vo){
+        boolean updateFlag = false;
+        String headIcon = vo.getHeadIcon();
+        String nickName = vo.getNickName();
+
+        if(headIcon != null){
+            if(user.getHeadImg()== null){
+                user.setHeadImg(headIcon);
+                updateFlag = true;
+            }
+        }
+        if(nickName != null){
+            if(user.getUsername()==user.getMobile()||user.getUsername()==null){
+                user.setUsername(nickName);
+                updateFlag =true;
+            }
+        }
+        if(updateFlag){
+            updateFlag=false;
+            clientUserDao.updateById(user);
+        }
+        return user;
+    }
+    @Override
+    public Result appLoginCheck(AppLoginCheckVo vo) {
+        String mobile = vo.getMobile();
+        String unionid = vo.getUnionid();
+        String headIcon = vo.getHeadIcon();
+        String nickName = vo.getNickName();
+        if(mobile != null){
+            ClientUserEntity user = clientUserDao.getUserByMobile(mobile);
+            if(user != null){
+                return loginSuccess(atachUserInfo(user,vo));
+            }else{
+                //走注册流程
+                return userRegister(vo);
+            }
+        }
+
+        if(unionid != null){
+            QueryWrapper<ClientUserEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("unionid",unionid);
+            List<ClientUserEntity> users = clientUserDao.selectList(queryWrapper);
+            if(users.size()>0){
+                if(users.size()>1){
+                    System.out.println("用户帐号："+users.get(0).toString()+"重复，请及时处理！");
+                }
+                ClientUserEntity u = users.get(0);
+                return loginSuccess(atachUserInfo(u,vo));
+            }else{
+                return new Result().error("failure");
+            }
+        }
+        return new Result().error("failure");
     }
 
 }

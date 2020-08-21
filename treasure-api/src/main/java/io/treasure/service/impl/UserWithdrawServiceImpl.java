@@ -19,10 +19,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.common.utils.WXPayUtil;
 import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
-import io.treasure.dao.MerchantDao;
-import io.treasure.dao.MerchantSalesRewardRecordDao;
-import io.treasure.dao.MerchantWithdrawDao;
-import io.treasure.dao.UserWithdrawDao;
+import io.treasure.dao.*;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
@@ -62,6 +59,8 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 
     @Autowired
     private MerchantSalesRewardServiceImpl merchantSalesRewardService ;
+    @Autowired(required = false)
+    private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
 
     @Autowired
     ClientUserService clientUserService;
@@ -330,9 +329,12 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 //=====================================返现提现接口=====================================================================
 
     @Transactional(rollbackFor = Exception.class)
-    public Result wxMerchantCommissionWithDraw(String commissionId, Long merchantId, String amount, String ipAddress, List<MerchantSalesRewardRecordEntity> entities){
+    public Result wxMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity){
         Result result=new Result();
-        MerchantEntity merchantEntity = merchantDao.selectById(merchantId);
+        Long mId = entity.getMId();
+        Integer rewardValue = entity.getRewardValue();
+        MerchantEntity merchantEntity = merchantDao.selectById(mId);
+        String ipAddress = merchantEntity.getMchIp();
         if(merchantEntity==null){
             return new Result().error("id不存在，未找到此商户和户！");
         }
@@ -349,19 +351,20 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
         }
         map.put("mchid",wxPayConfig.getMchID());
         map.put("nonce_str", WXPayUtil.generateNonceStr());//随机字符串
-        map.put("partner_trade_no",commissionId);
+        map.put("partner_trade_no",mId+"");
         map.put("openid",openid);
         map.put("check_name","NO_CHECK");
         //map.put("re_user_name",realName);//收款人真实姓名
         java.text.DecimalFormat df=new java.text.DecimalFormat("0");
 
         //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
-        String fen = new BigDecimal(amount).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
+        String fen = new BigDecimal(rewardValue+"").multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
         map.put("amount",df.format(fen));//金额
 
         map.put("desc","mch_commission!");//描述
-        map.put("spbill_create_ip",ipAddress);//IP
-
+        if(ipAddress != null){
+            map.put("spbill_create_ip",ipAddress);//IP
+        }
         String orderInfo = null;
         Map<String, String> returnInfo=new HashMap<String, String>();
         try {
@@ -376,15 +379,19 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
         if ("SUCCESS".equals(returnInfo.get("return_code"))
                 && "SUCCESS".equals(returnInfo.get("result_code"))) {
             //更新提现记录
-            int res = merchantSalesRewardService.updateWithDrawStatusById(entities,3);
-            if(res<0){
-                for(int i=0;i<entities.size();i++){
-                    System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entities.get(i).getId());
+            entity.setCashOutStatus(2);
+            merchantSalesRewardRecordDao.updateById(entity);
+            MerchantSalesRewardRecordEntity entity1 = merchantSalesRewardRecordDao.selectById(entity.getId());
+
+            if(entity1 != null){
+                if(entity1.getCashOutStatus() == 2){
+                    //发送成功消息
+                    SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
+                    return result;
                 }
-            }else{
-                //发送成功消息
-                SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),amount, merchantEntity.getName(), smsConfig);
             }
+            System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
+
         } else {
             // 提现失败，更新记录
             return result.error("微信提现过程出错,openid:" + merchantEntity.getWxAccountOpenid() + ",错误代码:" + returnInfo.get("err_code") + ",错误信息:"
@@ -395,14 +402,13 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 
     /**
      * 支付宝提现
-     * @param amount   金额
-     * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result AliMerchantCommissionWithDraw(String commissionId, Long merchantId, String amount, String ipAddress, List<MerchantSalesRewardRecordEntity> entities) throws AlipayApiException {
+    public Result AliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
 
         Result result=new Result();
-        MerchantEntity merchantEntity = merchantDao.selectById(merchantId);
+        Long mId = entity.getMId();
+        MerchantEntity merchantEntity = merchantDao.selectById(mId);
         if(merchantEntity==null){
             return new Result().error("id不存在，未找到此商户和户！");
         }
@@ -412,7 +418,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
             throw new RenException("佣金提现：请提前绑定支付宝相关帐号！");
         }
 
-        BigDecimal bigDecimalAmount=new BigDecimal(amount);
+        BigDecimal amount=new BigDecimal(entity.getRewardValue());
         //构造client
         CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
         //设置网关地址
@@ -460,7 +466,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 //        map.put("remark", "您的提现已转出请查收。");
         request.setBizContent(
                 "{" +
-                        "\"out_biz_no\":\""+commissionId+"\"," +
+                        "\"out_biz_no\":\""+mId+"\"," +
                         "\"trans_amount\":"+amount+"," +
                         "\"product_code\":\"TRANS_ACCOUNT_NO_PWD\"," +
                         "\"biz_scene\":\"DIRECT_TRANSFER\"," +
@@ -483,15 +489,18 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
         if ("10000".equals(response.getCode())) { //提现成功,本地业务逻辑略
 
             //更新提现记录
-            int res = merchantSalesRewardService.updateWithDrawStatusById(entities,2);
-            if(res<0){
-                for(int i=0;i<entities.size();i++){
-                    System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entities.get(i).getId());
-                }
-            }else{
+            entity.setCashOutStatus(2);
+            merchantSalesRewardRecordDao.updateById(entity);
+            MerchantSalesRewardRecordEntity entity1 = merchantSalesRewardRecordDao.selectById(entity.getId());
+
+            if(entity1 != null){
+                if(entity1.getCashOutStatus() == 2){
                     //发送成功消息
-                    SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),amount, merchantEntity.getName(), smsConfig);
+                    SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
+                    return result;
+                }
             }
+            System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
 
         } else { // 支付宝提现失败，本地业务逻辑略
             throw new RenException("调用支付宝提现接口成功,但提现失败!code["+response.getCode()+"],"+response.getMsg()+",["+response.getSubCode()+"]"+response.getSubMsg());

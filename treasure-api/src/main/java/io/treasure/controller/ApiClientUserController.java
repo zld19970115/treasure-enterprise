@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,18 +30,31 @@ import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.*;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
+import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.LevelVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.crypto.*;
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 import java.text.ParseException;
 import java.util.*;
+import java.util.Base64.Decoder;
 
 
 /**
@@ -190,7 +204,7 @@ public class ApiClientUserController {
     }
 
     @PostMapping("userRegister")
-    @ApiOperation("用户注册")
+    @ApiOperation("用户注册(已删除)")
     public Result userRegister(@RequestBody ClientUserDTO dto) {
         //表单校验
         ValidatorUtils.validateEntity(dto);
@@ -215,16 +229,14 @@ public class ApiClientUserController {
     @PostMapping("userLogin")
     @ApiOperation("用户登录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cid", value = "个推ID", required = true, paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "unionid", value = "unionid", required = true, paramType = "query", dataType = "String")
     })
-    public Result<Map<String, Object>> login(@RequestBody LoginDTO dto, String cid) {
-        //表单校验
-        ValidatorUtils.validateEntity(dto);
-
+    public Result login(String mobile,String unionid) {
         //用户登录
-        Map<String, Object> map = clientUserService.login(dto);
-        clientUserService.updateCID(cid, dto.getMobile());
-        return new Result().ok(map);
+        Result  result = clientUserService.login(mobile,unionid);
+     //   clientUserService.updateCID(cid, mobile);
+        return new Result().ok(result);
     }
 
     @Login
@@ -234,7 +246,98 @@ public class ApiClientUserController {
         tokenService.expireToken(userId);
         return new Result();
     }
+    /**
+     * 解密并且获取用户手机号码
+     * @param encrypdata
+     * @param ivdata
+     * @param sessionkey
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("getMobile")
+    @ApiOperation("解密并且获取用户手机号码")
+    public @ResponseBody String deciphering(String encrypdata,
+                                            String ivdata, String sessionkey,
+                                            HttpServletRequest request) {
+        Decoder decoder = Base64.getDecoder();
 
+        byte[] encrypData = decoder.decode(encrypdata);
+        byte[] ivData = decoder.decode(ivdata);
+        byte[] sessionKey = decoder.decode(sessionkey);
+        String str="";
+        try {
+            str = decrypt(sessionKey,ivData,encrypData);
+        } catch (Exception e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println(str);
+        return str;
+
+    }
+    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
+//        // 生成一个可信任的随机数源
+//        SecureRandom sr = new SecureRandom();
+//
+//        // 从原始密钥数据创建DESKeySpec对象
+//        DESKeySpec dks = new DESKeySpec(key);
+//
+//        // 创建一个密钥工厂，然后用它把DESKeySpec转换成SecretKey对象
+//        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+//        SecretKey securekey = keyFactory.generateSecret(dks);
+//
+//        // Cipher对象实际完成解密操作
+//        Cipher cipher = Cipher.getInstance("DES");
+//
+//        // 用密钥初始化Cipher对象
+//        cipher.init(Cipher.DECRYPT_MODE, securekey, sr);
+//
+//        return new String(cipher.doFinal(encData),"UTF-8");
+
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+        //解析解密后的字符串
+        return new String(cipher.doFinal(encData),"UTF-8");
+    }
+
+//
+//    public static String getWxMiniPhone(String sessionkey, String iv, String encryptedData)
+//            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+//            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, UnsupportedEncodingException {
+//
+//        byte[] encrypData = Base64Utils.decodeFromString(encryptedData);
+//        byte[] ivData = Base64Utils.decodeFromString(iv);
+//        byte[] sessionKey = Base64Utils.decodeFromString(sessionkey);
+//        String resultString = null;
+//        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivData);
+//        SecretKeySpec keySpec = new SecretKeySpec(sessionKey, "AES");
+//        try {
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+//        } catch (Exception e) {
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+//            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//            resultString = new String(cipher.doFinal(encrypData), "UTF-8");
+//        }
+//        JSONObject object = JSONObject.parseObject(resultString);
+//        // 拿到手机号码
+//        String phone = object.getString("phoneNumber");
+//        return phone;
+//    }
+//
+//
+//    public static String decrypt(byte[] key, byte[] iv, byte[] encData) throws Exception {
+//        AlgorithmParameterSpec ivSpec = new IvParameterSpec(iv);
+//        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+//        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+//        //解析解密后的字符串
+//        return new String(cipher.doFinal(encData),"UTF-8");
+//    }
     @Login
     @PutMapping("editPassword")
     @ApiOperation("修改密码")
@@ -786,5 +889,14 @@ public class ApiClientUserController {
         clientUserEntity.setBalance(add);
         clientUserService.updateById(clientUserEntity);
         return new Result().ok("成功");
+    }
+
+    @PostMapping("app_login_check")
+    @ApiOperation("APP用户登录验证")
+    public Result appLogin(@RequestBody AppLoginCheckVo vo) {
+
+        //System.out.println("mobile,headIcon,nickName:"+vo.getUnionid()+","+vo.getHeadIcon()+","+vo.getNickName());
+        Result  result = clientUserService.appLoginCheck(vo);
+        return new Result().ok(result);
     }
 }

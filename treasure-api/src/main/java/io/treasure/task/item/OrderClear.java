@@ -1,16 +1,20 @@
 package io.treasure.task.item;
 
 import io.treasure.dao.ClearOrderDao;
+import io.treasure.enm.Constants;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.impl.DistributionRewardServiceImpl;
 import io.treasure.task.TaskCommon;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.DistributionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +28,9 @@ public class OrderClear extends TaskCommon implements IOrderClear {
 
     @Autowired
     private DistributionRewardServiceImpl distributionRewardService;
+
+    @Autowired
+    private MasterOrderService masterOrderService;
 
     private List<DistributionVo> distributionVos = new ArrayList<>();//分类整理分销对象
 
@@ -48,16 +55,46 @@ public class OrderClear extends TaskCommon implements IOrderClear {
             return;
         }
 
-
         System.out.println("time0"+specifyDateTime[0]+",time1"+specifyDateTime[1]);
         clearOrderDao.clearSlaveOrders(specifyDateTime[0],specifyDateTime[1]);
         clearOrderDao.clearRooms(specifyDateTime[0],specifyDateTime[1]);
-
 
         if(andDistributionReward){
             distributionReward(specifyDateTime[0],specifyDateTime[1]);
         }
         clearOrderDao.clearMasterOrders(specifyDateTime[0],specifyDateTime[1]);
+
+
+        freeProcessLock();  //释放程序锁
+    }
+    @Override
+    public void clearOrder(){
+        lockedProcessLock();
+        updateTaskCounter();  //更新执行程序计数器
+
+
+        System.out.println("schedule：正在准备待清台列表... ...");
+        String[] specifyDateTime=null;
+        try{
+            specifyDateTime = TimeUtil.getFinishedUpdateTime();
+        }catch (ParseException e){
+            System.out.println("schedule: exception ... ...");
+            resetTaskCounter(); //复位程序计数器
+        }
+        if(specifyDateTime == null){
+            freeProcessLock();
+            return;
+        }
+        List<Long> ids = new ArrayList<>();
+        //查找需翻台的列表,半装入ids
+
+
+        System.out.println("schedule：列表准备完毕... ...");
+        for(int i=0;i<ids.size();i++){
+            Long id = ids.get(i);
+            //masterOrderService.finishUpdate(id, Constants.OrderStatus.MERCHANTAGFINISHORDER.getValue(),"platform",new Date(),"完成订单");
+        }
+
         freeProcessLock();  //释放程序锁
     }
     //分销奖励

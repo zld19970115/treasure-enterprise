@@ -10,6 +10,7 @@ import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MerchantSalesRewardService {
 
@@ -21,6 +22,8 @@ public interface MerchantSalesRewardService {
     void insertRecord(MerchantSalesRewardRecordEntity entity);
     void insertBatchRecords(List<RewardMchList> list);
     List<RewardMchList> getRewardMchList(MerchantSalesRewardRecordVo vo);
+    List<RewardMchList> getRewardMchList(List<Long> mIds);
     int updateWithDrawStatusById(List<MerchantSalesRewardRecordEntity> entites,Integer method);
+    String getNotWithdrawRewardAmount(Long mchId);
 
 }

@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * 商户表
  *
@@ -180,6 +179,18 @@ public class MerchantDTO implements Serializable {
 
 	@ApiModelProperty(value = "推荐菜")
 	private GoodDTO goodDTO;
+
+	private String mchIp;
+	//未提现佣金
+	@ApiModelProperty(value = "未提现佣金")
+	private BigDecimal commissionNotWithdraw;
+	//审核佣金
+	@ApiModelProperty(value = "审核佣金")
+	private BigDecimal commissionAudit;
+	//已提现佣金
+	@ApiModelProperty(value = "已提现佣金")
+	private BigDecimal commissionWithdraw;
+
 	@Override
 	public boolean equals(Object obj) {
 		MerchantDTO u = (MerchantDTO) obj;

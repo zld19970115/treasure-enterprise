@@ -11,16 +11,33 @@
             <if test="minValue != null and minValue != ''">
                 and rewared_value >= #{minValue}
             </if>
-            <if test="startTime != null and startTime != ''">
-                and eat_time >= #{startTime}
-            </if>
-            <if test="stopTime != null and stopTime != ''">
-                and #{stopTime} >= eat_time
-            </if>
+<!--            <if test="stopTime != null and stopTime != ''">-->
+<!--                and #{stopTime} >= eat_time-->
+<!--            </if>-->
         </where>
         group by merchant_id
         order by sales_volume desc, order_volume desc
-        limit #{index},#{pageNum}
+        limit #{index},#{pagesNum}
     </select>
+    <select id="getRewardMchList" parameterType="list" resultType="io.treasure.vo.RewardMchList">
+        select merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceeds
+        from ct_master_order
+        <where>
+            merchant_id in
+            <foreach collection="mIds" item="id" separator="," open="(" close=")">
+                #{id,jdbcType = BIGINT}
+            </foreach>
+        </where>
+
+    </select>
+    <update id="updateStatusByIds" parameterType="io.treasure.vo.MchRewardUpdateQuery">
+        update merchant_sales_reward_record set status = #{status},audit_comment = #{comment}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" separator="," open="(" close=")">
+                #{ids,jdbcType = BIGINT}
+            </foreach>
+        </where>
+    </update>
 
 </mapper>
