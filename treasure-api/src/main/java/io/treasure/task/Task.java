@@ -15,19 +15,14 @@ public class Task {
     @Autowired
     private OrderForBm orderForBm;
     @Autowired
-    private InitGoodsDatabase initGoodsDatabase;
-    @Autowired
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
     @Autowired
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
-
     //处理次数记录
     private int taskInProcess = 0;
 
     @Scheduled(fixedDelay = 5000)
-    public void TaskManager() throws Exception {
-        if(isInProcess()) return;
-        lockedTask();//
+    public void TaskManager(){
 
         //0,复位所有定时任务
         if(TimeUtil.resetTaskStatusTime()){
@@ -45,7 +40,6 @@ public class Task {
             clientMemberGradeAssessment.updateGrade(20);
         }
         //自动执行用户提现相关操作
-        
 
    }
     //=========================基本状态锁定===============================
