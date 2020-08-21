@@ -24,6 +24,7 @@ public class Task {
     @Scheduled(fixedDelay = 5000)
     public void TaskManager(){
 
+        orderForBm.getOrderByYwy();
         //0,复位所有定时任务
         if(TimeUtil.resetTaskStatusTime()){
             resetAllCounter();
@@ -32,9 +33,8 @@ public class Task {
         if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
             orderClear.execOrderClear(true);
 
-        if (orderForBm.isInProcess()==false){
-            orderForBm.getOrderByYwy();
-        }
+
+
         //更新用户级别相关信息
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
