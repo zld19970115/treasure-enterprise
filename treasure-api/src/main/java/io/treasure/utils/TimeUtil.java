@@ -1,7 +1,5 @@
 package io.treasure.utils;
 
-import org.junit.Test;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -154,5 +152,27 @@ public class TimeUtil {
         return new Date(time);
     }
 
+    //取得上个月的相对时间
+
+    public static Date getLastMonthDate() throws ParseException {
+        Date date = new Date();
+        String format = TimeUtil.simpleDateFormat.format(date);
+        Integer month = Integer.parseInt(format.substring(5, 7));
+        Integer days = Integer.parseInt(format.substring(8,10));
+        Integer year = Integer.parseInt(format.substring(0,4));
+
+        Date monthEnd = getMonthEnd(date);
+        if(date == monthEnd){
+            return date;
+        }
+        if(month == 1){
+            month = 12;
+            year --;
+        }else{
+            month --;
+        }
+        String result = year+"-"+month+"-"+"01 00:00:00";
+        return TimeUtil.simpleDateFormat.parse(result);
+    }
 
 }

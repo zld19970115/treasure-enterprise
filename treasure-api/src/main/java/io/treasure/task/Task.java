@@ -1,11 +1,13 @@
 package io.treasure.task;
 
-import io.treasure.task.item.*;
+import io.treasure.task.item.ClientMemberGradeAssessment;
+import io.treasure.task.item.OrderClear;
+import io.treasure.task.item.OrderForBm;
+import io.treasure.task.item.WithdrawCommissionForMerchant;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 
 @Component
 public class Task {
@@ -38,7 +40,11 @@ public class Task {
             clientMemberGradeAssessment.updateGrade(20);
         }
         //自动执行用户提现相关操作
+
    }
+
+
+
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
         if(taskInProcess >0)

@@ -281,6 +281,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     dto.setUpdateDate(date);
                     MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
                     baseDao.updateById(masterOrderEntity);
+                    
                     if (dto.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || dto.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
