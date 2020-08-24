@@ -52,7 +52,6 @@
     <select id="selectByNoCode" resultType="io.treasure.dto.CardInfoDTO">
           SELECT * FROM ct_card_info where status in (1,2) and code = '0'
     </select>
-
     <update id="openCard">
         update ct_card_info set
         status = 2,

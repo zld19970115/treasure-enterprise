@@ -77,6 +77,7 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
                 info.setBatch(batch);
                 info.setMoney(dto.getCardMoney());
                 info.setStatus(1);
+                info.setCreateDate(new Date());
                 info.setType(dto.getCardType());
                 info.setPassword(RandomPwd.getRandomPwd(16));
                 list.add(info);
@@ -85,10 +86,18 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
 
             List<CardInfoDTO> cardInfoDTOS = userCardService.selectByNoCode();
             for (CardInfoDTO cardInfoDTO : cardInfoDTOS) {
-                String s = insertMerchantQrCodeByMerchantId(cardInfoDTO.getId());
+                if (cardInfoDTO.getType() == 1){
+                    String s = insertMerchantQrCodeByMerchantId(cardInfoDTO.getId());
 
-                userCardService.updateCode(s,cardInfoDTO.getId());
+                    userCardService.updateCode(s,cardInfoDTO.getId());
+                }else if (cardInfoDTO.getType() == 2){
+                    String s = insertMerchantQrCodeByBalaance(cardInfoDTO.getId());
+
+                    userCardService.updateCode(s,cardInfoDTO.getId());
+                }
+
             }
+
 
 
         }
@@ -119,5 +128,32 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
         String url = OSSFactory.build().uploadSuffix(inSteam, IMAGE_SUFFIX);
         System.out.println("二维码存储地址"+url);
 return url;
+    }
+
+    public String insertMerchantQrCodeByBalaance(Long id) throws IOException, WriterException {
+
+        // 设置响应流信息
+        QRCodeFactory qrCodeFactory = new QRCodeFactory();
+        //二维码内容
+//        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
+//        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
+//        String content = ("https://jubaoapp.com:8443/treasure-api/pages/reserve/reserve?shopid=" + merchantId + "&type=1");
+//
+        String content = ("https://jubaoapp.com:8127?id=" + id);
+
+
+        //获取一个二维码图片
+        System.out.println("https://jubaoapp.com:8127?id=" + id);
+        BitMatrix bitMatrix = qrCodeFactory.CreatQrImage(content);
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+
+        BufferedImage posterBufImage = MatrixToImageWriter.toBufferedImage(bitMatrix, new MatrixToImageConfig(Color.BLACK.getRGB(), Color.WHITE.getRGB()));
+        ImageOutputStream imgOut = ImageIO.createImageOutputStream(bs);
+        ImageIO.write(posterBufImage, "jpg", imgOut);
+        final String IMAGE_SUFFIX = "jpg";
+        InputStream inSteam = new ByteArrayInputStream(bs.toByteArray());
+        String url = OSSFactory.build().uploadSuffix(inSteam, IMAGE_SUFFIX);
+        System.out.println("二维码存储地址"+url);
+        return url;
     }
 }

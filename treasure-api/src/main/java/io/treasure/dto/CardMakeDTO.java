@@ -32,7 +32,7 @@ public class CardMakeDTO implements Serializable {
 	private Integer cardBatch;
 
 	@ApiModelProperty(value = "制卡类型：1-赠送金")
-	private String cardType;
+	private Integer cardType;
 
 	@ApiModelProperty(value = "创建者")
 	private Long creator;

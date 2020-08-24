@@ -36,7 +36,7 @@ public class CardInfoDTO {
      * 类型：1-赠送金
      */
     @ApiModelProperty(value = "分类ID")
-    private String type;
+    private Integer type;
     /**
      * 卡状态：1-制卡，2-开卡，3-绑定卡，9-删除
      */

@@ -38,7 +38,7 @@ public class CardMakeEntity extends BaseEntity {
     /**
      * 制卡类型：1-赠送金
      */
-	private String cardType;
+	private Integer cardType;
     /**
      * 更新者
      */
