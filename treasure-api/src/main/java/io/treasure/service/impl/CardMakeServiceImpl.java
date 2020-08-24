@@ -77,6 +77,7 @@ public class CardMakeServiceImpl extends CrudServiceImpl<CardMakeDao, CardMakeEn
                 info.setBatch(batch);
                 info.setMoney(dto.getCardMoney());
                 info.setStatus(1);
+                info.setCreateDate(new Date());
                 info.setType(dto.getCardType());
                 info.setPassword(RandomPwd.getRandomPwd(16));
                 list.add(info);
