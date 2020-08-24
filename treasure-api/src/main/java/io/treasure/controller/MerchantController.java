@@ -9,21 +9,28 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
+import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
+import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.common.validator.group.AddGroup;
+import io.treasure.common.validator.group.DefaultGroup;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
+import io.treasure.dto.OrderDTO;
 import io.treasure.enm.Audit;
 import io.treasure.enm.Common;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
-import io.treasure.entity.SharingActivityLogEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.AttachCategoryPlusVo;
 import io.treasure.vo.AttachCategoryVo;
+import io.treasure.vo.AutoAceptVo;
 import io.treasure.vo.PagePlus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
@@ -790,4 +798,15 @@ public class MerchantController {
         }
         return new Result().ok(msg);
     }
+
+
+    @Login
+    @PostMapping("autoAcept")
+    @ApiOperation("商户自动接单设置")
+    public Result merchantAceptOrderSetting(@RequestBody AutoAceptVo vo){
+
+        merchantService.updateAutoAceptStatus(vo);
+        return  new Result().ok("success");
+    }
+
 }
