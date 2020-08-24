@@ -76,6 +76,46 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     }
 
     @Override
+    public Result selectMartCouponForBalance(long id, String password, long userId) {
+
+        CardInfoEntity cardInfoEntity = baseDao.selectByIdAndPassword(id, password);
+        if (cardInfoEntity==null){
+            return new Result().error("账号密码错误");
+        }
+        if (cardInfoEntity.getStatus()==1){
+            return new Result().error("该卡密未激活");
+        }
+        if (cardInfoEntity.getStatus()==3){
+            return new Result().error("该卡密已使用");
+        }
+        if (cardInfoEntity.getStatus()==9){
+            return new Result().error("该卡密已删除");
+        }
+        BigDecimal a = new BigDecimal("200");
+
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity==null){
+            return new Result().error("请登录");
+        }
+        if( clientUserEntity.getBalance().compareTo(a)==1){
+            return new Result().error("宝币余额大于200不可充值");
+        }
+        BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
+        clientUserEntity.setBalance(money);
+        clientUserService.updateById(clientUserEntity);
+
+        Date date = new Date();
+        cardInfoEntity.setStatus(3);
+        cardInfoEntity.setBindCardDate(date);
+        cardInfoEntity.setBindCardUser(userId);
+        baseDao.updateById(cardInfoEntity);
+
+     //   recordGiftService.insertRecordGift(userId,date,clientUserEntity.getGift(),cardInfoEntity.getMoney());
+
+        return new Result().ok("充值成功");
+    }
+
+    @Override
     public PageData<CardInfoDTO> pageList(Map params) {
         PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
         Page<CardInfoDTO> page = (Page) userCardDao.pageList(params);
