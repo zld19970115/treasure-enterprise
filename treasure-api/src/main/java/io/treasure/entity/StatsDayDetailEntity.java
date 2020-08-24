@@ -133,5 +133,4 @@ public class StatsDayDetailEntity {
      */
     private BigDecimal serviceCharge;
 
-
 }

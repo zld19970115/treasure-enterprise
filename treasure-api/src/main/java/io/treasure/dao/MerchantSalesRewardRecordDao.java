@@ -1,7 +1,6 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.vo.MchRewardUpdateQuery;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
@@ -18,5 +17,6 @@ public interface MerchantSalesRewardRecordDao extends BaseDao<MerchantSalesRewar
     List<RewardMchList> reward_mch_list(MerchantSalesRewardRecordVo vo);
     List<RewardMchList> getRewardMchList(List<Long> mIds);
     void updateStatusByIds(MchRewardUpdateQuery query);
+    int isExistRecord();
 
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.OrderRewardWithdrawRecordDao">
+
+
+    <update id="updateByIds">
+
+        update order_reward_withdraw_reocrd
+        set status = #{status}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" open="(" close=")" separator=",">
+                ${ids}
+            </foreach>
+        </where>
+
+    </update>
+</mapper>

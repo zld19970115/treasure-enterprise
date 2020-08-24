@@ -1,11 +1,13 @@
 package io.treasure.task;
 
-import io.treasure.task.item.*;
+import io.treasure.task.item.ClientMemberGradeAssessment;
+import io.treasure.task.item.OrderClear;
+import io.treasure.task.item.OrderForBm;
+import io.treasure.task.item.WithdrawCommissionForMerchant;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 
 @Component
 public class Task {
@@ -21,7 +23,7 @@ public class Task {
     //处理次数记录
     private int taskInProcess = 0;
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 10000)
     public void TaskManager(){
 
         orderForBm.getOrderByYwy();
@@ -30,10 +32,8 @@ public class Task {
             resetAllCounter();
         }
         //1,自动清台任务+加销奖励
-        if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
-            orderClear.execOrderClear(true);
-
-
+//        if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
+//            orderClear.clearOrder();
 
         //更新用户级别相关信息
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
@@ -42,6 +42,9 @@ public class Task {
         //自动执行用户提现相关操作
 
    }
+
+
+
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
         if(taskInProcess >0)

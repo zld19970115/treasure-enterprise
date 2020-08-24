@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiImplicitParam;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -25,11 +24,12 @@ import io.treasure.enm.EMessageUpdateType;
 import io.treasure.enm.MerchantRoomEnm;
 import io.treasure.entity.*;
 import io.treasure.jra.impl.MerchantMessageJRA;
-import io.treasure.jra.impl.MerchantSetJRA;
 import io.treasure.jro.MerchantMessage;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
-import io.treasure.utils.*;
+import io.treasure.utils.OrderUtil;
+import io.treasure.utils.SendSMSUtil;
+import io.treasure.utils.WsPool;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;
 import io.treasure.vo.PageTotalRowData;
@@ -43,7 +43,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -83,8 +82,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private GoodService goodService;
     @Autowired
-    private StimmeService stimmeService;
-    @Autowired
     private MasterOrderService masterOrderService;
     @Autowired
     private MerchantCouponService merchantCouponService;
@@ -96,7 +93,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     WsPool wsPool;
     @Autowired
     private IWXPay wxPay;
-
     @Autowired
     private IWXConfig wxPayConfig;
     @Autowired
@@ -108,9 +104,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private StatsDayDetailService statsDayDetailService;
-
-    @Autowired
-    private CtDaysTogetherService ctDaysTogetherService;
 
     @Autowired
     private DistributionRewardServiceImpl distributionRewardService;
@@ -267,11 +260,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             userTransactionDetailsService.insert(entiry);
         }
 
-        statsDayDetailService.insertFinishUpdate(dto);
-        List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
-        for (MasterOrderDTO mod : orderByFinance) {
-            statsDayDetailService.insertFinishUpdate(mod);
-        }
         Date date = new Date();
         if (null != dto) {
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
@@ -293,6 +281,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     dto.setUpdateDate(date);
                     MasterOrderEntity masterOrderEntity = ConvertUtils.sourceToTarget(dto, MasterOrderEntity.class);
                     baseDao.updateById(masterOrderEntity);
+                    
                     if (dto.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || dto.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                         merchantRoomParamsSetService.updateStatus(dto.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                     }
@@ -319,6 +308,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         if (o.getReservationType() == Constants.ReservationType.ONLYROOMRESERVATION.getValue() || o.getReservationType() == Constants.ReservationType.NORMALRESERVATION.getValue()) {
                             merchantRoomParamsSetService.updateStatus(o.getReservationId(), MerchantRoomEnm.STATE_USE_NO.getType());
                         }
+                    }
+                }
+
+                if(statsDayDetailService.orderCount(dto.getOrderId()) == 0) {
+                    statsDayDetailService.insertFinishUpdate(dto);
+                    List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
+                    for (MasterOrderDTO mod : orderByFinance) {
+                        statsDayDetailService.insertFinishUpdate(mod);
                     }
                 }
             } else {
@@ -3029,6 +3026,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 map.put("payMoney", vo.getPayMoney());
                 map.put("merchantProceeds", vo.getMerchantProceeds());
                 map.put("platformBrokerage", vo.getPlatformBrokerage());
+                map.put("payMoneyNew", vo.getPayMoneyNew());
+                map.put("payCoins", vo.getPayCoins());
             }
         }
         return new PageTotalRowData<>(page.getResult(), page.getTotal(), map);

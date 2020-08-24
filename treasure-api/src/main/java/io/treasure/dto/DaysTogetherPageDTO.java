@@ -54,4 +54,8 @@ public class DaysTogetherPageDTO {
     @ApiModelProperty(value = "平台实际所得")
     private BigDecimal platformRealityMoney;
 
+    private BigDecimal payCoins;
+
+    private BigDecimal realityMoneyNew;
+
 }

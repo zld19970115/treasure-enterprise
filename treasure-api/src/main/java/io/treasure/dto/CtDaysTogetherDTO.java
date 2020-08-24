@@ -77,4 +77,6 @@ public class CtDaysTogetherDTO {
     @ApiModelProperty(value = "代付金")
     private BigDecimal giftMoney;
 
+    private BigDecimal payCoins;
+
 }

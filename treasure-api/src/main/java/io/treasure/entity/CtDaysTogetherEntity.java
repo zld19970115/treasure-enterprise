@@ -65,8 +65,6 @@ public class CtDaysTogetherEntity {
      */
     private BigDecimal giftMoney;
 
-
-
-
+    private BigDecimal payCoins;
 
 }

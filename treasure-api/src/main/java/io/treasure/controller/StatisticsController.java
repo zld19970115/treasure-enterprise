@@ -261,6 +261,19 @@ public class StatisticsController {
     }
 
     @Login
+    @GetMapping("smsMerchantPage")
+    @ApiOperation("财务系统首页统计")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
+            @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
+    })
+    public Result<PageData<MerchantPageVo>> smsMerchantPage(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<MerchantPageVo>>().ok(statisticsService.smsMerchantPage(params));
+    }
+
+    @Login
     @GetMapping("userChart")
     @ApiOperation("用户统计图")
     @ApiImplicitParams({

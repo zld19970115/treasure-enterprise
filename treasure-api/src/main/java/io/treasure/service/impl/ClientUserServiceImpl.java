@@ -343,6 +343,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         baseDao.insert(user);
 
         ClientUserEntity userByPhone = baseDao.getUserByPhone(vo.getMobile());
+
         tokenService.createToken(userByPhone.getId());
         map.put("user", userByPhone);
         TokenEntity byUserId = tokenService.getByUserId(userByPhone.getId());
@@ -361,6 +362,29 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         return new Result().ok(map);
     }
 
+    public ClientUserEntity atachUserInfo(ClientUserEntity user,AppLoginCheckVo vo){
+        boolean updateFlag = false;
+        String headIcon = vo.getHeadIcon();
+        String nickName = vo.getNickName();
+
+        if(headIcon != null){
+            if(user.getHeadImg()== null){
+                user.setHeadImg(headIcon);
+                updateFlag = true;
+            }
+        }
+        if(nickName != null){
+            if(user.getUsername()==user.getMobile()||user.getUsername()==null){
+                user.setUsername(nickName);
+                updateFlag =true;
+            }
+        }
+        if(updateFlag){
+            updateFlag=false;
+            clientUserDao.updateById(user);
+        }
+        return user;
+    }
     @Override
     public Result appLoginCheck(AppLoginCheckVo vo) {
         String mobile = vo.getMobile();
@@ -370,24 +394,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if(mobile != null){
             ClientUserEntity user = clientUserDao.getUserByMobile(mobile);
             if(user != null){
-                int updateFlag = 0;
-                if(headIcon != null){
-                    if(user.getHeadImg().equals(null)){
-                        user.setHeadImg(headIcon);
-                        updateFlag++;
-                    }
-                }
-                if(nickName != null){
-                    if(user.getUsername()==user.getMobile()){
-                        user.setUsername(nickName);
-                        updateFlag++;
-                    }
-                }
-                if(updateFlag>0){
-                    updateFlag=0;
-                    clientUserDao.updateById(user);
-                }
-                return loginSuccess(user);
+                return loginSuccess(atachUserInfo(user,vo));
             }else{
                 //走注册流程
                 return userRegister(vo);
@@ -397,12 +404,13 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
         if(unionid != null){
             QueryWrapper<ClientUserEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("unionid",unionid);
-            List<ClientUserEntity> user = clientUserDao.selectList(queryWrapper);
-            if(user.size()<0){
-                if(user.size()<1){
-                    System.out.println("用户帐号："+user.get(0).toString()+"重复，请及时处理！");
+            List<ClientUserEntity> users = clientUserDao.selectList(queryWrapper);
+            if(users.size()>0){
+                if(users.size()>1){
+                    System.out.println("用户帐号："+users.get(0).toString()+"重复，请及时处理！");
                 }
-                return loginSuccess(user.get(0));
+                ClientUserEntity u = users.get(0);
+                return loginSuccess(atachUserInfo(u,vo));
             }else{
                 return new Result().error("failure");
             }
