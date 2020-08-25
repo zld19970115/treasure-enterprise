@@ -78,7 +78,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     @Override
     public Result selectMartCouponForBalance(long id, String password, long userId) {
 
-        CardInfoEntity cardInfoEntity = baseDao.selectByIdAndPassword(id, password);
+        CardInfoEntity cardInfoEntity = baseDao.selectByIdAndPasswordandType(id, password);
         if (cardInfoEntity==null){
             return new Result().error("账号密码错误");
         }
