@@ -105,6 +105,11 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
            map.put("expire", byUserId.getExpireDate().getTime() - System.currentTimeMillis());
            return new Result().ok(map);
        }else {
+           if (user.getStatus()==0){
+               return new Result().error("该账户已冻结，请联系平台");
+           }
+
+
            if (unionid!=null){
                user.setUnionid(unionid);
                baseDao.updateById(user);

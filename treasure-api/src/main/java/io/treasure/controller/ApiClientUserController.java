@@ -899,4 +899,17 @@ public class ApiClientUserController {
         Result  result = clientUserService.appLoginCheck(vo);
         return new Result().ok(result);
     }
+    @GetMapping("/frozen")
+    @ApiOperation("冻结用户")
+    public Result frozen(@RequestParam Long userId,@RequestParam int status) {
+
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        if (clientUserEntity == null) {
+            return new Result().error("没有找到该用户，请稍后再试");
+        }
+        clientUserEntity.setStatus(status);
+        clientUserService.updateById(clientUserEntity);
+        return new Result().ok("成功");
+    }
+
 }
