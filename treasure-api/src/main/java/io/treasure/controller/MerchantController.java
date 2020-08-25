@@ -374,6 +374,9 @@ public class MerchantController {
             MerchantEntity merchantEntity = merchantService.selectById(id);
             if(merchantEntity != null){
                 if(isAllowOpening(merchantEntity)){
+                    if (merchantEntity.getStatus()==0){
+                        return new Result().error("已冻结，无法开店");
+                    }
                     merchantService.closeShop(id,Common.STATUS_ON.getStatus());
                     return new Result();
                 }else{
@@ -386,6 +389,9 @@ public class MerchantController {
                 }
 
             }else{
+                if (merchantEntity.getStatus()==0){
+                    return new Result().error("已冻结，无法开店");
+                }
                 merchantService.closeShop(id,Common.STATUS_ON.getStatus());
                 return new Result();
             }

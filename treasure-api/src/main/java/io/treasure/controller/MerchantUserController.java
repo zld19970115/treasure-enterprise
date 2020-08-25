@@ -628,7 +628,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name = "status", value = "状态", required = true, paramType = "query", dataType = "int")
     })
     public Result delOrFrozen(@RequestParam Long id, @RequestParam Integer status) {
-        merchantUserService.delOrFrozen(id,status);
-        return new Result().ok(null);
+        Result result = merchantUserService.delOrFrozen(id, status);
+        return new Result().ok(result);
     }
 }

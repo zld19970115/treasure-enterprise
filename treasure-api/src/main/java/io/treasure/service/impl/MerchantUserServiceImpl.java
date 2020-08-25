@@ -14,6 +14,7 @@ import io.treasure.dto.LoginDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantUserDTO;
 import io.treasure.enm.Role;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.MerchantService;
@@ -205,7 +206,11 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
     @Override
     public Result delOrFrozen(Long id, Integer status) {
         baseDao.frozen(id,status);
-        return new Result().ok("");
+        MerchantUserEntity merchantUserEntity = baseDao.selectById(id);
+        MerchantEntity merchantEntity = merchantService.selectById(merchantUserEntity.getMerchantid());
+        merchantEntity.setStatus(2);
+        merchantService.updateById(merchantEntity);
+        return new Result().ok("冻结成功");
     }
 
 
