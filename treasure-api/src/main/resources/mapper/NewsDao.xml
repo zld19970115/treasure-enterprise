@@ -12,6 +12,7 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="type" column="type"/>
     </resultMap>
 
     <select id="pageList" resultType="io.treasure.dto.NewsDto">

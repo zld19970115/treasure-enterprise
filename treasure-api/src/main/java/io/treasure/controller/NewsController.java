@@ -42,9 +42,10 @@ public class NewsController {
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="date") ,
-            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="date")
+            @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="date"),
+            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="date")
     })
-    public Result newsList(@ApiIgnore @RequestParam int page,int limit,Date startDate,Date endDate) {
+    public Result newsList(@ApiIgnore @RequestParam int page,int limit,Date startDate,Date endDate,Integer type) {
 
         QueryWrapper<NewsEntity> saqw = new QueryWrapper<>();
 
@@ -52,6 +53,12 @@ public class NewsController {
             saqw.between("create_date",startDate,endDate);
         saqw.orderByDesc("create_date");
         saqw.eq("status",1);
+        if(type == 1) {
+            saqw.in("type", 1,3);
+        } else if(type == 2) {
+            saqw.in("type", 2,3);
+        }
+
         //奖励数量设置
         Page<NewsEntity> record = new Page<NewsEntity>(page,limit);
         IPage<NewsEntity> records = newsDao.selectPage(record, saqw);
