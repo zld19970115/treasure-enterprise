@@ -2,20 +2,16 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.treasure.common.constant.Constant;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.BusinessManagerDao;
-import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.BusinessManagerDTO;
-import io.treasure.dto.ClientUserDTO;
-import io.treasure.dto.MerchantRoomDTO;
 import io.treasure.entity.BusinessManagerEntity;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MerchantRoomEntity;
+import io.treasure.entity.BusinessManagerTrackRecordEntity;
 import io.treasure.service.BusinessManagerService;
-import io.treasure.service.ClientUserService;
-import org.apache.commons.lang3.StringUtils;
+import io.treasure.vo.BusinessManagerPageVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,9 +38,20 @@ public class BusinessManagerServiceImpl  extends CrudServiceImpl<BusinessManager
     }
 
     @Override
-    public void binding(int bmId, String mchId) {
+    public void binding(Integer bmId, String mchId) {
+        BusinessManagerTrackRecordEntity obj = baseDao.selectByMartId(Long.parseLong(mchId));
+        if(obj != null) {
+            baseDao.delLogById(obj.getPid());
+        }
+        if(bmId != null) {
+            baseDao.binding(bmId,mchId);
+        }
+    }
 
-
-        baseDao.binding(bmId,mchId);
+    @Override
+    public PageData<BusinessManagerPageVo> pagePC(Map<String, Object> map) {
+        PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
+        Page<BusinessManagerPageVo> page = (Page) baseDao.pagePC(map);
+        return new PageData<>(page.getResult(),page.getTotal());
     }
 }

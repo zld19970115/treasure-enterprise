@@ -23,14 +23,19 @@
     </resultMap>
     <insert id="binding">
        INSERT INTO business_manager_track_record(bm_id,mch_id,official_entry_time,status) VALUE(#{bmId},#{mchId},now(),1);
-
     </insert>
+    <delete id="delLogById">
+        DELETE FROM business_manager_track_record WHERE pid = #{pid}
+    </delete>
     <select id="getByNameAndPassWord" resultType="io.treasure.dto.BusinessManagerDTO">
         select * from business_manager where status in (1,2) and  real_name =#{realName} and password = #{passWord} and deleted = 0
     </select>
 
     <select id="listPage" resultType="io.treasure.dto.BusinessManagerDTO">
          select * from business_manager where status in (1,2) and deleted = 0
+        <if test=" mobile != null and mobile.trim() != '' ">
+            and mobile like CONCAT('%',#{mobile},'%')
+        </if>
     </select>
     <select id="selectByMobile" resultType="io.treasure.dto.BusinessManagerDTO">
         select * from business_manager where status in (1,2) and deleted = 0 and mobile = #{mobile}
@@ -42,5 +47,16 @@
          select * from business_manager_track_record where mch_id = #{martId}
     </select>
 
+    <select id="pagePC" resultType="io.treasure.vo.BusinessManagerPageVo">
+        select cm.id,cm.`name`,bm.mobile,bm.nick_name,bm.uid from ct_merchant cm
+        LEFT JOIN business_manager_track_record bmt on cm.id = bmt.mch_id
+        LEFT JOIN business_manager bm on bmt.bm_id = bm.id
+        <where>
+            <if test=" mobile != null and mobile.trim() != '' ">
+                bm.mobile like CONCAT('%',#{mobile},'%')
+            </if>
+        </where>
+        ORDER BY cm.create_date desc
+    </select>
 
 </mapper>
