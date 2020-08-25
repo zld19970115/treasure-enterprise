@@ -11,10 +11,10 @@ import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
-import io.treasure.dao.NewsDao;
-import io.treasure.dto.NewsDto;
-import io.treasure.entity.NewsEntity;
-import io.treasure.service.NewsService;
+import io.treasure.dao.NewsForClientDao;
+import io.treasure.dto.NewsForClientDto;
+import io.treasure.entity.NewsForClientEntity;
+import io.treasure.service.NewsForClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -24,15 +24,15 @@ import java.util.Date;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/news")
-@Api(tags="公告消息")
-public class NewsController {
+@RequestMapping("/cnews")
+@Api(tags="客户公告消息")
+public class NewsForClientController {
 
     @Autowired
-    private NewsService newsService;
+    private NewsForClientService newsForClientService;
 
     @Autowired(required = false)
-    private NewsDao newsDao;
+    private NewsForClientDao newsForClientDao;
 
 
     @Login
@@ -44,17 +44,17 @@ public class NewsController {
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="date") ,
             @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="date")
     })
-    public Result newsList(@ApiIgnore @RequestParam int page,int limit,Date startDate,Date endDate) {
+    public Result newsList(@ApiIgnore @RequestParam int page, int limit, Date startDate, Date endDate) {
 
-        QueryWrapper<NewsEntity> saqw = new QueryWrapper<>();
+        QueryWrapper<NewsForClientEntity> saqw = new QueryWrapper<>();
 
         if(startDate != null && endDate != null)
             saqw.between("create_date",startDate,endDate);
         saqw.orderByDesc("create_date");
         saqw.eq("status",1);
         //奖励数量设置
-        Page<NewsEntity> record = new Page<NewsEntity>(page,limit);
-        IPage<NewsEntity> records = newsDao.selectPage(record, saqw);
+        Page<NewsForClientEntity> record = new Page<NewsForClientEntity>(page,limit);
+        IPage<NewsForClientEntity> records = newsForClientDao.selectPage(record, saqw);
         if(records == null)
             return new Result().error("nothing");
 
@@ -71,8 +71,8 @@ public class NewsController {
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="String") ,
             @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="String")
     })
-    public Result<PageData<NewsDto>> page(@ApiIgnore @RequestParam Map<String, Object> params) {
-        return new Result<PageData<NewsDto>>().ok(newsService.page(params));
+    public Result<PageData<NewsForClientDto>> page(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<NewsForClientDto>>().ok(newsForClientService.page(params));
     }
 
     @Login
@@ -82,8 +82,8 @@ public class NewsController {
             @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
     })
-    public Result<PageData<NewsDto>> agreePage(@ApiIgnore @RequestParam Map<String, Object> params) {
-        return new Result<PageData<NewsDto>>().ok(newsService.agreePage(params));
+    public Result<PageData<NewsForClientDto>> agreePage(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<NewsForClientDto>>().ok(newsForClientService.agreePage(params));
     }
 
     @Login
@@ -93,8 +93,9 @@ public class NewsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="String") ,
     })
-    public Result<NewsDto> bannerById(@ApiIgnore @RequestParam Long id) {
-        return new Result<NewsDto>().ok(newsService.get(id));
+    public Result<NewsForClientDto> bannerById(@ApiIgnore @RequestParam Long id) {
+
+        return new Result<NewsForClientDto>().ok(newsForClientService.get(id));
     }
 
     @Login
@@ -104,39 +105,23 @@ public class NewsController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query",dataType="String") ,
     })
     public Result<Boolean> del(@ApiIgnore @RequestParam Long id) {
-        return new Result<Boolean>().ok(newsService.deleteBatchIds(Arrays.asList(new Long[]{id})));
+        return new Result<Boolean>().ok(newsForClientService.deleteBatchIds(Arrays.asList(new Long[]{id})));
     }
 
     @Login
     @PostMapping("update")
     @ApiOperation("更新")
-    public Result<String> update(@RequestBody NewsDto dto) {
-        newsService.update(dto);
+    public Result<String> update(@RequestBody NewsForClientDto dto) {
+        newsForClientService.update(dto);
         return new Result<String>().ok("ok");
     }
 
     @Login
     @PostMapping("insert")
     @ApiOperation("新增")
-    public Result<String> insert(@RequestBody NewsEntity dto) {
-        newsService.insert(dto);
+    public Result<String> insert(@RequestBody NewsForClientEntity dto) {
+        newsForClientService.insert(dto);
         return new Result<String>().ok("ok");
     }
-
-    @Login
-    @GetMapping("privacyAgrre")
-    @ApiOperation("隐私协议")
-    public Result<NewsDto> privacyAgrre() {
-        return newsService.privacyAgrre();
-    }
-
-    @Login
-    @GetMapping("userAgrre")
-    @ApiOperation("用户协议")
-    public Result<NewsDto> userAgrre() {
-        return newsService.userAgrre();
-    }
-
-
 
 }

@@ -2,6 +2,7 @@ package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.OrderRewardWithdrawRecordEntity;
+import io.treasure.vo.MerchantSalesRewardRecordVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,4 +15,6 @@ public interface OrderRewardWithdrawRecordDao extends BaseDao<OrderRewardWithdra
                      @Param("status") Integer status);
 
 
+    List<OrderRewardWithdrawRecordEntity> getMerchantRewardList(MerchantSalesRewardRecordVo vo);
 }
+

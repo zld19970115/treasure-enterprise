@@ -2,8 +2,8 @@ package io.treasure.enm;
 
 public enum EOrderRewardWithdrawRecord {
 
-    NOT_WITHDRAW(1,"未提现"),
-    WITHDRAW_COMPLETE(2,"提现完成");
+    NOT_COPY(1,"未拷"),
+    COPYED(2,"已拷-则不能再次拷");
 
     private int code;
     private String msg;

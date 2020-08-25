@@ -6,16 +6,12 @@ import com.github.pagehelper.PageHelper;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.ApiGoodDao;
-import io.treasure.dao.GoodDao;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.GoodPagePCDTO;
-import io.treasure.dto.NewsDto;
 import io.treasure.entity.GoodCategoryEntity;
 import io.treasure.entity.GoodEntity;
 import io.treasure.service.ApiGoodService;
-import io.treasure.service.GoodService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
