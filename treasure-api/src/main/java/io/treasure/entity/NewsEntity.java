@@ -27,4 +27,6 @@ public class NewsEntity {
 
     private Long updater;
 
+    private Integer type;
+
 }

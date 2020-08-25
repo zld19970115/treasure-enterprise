@@ -29,4 +29,6 @@ public class NewsDto {
 
     private Long updater;
 
+    private Integer type;
+
 }

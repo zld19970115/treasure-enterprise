@@ -12,9 +12,9 @@ import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
 import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dto.BusinessManagerDTO;
-import io.treasure.enm.Common;
 import io.treasure.service.BusinessManagerService;
 import io.treasure.task.item.OrderForBm;
+import io.treasure.vo.BusinessManagerPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -92,7 +92,7 @@ public class BusinessManagerController {
         if (dto==null){
             return new Result().error("没有找到该业务员");
         }
-        dto.setDeleted(1);
+        dto.setStatus(3);
         businessManagerService.update(dto);
         return new Result().ok("删除成功");
     }
@@ -114,8 +114,8 @@ public class BusinessManagerController {
             @ApiImplicitParam(name = "bmId", value = "业务员id", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "mchId", value = "商户id", paramType = "query", required = true, dataType = "long")
     })
-    public Result binding(@ApiIgnore @RequestParam int bmId , long  mchId){
-      //  businessManagerService.binding(bmId,mchId);
+    public Result binding(@ApiIgnore @RequestParam Integer bmId , Long mchId){
+        businessManagerService.binding(bmId,mchId+"");
         return new Result().ok("绑定成功！");
     }
     @GetMapping("text")
@@ -125,4 +125,16 @@ public class BusinessManagerController {
         orderForBm.getOrderByYwy();
         return new Result().ok("绑定成功！");
     }
+
+    @Login
+    @GetMapping("pagePC")
+    @ApiOperation("分页查询绑定关系")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData<BusinessManagerPageVo>> pagePC(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<BusinessManagerPageVo>>().ok(businessManagerService.pagePC(params));
+    }
+
 }
