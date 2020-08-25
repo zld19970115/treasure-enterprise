@@ -54,6 +54,9 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     List<CategoryDTO> selectcategoryDTOS(String Value);
     List<GoodDTO> selectByMidAndValue(Long merchantId,String value);
     List<GoodDTO> selectByMidAndValueCopy(Long merchantId,String value);
+
     List<GoodDTO> selectByMidAndSales(Long merchantId);
+
+    void updateAutoAceptOrderStatus(List<Long> ids,Integer status);
 
 }

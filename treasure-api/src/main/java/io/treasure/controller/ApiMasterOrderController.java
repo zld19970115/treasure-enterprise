@@ -1,6 +1,5 @@
 package io.treasure.controller;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +7,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import io.treasure.annotation.Login;
 import io.treasure.annotation.LoginUser;
 import io.treasure.common.constant.Constant;
@@ -22,12 +20,14 @@ import io.treasure.common.validator.group.UpdateGroup;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
-import io.treasure.entity.*;
+import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.OrderSimpleEntity;
+import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.MasterOrderSimpleService;
 import io.treasure.service.MerchantRoomParamsSetService;
-import io.treasure.utils.EMsgCode;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1091,5 +1091,7 @@ public class ApiMasterOrderController {
 
             return result.ok(masterOrderVo);
     }
+
+
 
 }

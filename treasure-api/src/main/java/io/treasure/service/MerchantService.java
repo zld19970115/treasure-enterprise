@@ -6,6 +6,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.vo.AutoAceptVo;
 
 import java.util.List;
 import java.util.Map;
@@ -50,4 +51,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
 
     int attachCategoryByName(Long merchantId,String categoryName);
     int attachCategoryByNamePlus(String merchantName,String categoryName);
+
+    void updateAutoAceptStatus(AutoAceptVo vo);
+
 }
