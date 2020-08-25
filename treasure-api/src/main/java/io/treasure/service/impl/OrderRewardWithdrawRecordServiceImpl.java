@@ -6,14 +6,14 @@ import io.treasure.enm.EOrderRewardWithdrawRecord;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.OrderRewardWithdrawRecordEntity;
 import io.treasure.service.OrderRewardWithdrawRecordService;
+import io.treasure.vo.MerchantSalesRewardRecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
-import static io.treasure.enm.EOrderRewardWithdrawRecord.NOT_WITHDRAW;
+import static io.treasure.enm.EOrderRewardWithdrawRecord.NOT_COPY;
 
 @Service
 public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdrawRecordService {
@@ -21,7 +21,12 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
     @Autowired(required = false)
     private OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao;
 
-    //添加新记录，本记录由清台服务维护
+
+    /**
+     * 系统清台时，自动将新订单记录增加至商家反佣记录内
+     * @param entity
+     * @return
+     */
     @Override
     public boolean addPreWithdrawRecord(MasterOrderEntity entity){
 
@@ -37,7 +42,7 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             BigDecimal payCoins = entity.getPayCoins();
 
             OrderRewardWithdrawRecordEntity orwrEntity = new OrderRewardWithdrawRecordEntity();
-            orwrEntity.setStatus(NOT_WITHDRAW.getCode());                //未提现状态
+            orwrEntity.setStatus(NOT_COPY.getCode());                //记录未动
 
             orwrEntity.setOrderId(orderId);
             orwrEntity.setMId(merchantId);
@@ -45,7 +50,7 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             orwrEntity.setActualPayment(payMoney);
             orwrEntity.setPayCoins(payCoins);
             orwrEntity.setPlatformIncome(platformBrokerage);
-            orwrEntity.setCreatePmt(new Date());
+            orwrEntity.setCreatePmt(entity.getEatTime());           //用餐时间作为返佣参考时间
 
             orderRewardWithdrawRecordDao.insert(orwrEntity);
             return  true;
@@ -58,15 +63,48 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
     }
 
-    @Override
-    public boolean updateWithdrawFlagById(List<Long> ids, EOrderRewardWithdrawRecord eStatus){
+    /**
+     * 更新记录录为已读状怘
+     * @param ids
+     * @return
+     */
 
+    @Override
+    public boolean updateCopiedStatus(List<Long> ids){
+        int code = EOrderRewardWithdrawRecord.COPYED.getCode();
         try{
-            orderRewardWithdrawRecordDao.updateByIds(ids,eStatus.getCode());
+            orderRewardWithdrawRecordDao.updateByIds(ids,code);
             return true;
         }catch (Exception e){
             return false;
         }
+    }
+
+
+    public List<OrderRewardWithdrawRecordEntity> getSpecifyMerchantList(MerchantSalesRewardRecordVo vo){
+
+        List<OrderRewardWithdrawRecordEntity> resultList = orderRewardWithdrawRecordDao.getMerchantRewardList(vo);
+
+//ipipippop[o[ppo[o[p[pooiuytyuiop[]poiufjkllkjhghjkl
+        /*
+        Date lastMonthDate = TimeUtil.getLastMonthDate();
+
+        Date monthStart = TimeUtil.getMonthStart(lastMonthDate);
+        Date monthEnd = TimeUtil.getMonthEnd(lastMonthDate);
+
+        vo.setStartTime(monthStart);
+        vo.setStopTime(monthEnd);
+
+        List<RewardMchList> list = merchantSalesRewardRecordDao.reward_mch_list(vo);
+//        for(int i=0;i<list.size();i++){
+//            RewardMchList rewardMchList = list.get(i);
+//            rewardMchList.setDtime(new Date());
+//            list.set(i,rewardMchList);
+//        }
+*/
+        return resultList;
+
+
     }
 
 }

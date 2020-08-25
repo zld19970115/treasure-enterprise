@@ -1,17 +1,14 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.NewsDao;
 import io.treasure.dto.NewsDto;
-import io.treasure.entity.MessageEntity;
 import io.treasure.entity.NewsEntity;
 import io.treasure.service.NewsService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +22,7 @@ import java.util.Map;
 @Service
 public class NewsServiceImpl implements NewsService {
 
-    @Autowired
+    @Autowired(required = false)
     private NewsDao newsDao;
 
     @Override
