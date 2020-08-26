@@ -41,10 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.treasure.enm.EAceptOrder.AUTO_ACEPT_ORDER;
 import static io.treasure.enm.EIncrType.ADD;
 
 /**
- * @author super
+ * @author super  251 903
  * @since 1.0.0 2019-09-08
  */
 @Slf4j
@@ -107,6 +108,8 @@ public class PayServiceImpl implements PayService {
     @Autowired
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
 
+    private Long platform_super = 1203867983016017922L;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public Map<String, String> wxNotify(BigDecimal total_amount, String out_trade_no) {
@@ -125,7 +128,7 @@ public class PayServiceImpl implements PayService {
         }
 
         if (masterOrderEntity.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() && masterOrderEntity.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
-            System.out.println("wxNotify02===============masterOrderEnitity.getStatus():" + masterOrderEntity.getStatus());
+           //System.out.println("wxNotify02===============masterOrderEnitity.getStatus():" + masterOrderEntity.getStatus());
             mapRtn.put("return_code", "SUCCESS");
             mapRtn.put("return_msg", "OK");
             return mapRtn;
@@ -167,7 +170,9 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "OK");
             return mapRtn;
         }
+
         masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+
         masterOrderEntity.setPayMode(Constants.PayMode.WXPAY.getValue());
         masterOrderEntity.setResponseStatus(1);//排序提前
         masterOrderEntity.setPayDate(new Date());
@@ -191,11 +196,6 @@ public class PayServiceImpl implements PayService {
         clientUserService.updateById(clientUserEntity);
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity.getId(), date, gift, a);
-        //System.out.println("position 1 : "+masterOrderDao.toString()+"===reservationType:"+masterOrderEntity.getReservationType());
-        //至此
-        //  int i = bitMessageUtil.attachMessage(EMsgCode.ADD_DISHES);
-//        System.out.println("i+++++++++++++++++++++++++++++:"+i
-//        );
 
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
@@ -247,6 +247,11 @@ public class PayServiceImpl implements PayService {
             clientId = list.get(0).getClientId();
         }
         if (null != merchantDto) {
+
+            //======    自动接单时，则自动开启接单功能     ------
+            Integer days = merchantDto.getDays();
+            masterOrderService.autoAceptOrder(masterOrderEntity.getId(),platform_super,days);
+
             MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());
             if (null != userDto) {
                 if (StringUtils.isNotBlank(clientId)) {
@@ -261,6 +266,7 @@ public class PayServiceImpl implements PayService {
                     stimmeEntity.setMerchantId(masterOrderEntity.getMerchantId());
                     stimmeEntity.setCreator(masterOrderEntity.getCreator());
                     stimmeService.insert(stimmeEntity);
+
                 } else {
                     System.out.println("无法发送提醒短消息！请联系管理员！【无法获取商户会员无clientId信息】");
                 }
@@ -893,6 +899,11 @@ public class PayServiceImpl implements PayService {
             // System.out.println("exec004");
             return mapRtn;
         }
+
+        //======    自动接单时，则自动开启接单功能     ------
+        Integer days = merchantDto.getDays();
+        masterOrderService.autoAceptOrder(masterOrderEntity.getId(),platform_super,days);
+
 
         //4-2、检查商户会员信息
         MerchantUserDTO userDto = merchantUserService.get(merchantDto.getCreator());

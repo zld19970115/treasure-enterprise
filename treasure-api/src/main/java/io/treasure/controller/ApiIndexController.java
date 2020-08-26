@@ -1,8 +1,5 @@
 package io.treasure.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,7 +10,6 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.GoodCategoryDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.jra.impl.UserSearchJRA;
 import io.treasure.service.GoodCategoryService;
 import io.treasure.service.MerchantService;
@@ -25,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -258,7 +252,7 @@ ApiIndexController {
     public Result getSysAndUserSearchKeysVo(@ApiIgnore @RequestParam Map<String, Object> params){
         List<MakeListDTO> makeListDTOS = merchantService.selectName(params);
         return new Result().ok(makeListDTOS);
-}
+    }
 
 
 }

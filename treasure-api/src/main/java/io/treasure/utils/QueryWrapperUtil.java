@@ -1,7 +1,6 @@
 package io.treasure.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.annotation.ObjExtends;
 import io.treasure.entity.SharingActivityExtendsEntity;
 import org.junit.Test;
 import org.springframework.stereotype.Component;
@@ -25,48 +24,43 @@ public class QueryWrapperUtil<T> {
     public QueryWrapper<T> attachEQConditionFromAnnotation(Object entity,QueryWrapper<?> queryWrapper) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Class<?> aClass = entity.getClass();
         Object qwEntity = aClass.newInstance();
-
-        Field[] fields = aClass.getDeclaredFields();
-        for (Field field : fields) {
-            ObjExtends annotation = field.getAnnotation(ObjExtends.class);
-            if (field.getAnnotation(ObjExtends.class) != null) {
-                String defaultValue = annotation.defaultValue();
-                String queryMethod = annotation.queryMethod();
-                String filedName = field.getName();//字段名
-                String type = field.getGenericType().toString();
-                if(queryMethod.equals("eq")){
-                    String methodName = generGetMethodName(filedName);
-                    Method getMethod = aClass.getDeclaredMethod(methodName);
-                    Object invoke = getMethod.invoke(qwEntity);
-                    System.out.println(qwEntity.toString());
-                    Integer tmp = (Integer)invoke;
-                    if(tmp == null){
-                        Method setMethod = aClass.getDeclaredMethod(filedName);
-                        //setMethod.invoke(qwEntity, Integer.parseInt(defaultValue));
-                        System.out.println(qwEntity.toString());
-
-                    }
-
-                }
-
-
-
-
-
-                //queryMethod
-
-              //  Method method = targetClass.getMethod(getName);
-                //Object value = method.invoke(this);
-                //if (value != null) {
-                  //  if (field.getGenericType().toString().contains("Date")) {
-                   //     Date tmpD = (Date) value;
-                    //    res.put(mName, tmpD.getTime() + "");
-                   // } else {
-                  //      res.put(mName, value + "");
-                   // }
-                //}
-            }
-        }
+//
+//        Field[] fields = aClass.getDeclaredFields();
+//        for (Field field : fields) {
+//            ObjExtends annotation = field.getAnnotation(ObjExtends.class);
+//            if (field.getAnnotation(ObjExtends.class) != null) {
+//                String defaultValue = null;//annotation.defaultValue();
+//                String queryMethod = null;//annotation.queryMethod();
+//                String filedName = field.getName();//字段名
+//                String type = field.getGenericType().toString();
+//                if(queryMethod.equals("eq")){
+//                    String methodName = generGetMethodName(filedName);
+//                    Method getMethod = aClass.getDeclaredMethod(methodName);
+//                    Object invoke = getMethod.invoke(qwEntity);
+//                    System.out.println(qwEntity.toString());
+//                    Integer tmp = (Integer)invoke;
+//                    if(tmp == null){
+//                        Method setMethod = aClass.getDeclaredMethod(filedName);
+//                        //setMethod.invoke(qwEntity, Integer.parseInt(defaultValue));
+//                        System.out.println(qwEntity.toString());
+//
+//                    }
+//
+//                }
+//                //queryMethod
+//
+//              //  Method method = targetClass.getMethod(getName);
+//                //Object value = method.invoke(this);
+//                //if (value != null) {
+//                  //  if (field.getGenericType().toString().contains("Date")) {
+//                   //     Date tmpD = (Date) value;
+//                    //    res.put(mName, tmpD.getTime() + "");
+//                   // } else {
+//                  //      res.put(mName, value + "");
+//                   // }
+//                //}
+//            }
+//        }
         return null;
     }
 
