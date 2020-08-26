@@ -6,8 +6,9 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.MerchantWithdrawDao;
-import io.treasure.entity.ClientMemberGradeAssessmentEntity;
+import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
+import io.treasure.service.MerchantSalesRewardService;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.UserWithdrawService;
 import io.treasure.task.TaskCommon;
@@ -16,7 +17,6 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -87,6 +87,8 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                         return true;
 
                 String dString = "2020-08-25 22:00:00";
+                MerchantSalesRewardEntity params = merchantSalesRewardService.getParams();
+
                 Date parse = TimeUtil.simpleDateFormat.parse(dString);
                 if(TimeUtil.isOnMothDay(parse)){
                      if(TimeUtil.isOnTime(parse,10)){
@@ -95,4 +97,6 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 }
                 return false;
         }
+        @Autowired
+        private MerchantSalesRewardService merchantSalesRewardService;
 }

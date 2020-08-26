@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.OrderRewardWithdrawRecordDao">
+
+
+    <update id="updateByIds">
+
+        update order_reward_withdraw_reocrd
+        set status = #{status}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" open="(" close=")" separator=",">
+                ${ids}
+            </foreach>
+        </where>
+
+    </update>
+
+    <select id="getMerchantRewardList" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo">
+hjlk;l';lkjhghjk;l'
+jghfhjkl';' ||
+ ''ljgghjk;
+ 
+        select m_id,sum(total_price) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
+        from order_reward_withdraw_reocrd
+        <where>
+            <if test="minValue != null and minValue != ''">
+                and sales_volume >= #{minValue}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and eat_time >= #{startTime}
+            </if>
+            <if test="stopTime != null and stopTime != ''">
+                and #{stopTime} >= eat_time
+            </if>
+        </where>
+        group by merchant_id
+        order by sales_volume desc, order_volume desc
+        limit #{index},#{pagesNum}
+
+    </select>
+</mapper>

@@ -451,7 +451,9 @@
             ctmo.p_order_id as porderId,
             ctmo.merchant_proceeds as merchantProceeds,
             ctmo.platform_brokerage as platformBrokerage,
-            u.mobile
+            u.mobile,
+            ctmo.pay_coins as payCoins,
+            (ctmo.pay_money - ctmo.pay_coins) as payMoneyNew
         from ct_master_order ctmo
         LEFT JOIN ct_merchant cm on cm.id = ctmo.merchant_id
         LEFT JOIN ct_client_user u on u.id = ctmo.creator
@@ -486,7 +488,9 @@
         IFNULL(sum(ctmo.gift_money),0) as giftMoney,
         IFNULL(sum(ctmo.pay_money),0) as payMoney,
         IFNULL(sum(ctmo.merchant_proceeds),0) as merchantProceeds,
-        IFNULL(sum(ctmo.platform_brokerage),0) as platformBrokerage
+        IFNULL(sum(ctmo.platform_brokerage),0) as platformBrokerage,
+        IFNULL(sum(ctmo.pay_coins),0) as payCoins,
+        IFNULL(sum(ctmo.pay_money - ctmo.pay_coins),0) as payMoneyNew
         from ct_master_order ctmo
         LEFT JOIN ct_merchant cm on cm.id = ctmo.merchant_id
         LEFT JOIN ct_client_user u on u.id = ctmo.creator

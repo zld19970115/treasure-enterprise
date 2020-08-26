@@ -43,7 +43,16 @@ public class UserCardController {
 
         return new Result().ok(result);
     }
+    @Login
+    @GetMapping("/selectMartCouponForBalance")
+    @ApiOperation("用户充值宝币(用卡)")
+    public Result selectMartCouponForBalance(@RequestParam long userId, @RequestParam long id , @RequestParam String password){
 
+        Result result = userCardService.selectMartCouponForBalance(id, password, userId);
+
+
+        return new Result().ok(result);
+    }
     @GetMapping("/makePageList")
     @ApiOperation("列表PC")
     @ApiImplicitParams({

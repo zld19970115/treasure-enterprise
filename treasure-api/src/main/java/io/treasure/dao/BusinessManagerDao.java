@@ -4,7 +4,7 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.BusinessManagerDTO;
 import io.treasure.entity.BusinessManagerEntity;
 import io.treasure.entity.BusinessManagerTrackRecordEntity;
-import io.treasure.entity.ClientUserEntity;
+import io.treasure.vo.BusinessManagerPageVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,4 +18,6 @@ public interface BusinessManagerDao  extends BaseDao<BusinessManagerEntity> {
     BusinessManagerDTO selectByMobile(String mobile);
   List<BusinessManagerTrackRecordEntity> selectlogById(long id);
     BusinessManagerTrackRecordEntity  selectByMartId(long martId);
+    List<BusinessManagerPageVo> pagePC(Map<String, Object> params);
+    void delLogById(Integer pid);
 }

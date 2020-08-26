@@ -12,6 +12,7 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="type" column="type"/>
     </resultMap>
 
     <select id="pageList" resultType="io.treasure.dto.NewsDto">
@@ -30,5 +31,8 @@
 
     <select id="selectByStatus" resultType="io.treasure.dto.NewsDto">
         select * from ct_news where `status` = #{status}
+    </select>
+    <select id="selectByOn" resultType="io.treasure.entity.NewsEntity">
+        select * from ct_news where  `type` in (#{type},3)
     </select>
 </mapper>

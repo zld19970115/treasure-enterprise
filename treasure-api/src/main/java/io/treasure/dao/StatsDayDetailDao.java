@@ -17,4 +17,6 @@ import java.util.List;
 @Mapper
 public interface StatsDayDetailDao  extends BaseDao<StatsDayDetailEntity> {
 
+    int orderCount(@Param("orderId") String orderId);
+
 }

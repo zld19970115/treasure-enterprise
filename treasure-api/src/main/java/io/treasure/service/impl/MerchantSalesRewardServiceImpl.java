@@ -1,31 +1,22 @@
 package io.treasure.service.impl;
 
-import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.treasure.common.exception.RenException;
-import io.treasure.common.utils.Result;
 import io.treasure.dao.MerchantSalesRewardDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
-import io.treasure.dto.UserWithdrawDTO;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.service.MerchantSalesRewardService;
-import io.treasure.utils.AdressIPUtil;
+import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
-import lombok.Data;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -86,10 +77,34 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         IPage<MerchantSalesRewardRecordEntity> pages = merchantSalesRewardRecordDao.selectPage(map,queryWrapper);
         return pages;
     }
+    @Test
+    public void test(){
 
-    public List<RewardMchList> getRewardMchList(MerchantSalesRewardRecordVo vo){
+        Date date = new Date();
+        String format = TimeUtil.simpleDateFormat.format(date);
+        String month = format.substring(5, 7);
+        String days = format.substring(8,10);
+        String year = format.substring(0,4);
+        System.out.println(year+","+month+","+days);
+    }
+
+    public List<RewardMchList> getRewardMchList(MerchantSalesRewardRecordVo vo) throws ParseException {
+
+        Date lastMonthDate = TimeUtil.getLastMonthDate();
+
+        Date monthStart = TimeUtil.getMonthStart(lastMonthDate);
+        Date monthEnd = TimeUtil.getMonthEnd(lastMonthDate);
+
+        vo.setStartTime(monthStart);
+        vo.setStopTime(monthEnd);
 
         List<RewardMchList> list = merchantSalesRewardRecordDao.reward_mch_list(vo);
+//        for(int i=0;i<list.size();i++){
+//            RewardMchList rewardMchList = list.get(i);
+//            rewardMchList.setDtime(new Date());
+//            list.set(i,rewardMchList);
+//        }
+
         return list;
     }
 
@@ -136,6 +151,9 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
             targetItem.setOutline("销售返利");
             targetItem.setRewardType(1);
             //queryList.add(targetItem);
+
+            //MerchantSalesRewardRecordEntity
+
             merchantSalesRewardRecordDao.insert(targetItem);
         }
     }

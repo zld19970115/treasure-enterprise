@@ -1,29 +1,20 @@
 package io.treasure.controller;
 
-import cn.jiguang.common.utils.TimeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
-import io.treasure.common.constant.Constant;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.common.validator.ValidatorUtils;
-import io.treasure.common.validator.group.AddGroup;
-import io.treasure.dao.*;
-import io.treasure.dto.GoodDTO;
-import io.treasure.dto.MerchantWithdrawDTO;
-import io.treasure.enm.Common;
-import io.treasure.enm.WithdrawEnm;
+import io.treasure.dao.MerchantDao;
+import io.treasure.dao.MerchantSalesRewardRecordDao;
+import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
-import io.treasure.entity.MerchantUserEntity;
 import io.treasure.service.MerchantSalesRewardService;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.UserWithdrawService;
@@ -34,11 +25,8 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MchRewardUpdateQuery;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -46,7 +34,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/mch_reward")
@@ -117,7 +104,7 @@ public class MerchantSalesRewardController {
     @CrossOrigin
     @Login
     @GetMapping("reward_logs")
-    @ApiOperation(value = "奖励记录",tags = "用于销售奖励,为商户返现")
+    @ApiOperation(value = "查询奖励记录",tags = "用于销售奖励,为商户返现")
     @ApiImplicitParams({
             @ApiImplicitParam(name ="mId", value = "商户id", paramType = "query",required = false, dataType="long") ,
             @ApiImplicitParam(name = "rewardValue",value = "奖励值",required = false, paramType = "query", dataType="int"),
@@ -199,6 +186,7 @@ public class MerchantSalesRewardController {
     public Result insertRecords(@RequestBody  List<Long> mchIds){
         //增加校验
         List<RewardMchList> rewardMchList = merchantSalesRewardService.getRewardMchList(mchIds);
+
         merchantSalesRewardService.insertBatchRecords(rewardMchList);
         return new Result().ok("添加记录成功");
     }
@@ -206,7 +194,7 @@ public class MerchantSalesRewardController {
     @CrossOrigin
     @Login
     @GetMapping("mch_list")
-    @ApiOperation("取得需要奖励的商家列表(全返)")
+    @ApiOperation("取得需要奖励的准商家列表(全返)")
     @ApiImplicitParams({
 
             @ApiImplicitParam(name = "ranking", value = "名次", paramType = "query",required = false, dataType="int") ,

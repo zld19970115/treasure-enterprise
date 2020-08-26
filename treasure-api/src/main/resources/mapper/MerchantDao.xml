@@ -325,4 +325,17 @@
         update ct_merchant set special = #{recommend} where id = #{id}
     </update>
 
+
+    <update id="updateAutoAceptOrderStatus" parameterType="io.treasure.vo.AutoAceptVo">
+
+        update ct_merchant set days=#{status}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" open="(" separator="," close=")">
+                ${ids}
+            </foreach>
+        </where>
+
+    </update>
+
 </mapper>

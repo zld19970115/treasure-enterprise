@@ -2,7 +2,6 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.ApiImplicitParam;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
@@ -14,18 +13,22 @@ import io.treasure.dto.CategoryDTO;
 import io.treasure.dto.GoodDTO;
 import io.treasure.dto.MakeListDTO;
 import io.treasure.dto.MerchantDTO;
-import io.treasure.enm.Common;
 import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.MerchantUserRoleEntity;
 import io.treasure.jra.impl.UserSearchJRA;
-import io.treasure.service.*;
+import io.treasure.service.MerchantRoomParamsSetService;
+import io.treasure.service.MerchantRoomService;
+import io.treasure.service.MerchantService;
+import io.treasure.service.MerchantUserService;
+import io.treasure.vo.AutoAceptVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 商户表
@@ -506,6 +509,19 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
             return 1;//附加
         }
         return 0;//不需要附加
+    }
+
+
+    public void updateAutoAceptStatus(AutoAceptVo vo){
+        List<Long> ids = vo.getIds();
+        Integer status = vo.getStatus();
+        if(status != 2){
+            status = 1;
+        }
+
+        merchantDao.updateAutoAceptOrderStatus(ids,status);
+
+
     }
 
 }

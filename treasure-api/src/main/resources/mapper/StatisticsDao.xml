@@ -658,7 +658,9 @@
         sum(ctdt.reality_money) as realityMoney,sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,sum(ctdt.gift_money) as giftMoney
         , ctm.`name`,
         ctm.id as mid,
-        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney
+        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney,
+        sum(ctdt.pay_coins) as payCoins,
+        sum(ctdt.reality_money - ctdt.pay_coins) as realityMoneyNew
         from ct_days_together ctdt
          left join ct_merchant ctm on ctm.id = ctdt.merchant_id
         LEFT JOIN ct_merchant_user mu on mu.merchantId = ctdt.merchant_id
@@ -691,7 +693,9 @@
         sum(ctdt.reality_money) as realityMoney,
         sum(ctdt.merchant_discount_amount) as merchantDiscount_amount,
         sum(ctdt.gift_money) as giftMoney,
-        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney
+        sum(ctdt.platform_brokerage-ctdt.gift_money) as platformRealityMoney,
+        sum(ctdt.pay_coins) as payCoins,
+        sum(ctdt.reality_money - ctdt.pay_coins) as realityMoneyNew
         from ct_days_together ctdt
         left join ct_merchant ctm on ctm.id = ctdt.merchant_id
         <where>
@@ -703,6 +707,12 @@
             </if>
             <if test="payType != null and payType.trim() != ''">
                 and ctdt.pay_type = #{payType}
+            </if>
+            <if test="name != null and name.trim() != ''">
+                and ctm.`name` like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mu.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
@@ -758,8 +768,10 @@
         sdd.ali_paymoney as aliPaymoney,
         sdd.service_charge as serviceCharge,
         sdd.update_date as updateDate,
-        case when sdd.incident_type = 0 then (select ro.order_id from refund_order ro where ro.refund_id = sdd.order_id) else '' end as tgoodOrderId,
-        case when sdd.incident_type = 8 then (select ctmo.order_id from ct_master_order ctmo where ctmo.refund_id = sdd.order_id) else '' end as torderId
+        (sdd.reality_money - sdd.ye_paymoney) as realityMoneyNew,
+        sdd.ye_paymoney as yePaymoney,
+        case when sdd.incident_type = 0 then (select ro.order_id from refund_order ro where ro.refund_id = sdd.order_id LIMIT 1) else '' end as tgoodOrderId,
+        case when sdd.incident_type = 8 then (select ctmo.order_id from ct_master_order ctmo where ctmo.refund_id = sdd.order_id LIMIT 1) else '' end as torderId
     FROM
 	    stats_day_detail sdd
         LEFT JOIN ct_merchant_user mu on mu.merchantId = sdd.pay_merchant_id
@@ -792,7 +804,9 @@
         IFNULL(SUM(CASE when sdd.platform_balance>0 then sdd.platform_balance else 0 end),0) as platformBalance,
         IFNULL(SUM(CASE when sdd.wx_paymoney>0 then sdd.wx_paymoney else 0 end),0) as wxPaymoney,
         IFNULL(SUM(CASE when sdd.ali_paymoney>0 then sdd.ali_paymoney else 0 end),0) as aliPaymoney,
-        IFNULL(SUM(CASE when sdd.service_charge>0 then sdd.service_charge else 0 end),0) as serviceCharge
+        IFNULL(SUM(CASE when sdd.service_charge>0 then sdd.service_charge else 0 end),0) as serviceCharge,
+        IFNULL(SUM(CASE when sdd.reality_money>0 then (sdd.reality_money - sdd.ye_paymoney) else 0 end),0) as realityMoneyNew,
+        IFNULL(SUM(CASE when sdd.ye_paymoney>0 then sdd.ye_paymoney else 0 end),0) as ye_paymoney
         FROM
             stats_day_detail sdd
         <where>
@@ -801,6 +815,12 @@
             </if>
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="name != null and name.trim() != ''">
+                and sdd.pay_merchant_name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mu.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
@@ -1022,8 +1042,39 @@
             <if test="id != null">
                 and c6.id = #{id}
             </if>
+            <if test="status != null">
+                and c6.status = #{status}
+            </if>
         </where>
         ORDER BY c6.create_date desc
+    </select>
+
+    <select id="smsMerchantPage" resultType="io.treasure.vo.MerchantPageVo">
+        select * from ct_merchant
+        <where>
+            <if test="name != null and name.trim() != ''">
+                and name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mobile like CONCAT('%',#{mobile},'%')
+            </if>
+            <if test="startDate != null and startDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null and endDate.trim() != ''">
+                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="auditStatus != null">
+                and auditStatus = #{auditStatus}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+        ORDER BY create_date desc
     </select>
 
     <select id="userChartByDay" resultType="io.treasure.vo.EChartInfoVo">

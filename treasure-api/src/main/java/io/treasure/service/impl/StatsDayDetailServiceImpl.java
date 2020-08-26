@@ -122,6 +122,7 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
             sdde.setPayMerchantName(merchantById.getName());
             sdde.setRealityMoney((dto.getPayMoney()).negate());
             sdde.setGiftMoney(giftMoney.negate());
+            sdde.setYePaymoney(dto.getPayCoins().negate());
             BigDecimal discountsMoneyByOrderId = slaveOrderService.getDiscountsMoneyByOrderId(dto.getOrderId());
             BigDecimal add = totalMoney.add(giftMoney);
             sdde.setOrderTotal((add.add(discountsMoneyByOrderId)).negate());
@@ -171,6 +172,7 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         sdde.setMerchantProceeds(statsDayDetailEntity.getMerchantProceeds());
         sdde.setPayType(statsDayDetailEntity.getPayMode());
         sdde.setPayMerchantId(statsDayDetailEntity.getMerchantId());
+        sdde.setYePaymoney(statsDayDetailEntity.getPayCoins());
         if(null != statsDayDetailEntity.getPayMode()){
             if (statsDayDetailEntity.getPayMode().equals("2")) {
                 sdde.setAliPaymoney(statsDayDetailEntity.getPayMoney());
@@ -315,6 +317,7 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
         sddd.setPlatformBalance(masterOrderService.getPlatformBalance().negate());
         sddd.setPayType(payMode);
         sddd.setGiftMoney((order.getGiftMoney()).negate());
+        sddd.setYePaymoney((order.getPayCoins()).negate());
         sddd.setPayMerchantId(order.getMerchantId());
         if (payMode.equals("2")) {
             sddd.setAliPaymoney((order.getPayMoney()).negate());
@@ -399,6 +402,11 @@ public class StatsDayDetailServiceImpl extends CrudServiceImpl<StatsDayDetailDao
             sdde.setAliPaymoney(money);
         }
         return baseDao.insert(sdde);
+    }
+
+    @Override
+    public int orderCount(String orderId) {
+        return 0;
     }
 
     @Override

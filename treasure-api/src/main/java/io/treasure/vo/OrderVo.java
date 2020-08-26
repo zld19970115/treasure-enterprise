@@ -66,4 +66,8 @@ public class OrderVo {
 
     private String mobile;
 
+    private BigDecimal payCoins;
+
+    private BigDecimal payMoneyNew;
+
 }

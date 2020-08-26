@@ -21,9 +21,12 @@
 
     <select id="selectByIdAndPassword" resultType="io.treasure.entity.CardInfoEntity">
 
-        SELECT * FROM ct_card_info where id = #{id} and password = #{password}
+        SELECT * FROM ct_card_info where id = #{id} and password = #{password} and type = 1
     </select>
+    <select id="selectByIdAndPasswordandType" resultType="io.treasure.entity.CardInfoEntity">
 
+        SELECT * FROM ct_card_info where id = #{id} and password = #{password} and type = 2
+    </select>
     <select id="pageList" resultType="io.treasure.dto.CardInfoDTO">
         SELECT
         ct.id,
@@ -52,7 +55,6 @@
     <select id="selectByNoCode" resultType="io.treasure.dto.CardInfoDTO">
           SELECT * FROM ct_card_info where status in (1,2) and code = '0'
     </select>
-
     <update id="openCard">
         update ct_card_info set
         status = 2,
