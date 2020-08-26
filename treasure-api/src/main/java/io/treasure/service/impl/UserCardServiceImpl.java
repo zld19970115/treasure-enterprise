@@ -110,7 +110,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         cardInfoEntity.setBindCardUser(userId);
         baseDao.updateById(cardInfoEntity);
 
-     // recordGiftService.insertRecordGift(userId,date,clientUserEntity.getGift(),cardInfoEntity.getMoney());
+      recordGiftService.insertRecordBalance(userId,date,clientUserEntity.getBalance(),cardInfoEntity.getMoney());
 
         return new Result().ok("充值成功");
     }

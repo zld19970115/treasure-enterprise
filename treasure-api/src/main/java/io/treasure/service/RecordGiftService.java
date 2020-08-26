@@ -12,6 +12,7 @@ import java.util.Map;
 public interface RecordGiftService  extends CrudService<RecordGiftEntity, RecordGiftDTO> {
 
     void insertRecordGift(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
+    void insertRecordBalance(long userId, Date date, BigDecimal balance, BigDecimal useBalance);
     void insertRecordGift2(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
     void insertRecordGift6(long userId, Date date, BigDecimal balanceGift, BigDecimal useGift);
 
