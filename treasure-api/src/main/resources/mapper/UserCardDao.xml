@@ -21,9 +21,12 @@
 
     <select id="selectByIdAndPassword" resultType="io.treasure.entity.CardInfoEntity">
 
-        SELECT * FROM ct_card_info where id = #{id} and password = #{password}
+        SELECT * FROM ct_card_info where id = #{id} and password = #{password} and type = 1
     </select>
+    <select id="selectByIdAndPasswordandType" resultType="io.treasure.entity.CardInfoEntity">
 
+        SELECT * FROM ct_card_info where id = #{id} and password = #{password} and type = 2
+    </select>
     <select id="pageList" resultType="io.treasure.dto.CardInfoDTO">
         SELECT
         ct.id,
