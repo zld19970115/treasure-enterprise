@@ -1,5 +1,6 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,4 +30,6 @@ public class NewsEntity {
 
     private Integer type;
 
+    @TableField(exist = false)
+    private Integer see = 0;       //0=未查看 1 =已查看
 }
