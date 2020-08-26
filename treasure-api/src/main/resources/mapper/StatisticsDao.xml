@@ -708,6 +708,12 @@
             <if test="payType != null and payType.trim() != ''">
                 and ctdt.pay_type = #{payType}
             </if>
+            <if test="name != null and name.trim() != ''">
+                and ctm.`name` like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mu.mobile like CONCAT('%',#{mobile},'%')
+            </if>
         </where>
     </select>
 
@@ -809,6 +815,12 @@
             </if>
             <if test="endDate != null and endDate.trim() != ''">
                 <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') <= #{endDate} ]]>
+            </if>
+            <if test="name != null and name.trim() != ''">
+                and sdd.pay_merchant_name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="mobile != null and mobile.trim() != ''">
+                and mu.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
