@@ -184,5 +184,21 @@ public class NewsController {
         recordNewsService.insert(recordNewsEntity);
          return new Result().ok("已查看");
     }
-
+    @GetMapping("countNews")
+    @ApiOperation("用户查询未读消息数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户/商户 id", paramType = "query",dataType="Long") ,
+            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="int")
+    })
+    public Result countNews(@ApiIgnore @RequestParam Long id , int type ) {
+        List<NewsEntity> newsEntities = newsService.selectByOn(type);
+        int a = 0;
+        for (NewsEntity newsEntity : newsEntities) {
+            RecordNewsEntity recordNewsEntity = recordNewsService.selectByUandNid(id, newsEntity.getId(), type);
+            if (recordNewsEntity!=null){
+                a++;
+            }
+        }
+        return new Result().ok(newsEntities.size()-a);
+    }
 }

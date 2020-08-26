@@ -23,5 +23,5 @@ public interface NewsDao extends BaseDao<NewsEntity> {
     List<NewsDto> agreePage();
 
     List<NewsDto> selectByStatus(@Param("status") Integer status);
-
+    List<NewsEntity> selectByOn(int type);
 }

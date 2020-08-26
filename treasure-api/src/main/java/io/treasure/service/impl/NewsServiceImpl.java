@@ -141,4 +141,9 @@ public class NewsServiceImpl implements NewsService {
     public Result<NewsDto> userAgrre() {
         return new Result<NewsDto>().ok(newsDao.selectByStatus(3).get(0));
     }
+
+    @Override
+    public List<NewsEntity> selectByOn(int type) {
+        return newsDao.selectByOn(type);
+    }
 }
