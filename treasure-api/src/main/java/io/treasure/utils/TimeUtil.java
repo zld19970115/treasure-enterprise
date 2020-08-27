@@ -1,5 +1,6 @@
 package io.treasure.utils;
 
+import io.treasure.enm.ECommission;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -177,19 +178,26 @@ public class TimeUtil {
         return TimeUtil.simpleDateFormat.parse(result);
     }
 
-
-    @Test
-    public void test() throws ParseException {
-        sevenDays(simpleDateFormat.parse("2020-08-22 22:00:00"));
-    }
     //跨年则归0
-    public void sevenDays(Date date){
-        Integer resourceDays = 0;
-        if(!sdfYear.format(date).equals(sdfYear.format(new Date()))){
-            resourceDays = Integer.parseInt(days.format(new Date()));
+    public int checkCommissionDaysAgo(Date lastDate, Integer dLong, ECommission eCommission){
+        switch (eCommission){
+            case DAYS_TYPE:
+
+                if(dLong == null)   dLong = 7;
+                Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(days.format(lastDate)):0;
+                Integer target = (Integer.parseInt(days.format(new Date())) - diffDays-1)/dLong;
+                return target;
+
+            case WEEKS_TYPE:
+
+                break;
+            case MONTHS_TYPE:
+
+                break;
         }
-        Integer totalDays = Integer.parseInt(days.format(new Date()));
-        Integer target = (totalDays - resourceDays+1)%7;
+
+
+
         /*
         一、奖励商家的前提条件
         第一种开店的百分比,在线店面的百分比，作为奖励名次数量，抛开无销量的
@@ -206,6 +214,7 @@ public class TimeUtil {
         System.out.println("第多少个"+target);
 
          */
+        return 12313132;
     }
 
 }

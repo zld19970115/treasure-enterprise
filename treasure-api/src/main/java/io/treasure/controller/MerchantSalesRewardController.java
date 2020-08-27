@@ -142,10 +142,10 @@ public class MerchantSalesRewardController {
         System.out.println(mId);
         if(mId != null)
             entity.setMId(mId);
-        if(rewardValue != null)
-            entity.setRewardValue(rewardValue);
-        if(outline != null)
-            entity.setOutline(outline);
+//        if(rewardValue != null)
+//            entity.setRewardValue(rewardValue);
+//        if(outline != null)
+//            entity.setOutline(outline);
         if(minValue != null)
             vo.setMinValue(minValue.doubleValue());
         vo.setMerchantSalesRewardRecordEntity(entity);
@@ -189,10 +189,10 @@ public class MerchantSalesRewardController {
         //增加校验
         Long mId = entity.getMId();
         String amount = merchantSalesRewardService.getNotWithdrawRewardAmount(mId);
-        if(amount.equals(entity.getRewardValue().toString())){
-            merchantSalesRewardService.insertRecord(entity);
-            return new Result().ok("添加记录成功");
-        }
+//        if(amount.equals(entity.getRewardValue().toString())){
+//            merchantSalesRewardService.insertRecord(entity);
+//            return new Result().ok("添加记录成功");
+//        }
         return new Result().ok("添加金额与实际金额不符");
     }
 
@@ -285,14 +285,14 @@ public class MerchantSalesRewardController {
         //给平台发送提现申请消息
         if(entities.size()== 1){
             MerchantSalesRewardRecordEntity entity = entities.get(0);
-            Integer status = entity.getStatus();
+            Integer status = 0;//entity.getStatus();
             if(status == 3){
                 MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
                 if(merchantEntity != null){
                     String fee = "0";
-                    BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
-                    value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
-                    sendSMSUtil.commissionNotify("15303690053",merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
+                    //BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
+                   // value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
+                   // sendSMSUtil.commissionNotify("15303690053",merchantEntity.getName(),232+"", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
                 }
             }
         }else if(entities.size()> 1){
@@ -319,21 +319,21 @@ public class MerchantSalesRewardController {
         }
         mchRewardUpdateQuery.setIds(ids);
         mchRewardUpdateQuery.setStatus(2);
-        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+//        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
         merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
         List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
         for(int i=0;i<entities.size();i++){
             MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
-            Integer status = entity.getStatus();
-            if(status == 2){
-                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
-                if(merchantEntity != null){
-                    String fee = "0";
-                    BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
-                    value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
-                    sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
-                }
-            }
+//            Integer status = entity.getStatus();
+//            if(status == 2){
+//                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+//                if(merchantEntity != null){
+//                    String fee = "0";
+//                    BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
+//                    value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
+//                    sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
+//                }
+//            }
         }
         return new Result().ok("refused");
     }
@@ -359,7 +359,7 @@ public class MerchantSalesRewardController {
         }
         mchRewardUpdateQuery.setIds(ids);
         mchRewardUpdateQuery.setStatus(1);
-        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+//        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
         merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
 
         //执行提现操作
@@ -377,7 +377,7 @@ public class MerchantSalesRewardController {
         queryWrapper.eq("status",1);
 
         MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
-        Integer canWithDraw = entity.getRewardValue();//可提现金额
+//        Integer canWithDraw = entity.getRewardValue();//可提现金额
 
         boolean withDrawResult = false;
 

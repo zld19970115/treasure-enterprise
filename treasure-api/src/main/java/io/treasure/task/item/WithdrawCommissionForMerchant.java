@@ -68,7 +68,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
                         String commissionId = entity.getId()+"";
                         Long merchantId = entity.getMId();
-                        Integer amount = entity.getRewardValue();
+                        //Integer amount = entity.getRewardValue();
 
                         if(method == 2){
                                 userWithdrawService.AliMerchantCommissionWithDrawxxxxx(entity);
@@ -99,7 +99,6 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
         }
         @Autowired
         private MerchantSalesRewardService merchantSalesRewardService;
-
 
         /*
                 treasure.ct_merchant.commission_not_withdraw
