@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@TableName("business_manager")
+@TableName("business_manaher_user")
 public class BusinessManaherUserEntity {
 
     @TableId(value = "id",type = IdType.INPUT)

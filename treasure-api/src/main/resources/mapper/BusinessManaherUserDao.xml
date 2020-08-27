@@ -4,6 +4,6 @@
 <mapper namespace="io.treasure.dao.BusinessManaherUserDao">
 
     <select id="selectByuserId" resultType="io.treasure.entity.BusinessManaherUserEntity">
-    select * from business_manaher_user where userId = #{userId}
+    select * from business_manaher_user where user_id = #{userId}
     </select>
 </mapper>
