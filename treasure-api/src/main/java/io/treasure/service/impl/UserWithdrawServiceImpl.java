@@ -329,7 +329,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 //=====================================返现提现接口=====================================================================
 
     @Transactional(rollbackFor = Exception.class)
-    public Result wxMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity){
+    public Result wxMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity){
         Result result=new Result();
         Long mId = entity.getMId();
         Integer rewardValue = entity.getRewardValue();
@@ -404,7 +404,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
      * 支付宝提现
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result AliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
+    public Result AliMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
 
         Result result=new Result();
         Long mId = entity.getMId();

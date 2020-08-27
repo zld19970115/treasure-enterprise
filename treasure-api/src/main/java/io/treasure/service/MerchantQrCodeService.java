@@ -16,11 +16,12 @@ import java.util.Date;
  */
 public interface MerchantQrCodeService extends CrudService<MerchantQrCodeEntity, MerchantQrCodeDTO> {
 
-    /***
+    /***createQRCodeForBm
      *根据商户ID添加商户二维码
      */
     void insertMerchantQrCodeByMerchantId(String merchantId) throws IOException, WriterException;
 
+    void createQRCodeForBm(String bmID) throws IOException, WriterException;
 
     /***
      * 根据商户ID查询商户二维码

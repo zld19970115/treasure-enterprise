@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static io.treasure.enm.EAceptOrder.AUTO_ACEPT_ORDER;
 import static io.treasure.enm.EIncrType.ADD;
 import static io.treasure.enm.EIncrType.SUB;
 
@@ -3145,92 +3146,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         }
         return getPageData(allMainOrder, pages, OrderDTO.class);
     }
+
+    @Override
+    public void autoAceptOrder(Long id,Long verify,int days){
+        //更新为自动接单状态
+        if(days ==AUTO_ACEPT_ORDER.getCode()){
+            acceptUpdate(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
+        }
+
+    }
+
 }
-
-/*
-//根据目标的相应的值得到其中的占比
-    public List<BigDecimal> calculatePercentx(List<BigDecimal> target){
-
-
-        BigDecimal sum = new BigDecimal("0");
-        BigDecimal stepBase = new BigDecimal("0.01");
-        BigDecimal patchValue = new BigDecimal("0");
-
-        BigDecimal percentSum = new BigDecimal("0");//计算结果百分数
-        List<BigDecimal> percentList = new ArrayList<>();
-        for(int i=0;i<target.size();i++){
-            sum = sum.add(target.get(i));
-        }
-        for(int i=0;i<target.size();i++){
-            percentList.add(target.get(i).divide(sum,2,BigDecimal.ROUND_DOWN));
-            percentSum = percentSum.add(percentList.get(i).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        }
-
-        int percentInt = Integer.parseInt(percentSum.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
-        if(percentInt >100){
-            for(int i=0;i<(percentInt-100);i++){
-
-                if(percentList.get(i%percentList.size()).compareTo(new BigDecimal("0.01"))<0){
-                    percentInt++;
-                }else{
-
-                    int ix = i%percentList.size();
-                    BigDecimal itemTmp = percentList.get(ix).subtract(new BigDecimal("0.01"));
-                    percentList.set(ix,itemTmp);
-                }
-            }
-        }else if(percentInt <100){
-            for(int i=0;i<(100-percentInt);i++){
-                BigDecimal itemTmp = percentList.get(i).add(new BigDecimal("0.01"));
-                percentList.set(i,itemTmp);
-            }
-        }
-        return percentList;
-    }
-    //根据比例分摊各自的值
-    public List<BigDecimal> proratex(List<BigDecimal> reference,BigDecimal target){
-        List<BigDecimal> resultList = new ArrayList<>();
-        BigDecimal sum = new BigDecimal("0");
-        for(int i=0;i<reference.size();i++){
-            BigDecimal res = reference.get(i).multiply(target).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-            resultList.add(res);
-            sum=sum.add(res);
-        }
-
-        int sumInt = Integer.parseInt(sum.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
-        int targetInt = Integer.parseInt(target.multiply(new BigDecimal("100")).setScale(0,BigDecimal.ROUND_DOWN).toString());
-        if(target.compareTo(sum)>0){
-            //说明比目标值小,需要增加
-            int diffValue = targetInt-sumInt;
-            for(int i=0;i<(targetInt-sumInt);i++){
-                int ix = i%resultList.size();
-                if(reference.get(ix).compareTo(new BigDecimal("0.00"))>0){
-
-                    if(diffValue > 0){
-                        BigDecimal tmp = resultList.get(ix).add(new BigDecimal("0.01"));
-                        resultList.set(ix,tmp);
-                        diffValue--;
-                    }
-
-                }else{
-                    sumInt--;
-                }
-
-            }
-
-        }else if(target.compareTo(sum)<0){
-            //比目标值大，需要减少
-            for(int i=0;i<(sumInt-targetInt);i++){
-                int ix = i%resultList.size();
-                BigDecimal tmp = new BigDecimal("0");
-                if(resultList.get(ix).compareTo(new BigDecimal("0.03"))>=0){
-                    tmp = resultList.get(ix).subtract(new BigDecimal("0.01"));
-                    resultList.set(ix,tmp);
-                }else{
-                    sumInt++;
-                }
-            }
-        }
-        return resultList;
-    }
- */

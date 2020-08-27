@@ -14,13 +14,16 @@ import io.treasure.common.utils.Result;
 import io.treasure.dao.NewsDao;
 import io.treasure.dto.NewsDto;
 import io.treasure.entity.NewsEntity;
+import io.treasure.entity.RecordNewsEntity;
 import io.treasure.service.NewsService;
+import io.treasure.service.RecordNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,7 +33,8 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
-
+    @Autowired
+    private RecordNewsService recordNewsService;
     @Autowired(required = false)
     private NewsDao newsDao;
 
@@ -43,9 +47,10 @@ public class NewsController {
             @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = "startDate", value = "开始time", paramType = "query",dataType="date") ,
             @ApiImplicitParam(name = "endDate", value = "结束time", paramType = "query",dataType="date"),
-            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="date")
+            @ApiImplicitParam(name = "id", value = "用户/商家 id", paramType = "query",dataType="Long"),
+            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="int")
     })
-    public Result newsList(@ApiIgnore @RequestParam int page,int limit,Date startDate,Date endDate,Integer type) {
+    public Result newsList(@ApiIgnore @RequestParam int page,int limit,Date startDate,Date endDate,Long id,Integer type) {
 
         QueryWrapper<NewsEntity> saqw = new QueryWrapper<>();
 
@@ -62,8 +67,22 @@ public class NewsController {
         //奖励数量设置
         Page<NewsEntity> record = new Page<NewsEntity>(page,limit);
         IPage<NewsEntity> records = newsDao.selectPage(record, saqw);
-        if(records == null)
-            return new Result().error("nothing");
+        List<NewsEntity> records1 = records.getRecords();
+
+        if(records == null){
+            return new Result().error("nothing");}else {
+
+            List<RecordNewsEntity> recordNewsEntities = recordNewsService.selectByUid(id, type);
+            for (NewsEntity newsEntity : records1) {
+                for (RecordNewsEntity recordNewsEntity : recordNewsEntities) {
+                    if (newsEntity.getId()==recordNewsEntity.getNId() || newsEntity.getId().equals(recordNewsEntity.getNId()) ){
+                        newsEntity.setSee(1);
+                    }
+
+                }
+            }
+
+        }
 
         return new Result().ok(records);
     }
@@ -144,6 +163,42 @@ public class NewsController {
         return newsService.userAgrre();
     }
 
+    @Login
+    @GetMapping("insertNews")
+    @ApiOperation("用户/商户 查看新闻")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户/商户 id", paramType = "query",dataType="Long") ,
+            @ApiImplicitParam(name = "nId", value = "新闻id", paramType = "query",dataType="Long"),
+            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="int")
+    })
+    public Result insertNews(@ApiIgnore @RequestParam Long id , Long nId , int type ) {
+        RecordNewsEntity recordNewsEntity1 = recordNewsService.selectByUandNid(id, nId, type);
+        if (recordNewsEntity1!=null){
+            return new Result().ok("已查看");
+        }
 
-
+        RecordNewsEntity recordNewsEntity = new RecordNewsEntity();
+        recordNewsEntity.setNId(nId);
+        recordNewsEntity.setUId(id);
+        recordNewsEntity.setStatus(type);
+        recordNewsService.insert(recordNewsEntity);
+         return new Result().ok("已查看");
+    }
+    @GetMapping("countNews")
+    @ApiOperation("用户查询未读消息数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户/商户 id", paramType = "query",dataType="Long") ,
+            @ApiImplicitParam(name = "type", value = "类型", paramType = "query",dataType="int")
+    })
+    public Result countNews(@ApiIgnore @RequestParam Long id , int type ) {
+        List<NewsEntity> newsEntities = newsService.selectByOn(type);
+        int a = 0;
+        for (NewsEntity newsEntity : newsEntities) {
+            RecordNewsEntity recordNewsEntity = recordNewsService.selectByUandNid(id, newsEntity.getId(), type);
+            if (recordNewsEntity!=null){
+                a++;
+            }
+        }
+        return new Result().ok(newsEntities.size()-a);
+    }
 }

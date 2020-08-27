@@ -6,6 +6,7 @@ import io.treasure.common.utils.Result;
 import io.treasure.dto.NewsDto;
 import io.treasure.entity.NewsEntity;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -16,5 +17,6 @@ public interface NewsService extends CrudService<NewsEntity, NewsDto> {
     Result<NewsDto> privacyAgrre();
 
     Result<NewsDto> userAgrre();
+    List<NewsEntity> selectByOn(int type);
 
 }
