@@ -230,11 +230,12 @@ public class ApiClientUserController {
     @ApiOperation("用户登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "unionid", value = "unionid", required = true, paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "bmId", value = "业务元id",  paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "unionid", value = "unionid", paramType = "query", dataType = "String")
     })
-    public Result login(String mobile,String unionid) {
+    public Result login(String mobile,Long bmId ,String unionid) {
         //用户登录
-        Result  result = clientUserService.login(mobile,unionid);
+        Result  result = clientUserService.login(mobile,bmId,unionid);
      //   clientUserService.updateCID(cid, mobile);
         return new Result().ok(result);
     }
