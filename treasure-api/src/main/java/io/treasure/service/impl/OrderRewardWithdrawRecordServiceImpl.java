@@ -42,7 +42,7 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             BigDecimal payCoins = entity.getPayCoins();
 
             OrderRewardWithdrawRecordEntity orwrEntity = new OrderRewardWithdrawRecordEntity();
-            orwrEntity.setStatus(NOT_COPY.getCode());                //记录未动
+            //orwrEntity.setStatus(NOT_COPY.getCode());                //记录未动
 
             orwrEntity.setOrderId(orderId);
             orwrEntity.setMId(merchantId);

@@ -191,6 +191,9 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "已提现佣金")
 	private BigDecimal commissionWithdraw;
 
+	@ApiModelProperty(value = "返佣商户标识")
+	private BigDecimal commissionType;
+
 	@Override
 	public boolean equals(Object obj) {
 		MerchantDTO u = (MerchantDTO) obj;

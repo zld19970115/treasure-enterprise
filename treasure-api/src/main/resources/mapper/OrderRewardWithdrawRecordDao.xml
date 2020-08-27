@@ -7,7 +7,7 @@
     <update id="updateByIds">
 
         update order_reward_withdraw_reocrd
-        set status = #{status}
+        set is_used = #{status}
         <where>
             id in
             <foreach collection="ids" item="ids" open="(" close=")" separator=",">

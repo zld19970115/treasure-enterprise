@@ -208,8 +208,10 @@ public class MerchantUserServiceImpl extends CrudServiceImpl<MerchantUserDao, Me
         baseDao.frozen(id,status);
         MerchantUserEntity merchantUserEntity = baseDao.selectById(id);
         MerchantEntity merchantEntity = merchantService.selectById(merchantUserEntity.getMerchantid());
-        merchantEntity.setStatus(2);
-        merchantService.updateById(merchantEntity);
+        if(merchantEntity != null) {
+            merchantEntity.setStatus(2);
+            merchantService.updateById(merchantEntity);
+        }
         return new Result().ok("冻结成功");
     }
 

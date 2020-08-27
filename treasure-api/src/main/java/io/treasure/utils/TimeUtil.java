@@ -1,5 +1,8 @@
 package io.treasure.utils;
 
+import io.treasure.enm.ECommission;
+import org.junit.Test;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ public class TimeUtil {
     public static SimpleDateFormat sdfHms = new SimpleDateFormat("HH:mm:ss");
     public static SimpleDateFormat sdfHm = new SimpleDateFormat("HH:mm");
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+    public static SimpleDateFormat days = new SimpleDateFormat("D");
 
     /**
      * 每天早上8点复位所有需要复位的内容
@@ -173,6 +176,45 @@ public class TimeUtil {
         }
         String result = year+"-"+month+"-"+"01 00:00:00";
         return TimeUtil.simpleDateFormat.parse(result);
+    }
+
+    //跨年则归0
+    public int checkCommissionDaysAgo(Date lastDate, Integer dLong, ECommission eCommission){
+        switch (eCommission){
+            case DAYS_TYPE:
+
+                if(dLong == null)   dLong = 7;
+                Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(days.format(lastDate)):0;
+                Integer target = (Integer.parseInt(days.format(new Date())) - diffDays-1)/dLong;
+                return target;
+
+            case WEEKS_TYPE:
+
+                break;
+            case MONTHS_TYPE:
+
+                break;
+        }
+
+
+
+        /*
+        一、奖励商家的前提条件
+        第一种开店的百分比,在线店面的百分比，作为奖励名次数量，抛开无销量的
+        第二种有销售客贩百分比作为奖励的名次条件
+
+        第三种按名次
+
+        第四种交易额限值
+
+        二、返佣奖励的值（返佣的比例）
+        扣点百分数
+        可也能是阶梯段（允许阶段设置）
+
+        System.out.println("第多少个"+target);
+
+         */
+        return 12313132;
     }
 
 }

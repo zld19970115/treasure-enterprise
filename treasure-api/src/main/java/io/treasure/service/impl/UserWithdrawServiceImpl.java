@@ -329,10 +329,10 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
 //=====================================返现提现接口=====================================================================
 
     @Transactional(rollbackFor = Exception.class)
-    public Result wxMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity){
+    public Result wxMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity){
         Result result=new Result();
         Long mId = entity.getMId();
-        Integer rewardValue = entity.getRewardValue();
+        Integer rewardValue = 0;//entity.getRewardValue();
         MerchantEntity merchantEntity = merchantDao.selectById(mId);
         String ipAddress = merchantEntity.getMchIp();
         if(merchantEntity==null){
@@ -386,7 +386,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
             if(entity1 != null){
                 if(entity1.getCashOutStatus() == 2){
                     //发送成功消息
-                    SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
+                   // SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
                     return result;
                 }
             }
@@ -404,7 +404,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
      * 支付宝提现
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result AliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
+    public Result AliMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
 
         Result result=new Result();
         Long mId = entity.getMId();
@@ -418,7 +418,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
             throw new RenException("佣金提现：请提前绑定支付宝相关帐号！");
         }
 
-        BigDecimal amount=new BigDecimal(entity.getRewardValue());
+        BigDecimal amount=new BigDecimal("0");//entity.getRewardValue());
         //构造client
         CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
         //设置网关地址
@@ -496,7 +496,7 @@ public class UserWithdrawServiceImpl   extends CrudServiceImpl<UserWithdrawDao, 
             if(entity1 != null){
                 if(entity1.getCashOutStatus() == 2){
                     //发送成功消息
-                    SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
+                   // SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getRewardValue()+"", merchantEntity.getName(), smsConfig);
                     return result;
                 }
             }
