@@ -60,6 +60,22 @@ public class QRCodeController {
         merchantQrCodeService.insertMerchantQrCodeByMerchantId(String.valueOf(id));
         return new Result<Map<String, Object>>().ok(data);
     }
+    @GetMapping("createQRCodeForBm")
+    @ApiOperation("生成业务员二维码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name ="id", value = "业务员id", paramType = "query",required = true, dataType="long"),
+    })
+    public Result<Map<String, Object>> createQRCodeForBm(@ApiIgnore @RequestParam Long id) throws IOException, WriterException {
+
+
+        Map<String, Object> data = new HashMap<>(1);
+        merchantQrCodeService.createQRCodeForBm(String.valueOf(id));
+        return new Result<Map<String, Object>>().ok(data);
+    }
+
+
+
+
     @CrossOrigin
     @Login
     @GetMapping("getQRCode")

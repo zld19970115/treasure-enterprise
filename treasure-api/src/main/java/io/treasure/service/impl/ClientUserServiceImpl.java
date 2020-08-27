@@ -11,14 +11,12 @@ import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
+import io.treasure.dao.BusinessManaherUserDao;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.dto.LoginDTO;
 import io.treasure.dto.QueryClientUserDto;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.LevelStatusEntity;
-import io.treasure.entity.RecordGiftEntity;
-import io.treasure.entity.TokenEntity;
+import io.treasure.entity.*;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.RecordGiftService;
 import io.treasure.service.TokenService;
@@ -52,6 +50,8 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     private RecordGiftService recordGiftService;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
+    @Autowired(required = false)
+    private BusinessManaherUserDao businessManaherUserDao;
 
     @Override
     public QueryWrapper<ClientUserEntity> getWrapper(Map<String, Object> params){
@@ -82,7 +82,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
     }
 
     @Override
-    public Result login(String mobile,String unionid) {
+    public Result login(String mobile,Long bmId,String unionid) {
         ClientUserEntity user = getByMobile(mobile);
         Map<String, Object> map = new HashMap<>(2);
        if (user==null){
@@ -95,10 +95,22 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
            if (unionid!=null){
                user1.setUnionid(unionid);
            }
-
            baseDao.insert(user1);
            ClientUserEntity userByPhone1 = baseDao.getUserByPhone(mobile);
            tokenService.createToken(userByPhone1.getId());
+           if (bmId!=null){
+               BusinessManaherUserEntity businessManaherUserEntity = businessManaherUserDao.selectByuserId(userByPhone1.getId());
+               if (businessManaherUserEntity==null){
+                   BusinessManaherUserEntity businessManaherUser = new BusinessManaherUserEntity();
+                   businessManaherUser.setBmId(bmId);
+                   businessManaherUser.setUserId(userByPhone1.getId());
+                   businessManaherUserDao.insert(businessManaherUser);
+
+               }
+
+           }
+
+
            map.put("user", userByPhone1);
            TokenEntity byUserId = tokenService.getByUserId(userByPhone1.getId());
            map.put("token", byUserId.getToken());
