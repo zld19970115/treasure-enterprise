@@ -246,7 +246,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Transactional(rollbackFor = Exception.class)
     public Result finishUpdate(long id, int status, long verify, Date verify_date, String refundReason) {
         MasterOrderDTO dto = get(id);
-
+        if (dto.getStatus()==status){
+            return new Result().error("已翻台，请稍后再试！");
+        }
         if (dto.getPayMode().equals("1") && dto.getPayMoney().doubleValue() > 0) {
             ClientUserEntity clientUserEntity = clientUserService.selectById(dto.getCreator());
             UserTransactionDetailsEntity entiry = new UserTransactionDetailsEntity();
