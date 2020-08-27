@@ -25,6 +25,8 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MchRewardUpdateQuery;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
+import io.treasure.vo.SalesRewardApplyForWithdrawVo;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -235,17 +237,24 @@ public class MerchantSalesRewardController {
     @Login
     @PostMapping("apply_for")
     @ApiOperation("申请提现")
-    public Result save(@RequestBody List<MerchantSalesRewardRecordEntity> entities,@RequestParam HttpServletRequest request){
+    public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo, @RequestParam HttpServletRequest request){
 
+        List<MerchantSalesRewardRecordEntity> entities = vo.getEntities();
         if(entities.size()==0)
             return new Result().ok("no content");
 
         MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
         List<Long> ids = new ArrayList<>();
         for(int i=0;i<entities.size();i++){
-            Long id = entities.get(i).getId();
+            MerchantSalesRewardRecordEntity entity = entities.get(i);
+            Long id = entity.getId();
             ids.add(id);
 
+            //修改提现方式
+            entity.setMethod(vo.getWithDrawType());
+            merchantSalesRewardRecordDao.updateById(entity);
+
+            //准备微信支付ip地址
             MerchantEntity merchantEntity = merchantDao.selectById(entities.get(i).getMId());
             String ipAddress= AdressIPUtil.getClientIpAddress(request);
             if(ipAddress != null){
@@ -255,7 +264,7 @@ public class MerchantSalesRewardController {
         }
         mchRewardUpdateQuery.setIds(ids);
         mchRewardUpdateQuery.setStatus(3);//申请提现
-        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
+        mchRewardUpdateQuery.setComment("商申请提现");
         merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
 
         //给平台发送提现申请消息
@@ -360,5 +369,6 @@ public class MerchantSalesRewardController {
         //执行提现操作
         return new Result().ok(entity);
     }
+
 
 }
