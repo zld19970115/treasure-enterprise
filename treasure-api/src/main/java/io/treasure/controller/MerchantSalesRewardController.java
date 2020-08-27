@@ -137,7 +137,6 @@ public class MerchantSalesRewardController {
                                                                      Integer index,Integer pagesNum) throws ParseException {
 
         MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
-
         MerchantSalesRewardRecordEntity entity = new MerchantSalesRewardRecordEntity();
 
         System.out.println(mId);
@@ -382,8 +381,7 @@ public class MerchantSalesRewardController {
 
         boolean withDrawResult = false;
 
-        //执行提现操作
-        return new Result().ok(entity);
+        return new Result().ok(entity);//执行提现操作
     }
 
 
