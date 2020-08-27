@@ -94,6 +94,22 @@ public class MerchantSalesRewardController {
     //===============================================第二部分记录CRUD===========================================
     @CrossOrigin
     @Login
+    @GetMapping("my_reward_logs")
+    @ApiOperation(value = "查询奖励记录",tags = "用于销售奖励,为商户返现")
+    @ApiImplicitParam(name ="mId", value = "商户id", paramType = "query",required = false, dataType="long")
+
+    public Result getRecords(Long mId) throws ParseException {
+
+        QueryWrapper<MerchantSalesRewardRecordEntity>  queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.eq("m_id",mId);
+        List<MerchantSalesRewardRecordEntity> merchantSalesRewardRecordEntities = merchantSalesRewardRecordDao.selectList(queryWrapper);
+        return new Result().ok(merchantSalesRewardRecordEntities);
+    }
+
+
+    @CrossOrigin
+    @Login
     @GetMapping("reward_log")
     @ApiOperation("奖励记录(单条)")
     @ApiImplicitParam(name = "id", value = "记录编号", paramType = "query", required = true, dataType="Long")
