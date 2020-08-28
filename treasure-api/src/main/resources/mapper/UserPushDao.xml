@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.UserPushDao">
+
+    <resultMap type="io.treasure.entity.UserPushEntity" id="userPushMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="clientId" column="client_id"/>
+        <result property="meId" column="me_id"/>
+        <result property="meName" column="me_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectByCid" resultMap="userPushMap">
+        select * from user_push where client_id = #{clientId}
+    </select>
+
+</mapper>
