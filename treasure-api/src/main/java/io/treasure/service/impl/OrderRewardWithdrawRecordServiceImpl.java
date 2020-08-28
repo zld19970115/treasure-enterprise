@@ -1,15 +1,9 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.dao.MasterOrderDao;
-import io.treasure.dao.MerchantSalesRewardDao;
-import io.treasure.dao.MerchantSalesRewardRecordDao;
-import io.treasure.dao.OrderRewardWithdrawRecordDao;
+import io.treasure.dao.*;
 import io.treasure.enm.EOrderRewardWithdrawRecord;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.MerchantSalesRewardEntity;
-import io.treasure.entity.MerchantSalesRewardRecordEntity;
-import io.treasure.entity.OrderRewardWithdrawRecordEntity;
+import io.treasure.entity.*;
 import io.treasure.service.OrderRewardWithdrawRecordService;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
@@ -22,10 +16,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.treasure.enm.EOrderRewardWithdrawRecord.NEW_RECORD;
 
@@ -44,6 +35,8 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
     @Autowired(required = false)
     private MerchantSalesRewardDao merchantSalesRewardDao;
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
 
 
 
@@ -117,14 +110,24 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         vo.setRanking(sysParams.getTradeNum());
 
         List<MerchantSalesRewardRecordEntity> resultList = orderRewardWithdrawRecordDao.generateSalesRewardRecord(vo);
+        Map<String,Date> map = new HashMap<>();
         if(sysParams.getTimeMode()!=3){
-            Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,null);
+            map = TimeUtil.getCommissionTimeRange(sysParams,null);
         }
 
         try{
             for(int i=0;i<resultList.size();i++){
+                MerchantSalesRewardRecordEntity recordItem = resultList.get(i);
+                if(sysParams.getTimeMode() == 3){//按启起时间计算
+                    Long mId = recordItem.getMId();
+                    MerchantEntity merchantEntity = merchantDao.selectById(mId);
+                    Date regDate = merchantEntity != null?merchantEntity.getCreateDate():new Date();
+                    map = TimeUtil.getCommissionTimeRange(sysParams,regDate);
 
-                merchantSalesRewardRecordDao.insert(resultList.get(i));
+                }
+                //recordItem.setStartPmt(map.get("startTime"));
+                recordItem.setStopPmt(map.get("stopTime"));
+                merchantSalesRewardRecordDao.insert(recordItem);
             }
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
