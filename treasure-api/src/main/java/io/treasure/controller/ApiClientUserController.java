@@ -28,6 +28,7 @@ import io.treasure.dto.LoginDTO;
 import io.treasure.dto.RecordGiftDTO;
 import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.*;
+import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.AppLoginCheckVo;
@@ -35,6 +36,7 @@ import io.treasure.vo.LevelVo;
 import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
@@ -910,6 +912,13 @@ public class ApiClientUserController {
         }
         clientUserEntity.setStatus(status);
         clientUserService.updateById(clientUserEntity);
+        return new Result().ok("成功");
+    }
+
+    @GetMapping("/pushClientPC")
+    @ApiOperation("PC端推送用户")
+    public Result pushClientPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
+        AppPushUtil.pushToSingleClient(title, text, "", clientId);
         return new Result().ok("成功");
     }
 
