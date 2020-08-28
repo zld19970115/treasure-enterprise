@@ -30,6 +30,5 @@ public interface UserWithdrawService extends CrudService<UserWithdrawEntity, Use
    PageData<UserWithdrawDTO> listPage(Map<String, Object> params);
 
    PageTotalRowData<UserWithdrawDTO> getMerchanWithDrawByMerchantId(Map<String, Object> params);
-   Result wxMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity);
-   Result AliMerchantCommissionWithDrawxxxxx(MerchantSalesRewardRecordEntity entity) throws AlipayApiException;
+
 }

@@ -17,7 +17,7 @@ public class OrderRewardWithdrawRecordEntity{
 
     private Long mId;
     private String orderId;
-    private Integer isUsed;//1表示失效，默认为2，表示新记录
+    private Integer isUsed;//1表示失效,所有记录为了则表示已经汇总过了，默认为0，表示新记录
 
     private BigDecimal totalPrice;
     private BigDecimal actualPayment;

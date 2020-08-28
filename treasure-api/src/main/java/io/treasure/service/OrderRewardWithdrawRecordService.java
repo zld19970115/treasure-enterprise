@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderRewardWithdrawRecordService {
 
-    boolean addPreWithdrawRecord(MasterOrderEntity entity);
+    boolean addRecord(MasterOrderEntity entity);
 
     boolean updateCopiedStatus(List<Long> ids);
 }
