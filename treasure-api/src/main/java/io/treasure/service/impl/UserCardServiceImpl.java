@@ -3,11 +3,14 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.UserCardDao;
 import io.treasure.dto.CardInfoDTO;
+import io.treasure.dto.RecordGiftDTO;
 import io.treasure.entity.CardInfoEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.UserCardService;
@@ -28,6 +31,9 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     private RecordGiftServiceImpl recordGiftService;
     @Autowired
     private UserCardDao userCardDao;
+    @Autowired
+    private RecordGiftDao recordGiftDao;
+
     @Override
     public QueryWrapper<CardInfoEntity> getWrapper(Map<String, Object> params) {
         return null;
@@ -91,6 +97,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         if (cardInfoEntity.getStatus()==9){
             return new Result().error("该卡密已删除");
         }
+
         BigDecimal a = new BigDecimal("200");
 
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
@@ -100,6 +107,11 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         if( clientUserEntity.getBalance().compareTo(a)==1){
             return new Result().error("宝币余额大于200不可充值");
         }
+        List<RecordGiftDTO> recordGiftDTOS = recordGiftDao.selectByUserIdandstatus(userId, 12);
+        if (recordGiftDTOS.size()>=2){
+            return new Result().error("充值已达到上限");
+        }
+
         BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
         clientUserEntity.setBalance(money);
         clientUserService.updateById(clientUserEntity);

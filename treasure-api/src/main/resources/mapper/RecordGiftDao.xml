@@ -22,7 +22,9 @@
     <select id="selectByUserId" resultType="io.treasure.dto.RecordGiftDTO">
         select * from ct_record_gift where user_id = #{userId} and status = 3
     </select>
-
+    <select id="selectByUserIdandstatus" resultType="io.treasure.dto.RecordGiftDTO">
+        select * from ct_record_gift where user_id = #{userId} and status = #{status}
+    </select>
     <insert id="insertRecordGiftAdmin">
         insert into ct_record_gift (user_id,transferred_mobile,use_gift,balance_gift,status,create_date,creator )
          VALUES

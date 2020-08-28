@@ -18,6 +18,8 @@ public interface RecordGiftDao extends BaseDao<RecordGiftEntity> {
    void insertRecordGift2(@Param("userId") long userId, @Param("date") Date date, @Param("balanceGift") BigDecimal balanceGift, @Param("useGift") BigDecimal useGift);
    void insertRecordGift6(@Param("userId") long userId, @Param("date") Date date, @Param("balanceGift") BigDecimal balanceGift, @Param("useGift") BigDecimal useGift);
    List<RecordGiftDTO> selectByUserId(Map<String, Object> params);
+   List<RecordGiftDTO> selectByUserIdandstatus(@Param("userId") long userId,@Param("status") int status);
+
    int insertRecordGiftAdmin(Map<String, Object> params);
    List<RecordGiftDTO> getAllRecordGoht(Map<String, Object> params);
    List<RecordGiftDTO> getRecordGiftByUserId(Map<String, Object> params);
