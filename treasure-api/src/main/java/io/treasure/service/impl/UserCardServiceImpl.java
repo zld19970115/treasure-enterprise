@@ -109,7 +109,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         }
         List<RecordGiftDTO> recordGiftDTOS = recordGiftDao.selectByUserIdandstatus(userId, 12);
         if (recordGiftDTOS.size()>=2){
-            return new Result().error("充值已达到上限");
+            return new Result().error("充值已达到上限次数");
         }
 
         BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
