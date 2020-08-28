@@ -33,7 +33,7 @@ public class DemoController {
         m.setPlatformBrokerage(new BigDecimal("12.00"));
         m.setMerchantId(12312l);
 
-        orderRewardWithdrawRecordService.addPreWithdrawRecord(m);
+        //orderRewardWithdrawRecordService.addPreWithdrawRecord(m);
 
         return new Result().ok("success");
     }

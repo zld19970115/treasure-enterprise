@@ -17,17 +17,16 @@ import java.util.Date;
 public class MerchantSalesRewardEntity{
 
     private Long id;
-    private Integer status;
-    private Integer type;
-    private Integer secondCondition;
+    private Integer timeMode;//1下月一号起可返上月的佣金,2星期，下个星期可返上个星期的佣金，3，按天数模式，比如7天
+    private Integer merchantType;
+    private Integer judgeMethod;
     private Integer tradeNum;
-    private Integer returnRate;
+    private Integer minimumSales;
+    private Integer returnCommissionRate;
+    private Integer returnCommissionType;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
+    private Date updatePmt;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date stopTime;
 }

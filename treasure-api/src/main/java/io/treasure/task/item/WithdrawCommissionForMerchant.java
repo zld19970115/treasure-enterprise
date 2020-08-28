@@ -47,7 +47,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
         private boolean forceRunOnce = false;
 
-        public void startWithdrarwxxxxx() throws ParseException, AlipayApiException {
+        public void startWithdrarw() throws ParseException, AlipayApiException {
                 lockedProcessLock();
                 if(!isOnTime() && getTaskCounter() == 0)
                         return;
@@ -68,12 +68,12 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
                         String commissionId = entity.getId()+"";
                         Long merchantId = entity.getMId();
-                        Integer amount = entity.getRewardValue();
+                        //Integer amount = entity.getRewardValue();
 
                         if(method == 2){
-                                userWithdrawService.AliMerchantCommissionWithDrawxxxxx(entity);
+                                //userWithdrawService.AliMerchantCommissionWithDraw(entity);
                             }else{
-                                userWithdrawService.wxMerchantCommissionWithDrawxxxxx(entity);
+                                //userWithdrawService.wxMerchantCommissionWithDraw(entity);
                             }
                         System.out.println("withdraw commission - id"+entity.getId());
                 }
@@ -99,7 +99,6 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
         }
         @Autowired
         private MerchantSalesRewardService merchantSalesRewardService;
-
 
         /*
                 treasure.ct_merchant.commission_not_withdraw

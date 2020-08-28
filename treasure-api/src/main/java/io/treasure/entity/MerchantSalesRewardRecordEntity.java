@@ -16,16 +16,15 @@ public class MerchantSalesRewardRecordEntity {
     
     private Long id;
     private Long mId;
-    private Integer rewardType;
-    private Integer rewardValue;
-    private String outline;
-    private Integer preferenceVolume;
     private Integer method;
     private Integer cashOutStatus;
-    private Integer status;
-    private String auditComment;
-    private Date withDrawTime;
-    private Date createPmt;
+    private String audit_status;
+    private Integer audit_comment;
+    private Integer withDrawTime;
+    private Integer salesVolume;
+    private Integer commissionVolume;
+    private String startPmt;
+    private Date stopPmt;
 
     @TableLogic
     private Integer deleted;

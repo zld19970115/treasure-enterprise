@@ -7,7 +7,7 @@
     <update id="updateByIds">
 
         update order_reward_withdraw_reocrd
-        set status = #{status}
+        set is_used = #{status}
         <where>
             id in
             <foreach collection="ids" item="ids" open="(" close=")" separator=",">
@@ -17,14 +17,19 @@
 
     </update>
 
-    <select id="getMerchantRewardList" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo">
-hjlk;l';lkjhghjk;l'
-jghfhjkl';' ||
- ''ljgghjk;
- 
+    <update id="updateUsedStatus">
+
+        update order_reward_withdraw_reocrd
+        set is_used = ${status}
+    </update>
+
+    <select id="generateSalesRewardRecord" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+
+        merchantSalesRewardRecordEntity
         select m_id,sum(total_price) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
         from order_reward_withdraw_reocrd
         <where>
+            is_used = 0
             <if test="minValue != null and minValue != ''">
                 and sales_volume >= #{minValue}
             </if>

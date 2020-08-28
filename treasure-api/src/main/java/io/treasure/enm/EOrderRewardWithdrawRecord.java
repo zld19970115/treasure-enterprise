@@ -2,8 +2,8 @@ package io.treasure.enm;
 
 public enum EOrderRewardWithdrawRecord {
 
-    NOT_COPY(1,"未拷"),
-    COPYED(2,"已拷-则不能再次拷");
+    NEW_RECORD(0,"新记录"),
+    USED_RECORD(1,"用过-不能再次用");
 
     private int code;
     private String msg;

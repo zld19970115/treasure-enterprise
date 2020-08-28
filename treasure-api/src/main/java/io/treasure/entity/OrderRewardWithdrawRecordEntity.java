@@ -17,14 +17,16 @@ public class OrderRewardWithdrawRecordEntity{
 
     private Long mId;
     private String orderId;
-    private Integer status;
+    private Integer isUsed;//1表示失效,所有记录为了则表示已经汇总过了，默认为0，表示新记录
 
     private BigDecimal totalPrice;
     private BigDecimal actualPayment;
     private BigDecimal payCoins;
     private BigDecimal platformIncome;
 
+    private Date eatTime;
     private Date createPmt;
     private Date updatePmt;
+    private Integer version;
 
 }

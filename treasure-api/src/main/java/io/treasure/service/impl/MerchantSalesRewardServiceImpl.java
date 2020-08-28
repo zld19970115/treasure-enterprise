@@ -38,6 +38,8 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
 
     @Override
     public void setParams(MerchantSalesRewardEntity entity){
+        if(entity.getId()==null)
+            entity.setId(1L);
         merchantSalesRewardDao.updateById(entity);
     }
 
@@ -47,6 +49,7 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
             merchantSalesRewardDao.insert(entity);
         }
     }
+//===========================================系统参数设置完毕============================================================
 
     @Override
     public IPage<MerchantSalesRewardRecordEntity> getRecords(MerchantSalesRewardRecordVo vo){
@@ -58,12 +61,12 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
                 queryWrapper.eq("id",queryEntity.getId());
             if(queryEntity.getMId() != null)
                 queryWrapper.eq("m_id",queryEntity.getMId());
-            if(queryEntity.getOutline() != null)
-                queryWrapper.like("outline",queryEntity.getOutline());
-            if(queryEntity.getRewardType() != null)
-                queryWrapper.eq("reward_type",queryEntity.getRewardType());
-            if(queryEntity.getRewardValue() != null && vo.getMinValue()==null)
-                queryWrapper.eq("reward_value",queryEntity.getRewardValue());//大于等于
+//            if(queryEntity.getOutline() != null)
+//                queryWrapper.like("outline",queryEntity.getOutline());
+//            if(queryEntity.getRewardType() != null)
+//                queryWrapper.eq("reward_type",queryEntity.getRewardType());
+//            if(queryEntity.getRewardValue() != null && vo.getMinValue()==null)
+//                queryWrapper.eq("reward_value",queryEntity.getRewardValue());//大于等于
         }
 
         if(vo.getMinValue() != null)
@@ -139,17 +142,17 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
             targetItem.setMId(rewardMchList.getMerchantId());
             String salesVolume = rewardMchList.getSalesVolume();
             String s = new BigDecimal(salesVolume).setScale(0, BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
-            targetItem.setPreferenceVolume(Integer.parseInt(s));
+//            targetItem.setPreferenceVolume(Integer.parseInt(s));
 
             String merchantProceed = new BigDecimal(rewardMchList.getMerchantProceed()).setScale(0, BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
 
             //重新获取需要要反现的记录列表
 
-            targetItem.setRewardValue(Integer.parseInt(merchantProceed));
-
-            targetItem.setCreatePmt(new Date());
-            targetItem.setOutline("销售返利");
-            targetItem.setRewardType(1);
+//            targetItem.setRewardValue(Integer.parseInt(merchantProceed));
+//
+//            targetItem.setCreatePmt(new Date());
+//            targetItem.setOutline("销售返利");
+//            targetItem.setRewardType(1);
             //queryList.add(targetItem);
 
             //MerchantSalesRewardRecordEntity
@@ -176,9 +179,9 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         queryWrapper.eq("cash_out_status",1);
 
         MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
-        if(entity != null){
-            return entity.getRewardValue().toString();
-        }
+//        if(entity != null){
+//            return entity.getRewardValue().toString();
+//        }
         return "0";
     }
 //    @Override
