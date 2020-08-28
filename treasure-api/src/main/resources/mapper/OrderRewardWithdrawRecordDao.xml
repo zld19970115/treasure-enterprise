@@ -25,8 +25,7 @@
 
     <select id="generateSalesRewardRecord" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
 
-        merchantSalesRewardRecordEntity
-        select m_id,sum(total_price) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
+        select m_id as mId,sum(total_price) as salesVolume, count(*) as orderVolume,platform_income as commissionVolume, 1 as cashOutStatus,0 as deleted
         from order_reward_withdraw_reocrd
         <where>
             is_used = 0
@@ -40,9 +39,10 @@
                 and #{stopTime} >= eat_time
             </if>
         </where>
-        group by merchant_id
-        order by sales_volume desc, order_volume desc
+        group by m_id
+        order by salesVolume desc, orderVolume desc
         limit #{index},#{pagesNum}
 
     </select>
+
 </mapper>

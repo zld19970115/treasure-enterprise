@@ -64,6 +64,8 @@ public class MerchantSalesRewardController {
 
     @Autowired
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
+    @Autowired
+    private SendSMSUtil sendSMSUtil;
 
     @CrossOrigin
     @Login
@@ -92,6 +94,7 @@ public class MerchantSalesRewardController {
         return new Result().ok("插入完成");
     }
     //===============================================第二部分记录CRUD===========================================
+
     @CrossOrigin
     @Login
     @GetMapping("my_reward_logs")
@@ -246,8 +249,6 @@ public class MerchantSalesRewardController {
         return new Result().ok(rewardMchList);
     }
     //=========================================================================================
-    @Autowired
-    private SendSMSUtil sendSMSUtil;
 
     @Login
     @PostMapping("apply_for")

@@ -2,6 +2,7 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.MasterOrderDao;
+import io.treasure.dao.MerchantSalesRewardDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.OrderRewardWithdrawRecordDao;
 import io.treasure.enm.EOrderRewardWithdrawRecord;
@@ -39,7 +40,10 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
     private OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao;
 
     @Autowired(required = false)
-    MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
+    private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
+
+    @Autowired(required = false)
+    private MerchantSalesRewardDao merchantSalesRewardDao;
 
 
 
@@ -100,20 +104,26 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
     //2-1   定时汇总记录,汇总并生成奖励记录====================================================================================
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardEntity sysParams, MerchantSalesRewardRecordEntity entity) throws ParseException {
+    public List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardRecordEntity entity) throws ParseException {
+
+        MerchantSalesRewardEntity sysParams = merchantSalesRewardDao.selectById(1);
 
         MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
         vo.setMerchantSalesRewardRecordEntity(entity);
-        Map<String, Date> commissionTimeRange = TimeUtil.getCommissionTimeRange(sysParams);
+        Map<String, Date> commissionTimeRange = null;//TimeUtil.getCommissionTimeRange(sysParams);
         vo.setStartTime(commissionTimeRange.get("startTime"));
         vo.setStopTime(commissionTimeRange.get("stopTime"));
         vo.setMinValue(sysParams.getMinimumSales().doubleValue());
         vo.setRanking(sysParams.getTradeNum());
 
         List<MerchantSalesRewardRecordEntity> resultList = orderRewardWithdrawRecordDao.generateSalesRewardRecord(vo);
+        if(sysParams.getTimeMode()!=3){
+            Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,null);
+        }
 
         try{
             for(int i=0;i<resultList.size();i++){
+
                 merchantSalesRewardRecordDao.insert(resultList.get(i));
             }
         }catch (Exception e){
@@ -131,11 +141,17 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
         return resultList;
     }
+
+
+
+
+
     //2-2   统计并拷贝==============================================================================
     //2-3   打开拷贝锁标记==========================================================================
 
+
     /**
-     * 更新记录录为已读状怘(1-2更新记录状态)
+     * 非预计内，防止有接口调用需求，更新记录录为已读状怘(1-2更新记录状态)
      * @param ids
      * @return
      */
