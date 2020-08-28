@@ -17,6 +17,7 @@ import java.util.Date;
 public class MerchantSalesRewardEntity{
 
     private Long id;
+    private Integer timeMode;//1下月一号起可返上月的佣金,2星期，下个星期可返上个星期的佣金，3，按天数模式，比如7天
     private Integer merchantType;
     private Integer judgeMethod;
     private Integer tradeNum;

@@ -1,26 +1,27 @@
 package io.treasure.utils;
 
 import io.treasure.enm.ECommission;
+import io.treasure.entity.MerchantSalesRewardEntity;
 import org.junit.Test;
 
+import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class TimeUtil {
 
     /**             与时间相关                */
-    public static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
-    public static SimpleDateFormat sdfYmd = new SimpleDateFormat("yyyy-MM-dd");
-    public static SimpleDateFormat sdfYm = new SimpleDateFormat("yyyy-MM");
-    public static SimpleDateFormat sdfM = new SimpleDateFormat("MM");
-    public static SimpleDateFormat sdfd = new SimpleDateFormat("dd");
-    public static SimpleDateFormat sdfHms = new SimpleDateFormat("HH:mm:ss");
-    public static SimpleDateFormat sdfHm = new SimpleDateFormat("HH:mm");
-    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static SimpleDateFormat days = new SimpleDateFormat("D");
+    public static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy",Locale.CHINESE);
+    public static SimpleDateFormat sdfYmd = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINESE);
+    public static SimpleDateFormat sdfYm = new SimpleDateFormat("yyyy-MM",Locale.CHINESE);
+    public static SimpleDateFormat sdfM = new SimpleDateFormat("MM",Locale.CHINESE);
+    public static SimpleDateFormat sdfd = new SimpleDateFormat("dd",Locale.CHINESE);
+    public static SimpleDateFormat sdfHms = new SimpleDateFormat("HH:mm:ss",Locale.CHINESE);
+    public static SimpleDateFormat sdfHm = new SimpleDateFormat("HH:mm",Locale.CHINESE);
+    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINESE);
+    public static SimpleDateFormat days = new SimpleDateFormat("D",Locale.CHINESE);
+    public static SimpleDateFormat week = new SimpleDateFormat("E",Locale.CHINESE);
 
     /**
      * 每天早上8点复位所有需要复位的内容
@@ -178,15 +179,15 @@ public class TimeUtil {
         return TimeUtil.simpleDateFormat.parse(result);
     }
 
-    //跨年则归0
-    public int checkCommissionDaysAgo(Date lastDate, Integer dLong, ECommission eCommission){
+    //定时检查返佣时间
+    public Map<String,Date> CommissionIsOnTime(Date lastDate, Integer dLong, ECommission eCommission){
         switch (eCommission){
             case DAYS_TYPE:
 
                 if(dLong == null)   dLong = 7;
                 Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(days.format(lastDate)):0;
                 Integer target = (Integer.parseInt(days.format(new Date())) - diffDays-1)/dLong;
-                return target;
+                return null;
 
             case WEEKS_TYPE:
 
@@ -214,7 +215,133 @@ public class TimeUtil {
         System.out.println("第多少个"+target);
 
          */
-        return 12313132;
+        return null;
+    }
+
+    //取得返佣的开始时与结束时间
+    public static Map<String,Date> getCommissionTimeRange(MerchantSalesRewardEntity sysParams) throws ParseException {
+        Map<String,Date> result = new HashMap<>();
+        Integer timeMode = sysParams.getTimeMode();//1数量，2开店百分比，3销量百分比
+        String sTime = "startTime";
+        String eTime = "stopTime";
+        switch (timeMode){
+            case 1://1下月一号起可返上月的佣金
+
+                Date lastMonthDate = TimeUtil.getLastMonthDate();
+                Date monthStart = TimeUtil.getMonthStart(lastMonthDate);
+                Date monthEnd = TimeUtil.getMonthEnd(lastMonthDate);
+
+                result.put(sTime,monthStart);
+                result.put(eTime,monthEnd);
+                return result;
+
+            case 2://2星期，下个星期可返上个星期的佣金
+                //返回上个星期一和星期天的时间
+                return getLastWeekTimeRange(null);
+
+            case 3://3，按天数模式，比如7天
+                //返回上一天开始的一定数量的天数
+
+
+                break;
+        }
+
+
+
+/*
+
+        /*
+        一、奖励商家的前提条件
+        第一种开店的百分比,在线店面的百分比，作为奖励名次数量，抛开无销量的
+        第二种有销售客贩百分比作为奖励的名次条件
+
+        第三种按名次
+
+        第四种交易额限值
+
+        二、返佣奖励的值（返佣的比例）
+        扣点百分数
+        可也能是阶梯段（允许阶段设置）
+
+        System.out.println("第多少个"+target);
+
+         */
+        return null;
+    }
+
+
+    public static Map<String,Date> getLastWeekTimeRange(Date date){
+        Map<String,Date> result = new HashMap<>();
+        String sTime = "startTime";
+        String eTime = "stopTime";
+        Date d = date==null?new Date():date;
+        Integer weekValue = getWeekValue(d);
+
+        long endTime = d.getTime()-24*60*60*1000*weekValue;
+        long startTime = endTime - 24*60*60*1000*6;
+
+        result.put(sTime,new Date(startTime));
+        result.put(eTime,new Date(endTime));
+        return result;
+    }
+
+    public static Integer getWeekValue(Date date){
+        Date d = date==null?new Date():date;
+        String tmpWeek = week.format(d);
+
+        if(tmpWeek.contains("一")||tmpWeek.contains("Mon")){
+            return 1;
+        }
+        if(tmpWeek.contains("二")||tmpWeek.contains("Tue")){
+            return 2;
+        }
+        if(tmpWeek.contains("三")||tmpWeek.contains("Wed")){
+            return 3;
+        }
+        if(tmpWeek.contains("四")||tmpWeek.contains("Thu")){
+            return 4;
+        }
+        if(tmpWeek.contains("五")||tmpWeek.contains("Fri")){
+            return 5;
+        }
+        if(tmpWeek.contains("六")||tmpWeek.contains("Sat")){
+            return 6;
+        }
+        if(tmpWeek.contains("日")||tmpWeek.contains("Sun")){
+            return 7;
+        }
+        return null;
+    }
+
+
+    @Test
+    public void ss() throws ParseException {
+
+        String s = "2020-08-16";
+        Date parse = sdfYmd.parse(s);
+        getLastWeekTimeRange(parse);
+
+        //getLastDayRange(Date regDate,Date date, Integer dayLong);
+    }
+
+
+    //跨年则复位，主要是减少程序压力
+    public static Map<String,Date> getLastDayRange(Date regDate,Date date, Integer dayLong){
+        Map<String,Date> result = new HashMap<>();
+        String sTime = "startTime";
+        String eTime = "stopTime";
+
+        Integer dLong = dayLong==null?7:dayLong;
+        Date targetDate = date==null?new Date():date;
+        String targetDateStr = sdfYmd.format(targetDate);
+        String regDays = days.format(regDate);
+        String targetDays = days.format(targetDate);
+
+        System.out.println("注册至当前的时间差"+regDays+","+targetDays);
+
+        //Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(dayLong.format(lastDate)):0;
+        //Integer target = (Integer.parseInt(dayLong.format(new Date())) - diffDays-1)/dLong;
+        return null;
     }
 
 }
