@@ -36,6 +36,8 @@ public class GoodEntity extends BaseEntity {
      * 菜品原价格
      */
 	private BigDecimal price;
+
+	private BigDecimal discountValue;
     /**
      * 菜品介绍
      */
