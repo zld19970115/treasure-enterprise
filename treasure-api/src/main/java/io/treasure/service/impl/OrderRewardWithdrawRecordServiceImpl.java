@@ -2,6 +2,7 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.*;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.EOrderRewardWithdrawRecord;
 import io.treasure.entity.*;
 import io.treasure.service.OrderRewardWithdrawRecordService;
@@ -95,62 +96,51 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         return false;
     }
 
-    //2-1   定时汇总记录,汇总并生成奖励记录====================================================================================
+    //定时任务：每个月一号或星期一或第7天
+
+    //2-2   ===========定时更新内容,每天执行一次===================================================
+    public void execCommission() throws ParseException {
+
+        List<MerchantDTO> merchantDTOS = merchantDao.selectCommissionList();
+        for(int i=0;i<merchantDTOS.size();i++){
+            updateMerchantSalesRewardRecord(merchantDTOS.get(i));
+        }
+    }
+    //2-3   ==========================================================================
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardRecordEntity entity) throws ParseException {
+    public boolean updateMerchantSalesRewardRecord(MerchantDTO merchantDTO) throws ParseException {
 
         MerchantSalesRewardEntity sysParams = merchantSalesRewardDao.selectById(1);
 
-        MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
-        vo.setMerchantSalesRewardRecordEntity(entity);
-        Map<String, Date> commissionTimeRange = null;//TimeUtil.getCommissionTimeRange(sysParams);
-        vo.setStartTime(commissionTimeRange.get("startTime"));
-        vo.setStopTime(commissionTimeRange.get("stopTime"));
-        vo.setMinValue(sysParams.getMinimumSales().doubleValue());
-        vo.setRanking(sysParams.getTradeNum());
+        Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,merchantDTO.getCreateDate());
 
-        List<MerchantSalesRewardRecordEntity> resultList = orderRewardWithdrawRecordDao.generateSalesRewardRecord(vo);
-        Map<String,Date> map = new HashMap<>();
-        if(sysParams.getTimeMode()!=3){
-            map = TimeUtil.getCommissionTimeRange(sysParams,null);
-        }
+        List<MerchantSalesRewardRecordEntity> entities
+                = orderRewardWithdrawRecordDao.selectCommissionListByMid(merchantDTO.getId(),map.get("startTime"),map.get("stopTime"));
 
-        try{
-            for(int i=0;i<resultList.size();i++){
-                MerchantSalesRewardRecordEntity recordItem = resultList.get(i);
-                if(sysParams.getTimeMode() == 3){//按启起时间计算
-                    Long mId = recordItem.getMId();
-                    MerchantEntity merchantEntity = merchantDao.selectById(mId);
-                    Date regDate = merchantEntity != null?merchantEntity.getCreateDate():new Date();
-                    map = TimeUtil.getCommissionTimeRange(sysParams,regDate);
+        for(int i=0;i<entities.size();i++){
+            MerchantSalesRewardRecordEntity recordItem = entities.get(i);
 
-                }
-                //recordItem.setStartPmt(map.get("startTime"));
-                recordItem.setStopPmt(map.get("stopTime"));
+            //插入新记录
+            //recordItem.setStartPmt(map.get("startTime"));
+            recordItem.setStopPmt(map.get("stopTime"));
+            try{
                 merchantSalesRewardRecordDao.insert(recordItem);
+
+                int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
+                orderRewardWithdrawRecordDao.updateUsedStatus(code,map.get("stopTime"));
+            }catch (Exception e){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return false;//order状态更新失败
             }
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return null;//记录更新异常，晚些时候再试
-        }
-        try{
 
-            int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
-            orderRewardWithdrawRecordDao.updateUsedStatus(code);
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return null;//order状态更新失败
         }
+        return true;
 
-        return resultList;
     }
 
+    //2-4   统计并拷贝==============================================================================
 
-
-
-
-    //2-2   统计并拷贝==============================================================================
-    //2-3   打开拷贝锁标记==========================================================================
+    //2-5   打开拷贝锁标记==========================================================================
 
 
     /**

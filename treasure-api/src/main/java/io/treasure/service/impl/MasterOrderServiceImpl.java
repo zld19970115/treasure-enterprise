@@ -111,6 +111,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private UserTransactionDetailsService userTransactionDetailsService;
 
+    @Autowired
+    private OrderRewardWithdrawRecordService orderRewardWithdrawRecordService;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -234,6 +236,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         return new Result().ok("接受订单成功！");
     }
 
+
+    public Result updateCommissionRecordAndReturn(Long id){
+        MasterOrderEntity entity = masterOrderDao.selectOrderInfo(id);
+
+        if(entity.getPlatformBrokerage().doubleValue()>0){
+            orderRewardWithdrawRecordService.addRecord(entity);
+        }
+        return new Result().ok("订单翻台成功！");
+    }
     /**
      * 商家翻台
      *
@@ -261,6 +272,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             entiry.setBalance(clientUserEntity.getBalance().subtract(dto.getPayMoney()));
             entiry.setUserId(clientUserEntity.getId());
             userTransactionDetailsService.insert(entiry);
+
         }
 
         Date date = new Date();
@@ -321,6 +333,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         statsDayDetailService.insertFinishUpdate(mod);
                     }
                 }
+
             } else {
                 Result c = new Result();
                 c.setCode(1);
@@ -388,7 +401,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                 merchantEntity.setPointMoney(0.00);
                 merchantEntity.setWartCash(wartcashZore);
                 merchantService.updateById(merchantEntity);
-                return new Result().ok("订单翻台成功！");
+
+                //1-1更新返佣
+
+
+                //return new Result().ok("订单翻台成功！");
+                return updateCommissionRecordAndReturn(id);
             } else {
                 return new Result().error("无法获取店铺信息!");
             }
@@ -411,7 +429,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     merchantEntity.setPointMoney(bigDecimal1.doubleValue());
                     merchantEntity.setWartCash(wartcashZore);
                     merchantService.updateById(merchantEntity);
-                    return new Result().ok("订单翻台成功！");
+
+                    //return new Result().ok("订单翻台成功！");
+                    return updateCommissionRecordAndReturn(id);
                 } else {
                     return new Result().error("无法获取店铺信息!");
                 }
@@ -423,7 +443,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             merchantEntity.setWartCash(wartcashZore);
             merchantService.updateById(merchantEntity);
-            return new Result().ok("订单翻台成功！");
+
+
+            //return new Result().ok("订单翻台成功！");
+            return updateCommissionRecordAndReturn(id);
         }
         if (merchantWithdrawEntities.size() != 0) {
             BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
@@ -453,9 +476,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             merchantEntity.setPointMoney(bigDecimal1.doubleValue());
             merchantEntity.setWartCash(wartcash);
             merchantService.updateById(merchantEntity);
-            return new Result().ok("订单翻台成功！");
+
+            return updateCommissionRecordAndReturn(id);
+            //return new Result().ok("订单翻台成功！");
         }
-        return new Result().ok("订单翻台成功！");
+        return updateCommissionRecordAndReturn(id);
+        //return new Result().ok("订单翻台成功！");
     }
 
     @Override

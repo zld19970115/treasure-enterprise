@@ -80,16 +80,7 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         IPage<MerchantSalesRewardRecordEntity> pages = merchantSalesRewardRecordDao.selectPage(map,queryWrapper);
         return pages;
     }
-    @Test
-    public void test(){
 
-        Date date = new Date();
-        String format = TimeUtil.simpleDateFormat.format(date);
-        String month = format.substring(5, 7);
-        String days = format.substring(8,10);
-        String year = format.substring(0,4);
-        System.out.println(year+","+month+","+days);
-    }
 
     public List<RewardMchList> getRewardMchList(MerchantSalesRewardRecordVo vo) throws ParseException {
 

@@ -338,4 +338,13 @@
 
     </update>
 
+    <select id="selectCommissionList" resultType="io.treasure.dto.MerchantDTO">
+        select id,mobile,create_date,days,commission_type
+        from ct_merchant
+        where commission_type != 0
+
+    </select>
+
+
+
 </mapper>

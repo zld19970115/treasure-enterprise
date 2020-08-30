@@ -1,5 +1,6 @@
 package io.treasure.task;
 
+import com.alipay.api.AlipayApiException;
 import io.treasure.task.item.ClientMemberGradeAssessment;
 import io.treasure.task.item.OrderClear;
 import io.treasure.task.item.OrderForBm;
@@ -8,6 +9,8 @@ import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
 
 @Component
 public class Task {
@@ -24,7 +27,7 @@ public class Task {
     private int taskInProcess = 0;
 
     @Scheduled(fixedDelay = 10000)
-    public void TaskManager(){
+    public void TaskManager() throws ParseException, AlipayApiException {
 
         orderForBm.getOrderByYwy();
         //0,复位所有定时任务
@@ -40,7 +43,8 @@ public class Task {
             clientMemberGradeAssessment.updateGrade(20);
         }
         //自动执行用户提现相关操作
-
+        if(!withdrawCommissionForMerchant.isInProcess())
+            withdrawCommissionForMerchant.startWithdrarw();
 
    }
 

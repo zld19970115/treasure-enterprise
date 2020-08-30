@@ -21,6 +21,7 @@
 
         update order_reward_withdraw_reocrd
         set is_used = ${status}
+        where #{stopTime} >= eat_time
     </update>
 
     <select id="generateSalesRewardRecord" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
@@ -41,8 +42,24 @@
         </where>
         group by m_id
         order by salesVolume desc, orderVolume desc
-        limit #{index},#{pagesNum}
+        <!--limit #{index},#{pagesNum}-->
 
+    </select>
+
+
+
+    <select id="selectCommissionList" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+
+    </select>
+    <select id="selectCommissionListByMid" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+
+        select * from order_reward_withdraw_reocrd
+        where m_id = #{mId}
+        and #{eDate} >= eat_time
+
+--         @Param("mId")Long mId,
+--         @Param("sDate")Date sDate,
+--         @Param("eDate")Date eDate
     </select>
 
 </mapper>
