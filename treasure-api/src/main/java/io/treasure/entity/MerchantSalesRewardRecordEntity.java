@@ -22,7 +22,7 @@ public class MerchantSalesRewardRecordEntity {
     private String auditStatus;
     private Integer auditComment;
     private Integer withDrawTime;
-    private Integer commissionVolume;
+    private BigDecimal commissionVolume;
 
     private BigDecimal salesVolume;
 

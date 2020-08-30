@@ -8,10 +8,8 @@ import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
-import io.treasure.service.MerchantSalesRewardService;
-import io.treasure.service.MerchantWithdrawService;
-import io.treasure.service.OrderRewardWithdrawRecordService;
-import io.treasure.service.UserWithdrawService;
+import io.treasure.service.*;
+import io.treasure.service.impl.CommissionWithdrawServiceImpl;
 import io.treasure.task.TaskCommon;
 import io.treasure.utils.TimeUtil;
 import lombok.Data;
@@ -50,6 +48,9 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
         @Autowired
         private OrderRewardWithdrawRecordService orderRewardWithdrawRecordService;
 
+        @Autowired
+        private CommissionWithdrawService commissionWithdrawService;
+
         private boolean forceRunOnce = false;
 
         public void startWithdrarw() throws ParseException, AlipayApiException {
@@ -59,31 +60,9 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 updateTaskCounter();  //更新执行程序计数器
 
                 UpdateCommissionRecord();//更新记录内容
-                /*
-                QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.select("sum(reward_value) as reward_value");
-                queryWrapper.eq("cash_out_status",1);//未提现
-                queryWrapper.eq("audit",0);//未进行审核
+                commissionWithdraw();//执行提现操作
 
-                List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
-                Integer size=entities.size();
 
-                for(int i=0;i<entities.size();i++){
-                        MerchantSalesRewardRecordEntity entity = entities.get(i);
-                        Integer method = entity.getMethod();
-
-                        String commissionId = entity.getId()+"";
-                        Long merchantId = entity.getMId();
-                        //Integer amount = entity.getRewardValue();
-
-                        if(method == 2){
-                                //userWithdrawService.AliMerchantCommissionWithDraw(entity);
-                            }else{
-                                //userWithdrawService.wxMerchantCommissionWithDraw(entity);
-                            }
-                        System.out.println("withdraw commission - id"+entity.getId());
-                }
-                */
                 forceRunOnce = false;
                 freeProcessLock();
         }
@@ -101,6 +80,32 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
         //每天执行一次
         public void UpdateCommissionRecord() throws ParseException {
                 orderRewardWithdrawRecordService.execCommission();
+        }
+
+        public void commissionWithdraw() throws AlipayApiException {
+                QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+                queryWrapper.select("sum(reward_value) as reward_value");
+                queryWrapper.eq("cash_out_status",1);//未提现
+                queryWrapper.eq("audit_status",1);//同意提现
+
+                List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
+                Integer size=entities.size();
+
+                for(int i=0;i<entities.size();i++){
+                        MerchantSalesRewardRecordEntity entity = entities.get(i);
+                        Integer method = entity.getMethod();
+
+                        String commissionId = entity.getId()+"";
+                        Long merchantId = entity.getMId();
+                        //Integer amount = entity.getRewardValue();
+
+                        if(method == 2){
+                                commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
+                        }else{
+                                commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                        }
+                        System.out.println("withdraw commission - id"+entity.getId());
+                }
         }
 
 }

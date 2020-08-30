@@ -251,7 +251,7 @@ public class MerchantSalesRewardController {
     //=========================================================================================
 
     @Login
-    @PostMapping("apply_for")
+    @PostMapping("apply_for")//商户申请，即商户id必须为一个
     @ApiOperation("申请提现")
     public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo, @RequestParam HttpServletRequest request){
 
@@ -261,22 +261,32 @@ public class MerchantSalesRewardController {
 
         MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
         List<Long> ids = new ArrayList<>();
+        BigDecimal applyForValue = new BigDecimal("0");
+        Long mId = null;
         for(int i=0;i<entities.size();i++){
             MerchantSalesRewardRecordEntity entity = entities.get(i);
             Long id = entity.getId();
             ids.add(id);
 
+            if(mId == null)
+                mId = entity.getMId();
+
+            BigDecimal commissionVolume = entity.getCommissionVolume();
+            applyForValue = applyForValue.add(commissionVolume);
+
             //修改提现方式
             entity.setMethod(vo.getWithDrawType());
             merchantSalesRewardRecordDao.updateById(entity);
-
+        }
+        if(mId != null){
             //准备微信支付ip地址
-            MerchantEntity merchantEntity = merchantDao.selectById(entities.get(i).getMId());
+            MerchantEntity merchantEntity = merchantDao.selectById(mId);
             String ipAddress= AdressIPUtil.getClientIpAddress(request);
-            if(ipAddress != null){
+            if(ipAddress != null) {
                 merchantEntity.setAddress(ipAddress);
-                merchantDao.updateById(merchantEntity);
             }
+            merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
+            merchantDao.updateById(merchantEntity);
         }
         mchRewardUpdateQuery.setIds(ids);
         mchRewardUpdateQuery.setStatus(3);//申请提现

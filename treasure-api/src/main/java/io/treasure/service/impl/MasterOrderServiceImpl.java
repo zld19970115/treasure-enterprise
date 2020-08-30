@@ -18,6 +18,7 @@ import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.BusinessManagerDao;
 import io.treasure.dao.MasterOrderDao;
+import io.treasure.dao.MerchantDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.EMessageUpdateType;
@@ -88,6 +89,8 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     private MerchantCouponService merchantCouponService;
     @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
     @Autowired
     MerchantMessageJRA merchantMessageJRA;
     @Autowired
@@ -239,9 +242,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     public Result updateCommissionRecordAndReturn(Long id){
         MasterOrderEntity entity = masterOrderDao.selectOrderInfo(id);
-
+        Long merchantId = entity.getMerchantId();
+        MerchantEntity merchantById = merchantDao.selectById(merchantId);
+        if(merchantById == null){
+            return new Result().ok("订单翻台成功！");//提前返回
+        }
+        if(merchantById.getCommissionType()==0){
+            return new Result().ok("订单翻台成功！");//提前返回
+        }
         if(entity.getPlatformBrokerage().doubleValue()>0){
             orderRewardWithdrawRecordService.addRecord(entity);
+            //更新未提现记录
+            merchantById.setCommissionNotWithdraw(merchantById.getCommissionNotWithdraw().add(entity.getPlatformBrokerage()));
+            merchantDao.updateById(merchantById);
         }
         return new Result().ok("订单翻台成功！");
     }

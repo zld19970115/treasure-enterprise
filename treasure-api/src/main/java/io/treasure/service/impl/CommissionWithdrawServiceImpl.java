@@ -55,7 +55,7 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
     public Result wxMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity){
         Result result=new Result();
         Long mId = entity.getMId();
-        Integer rewardValue = 0;//entity.getRewardValue();
+        BigDecimal commissionVolume = entity.getCommissionVolume();
         MerchantEntity merchantEntity = merchantDao.selectById(mId);
         String ipAddress = merchantEntity.getMchIp();
         if(merchantEntity==null){
@@ -81,7 +81,7 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
         java.text.DecimalFormat df=new java.text.DecimalFormat("0");
 
         //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
-        String fen = new BigDecimal(rewardValue+"").multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
+        String fen = commissionVolume.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
         map.put("amount",df.format(fen));//金额
 
         map.put("desc","mch_commission!");//描述
@@ -101,19 +101,8 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
         }
         if ("SUCCESS".equals(returnInfo.get("return_code"))
                 && "SUCCESS".equals(returnInfo.get("result_code"))) {
-            //更新提现记录
-            entity.setCashOutStatus(2);
-            merchantSalesRewardRecordDao.updateById(entity);
-            MerchantSalesRewardRecordEntity entity1 = merchantSalesRewardRecordDao.selectById(entity.getId());
-
-            if(entity1 != null){
-                if(entity1.getCashOutStatus() == 2){
-                    //发送成功消息
-                     SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getCommissionVolume()+"", merchantEntity.getName(), smsConfig);
-                    return result;
-                }
-            }
-            System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
+            //提现成功
+            updateAndReturn(entity,merchantEntity,commissionVolume);//提现成功
 
         } else {
             // 提现失败，更新记录
@@ -141,7 +130,7 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
             throw new RenException("佣金提现：请提前绑定支付宝相关帐号！");
         }
 
-        BigDecimal amount=new BigDecimal("0");//entity.getRewardValue());
+        BigDecimal amount= entity.getCommissionVolume();
         //构造client
         CertAlipayRequest certAlipayRequest = new CertAlipayRequest();
         //设置网关地址
@@ -211,23 +200,36 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
         }
         if ("10000".equals(response.getCode())) { //提现成功,本地业务逻辑略
 
-            //更新提现记录
-            entity.setCashOutStatus(2);
-            merchantSalesRewardRecordDao.updateById(entity);
-            MerchantSalesRewardRecordEntity entity1 = merchantSalesRewardRecordDao.selectById(entity.getId());
-
-            if(entity1 != null){
-                if(entity1.getCashOutStatus() == 2){
-                    //发送成功消息
-                     SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getCommissionVolume()+"", merchantEntity.getName(), smsConfig);
-                    return result;
-                }
-            }
-            System.out.println("更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
+            updateAndReturn(entity,merchantEntity,amount);//提现成功
 
         } else { // 支付宝提现失败，本地业务逻辑略
             throw new RenException("调用支付宝提现接口成功,但提现失败!code["+response.getCode()+"],"+response.getMsg()+",["+response.getSubCode()+"]"+response.getSubMsg());
         }
         return result;
+    }
+
+    public Result updateAndReturn(MerchantSalesRewardRecordEntity entity,MerchantEntity merchantEntity,BigDecimal amount){
+        //更新奖励记录
+        entity.setCashOutStatus(2);
+        merchantSalesRewardRecordDao.updateById(entity);
+
+        //更新商户提现等参数金额
+        merchantEntity.setCommissionNotWithdraw(merchantEntity.getCommissionNotWithdraw().subtract(amount));
+        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(amount));
+        merchantEntity.setCommissionWithdraw(merchantEntity.getCommissionWithdraw().add(amount));
+        merchantDao.updateById(merchantEntity);
+
+        //发送成功消息
+        SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getCommissionVolume()+"", merchantEntity.getName(), smsConfig);
+
+        //检查更新状态，异常则需要手动更改
+        MerchantSalesRewardRecordEntity updatedEntity = merchantSalesRewardRecordDao.selectById(entity.getId());
+        if(updatedEntity != null){
+            if(updatedEntity.getCashOutStatus() != 2){
+                System.out.println("提现成功，记录更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
+            }
+        }
+
+        return new Result().ok("success");
     }
 }
