@@ -712,7 +712,7 @@
                 and ctm.`name` like CONCAT('%',#{name},'%')
             </if>
             <if test="mobile != null and mobile.trim() != ''">
-                and mu.mobile like CONCAT('%',#{mobile},'%')
+                and ctm.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
@@ -809,6 +809,7 @@
         IFNULL(SUM(CASE when sdd.ye_paymoney>0 then sdd.ye_paymoney else 0 end),0) as ye_paymoney
         FROM
             stats_day_detail sdd
+        LEFT JOIN ct_merchant ct on ct.id = sdd.pay_merchant_id
         <where>
             <if test="startDate != null and startDate.trim() != ''">
                 <![CDATA[ and date_format(sdd.create_date, '%Y-%m-%d') >= #{startDate} ]]>
@@ -820,7 +821,7 @@
                 and sdd.pay_merchant_name like CONCAT('%',#{name},'%')
             </if>
             <if test="mobile != null and mobile.trim() != ''">
-                and mu.mobile like CONCAT('%',#{mobile},'%')
+                and ct.mobile like CONCAT('%',#{mobile},'%')
             </if>
         </where>
     </select>
@@ -829,6 +830,7 @@
         SELECT
 
         IFNULL(SUM( case when `status` = 10 then merchant_proceeds else 0 end ),0) as merchantTotalCash,
+        IFNULL(SUM( case when `status` = 10 then gift_money else 0 end ),0) as giftTotalCash,
         <if test="merchantId == null">
             IFNULL(SUM( case when `status` = 10 and pay_mode = 1 then pay_money else 0 end ),0) as balanceTotalCash,
             IFNULL(SUM( case when `status` = 10 and pay_mode = 2 then pay_money else 0 end ),0) as aliTotalCash,
