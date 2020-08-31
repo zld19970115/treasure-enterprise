@@ -102,12 +102,6 @@ public class RAddressQueryController {
                     }
                     System.out.println("响应地址："+stringBuilder.toString());
                     return new Result().ok(getMainString(stringBuilder.toString()));
-                    //formatted_address
-                    /*
-                    if(stringBuilder.toString().contains("success")){
-                        resultCode = 1;
-                        responseSecretary = (Secretary)jsonUtil.generatorObjectFromJson(stringBuilder.toString().trim(),secretary);
-                    }*/
                 }
             }catch(Exception e){
                 System.out.println("反地理参数处理异常 exception  ... ...");
@@ -145,12 +139,23 @@ public class RAddressQueryController {
         String townShip = getValue(EGeocode.ResponseLocalInfo._ADDRESS_COMPONENT__TOWNSHIP,s);
         String mainAddress = getValue(EGeocode.ResponseLocalInfo.REGEO_CODES__FORMATTED_ADDRESS,s);
         int index = mainAddress.lastIndexOf(townShip);
-
+        String res = null;
+        if(mainAddress == null)
+            return null;
+        if(mainAddress.length()<3)
+            return  mainAddress;
         if(mainAddress.contains(townShip)){
-            return mainAddress.substring(index+townShip.length());
+            res = mainAddress.substring(index+townShip.length());
         }
+        res = mainAddress;
 
-        return mainAddress;
+
+        String substring = res.substring(0, 2);
+        int i = substring.lastIndexOf(substring);
+        if(i>0){
+            res = res.substring(i);
+        }
+        return res;
     }
     public String getValue(EGeocode.ResponseLocalInfo resp,String s){
         s = s.replaceAll("\"","");
@@ -177,6 +182,5 @@ public class RAddressQueryController {
         }
         return sb.toString();
     }
-
 
 }
