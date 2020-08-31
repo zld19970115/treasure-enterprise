@@ -40,4 +40,7 @@ public class FmisHomeVo {
     @ApiModelProperty(value = "子订单总数")
     private Integer orderCount;
 
+    @ApiModelProperty(value = "代付金")
+    private BigDecimal giftTotalCash;
+
 }

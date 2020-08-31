@@ -38,7 +38,7 @@
         date_format(ct.open_card_date, '%Y-%m-%d %H:%i:%S') as openCardDate,
         (select s.username from sys_user s where s.id = ct.open_card_user) as openCardUserName,
         date_format(ct.bind_card_date, '%Y-%m-%d %H:%i:%S') as bindCardDate,
-        (select s.username from ct_client_user s where s.id = ct.bind_card_user) as bindCardUserName,
+        (select s.mobile from ct_client_user s where s.id = ct.bind_card_user) as bindCardUserName,
         date_format(ct.create_date, '%Y-%m-%d %H:%i:%S') as createDate,
         ct.code
          FROM ct_card_info ct
