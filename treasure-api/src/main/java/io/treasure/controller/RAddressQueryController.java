@@ -142,16 +142,17 @@ public class RAddressQueryController {
         String res = null;
         if(mainAddress == null)
             return null;
-        if(mainAddress.length()<3)
-            return  mainAddress;
+        if(mainAddress.length()<3){
+            res = mainAddress;
+        }
         if(mainAddress.contains(townShip)){
             res = mainAddress.substring(index+townShip.length());
+        }else{
+            res = mainAddress;
         }
-        res = mainAddress;
-
 
         String substring = res.substring(0, 2);
-        int i = substring.lastIndexOf(substring);
+        int i = res.lastIndexOf(substring);
         if(i>0){
             res = res.substring(i);
         }
