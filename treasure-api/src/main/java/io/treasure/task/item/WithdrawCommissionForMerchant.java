@@ -8,9 +8,8 @@ import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
-import io.treasure.service.MerchantSalesRewardService;
-import io.treasure.service.MerchantWithdrawService;
-import io.treasure.service.UserWithdrawService;
+import io.treasure.service.*;
+import io.treasure.service.impl.CommissionWithdrawServiceImpl;
 import io.treasure.task.TaskCommon;
 import io.treasure.utils.TimeUtil;
 import lombok.Data;
@@ -44,20 +43,50 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
         private MerchantDao merchantDao;
         @Autowired
         private UserWithdrawService userWithdrawService;
+        @Autowired
+        private MerchantSalesRewardService merchantSalesRewardService;
+        @Autowired
+        private OrderRewardWithdrawRecordService orderRewardWithdrawRecordService;
+
+        @Autowired
+        private CommissionWithdrawService commissionWithdrawService;
 
         private boolean forceRunOnce = false;
 
         public void startWithdrarw() throws ParseException, AlipayApiException {
                 lockedProcessLock();
-                if(!isOnTime() && getTaskCounter() == 0)
+                if(!isOnTime() || getTaskCounter() > 0)
                         return;
-
                 updateTaskCounter();  //更新执行程序计数器
 
+                UpdateCommissionRecord();//更新记录内容
+                commissionWithdraw();//执行提现操作
+
+
+                forceRunOnce = false;
+                freeProcessLock();
+        }
+
+        public boolean isOnTime() throws ParseException {
+                if(forceRunOnce == true)
+                        return true;
+
+              String dString = "2020-01-01 00:00:00";
+              Date parse = TimeUtil.simpleDateFormat.parse(dString);
+             return TimeUtil.isOnTime(parse,10);
+        }
+
+
+        //每天执行一次
+        public void UpdateCommissionRecord() throws ParseException {
+                orderRewardWithdrawRecordService.execCommission();
+        }
+
+        public void commissionWithdraw() throws AlipayApiException {
                 QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
                 queryWrapper.select("sum(reward_value) as reward_value");
-                queryWrapper.eq("cash_out_status",1);
-                queryWrapper.eq("status",1);
+                queryWrapper.eq("cash_out_status",1);//未提现
+                queryWrapper.eq("audit_status",1);//同意提现
 
                 List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
                 Integer size=entities.size();
@@ -71,39 +100,12 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                         //Integer amount = entity.getRewardValue();
 
                         if(method == 2){
-                                //userWithdrawService.AliMerchantCommissionWithDraw(entity);
-                            }else{
-                                //userWithdrawService.wxMerchantCommissionWithDraw(entity);
-                            }
+                                commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
+                        }else{
+                                commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                        }
                         System.out.println("withdraw commission - id"+entity.getId());
                 }
-
-                forceRunOnce = false;
-                freeProcessLock();
         }
 
-        public boolean isOnTime() throws ParseException {
-                if(forceRunOnce == true)
-                        return true;
-
-                String dString = "2020-08-25 22:00:00";
-                MerchantSalesRewardEntity params = merchantSalesRewardService.getParams();
-
-                Date parse = TimeUtil.simpleDateFormat.parse(dString);
-                if(TimeUtil.isOnMothDay(parse)){
-                     if(TimeUtil.isOnTime(parse,10)){
-                             return true;
-                     }
-                }
-                return false;
-        }
-        @Autowired
-        private MerchantSalesRewardService merchantSalesRewardService;
-
-        /*
-                treasure.ct_merchant.commission_not_withdraw
-                treasure.ct_merchant.commission_audit
-                treasure.ct_merchant.commission_withdraw
-                treasure.ct_merchant.commission_type
-         */
 }

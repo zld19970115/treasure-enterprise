@@ -1,14 +1,10 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.treasure.dao.MasterOrderDao;
-import io.treasure.dao.MerchantSalesRewardRecordDao;
-import io.treasure.dao.OrderRewardWithdrawRecordDao;
+import io.treasure.dao.*;
+import io.treasure.dto.MerchantDTO;
 import io.treasure.enm.EOrderRewardWithdrawRecord;
-import io.treasure.entity.MasterOrderEntity;
-import io.treasure.entity.MerchantSalesRewardEntity;
-import io.treasure.entity.MerchantSalesRewardRecordEntity;
-import io.treasure.entity.OrderRewardWithdrawRecordEntity;
+import io.treasure.entity.*;
 import io.treasure.service.OrderRewardWithdrawRecordService;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
@@ -21,10 +17,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.treasure.enm.EOrderRewardWithdrawRecord.NEW_RECORD;
 
@@ -39,7 +32,12 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
     private OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao;
 
     @Autowired(required = false)
-    MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
+    private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
+
+    @Autowired(required = false)
+    private MerchantSalesRewardDao merchantSalesRewardDao;
+    @Autowired(required = false)
+    private MerchantDao merchantDao;
 
 
 
@@ -98,44 +96,55 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         return false;
     }
 
-    //2-1   定时汇总记录,汇总并生成奖励记录====================================================================================
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardEntity sysParams, MerchantSalesRewardRecordEntity entity) throws ParseException {
+    //定时任务：每个月一号或星期一或第7天
 
-        MerchantSalesRewardRecordVo vo = new MerchantSalesRewardRecordVo();
-        vo.setMerchantSalesRewardRecordEntity(entity);
-        Map<String, Date> commissionTimeRange = TimeUtil.getCommissionTimeRange(sysParams);
-        vo.setStartTime(commissionTimeRange.get("startTime"));
-        vo.setStopTime(commissionTimeRange.get("stopTime"));
-        vo.setMinValue(sysParams.getMinimumSales().doubleValue());
-        vo.setRanking(sysParams.getTradeNum());
+    //2-2   ===========定时更新内容,每天执行一次===================================================
+    public void execCommission() throws ParseException {
 
-        List<MerchantSalesRewardRecordEntity> resultList = orderRewardWithdrawRecordDao.generateSalesRewardRecord(vo);
-
-        try{
-            for(int i=0;i<resultList.size();i++){
-                merchantSalesRewardRecordDao.insert(resultList.get(i));
-            }
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return null;//记录更新异常，晚些时候再试
+        List<MerchantDTO> merchantDTOS = merchantDao.selectCommissionList();
+        for(int i=0;i<merchantDTOS.size();i++){
+            updateMerchantSalesRewardRecord(merchantDTOS.get(i));
         }
-        try{
-
-            int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
-            orderRewardWithdrawRecordDao.updateUsedStatus(code);
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return null;//order状态更新失败
-        }
-
-        return resultList;
     }
-    //2-2   统计并拷贝==============================================================================
-    //2-3   打开拷贝锁标记==========================================================================
+    //2-3   ==========================================================================
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public boolean updateMerchantSalesRewardRecord(MerchantDTO merchantDTO) throws ParseException {
+
+        MerchantSalesRewardEntity sysParams = merchantSalesRewardDao.selectById(1);
+
+        Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,merchantDTO.getCreateDate());
+
+        List<MerchantSalesRewardRecordEntity> entities
+                = orderRewardWithdrawRecordDao.selectCommissionListByMid(merchantDTO.getId(),map.get("startTime"),map.get("stopTime"));
+
+        for(int i=0;i<entities.size();i++){
+            MerchantSalesRewardRecordEntity recordItem = entities.get(i);
+
+            //插入新记录
+            //recordItem.setStartPmt(map.get("startTime"));
+            recordItem.setStopPmt(map.get("stopTime"));
+            try{
+                merchantSalesRewardRecordDao.insert(recordItem);
+
+                int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
+                orderRewardWithdrawRecordDao.updateUsedStatus(code,map.get("stopTime"));
+            }catch (Exception e){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return false;//order状态更新失败
+            }
+
+        }
+        return true;
+
+    }
+
+    //2-4   统计并拷贝==============================================================================
+
+    //2-5   打开拷贝锁标记==========================================================================
+
 
     /**
-     * 更新记录录为已读状怘(1-2更新记录状态)
+     * 非预计内，防止有接口调用需求，更新记录录为已读状怘(1-2更新记录状态)
      * @param ids
      * @return
      */

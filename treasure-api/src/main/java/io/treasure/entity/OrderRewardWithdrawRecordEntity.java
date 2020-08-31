@@ -24,6 +24,8 @@ public class OrderRewardWithdrawRecordEntity{
     private BigDecimal payCoins;
     private BigDecimal platformIncome;
 
+    private Integer orderVolume;
+
     private Date eatTime;
     private Date createPmt;
     private Date updatePmt;

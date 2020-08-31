@@ -36,7 +36,6 @@ public class TimeUtil {
             return false;
         }
     }
-
     /**
      * 得到凌晨5点钟的时间
      * hour指定时间
@@ -157,7 +156,6 @@ public class TimeUtil {
     }
 
     //取得上个月的相对时间
-
     public static Date getLastMonthDate() throws ParseException {
         Date date = new Date();
         String format = TimeUtil.simpleDateFormat.format(date);
@@ -179,96 +177,80 @@ public class TimeUtil {
         return TimeUtil.simpleDateFormat.parse(result);
     }
 
-    //定时检查返佣时间
-    public Map<String,Date> CommissionIsOnTime(Date lastDate, Integer dLong, ECommission eCommission){
-        switch (eCommission){
-            case DAYS_TYPE:
 
-                if(dLong == null)   dLong = 7;
-                Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(days.format(lastDate)):0;
-                Integer target = (Integer.parseInt(days.format(new Date())) - diffDays-1)/dLong;
-                return null;
+    //跨年则复位，主要是减少程序压力
+    public static boolean isEnableCommissionViaDaysMethod(Date regDate,Date date, Integer dayLong){
+        Map<String,Date> result = new HashMap<>();
+        String sTime = "startTime";
+        String eTime = "stopTime";
 
-            case WEEKS_TYPE:
+        Integer dLong = dayLong==null?7:dayLong;
+        Date targetDate = date==null?new Date():date;
 
-                break;
-            case MONTHS_TYPE:
+        Integer regDays = 0;
+        if(regDate != null)
+            regDays = Integer.parseInt(days.format(regDate));
+        Integer targetDays = Integer.parseInt(days.format(targetDate));
+        Integer diffDays = targetDays - regDays;
 
-                break;
+        if((diffDays/dLong)>0){
+            return true;
         }
 
+        return false;
+    }
+    //定时检查返佣时间
+    public static boolean CommissionIsOnTime(MerchantSalesRewardEntity sysParams,Date regDate,String time) throws ParseException {
+        String strTime = time == null?"00:00:00":time;
+        Date preferenceDate = simpleDateFormat.parse("2020-01-01 " + strTime);
 
-
-        /*
-        一、奖励商家的前提条件
-        第一种开店的百分比,在线店面的百分比，作为奖励名次数量，抛开无销量的
-        第二种有销售客贩百分比作为奖励的名次条件
-
-        第三种按名次
-
-        第四种交易额限值
-
-        二、返佣奖励的值（返佣的比例）
-        扣点百分数
-        可也能是阶梯段（允许阶段设置）
-
-        System.out.println("第多少个"+target);
-
-         */
-        return null;
+        Integer timeMode = sysParams.getTimeMode();//1数量，2开店百分比，3销量百分比
+        switch (timeMode){
+            case 1://每个月1号检查上个月的记录
+                Date date = new Date();
+                if(sdfd.format(date).equals("01")){
+                    return isOnTime(preferenceDate,30);//三十分钟内
+                }
+                return false;
+            case 2://每个星期一检查上个星期的记录
+                String tmpWeek = week.format(new Date());
+                if(tmpWeek.contains("一")||tmpWeek.contains("Mon")){
+                    return isOnTime(preferenceDate,30);//三十分钟内
+                }
+                return false;
+            case 3://超出定长时间时检查上一个定长时间段的内容
+                return isEnableCommissionViaDaysMethod(regDate,null,null);
+        }
+        return false;
     }
 
     //取得返佣的开始时与结束时间
-    public static Map<String,Date> getCommissionTimeRange(MerchantSalesRewardEntity sysParams) throws ParseException {
-        Map<String,Date> result = new HashMap<>();
+    public static Map<String,Date> getCommissionTimeRange(MerchantSalesRewardEntity sysParams,Date regDate) throws ParseException {
         Integer timeMode = sysParams.getTimeMode();//1数量，2开店百分比，3销量百分比
-        String sTime = "startTime";
-        String eTime = "stopTime";
         switch (timeMode){
             case 1://1下月一号起可返上月的佣金
-
-                Date lastMonthDate = TimeUtil.getLastMonthDate();
-                Date monthStart = TimeUtil.getMonthStart(lastMonthDate);
-                Date monthEnd = TimeUtil.getMonthEnd(lastMonthDate);
-
-                result.put(sTime,monthStart);
-                result.put(eTime,monthEnd);
-                return result;
-
-            case 2://2星期，下个星期可返上个星期的佣金
-                //返回上个星期一和星期天的时间
+                return getLastMonthRange();
+            case 2://2星期，下个星期可返上个星期的佣金,返回上个星期一和星期天的时间
                 return getLastWeekTimeRange(null);
-
-            case 3://3，按天数模式，比如7天
-                //返回上一天开始的一定数量的天数
-
-
-                break;
+            case 3://3，按天数模式，比如7天,返回上一天开始的一定数量的天数
+                return getLastDayRange(regDate,null,null);
         }
-
-
-
-/*
-
-        /*
-        一、奖励商家的前提条件
-        第一种开店的百分比,在线店面的百分比，作为奖励名次数量，抛开无销量的
-        第二种有销售客贩百分比作为奖励的名次条件
-
-        第三种按名次
-
-        第四种交易额限值
-
-        二、返佣奖励的值（返佣的比例）
-        扣点百分数
-        可也能是阶梯段（允许阶段设置）
-
-        System.out.println("第多少个"+target);
-
-         */
         return null;
     }
 
+    public static Map<String,Date> getLastMonthRange() throws ParseException {
+        Map<String,Date> result = new HashMap<>();
+        String sTime = "startTime";
+        String eTime = "stopTime";
+
+        Date lastMonthDate = TimeUtil.getLastMonthDate();
+        Date monthStart = TimeUtil.getMonthStart(lastMonthDate);
+        Date monthEnd = TimeUtil.getMonthEnd(lastMonthDate);
+
+        result.put(sTime,monthStart);
+        result.put(eTime,monthEnd);
+        return result;
+    }
 
     public static Map<String,Date> getLastWeekTimeRange(Date date){
         Map<String,Date> result = new HashMap<>();
@@ -312,19 +294,6 @@ public class TimeUtil {
         }
         return null;
     }
-
-
-    @Test
-    public void ss() throws ParseException {
-
-        String s = "2020-08-16";
-        Date parse = sdfYmd.parse(s);
-        getLastWeekTimeRange(parse);
-
-        //getLastDayRange(Date regDate,Date date, Integer dayLong);
-    }
-
-
     //跨年则复位，主要是减少程序压力
     public static Map<String,Date> getLastDayRange(Date regDate,Date date, Integer dayLong){
         Map<String,Date> result = new HashMap<>();
@@ -333,14 +302,23 @@ public class TimeUtil {
 
         Integer dLong = dayLong==null?7:dayLong;
         Date targetDate = date==null?new Date():date;
-        String targetDateStr = sdfYmd.format(targetDate);
-        String regDays = days.format(regDate);
-        String targetDays = days.format(targetDate);
 
-        System.out.println("注册至当前的时间差"+regDays+","+targetDays);
+        Integer regDays = 0;
+        if(regDate != null)
+            regDays = Integer.parseInt(days.format(regDate));
+        Integer targetDays = Integer.parseInt(days.format(targetDate));
+        Integer diffDays = targetDays - regDays;
 
-        //Integer diffDays = sdfYear.format(lastDate).equals(sdfYear.format(new Date()))?diffDays = Integer.parseInt(dayLong.format(lastDate)):0;
-        //Integer target = (Integer.parseInt(dayLong.format(new Date())) - diffDays-1)/dLong;
+        if((diffDays/dLong)>0){
+
+            int tmpValue = diffDays % dayLong;
+            Long eDate = targetDate.getTime() - 24*60*60*1000*tmpValue;
+            Long sDate = eDate - 24*60*60*1000*dayLong;
+
+            result.put(sTime,new Date(sDate));
+            result.put(eTime,new Date(eDate));
+            return result;
+        }
         return null;
     }
 

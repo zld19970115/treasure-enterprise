@@ -21,12 +21,12 @@
 
         update order_reward_withdraw_reocrd
         set is_used = ${status}
+        where #{stopTime} >= eat_time
     </update>
 
     <select id="generateSalesRewardRecord" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
 
-        merchantSalesRewardRecordEntity
-        select m_id,sum(total_price) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
+        select m_id as mId,sum(total_price) as salesVolume, count(*) as orderVolume,platform_income as commissionVolume, 1 as cashOutStatus,0 as deleted
         from order_reward_withdraw_reocrd
         <where>
             is_used = 0
@@ -40,9 +40,26 @@
                 and #{stopTime} >= eat_time
             </if>
         </where>
-        group by merchant_id
-        order by sales_volume desc, order_volume desc
-        limit #{index},#{pagesNum}
+        group by m_id
+        order by salesVolume desc, orderVolume desc
+        <!--limit #{index},#{pagesNum}-->
 
     </select>
+
+
+
+    <select id="selectCommissionList" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+
+    </select>
+    <select id="selectCommissionListByMid" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+
+        select * from order_reward_withdraw_reocrd
+        where m_id = #{mId}
+        and #{eDate} >= eat_time
+
+--         @Param("mId")Long mId,
+--         @Param("sDate")Date sDate,
+--         @Param("eDate")Date eDate
+    </select>
+
 </mapper>

@@ -680,4 +680,25 @@
 
     </select>
 
+    <select id="selectOrderInfo" resultType="io.treasure.entity.MasterOrderEntity">
+
+        select merchant_id,order_id,eat_time,
+               sum(total_money) as total_money,sum(pay_money) as pay_money,sum(pay_coins) as pay_coins,
+               sum(platform_brokerage) as platform_brokerage
+
+        from ct_master_order
+        <where>
+            order_id =(
+                select order_id from ct_master_order where id = ${id}
+            )
+            or
+            p_order_id =(
+                select order_id from ct_master_order where id = ${id}
+            )
+        </where>
+
+        group by creator
+
+    </select>
+
 </mapper>

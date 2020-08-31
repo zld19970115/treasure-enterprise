@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -18,12 +19,14 @@ public class MerchantSalesRewardRecordEntity {
     private Long mId;
     private Integer method;
     private Integer cashOutStatus;
-    private String audit_status;
-    private Integer audit_comment;
+    private String auditStatus;
+    private Integer auditComment;
     private Integer withDrawTime;
-    private Integer salesVolume;
-    private Integer commissionVolume;
-    private String startPmt;
+    private BigDecimal commissionVolume;
+
+    private BigDecimal salesVolume;
+
+    private Date startPmt;
     private Date stopPmt;
 
     @TableLogic

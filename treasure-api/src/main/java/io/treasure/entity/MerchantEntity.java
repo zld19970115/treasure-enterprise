@@ -233,7 +233,7 @@ public class MerchantEntity implements Serializable {
 	private BigDecimal commissionNotWithdraw;
 	private BigDecimal commissionAudit;
 	private BigDecimal commissionWithdraw;
-	private BigDecimal commissionType;
+	private Integer commissionType;
 
 	
 }

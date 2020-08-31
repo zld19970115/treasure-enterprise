@@ -59,4 +59,6 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
 
     void updateAutoAceptOrderStatus(List<Long> ids,Integer status);
 
+
+    List<MerchantDTO> selectCommissionList();
 }
