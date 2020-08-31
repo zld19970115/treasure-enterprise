@@ -12,9 +12,14 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.entity.UserPushEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+import java.util.Map;
+
 @Mapper
 public interface UserPushDao extends BaseDao<UserPushEntity> {
 
     UserPushEntity selectByCid(String clientId);
+
+    List pageList(Map map);
 
 }

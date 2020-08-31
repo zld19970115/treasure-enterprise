@@ -1050,31 +1050,32 @@
     </select>
 
     <select id="smsMerchantPage" resultType="io.treasure.vo.MerchantPageVo">
-        select * from ct_merchant
+        select ct.*,cu.client_id from ct_merchant ct
+        LEFT JOIN ct_merchant_user cu on ct.id = cu.merchantId
         <where>
             <if test="name != null and name.trim() != ''">
-                and name like CONCAT('%',#{name},'%')
+                and ct.name like CONCAT('%',#{name},'%')
             </if>
             <if test="mobile != null and mobile.trim() != ''">
-                and mobile like CONCAT('%',#{mobile},'%')
+                and ct.mobile like CONCAT('%',#{mobile},'%')
             </if>
             <if test="startDate != null and startDate.trim() != ''">
-                <![CDATA[ and date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
+                <![CDATA[ and ct.date_format(create_date, '%Y-%m-%d') >= #{startDate} ]]>
             </if>
             <if test="endDate != null and endDate.trim() != ''">
-                <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
+                <![CDATA[ and ct.date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
             </if>
             <if test="auditStatus != null">
-                and auditStatus = #{auditStatus}
+                and ct.auditStatus = #{auditStatus}
             </if>
             <if test="status != null">
-                and status = #{status}
+                and ct.status = #{status}
             </if>
             <if test="id != null">
-                and id = #{id}
+                and ct.id = #{id}
             </if>
         </where>
-        ORDER BY create_date desc
+        ORDER BY ct.create_date desc
     </select>
 
     <select id="userChartByDay" resultType="io.treasure.vo.EChartInfoVo">
