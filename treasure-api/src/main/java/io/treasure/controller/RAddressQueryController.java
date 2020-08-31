@@ -71,7 +71,7 @@ public class RAddressQueryController {
             map.put(EGeocode.RequestLocal.REGEO_KEY.getParamsField(),gaodeKeyValue);
             //logAndLat = "125.164918,46.58033";
 
-        map.put(EGeocode.RequestLocal.REGEO_LOCATION.getParamsField(),logAndLat);
+        map.put(EGeocode.RequestLocal.REGEO_LOCATION.getParamsField(),logAndLat.replaceAll(" ",""));
             map.put(EGeocode.RequestLocal.regeo_RADIUS.getParamsField(),2000);
             String params = mapToString(map);
         try {
