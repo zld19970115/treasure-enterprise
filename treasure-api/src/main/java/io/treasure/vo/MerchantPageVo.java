@@ -148,4 +148,6 @@ public class MerchantPageVo {
 
     private BigDecimal money2;
 
+    private String clientId;
+
 }

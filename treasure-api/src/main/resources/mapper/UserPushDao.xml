@@ -16,4 +16,14 @@
         select * from user_push where client_id = #{clientId}
     </select>
 
+    <select id="pageList" resultType="io.treasure.vo.UserPushVo">
+        SELECT cu.mobile,up.client_id FROM user_push up
+        LEFT JOIN ct_client_user cu on up.user_id = cu.id
+        <where>
+            <if test="mobile != null">
+                and cu.mobile like CONCAT('%',#{mobile},'%')
+            </if>
+        </where>
+    </select>
+
 </mapper>
