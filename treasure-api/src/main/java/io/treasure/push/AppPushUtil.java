@@ -53,22 +53,22 @@ public class AppPushUtil {
      * clientId
      */
     public  static void pushToSingleClient(String title,String text,String logo,String clientId) {
-        IGtPush push = new IGtPush(AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
-        AbstractTemplate template = PushTemplate.getNotificationTemplate(AppInfo.APPID_CLIENT,AppInfo.APPKEY_CLIENT,title,text,logo); //通知模板(点击后续行为: 支持打开应用、发送透传内容、打开应用同时接收到透传 这三种行为)
-//        AbstractTemplate template = PushTemplate.getLinkTemplate(); //点击通知打开(第三方)网页模板
-//        AbstractTemplate template = PushTemplate.getTransmissionTemplate(); //透传消息模版
-//        AbstractTemplate template = PushTemplate.getRevokeTemplate(); //消息撤回模版
-//        AbstractTemplate template = PushTemplate.getStartActivityTemplate(); //点击通知, 打开（自身）应用内任意页面
-
-        // 单推消息类型
+        AbstractTemplate template = getTransmissionTemplate2(title,text); //透传消息模版
+        IGtPush push = new IGtPush(url,AppInfo.APPKEY_CLIENT, AppInfo.MASTERSECRET_CLIENT);
         SingleMessage message = getSingleMessage(template);
         Target target = new Target();
         target.setAppId(AppInfo.APPID_CLIENT);
         target.setClientId(clientId);
-//        target.setAlias(ALIAS); //别名需要提前绑定
+        AppMessage message1 = new AppMessage();
+        message1.setData(template);
+        message1.setAppIdList(Collections.singletonList(AppInfo.APPID_CLIENT));
+        message1.setOffline(true);
+        message1.setOfflineExpireTime(1000 * 600);// 时间单位为毫秒
         IPushResult ret = null;
         try {
             ret = push.pushMessageToSingle(message, target);
+            // STEP6：执行推送
+//            ret = push.pushMessageToApp(message1,CID);
         } catch (RequestException e) {
             e.printStackTrace();
             ret = push.pushMessageToSingle(message, target, e.getRequestId());
@@ -112,6 +112,25 @@ public class AppPushUtil {
     public static TransmissionTemplate getTransmissionTemplate(String title, String text) {
         TransmissionTemplate template = new TransmissionTemplate();
         template.setAppId(AppInfo.APPID_MERCHANT);
+        template.setAppkey(AppInfo.APPKEY_MERCHANT);
+        template.setTransmissionType(1);//搭配transmissionContent使用，可选值为1、2；1：立即启动APP（不推荐使用，影响客户体验）2：客户端收到消息后需要自行处理
+        template.setTransmissionContent("{\"title\": \""+title+"\",\"content\": \""+text+"\",\"payload\": \"lixian\"} "); //透传内容,不支持转义字符
+        template.setAPNInfo(getAPNPayload(text)); //ios消息推送，用于设置标题、内容、语音、多媒体、VoIP（基于IP的语音传输）等。离线走APNs时起效果
+        Notify notify = new Notify();
+        notify.setTitle(title);
+        notify.setContent(text);
+        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.jubao.UNI809BFD1/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title="+title+";S.content="+text+";S.payload=lixian;end");
+//        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.jubao.UNI809BFD1;S.UP-OL-SU=true;S.title="+title+";S.content="+text+";S.payload=test;end");
+        notify.setType(GtReq.NotifyInfo.Type._intent);
+        template.set3rdNotifyInfo(notify);//设置第三方通知
+
+
+        return template;
+    }
+
+    public static TransmissionTemplate getTransmissionTemplate2(String title, String text) {
+        TransmissionTemplate template = new TransmissionTemplate();
+        template.setAppId(AppInfo.APPID_CLIENT);
         template.setAppkey(AppInfo.APPKEY_MERCHANT);
         template.setTransmissionType(1);//搭配transmissionContent使用，可选值为1、2；1：立即启动APP（不推荐使用，影响客户体验）2：客户端收到消息后需要自行处理
         template.setTransmissionContent("{\"title\": \""+title+"\",\"content\": \""+text+"\",\"payload\": \"lixian\"} "); //透传内容,不支持转义字符

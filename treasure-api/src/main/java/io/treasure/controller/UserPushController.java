@@ -57,6 +57,9 @@ public class UserPushController {
                 }
             }
             UserPushEntity obj = userPushService.selectByCid(clientId);
+            if(obj == null && userId != null) {
+                obj = userPushService.selectByUserId(userId);
+            }
             if(obj != null) {
                 obj.setClientId(clientId);
                 obj.setUserId(userId);

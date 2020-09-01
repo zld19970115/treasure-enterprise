@@ -16,6 +16,10 @@
         select * from user_push where client_id = #{clientId}
     </select>
 
+    <select id="selectByUserId" resultMap="userPushMap">
+        select * from user_push where user_id = #{userId}
+    </select>
+
     <select id="pageList" resultType="io.treasure.vo.UserPushVo">
         SELECT cu.mobile,up.client_id FROM user_push up
         LEFT JOIN ct_client_user cu on up.user_id = cu.id
