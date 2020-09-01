@@ -13,4 +13,5 @@ public class MchRewardUpdateQuery {
     private List<Long> ids;
     private Integer status;
     private String comment;
+    private Integer method;
 }

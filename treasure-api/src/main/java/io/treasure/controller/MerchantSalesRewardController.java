@@ -273,8 +273,9 @@ public class MerchantSalesRewardController {
         MchRewardUpdateQuery query = new MchRewardUpdateQuery();
         query.setIds(ids);
         query.setStatus(3);
+        query.setMethod(withDrawType);//1微信，2支付宝
         query.setComment("申请提佣");
-        merchantSalesRewardRecordDao.updateStatusByIds(query);
+        merchantSalesRewardRecordDao.updateAuditStatusByIds(query);
 
         //更新ip地址准备微信支付ip地址
         MerchantEntity merchantEntity = merchantDao.selectById(mId);

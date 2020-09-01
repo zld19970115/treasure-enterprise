@@ -50,6 +50,15 @@
 
        </where>
     </select>
+    <update id="updateAuditStatusByIds" parameterType="io.treasure.vo.MchRewardUpdateQuery">
+        update merchant_sales_reward_record set audit_status = #{status},audit_comment = #{comment},method=#{method}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" separator="," open="(" close=")">
+                #{ids,jdbcType = BIGINT}
+            </foreach>
+        </where>
+    </update>
 
 
 </mapper>
