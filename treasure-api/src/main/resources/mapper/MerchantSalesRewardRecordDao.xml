@@ -5,7 +5,8 @@
 
 
     <select id="reward_mch_list" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.vo.RewardMchList">
-        select merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
+
+        select merchant_id as merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceed
         from ct_master_order
         <where>
             <if test="minValue != null and minValue != ''">
@@ -49,5 +50,6 @@
 
        </where>
     </select>
+
 
 </mapper>

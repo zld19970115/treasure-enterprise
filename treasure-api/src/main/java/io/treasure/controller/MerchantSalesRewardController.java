@@ -255,61 +255,43 @@ public class MerchantSalesRewardController {
     @ApiOperation("申请提现")
     public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo, @RequestParam HttpServletRequest request){
 
-        List<MerchantSalesRewardRecordEntity> entities = vo.getEntities();
-        if(entities.size()==0)
-            return new Result().ok("no content");
+        Long mId = vo.getMId();
+        Integer withDrawType = vo.getWithDrawType();
 
-        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
-        List<Long> ids = new ArrayList<>();
+        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("m_id",mId);
+        queryWrapper.eq("cash_out_status",1);
+        queryWrapper.eq("audit_status",0);
         BigDecimal applyForValue = new BigDecimal("0");
-        Long mId = null;
+        List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
+
+        List<Long> ids = new ArrayList<>();
         for(int i=0;i<entities.size();i++){
-            MerchantSalesRewardRecordEntity entity = entities.get(i);
-            Long id = entity.getId();
-            ids.add(id);
-
-            if(mId == null)
-                mId = entity.getMId();
-
-            BigDecimal commissionVolume = entity.getCommissionVolume();
-            applyForValue = applyForValue.add(commissionVolume);
-
-            //修改提现方式
-            entity.setMethod(vo.getWithDrawType());
-            merchantSalesRewardRecordDao.updateById(entity);
+            ids.add(entities.get(i).getId());
+            applyForValue = applyForValue.add(entities.get(i).getCommissionVolume());
         }
-        if(mId != null){
-            //准备微信支付ip地址
-            MerchantEntity merchantEntity = merchantDao.selectById(mId);
-            String ipAddress= AdressIPUtil.getClientIpAddress(request);
-            if(ipAddress != null) {
-                merchantEntity.setAddress(ipAddress);
-            }
-            merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
-            merchantDao.updateById(merchantEntity);
-        }
-        mchRewardUpdateQuery.setIds(ids);
-        mchRewardUpdateQuery.setStatus(3);//申请提现
-        mchRewardUpdateQuery.setComment("商申请提现");
-        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
+        MchRewardUpdateQuery query = new MchRewardUpdateQuery();
+        query.setIds(ids);
+        query.setStatus(3);
+        query.setComment("申请提佣");
+        merchantSalesRewardRecordDao.updateStatusByIds(query);
 
-        //给平台发送提现申请消息
-        if(entities.size()== 1){
-            MerchantSalesRewardRecordEntity entity = entities.get(0);
-            Integer status = 0;//entity.getStatus();
-            if(status == 3){
-                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
-                if(merchantEntity != null){
-                    String fee = "0";
-                    //BigDecimal value = new BigDecimal(entity.getRewardValue().toString());
-                   // value = value.divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
-                   // sendSMSUtil.commissionNotify("15303690053",merchantEntity.getName(),232+"", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
-                }
-            }
-        }else if(entities.size()> 1){
-            sendSMSUtil.commissionNotify("15303690053","多位商家","X", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
+        //更新ip地址准备微信支付ip地址
+        MerchantEntity merchantEntity = merchantDao.selectById(mId);
+        String ipAddress= AdressIPUtil.getClientIpAddress(request);
+        if(ipAddress != null) {
+            merchantEntity.setAddress(ipAddress);
         }
+        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
+        merchantDao.updateById(merchantEntity);
 
+        String mchInfo = mId+"";
+        mchInfo = "商家尾号"+mchInfo.substring(mchInfo.length()-6);
+        MerchantEntity mchEntity = merchantDao.selectById(mId);
+        if(mchEntity != null)
+            mchInfo = mchEntity.getName();
+
+        sendSMSUtil.commissionNotify("15303690053",mchInfo,applyForValue+"", SendSMSUtil.CommissionNotifyType.SERVICE_NOTIFY);
         return new Result().ok("success");
     }
 

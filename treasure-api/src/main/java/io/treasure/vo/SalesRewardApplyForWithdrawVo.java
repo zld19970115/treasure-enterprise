@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class SalesRewardApplyForWithdrawVo {
 
-    private List<MerchantSalesRewardRecordEntity> entities;
+    private Long mId;
     private Integer withDrawType;
 }
