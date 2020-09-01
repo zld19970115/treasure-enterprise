@@ -49,8 +49,6 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             return false;
 
         String orderId = entity.getOrderId();
-        if(isExistByOrderId(orderId))
-            return false;
 
         Long merchantId = entity.getMerchantId();
         BigDecimal totalMoney = entity.getTotalMoney();
@@ -71,21 +69,23 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             if(!isExistByOrderId(orderId)){
                 orderRewardWithdrawRecordDao.insert(orwrEntity);
             }else{
+                System.out.println("记录已存在，不能插入此记录,请及时处理:"+orderId);
                 return true;
             }
         }catch (Exception e){
+            System.out.println("记录插入异常,请及时处理:"+orderId);
             return false;//记录更新失败
         }
         return true;
     }
 
     public boolean isExistByOrderId(String orderId){
-        QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<OrderRewardWithdrawRecordEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("order_id",orderId);
 
-        List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList(queryWrapper);
+        List<OrderRewardWithdrawRecordEntity> orderRewardWithdrawRecordEntities = orderRewardWithdrawRecordDao.selectList(queryWrapper);
 
-        if(masterOrderEntities.size()>0)
+        if(orderRewardWithdrawRecordEntities.size()>0)
             return true;
         return false;
     }
@@ -136,7 +136,6 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             return false;//order状态更新失败
         }
         return true;
-
     }
 
     /**

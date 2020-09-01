@@ -250,6 +250,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if(merchantById.getCommissionType()==0){
             return new Result().ok("订单翻台成功！");//提前返回
         }
+
         if(entity.getPlatformBrokerage().doubleValue()>0){
             orderRewardWithdrawRecordService.addRecord(entity);
             //更新未提现记录
