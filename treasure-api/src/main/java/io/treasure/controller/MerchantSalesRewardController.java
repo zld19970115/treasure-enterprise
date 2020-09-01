@@ -253,7 +253,7 @@ public class MerchantSalesRewardController {
     @Login
     @PostMapping("apply_for")//商户申请，即商户id必须为一个
     @ApiOperation("申请提现")
-    public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo,HttpServletRequest request){
+    public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo, HttpServletRequest request){
 
         Long mId = vo.getMId();
         Integer withDrawType = vo.getWithDrawType();
@@ -283,6 +283,7 @@ public class MerchantSalesRewardController {
         //更新ip地址准备微信支付ip地址
         MerchantEntity merchantEntity = merchantDao.selectById(mId);
         String ipAddress= AdressIPUtil.getClientIpAddress(request);
+        System.out.println("ipAddress:"+ipAddress);
         if(ipAddress != null) {
             merchantEntity.setAddress(ipAddress);
         }
