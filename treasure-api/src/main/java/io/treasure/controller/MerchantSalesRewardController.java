@@ -253,7 +253,7 @@ public class MerchantSalesRewardController {
     @Login
     @PostMapping("apply_for")//商户申请，即商户id必须为一个
     @ApiOperation("申请提现")
-    public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo, @RequestParam HttpServletRequest request){
+    public Result save(@RequestBody SalesRewardApplyForWithdrawVo vo,HttpServletRequest request){
 
         Long mId = vo.getMId();
         Integer withDrawType = vo.getWithDrawType();
@@ -265,6 +265,9 @@ public class MerchantSalesRewardController {
         BigDecimal applyForValue = new BigDecimal("0");
         List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
 
+        if(entities.size()==0){
+            return new Result().ok("nothing");
+        }
         List<Long> ids = new ArrayList<>();
         for(int i=0;i<entities.size();i++){
             ids.add(entities.get(i).getId());

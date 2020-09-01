@@ -20,7 +20,7 @@ public class MerchantSalesRewardRecordEntity {
     private Integer method;
     private Integer cashOutStatus;
     private String auditStatus;
-    private Integer auditComment;
+    private String auditComment;
     private Integer withDrawTime;
     private BigDecimal commissionVolume;
 
