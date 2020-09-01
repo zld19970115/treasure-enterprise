@@ -33,6 +33,11 @@ public class UserPushServiceImpl extends CrudServiceImpl<UserPushDao, UserPushEn
     }
 
     @Override
+    public UserPushEntity selectByUserId(Long userId) {
+        return dao.selectByUserId(userId);
+    }
+
+    @Override
     public PageData<UserPushVo> pageList(Map<String, Object> map) {
         PageHelper.startPage(Integer.parseInt(map.get("page")+""),Integer.parseInt(map.get("limit")+""));
         Page<UserPushVo> page = (Page) dao.pageList(map);

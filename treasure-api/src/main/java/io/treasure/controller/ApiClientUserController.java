@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.gexin.rp.sdk.base.payload.APNPayload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -919,6 +920,13 @@ public class ApiClientUserController {
     @ApiOperation("PC端推送用户")
     public Result pushClientPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
         AppPushUtil.pushToSingleClient(title, text, "", clientId);
+        return new Result().ok("成功");
+    }
+
+    @GetMapping("/pushMerPC")
+    @ApiOperation("PC端推送商户")
+    public Result pushMerPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
+        AppPushUtil.pushToSingleMerchant(title, text, clientId);
         return new Result().ok("成功");
     }
 

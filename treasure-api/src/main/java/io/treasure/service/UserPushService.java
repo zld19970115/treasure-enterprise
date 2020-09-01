@@ -12,6 +12,8 @@ public interface UserPushService extends CrudService<UserPushEntity, UserPushDTO
 
     UserPushEntity selectByCid(String clientId);
 
+    UserPushEntity selectByUserId(Long userId);
+
     PageData<UserPushVo> pageList(Map<String, Object> map);
 
 }

@@ -20,6 +20,8 @@ public interface UserPushDao extends BaseDao<UserPushEntity> {
 
     UserPushEntity selectByCid(String clientId);
 
+    UserPushEntity selectByUserId(Long userId);
+
     List pageList(Map map);
 
 }
