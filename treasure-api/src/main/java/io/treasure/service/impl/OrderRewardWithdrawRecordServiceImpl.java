@@ -27,19 +27,14 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
     @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
-
     @Autowired(required = false)
     private OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao;
-
     @Autowired(required = false)
     private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
-
     @Autowired(required = false)
     private MerchantSalesRewardDao merchantSalesRewardDao;
     @Autowired(required = false)
     private MerchantDao merchantDao;
-
-
 
     /**
      * 系统清台时，自动将新订单记录增加至商家反佣记录内(1-1更新记录列表)
@@ -56,7 +51,6 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         String orderId = entity.getOrderId();
         if(isExistByOrderId(orderId))
             return false;
-
 
         Long merchantId = entity.getMerchantId();
         BigDecimal totalMoney = entity.getTotalMoney();
@@ -97,8 +91,6 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
     }
 
     //定时任务：每个月一号或星期一或第7天
-
-    //2-2   ===========定时更新内容,每天执行一次===================================================
     public void execCommission() throws ParseException {
 
         List<MerchantDTO> merchantDTOS = merchantDao.selectCommissionList();
@@ -117,36 +109,38 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         List<MerchantSalesRewardRecordEntity> entities
                 = orderRewardWithdrawRecordDao.selectCommissionListByMid(merchantDTO.getId(),map.get("startTime"),map.get("stopTime"));
 
+        List<Long> ids = new ArrayList<>();
+
         for(int i=0;i<entities.size();i++){
             MerchantSalesRewardRecordEntity recordItem = entities.get(i);
-
+            ids.add(recordItem.getId());
             //插入新记录
             //recordItem.setStartPmt(map.get("startTime"));
             recordItem.setStopPmt(map.get("stopTime"));
             try{
                 merchantSalesRewardRecordDao.insert(recordItem);
-
-                int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
-                orderRewardWithdrawRecordDao.updateUsedStatus(code,map.get("stopTime"));
             }catch (Exception e){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return false;//order状态更新失败
             }
 
         }
+
+        int usedCode = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
+        try{
+            if(ids.size()>0){
+                orderRewardWithdrawRecordDao.updateUsedStatus(usedCode,ids);
+            }
+        }catch(Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;//order状态更新失败
+        }
         return true;
 
     }
 
-    //2-4   统计并拷贝==============================================================================
-
-    //2-5   打开拷贝锁标记==========================================================================
-
-
     /**
      * 非预计内，防止有接口调用需求，更新记录录为已读状怘(1-2更新记录状态)
-     * @param ids
-     * @return
      */
     @Override
     public boolean updateCopiedStatus(List<Long> ids){

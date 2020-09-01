@@ -17,7 +17,7 @@ public interface OrderRewardWithdrawRecordDao extends BaseDao<OrderRewardWithdra
                      @Param("status") Integer status);
 
     void updateUsedStatus(@Param("status")Integer status,
-                          @Param("stopTime")Date stopTime);
+                          @Param("ids")List<Long> ids);
 
     List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardRecordVo vo);
 

@@ -19,9 +19,9 @@ public class MerchantSalesRewardRecordEntity {
     private Long mId;
     private Integer method;
     private Integer cashOutStatus;
-    private String auditStatus;
+    private Integer auditStatus;
     private String auditComment;
-    private Integer withDrawTime;
+    private BigDecimal withDrawTime;
     private BigDecimal commissionVolume;
 
     private BigDecimal salesVolume;
