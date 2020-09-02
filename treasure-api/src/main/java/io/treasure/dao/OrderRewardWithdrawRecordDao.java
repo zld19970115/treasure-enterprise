@@ -21,9 +21,8 @@ public interface OrderRewardWithdrawRecordDao extends BaseDao<OrderRewardWithdra
 
     List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardRecordVo vo);
 
-    List<MerchantSalesRewardRecordEntity> selectCommissionList();
 
-    List<MerchantSalesRewardRecordEntity> selectCommissionListByMid(@Param("mId")Long mId,
+    List<OrderRewardWithdrawRecordEntity> selectCommissionListByMid(@Param("mId")Long mId,
                                                                     @Param("sDate")Date sDate,
                                                                     @Param("eDate")Date eDate);
 }

@@ -90,7 +90,7 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         return false;
     }
 
-    //定时任务：每个月一号或星期一或第7天
+    //定时任务：每个月一号或星期一或第7天(将订单记录加入到可提现列表中)
     public void execCommission() throws ParseException {
 
         List<MerchantDTO> merchantDTOS = merchantDao.selectCommissionList();
@@ -99,6 +99,10 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         }
     }
     //2-3   ==========================================================================
+    //将orderRewardWithRecord==集中放入到==MerchantRewardWithRecord========>
+    //
+    //
+    //
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public boolean updateMerchantSalesRewardRecord(MerchantDTO merchantDTO) throws ParseException {
 
@@ -106,24 +110,34 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
         Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,merchantDTO.getCreateDate());
 
-        List<MerchantSalesRewardRecordEntity> entities
+        List<OrderRewardWithdrawRecordEntity> entities
                 = orderRewardWithdrawRecordDao.selectCommissionListByMid(merchantDTO.getId(),map.get("startTime"),map.get("stopTime"));
 
+        if(entities.size()==0)
+            return false;
+
         List<Long> ids = new ArrayList<>();
-
+        BigDecimal commissionVolume = new BigDecimal("0");
         for(int i=0;i<entities.size();i++){
-            MerchantSalesRewardRecordEntity recordItem = entities.get(i);
-            ids.add(recordItem.getId());
-            //插入新记录
-            //recordItem.setStartPmt(map.get("startTime"));
-            recordItem.setStopPmt(map.get("stopTime"));
-            try{
-                merchantSalesRewardRecordDao.insert(recordItem);
-            }catch (Exception e){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return false;//order状态更新失败
-            }
+            BigDecimal platformIncome = entities.get(i).getPlatformIncome();
+            commissionVolume = commissionVolume.add(platformIncome);
+            ids.add(entities.get(i).getId());
+        }
 
+        MerchantSalesRewardRecordEntity merchantSales = new MerchantSalesRewardRecordEntity();
+        merchantSales.setMId(merchantDTO.getId());
+        merchantSales.setMethod(0);
+        merchantSales.setCashOutStatus(1);
+        merchantSales.setAuditStatus(0);
+        merchantSales.setAuditComment("更新");
+        merchantSales.setCommissionVolume(commissionVolume);
+        merchantSales.setStopPmt(map.get("stopTime"));
+
+        try{
+            merchantSalesRewardRecordDao.insert(merchantSales);
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;//order状态更新失败
         }
 
         int usedCode = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
