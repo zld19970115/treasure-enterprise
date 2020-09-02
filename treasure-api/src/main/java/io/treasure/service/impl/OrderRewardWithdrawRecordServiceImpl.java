@@ -165,6 +165,5 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         }catch (Exception e){
             return false;
         }
-
     }
 }

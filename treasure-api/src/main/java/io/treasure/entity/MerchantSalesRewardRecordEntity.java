@@ -21,7 +21,7 @@ public class MerchantSalesRewardRecordEntity {
     private Integer cashOutStatus;
     private Integer auditStatus;
     private String auditComment;
-    private BigDecimal withDrawTime;
+    private Date withDrawTime;
     private BigDecimal commissionVolume;
 
     private BigDecimal salesVolume;
