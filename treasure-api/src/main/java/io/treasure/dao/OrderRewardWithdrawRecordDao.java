@@ -17,7 +17,8 @@ public interface OrderRewardWithdrawRecordDao extends BaseDao<OrderRewardWithdra
                      @Param("status") Integer status);
 
     void updateUsedStatus(@Param("status")Integer status,
-                          @Param("ids")List<Long> ids);
+                          @Param("ids")List<Long> ids,
+                          @Param("updateId")Long updateId);
 
     List<MerchantSalesRewardRecordEntity> generateSalesRewardRecord(MerchantSalesRewardRecordVo vo);
 
@@ -25,5 +26,7 @@ public interface OrderRewardWithdrawRecordDao extends BaseDao<OrderRewardWithdra
     List<OrderRewardWithdrawRecordEntity> selectCommissionListByMid(@Param("mId")Long mId,
                                                                     @Param("sDate")Date sDate,
                                                                     @Param("eDate")Date eDate);
+
+    Long insertEntityWhenNotExists(OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao);
 }
 

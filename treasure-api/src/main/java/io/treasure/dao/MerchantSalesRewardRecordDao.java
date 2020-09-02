@@ -19,5 +19,6 @@ public interface MerchantSalesRewardRecordDao extends BaseDao<MerchantSalesRewar
     void updateStatusByIds(MchRewardUpdateQuery query);
     int isExistRecord();
     void updateAuditStatusByIds(MchRewardUpdateQuery query);
+    Long insertEntity(MerchantSalesRewardRecordEntity merchantSales);
 
 }

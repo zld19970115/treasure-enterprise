@@ -24,7 +24,6 @@ import static io.treasure.enm.EOrderRewardWithdrawRecord.NEW_RECORD;
 @Service
 public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdrawRecordService {
 
-
     @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
     @Autowired(required = false)
@@ -133,8 +132,11 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         merchantSales.setCommissionVolume(commissionVolume);
         merchantSales.setStopPmt(map.get("stopTime"));
 
+        Long updateId = null;
         try{
-            merchantSalesRewardRecordDao.insert(merchantSales);
+            //merchantSalesRewardRecordDao.insert(merchantSales);
+            merchantSalesRewardRecordDao.insertEntity(merchantSales);
+            updateId = merchantSales.getId();
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;//order状态更新失败
@@ -142,8 +144,10 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
         int usedCode = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
         try{
-            if(ids.size()>0){
-                orderRewardWithdrawRecordDao.updateUsedStatus(usedCode,ids);
+            if(ids.size()>0 && updateId != null){
+                orderRewardWithdrawRecordDao.updateUsedStatus(usedCode,ids,updateId);
+            }else{
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -13,12 +13,14 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.ValidatorUtils;
 import io.treasure.common.validator.group.AddGroup;
+import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dto.MerchantWithdrawDTO;
 import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.enm.Common;
 import io.treasure.enm.WithdrawEnm;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.UserWithdrawService;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -209,6 +211,5 @@ public class UserWithdrawController {
         PageTotalRowData<UserWithdrawDTO> page = userWithdrawService.getMerchanWithDrawByMerchantId(params);
         return new Result<PageTotalRowData<UserWithdrawDTO>>().ok(page);
     }
-
 
 }

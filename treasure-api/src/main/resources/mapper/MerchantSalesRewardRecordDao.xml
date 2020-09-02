@@ -60,5 +60,20 @@
         </where>
     </update>
 
+    <sql id="insert_base_columns">
+        m_id,commission_volume,sales_volume
+--         with_draw_time,stop_pmt,deleted
+    </sql>
+    <sql id="insert_and_select">
+    #{mId},#{commissionVolume},#{salesVolume}
+--     #{withDrawTime},#{stopPmt},#{deleted}
+    </sql>
+    <update id="insertEntity" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO merchant_sales_reward_record
+            ( m_id,method,cash_out_status,audit_status,audit_comment,with_draw_time,stop_pmt,commission_volume,sales_volume)
+        value
+        (#{mId},#{method},#{cashOutStatus},#{auditStatus},#{auditComment},#{withDrawTime},#{stopPmt},#{commissionVolume},#{salesVolume})
+    </update>
 
 </mapper>
