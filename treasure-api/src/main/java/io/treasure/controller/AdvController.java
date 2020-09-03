@@ -5,16 +5,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.AdvertisementEntity;
 import io.treasure.service.AdvertisementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class AdvController {
 
     @GetMapping("startupPageUser")
     @ApiOperation("启动页广告")
-    public Result<String> selectById(Integer type) {
+    public Result<String> startupPageUser(Integer type) {
         Map<String, Object> params = Maps.newHashMap();
         params.put("page", 1);
         params.put("limit", 100);
@@ -42,6 +40,7 @@ public class AdvController {
         return new Result<String>().ok("");
     }
 
+    @Login
     @GetMapping("page")
     @ApiOperation("分页查询")
     @ApiImplicitParams({
@@ -52,5 +51,18 @@ public class AdvController {
         return new Result<PageData<AdvertisementEntity>>().ok(advertisementService.pageList(params));
     }
 
+    @Login
+    @PostMapping("update")
+    @ApiOperation("更新")
+    public Result<Integer> update(@RequestBody AdvertisementEntity info) {
+        advertisementService.updateById(info);
+        return new Result<Integer>().ok(0);
+    }
+
+    @GetMapping("selectById")
+    @ApiOperation("查询")
+    public Result<AdvertisementEntity> selectById(Long id) {
+        return new Result<AdvertisementEntity>().ok(advertisementService.selectById(id));
+    }
 
 }

@@ -11,13 +11,14 @@
 
     <select id="pageList" resultType="io.treasure.entity.AdvertisementEntity">
         select * from advertisement
-        where
-        <if test="type == 1">
-            type in (1,3)
-        </if>
-        <if test="type == 2">
-            type in (2,3)
-        </if>
+        <where>
+            <if test="type == 1">
+                and type in (1,3)
+            </if>
+            <if test="type == 2">
+                and type in (2,3)
+            </if>
+        </where>
     </select>
 
 </mapper>
