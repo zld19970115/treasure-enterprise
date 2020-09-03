@@ -14,7 +14,6 @@
             <otherwise>
                 consume_value = coupon_value,
                 use_status = 1
-                where
             </otherwise>
         </choose>
         where id in
