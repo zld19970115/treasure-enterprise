@@ -3,4 +3,26 @@
 
 <mapper namespace="io.treasure.dao.MulitCouponBoundleDao">
 
+
+    <update id="updateStatusByIds">
+        update mulit_coupon_boundle
+        set
+        <choose>
+            <when test="consumeValue != null and consumeValue != ''">
+                consume_value = #{consumeValue}
+            </when>
+            <otherwise>
+                consume_value = coupon_value,
+                use_status = 1
+                where
+            </otherwise>
+        </choose>
+        where id in
+        <foreach collection="ids" item="ids" separator="," open="(" close=")">
+            #{ids,jdbcType = BIGINT}
+        </foreach>
+
+    </update>
+
+
 </mapper>

@@ -25,6 +25,7 @@ public class MulitCouponBoundleEntity {
     private Integer useStatus;
     private Long goodsId;
     private BigDecimal couponValue;
+    private BigDecimal consumeValue;
     private Date gotPmt;
     private Date expirePmt;
 

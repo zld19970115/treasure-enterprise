@@ -36,7 +36,6 @@ import java.util.Map;
 
 /**
  * 商户管理员
- *
  * @author Super 63600679@qq.com
  * @since 1.0.0 2019-07-22
  */
