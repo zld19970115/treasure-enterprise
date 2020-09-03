@@ -1,5 +1,6 @@
 package io.treasure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,8 @@ public class MerchantSalesRewardRecordEntity {
 
     @TableLogic
     private Integer deleted;
+
+    @TableField(exist = false)
+    private String merName;
 
 }
