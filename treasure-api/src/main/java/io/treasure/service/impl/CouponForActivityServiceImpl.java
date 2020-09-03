@@ -2,21 +2,19 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.ClientUserDao;
-import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.utils.TimeUtil;
-import io.treasure.vo.ClientCoinsForActivityQueryVo;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.time.LocalDate.now;
 
 @Service
 public class CouponForActivityServiceImpl implements CouponForActivityService {
@@ -35,9 +33,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("use_status",0);
-        queryWrapper.ge("got_pmt",new Date());
-        queryWrapper.le("expire_pmt",new Date());
-        //queryWrapper.groupBy("owner_id");
+        queryWrapper.le("got_pmt",now());
+        queryWrapper.ge("expire_pmt",now());
         queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
         MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
         if(mulitCouponBoundleEntity == null)
@@ -85,12 +82,12 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
         }else{
             //正常扣除
-            BigDecimal canUseCoins = getClientCanUseTotalCoinsVolume(clientUser_id);
-            if(canUseCoins.compareTo(coins)>=0){
+            BigDecimal canUseActivityCoins = getClientActivityCoinsVolume(clientUser_id);
+            if(canUseActivityCoins.compareTo(coins)>=0){
                 updateActivityCoinsConsumeRecord(clientUser_id,coins);
             }else{
-                updateActivityCoinsConsumeRecord(clientUser_id,canUseCoins);
-                BigDecimal subtract = coins.subtract(canUseCoins);
+                updateActivityCoinsConsumeRecord(clientUser_id,canUseActivityCoins);
+                BigDecimal subtract = coins.subtract(canUseActivityCoins);
 
                 ClientUserEntity clientUserEntity = clientUserDao.selectById(clientUser_id);
                 BigDecimal balance = clientUserEntity.getBalance();
@@ -112,8 +109,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("use_status",0);
-        queryWrapper.ge("got_pmt",new Date());
-        queryWrapper.le("expire_pmt",new Date());
+        queryWrapper.le("got_pmt",new Date());
+        queryWrapper.ge("expire_pmt",new Date());
         queryWrapper.orderByAsc("expire_pmt");
         List<MulitCouponBoundleEntity> resourceEntities = null;
         try {
@@ -121,6 +118,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             if(resourceEntities.size() == 0)
                 return false;
         }catch(Exception e){
+            e.printStackTrace();
             return false;
         }
 
@@ -154,6 +152,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             if (maxedOuts.size() > 0) {
                 mulitCouponBoundleDao.updateStatusByIds(maxedOuts, null);
             }
+
             //减掉剩余的余额
             if (surplusId != null) {
                 List<Long> idTmp = new ArrayList<>();
@@ -161,6 +160,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                 mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins);
             }
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
         return true;
