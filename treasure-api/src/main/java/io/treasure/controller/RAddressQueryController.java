@@ -25,24 +25,8 @@ import java.util.Map;
 public class RAddressQueryController {
     /**
      * 日上限3000000	并发能力1000
-     *
-     * 结构化地址的定义： 首先，地址肯定是一串字符，内含国家、省份、城市、区县、城镇、乡村、街道、门牌号码、屋邨、大厦等建筑物名称。
-     * 按照由大区域名称到小区域名称组合在一起的字符。
-     * 一个有效的地址应该是独一无二的。
-     * 注意：针对大陆、港、澳地区的地理编码转换时可以将国家信息选择性的忽略，
-     * 但省、市、城镇等级别的地址构成是不能忽略的。暂时不支持返回台湾省的详细地址信息。
-     *
-     *
-     * 地理编码：将详细的结构化地址转换为高德经纬度坐标。且支持对地标性名胜景区、建筑物名称解析为高德经纬度坐标。
-     * 结构化地址举例：北京市朝阳区阜通东大街6号转换后经纬度：116.480881,39.989410
-     * 地标性建筑举例：天安门转换后经纬度：116.397499,39.908722
-     * 逆地理编码：将经纬度转换为详细结构化的地址，且返回附近周边的POI、AOI信息。
-     * 例如：116.480881,39.989410 转换地址描述后：北京市朝阳区阜通东大街6号
-     *
-     * 接口请求地址
+     * 接口请求地址(GET)
      * URL: https://restapi.amap.com/v3/geocode/regeo?parameters
-     * 请求方式:GET
-     *
      */
     private String gaodeKeyName = "jubao_2020_app";
     private String gaodeKeyValue = "248f147a3bf4681399e5593e9b30fe56";
@@ -69,8 +53,6 @@ public class RAddressQueryController {
             BufferedReader bufferedReader = null;
             Map<String,Object> map = new HashMap<>();
             map.put(EGeocode.RequestLocal.REGEO_KEY.getParamsField(),gaodeKeyValue);
-            //logAndLat = "125.164918,46.58033";
-
         map.put(EGeocode.RequestLocal.REGEO_LOCATION.getParamsField(),logAndLat.replaceAll(" ",""));
             map.put(EGeocode.RequestLocal.regeo_RADIUS.getParamsField(),2000);
             String params = mapToString(map);

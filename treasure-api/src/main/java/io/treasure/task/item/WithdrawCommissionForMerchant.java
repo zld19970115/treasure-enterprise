@@ -58,11 +58,10 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(!isOnTime() || getTaskCounter() > 0)
                         return;
                 updateTaskCounter();  //更新执行程序计数器
+                if(forceRunOnce == false)
+                        UpdateCommissionRecord();//更新记录内容
 
-                UpdateCommissionRecord();//更新记录内容
                 commissionWithdraw();//执行提现操作
-
-
                 forceRunOnce = false;
                 freeProcessLock();
         }
@@ -89,19 +88,14 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 queryWrapper.eq("audit_status",1);//同意提现
 
                 List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
-                Integer size=entities.size();
 
                 for(int i=0;i<entities.size();i++){
                         MerchantSalesRewardRecordEntity entity = entities.get(i);
                         Integer method = entity.getMethod();
 
-                        String commissionId = entity.getId()+"";
-                        Long merchantId = entity.getMId();
-                        //Integer amount = entity.getRewardValue();
-
                         if(method == 2){
                                 commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
-                        }else{
+                        }else if(method == 1){
                                 commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
                         }
                         System.out.println("withdraw commission - id"+entity.getId());

@@ -93,12 +93,12 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
         vo.setStopTime(monthEnd);
 
         List<RewardMchList> list = merchantSalesRewardRecordDao.reward_mch_list(vo);
-//        for(int i=0;i<list.size();i++){
-//            RewardMchList rewardMchList = list.get(i);
-//            rewardMchList.setDtime(new Date());
-//            list.set(i,rewardMchList);
-//        }
 
+        for(int i=0;i<list.size();i++){
+            RewardMchList rewardMchList = list.get(i);
+            rewardMchList.setEatTime(new Date());
+            list.set(i,rewardMchList);
+        }
         return list;
     }
 
@@ -165,14 +165,15 @@ public class MerchantSalesRewardServiceImpl implements MerchantSalesRewardServic
     public String getNotWithdrawRewardAmount(Long mchId){
 
         QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("sum(reward_value) as reward_value");
+        queryWrapper.select("sum(commission_volume) as commissionVolume");
         queryWrapper.eq("m_id",mchId);
-        queryWrapper.eq("cash_out_status",1);
+        queryWrapper.eq("cash_out_status",1);   //1,表示未提现
+        //queryWrapper.eq("audit_status",1);      //1,表示同意
 
         MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
-//        if(entity != null){
-//            return entity.getRewardValue().toString();
-//        }
+        if(entity != null){
+            return entity.getCommissionVolume().toString();
+        }
         return "0";
     }
 //    @Override

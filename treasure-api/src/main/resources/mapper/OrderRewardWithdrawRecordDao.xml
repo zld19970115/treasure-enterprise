@@ -20,8 +20,13 @@
     <update id="updateUsedStatus">
 
         update order_reward_withdraw_reocrd
-        set is_used = ${status}
-        where #{stopTime} >= eat_time
+        set is_used = ${status},msr_id = #{updateId}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" open="(" close=")" separator=",">
+                ${ids}
+            </foreach>
+        </where>
     </update>
 
     <select id="generateSalesRewardRecord" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
@@ -46,20 +51,42 @@
 
     </select>
 
-
-
-    <select id="selectCommissionList" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
-
-    </select>
-    <select id="selectCommissionListByMid" resultType="io.treasure.entity.MerchantSalesRewardRecordEntity">
+    <select id="selectCommissionListByMid" resultType="io.treasure.entity.OrderRewardWithdrawRecordEntity">
 
         select * from order_reward_withdraw_reocrd
         where m_id = #{mId}
         and #{eDate} >= eat_time
-
---         @Param("mId")Long mId,
---         @Param("sDate")Date sDate,
---         @Param("eDate")Date eDate
+        and is_used = 0
+        and msr_id = 0
     </select>
+
+
+    <sql id="insert_base_columns">
+        m_id,order_id,is_used,eat_time,create_pmt,
+        update_pmt,total_price,
+        actual_payment,pay_coins,
+        platform_income,version
+    </sql>
+    <sql id="insert_and_select">
+    #{mId},${orderId}#{isUsed},#{eatTime},#{createPmt},
+    #{updatePmt},#{totalPrice},
+    #{actualPayment},#{payCoins}
+    #{platformIncome},#{version}
+    </sql>
+    <update id="insertEntityWhenNotExists" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO order_reward_withdraw_reocrd
+        (
+        <include refid="insert_base_columns"></include>
+        )
+        select
+        <include refid="insert_and_select"></include>
+        from dual
+        where NOT EXISTS
+        (
+        select order_id from order_reward_withdraw_reocrd
+        where order_id = ${orderId}
+        )
+    </update>
 
 </mapper>

@@ -24,22 +24,16 @@ import static io.treasure.enm.EOrderRewardWithdrawRecord.NEW_RECORD;
 @Service
 public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdrawRecordService {
 
-
     @Autowired(required = false)
     private MasterOrderDao masterOrderDao;
-
     @Autowired(required = false)
     private OrderRewardWithdrawRecordDao orderRewardWithdrawRecordDao;
-
     @Autowired(required = false)
     private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
-
     @Autowired(required = false)
     private MerchantSalesRewardDao merchantSalesRewardDao;
     @Autowired(required = false)
     private MerchantDao merchantDao;
-
-
 
     /**
      * 系统清台时，自动将新订单记录增加至商家反佣记录内(1-1更新记录列表)
@@ -54,9 +48,6 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             return false;
 
         String orderId = entity.getOrderId();
-        if(isExistByOrderId(orderId))
-            return false;
-
 
         Long merchantId = entity.getMerchantId();
         BigDecimal totalMoney = entity.getTotalMoney();
@@ -77,28 +68,28 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
             if(!isExistByOrderId(orderId)){
                 orderRewardWithdrawRecordDao.insert(orwrEntity);
             }else{
+                System.out.println("记录已存在，不能插入此记录,请及时处理:"+orderId);
                 return true;
             }
         }catch (Exception e){
+            System.out.println("记录插入异常,请及时处理:"+orderId);
             return false;//记录更新失败
         }
         return true;
     }
 
     public boolean isExistByOrderId(String orderId){
-        QueryWrapper<MasterOrderEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<OrderRewardWithdrawRecordEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("order_id",orderId);
 
-        List<MasterOrderEntity> masterOrderEntities = masterOrderDao.selectList(queryWrapper);
+        List<OrderRewardWithdrawRecordEntity> orderRewardWithdrawRecordEntities = orderRewardWithdrawRecordDao.selectList(queryWrapper);
 
-        if(masterOrderEntities.size()>0)
+        if(orderRewardWithdrawRecordEntities.size()>0)
             return true;
         return false;
     }
 
-    //定时任务：每个月一号或星期一或第7天
-
-    //2-2   ===========定时更新内容,每天执行一次===================================================
+    //定时任务：每个月一号或星期一或第7天(将订单记录加入到可提现列表中)
     public void execCommission() throws ParseException {
 
         List<MerchantDTO> merchantDTOS = merchantDao.selectCommissionList();
@@ -107,6 +98,10 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         }
     }
     //2-3   ==========================================================================
+    //将orderRewardWithRecord==集中放入到==MerchantRewardWithRecord========>
+    //
+    //
+    //
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public boolean updateMerchantSalesRewardRecord(MerchantDTO merchantDTO) throws ParseException {
 
@@ -114,39 +109,55 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
 
         Map<String,Date> map = TimeUtil.getCommissionTimeRange(sysParams,merchantDTO.getCreateDate());
 
-        List<MerchantSalesRewardRecordEntity> entities
+        List<OrderRewardWithdrawRecordEntity> entities
                 = orderRewardWithdrawRecordDao.selectCommissionListByMid(merchantDTO.getId(),map.get("startTime"),map.get("stopTime"));
 
+        if(entities.size()==0)
+            return false;
+
+        List<Long> ids = new ArrayList<>();
+        BigDecimal commissionVolume = new BigDecimal("0");
         for(int i=0;i<entities.size();i++){
-            MerchantSalesRewardRecordEntity recordItem = entities.get(i);
+            BigDecimal platformIncome = entities.get(i).getPlatformIncome();
+            commissionVolume = commissionVolume.add(platformIncome);
+            ids.add(entities.get(i).getId());
+        }
 
-            //插入新记录
-            //recordItem.setStartPmt(map.get("startTime"));
-            recordItem.setStopPmt(map.get("stopTime"));
-            try{
-                merchantSalesRewardRecordDao.insert(recordItem);
+        MerchantSalesRewardRecordEntity merchantSales = new MerchantSalesRewardRecordEntity();
+        merchantSales.setMId(merchantDTO.getId());
+        merchantSales.setMethod(0);
+        merchantSales.setCashOutStatus(1);
+        merchantSales.setAuditStatus(0);
+        merchantSales.setAuditComment("更新");
+        merchantSales.setCommissionVolume(commissionVolume);
+        merchantSales.setStopPmt(map.get("stopTime"));
 
-                int code = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
-                orderRewardWithdrawRecordDao.updateUsedStatus(code,map.get("stopTime"));
-            }catch (Exception e){
+        Long updateId = null;
+        try{
+            //merchantSalesRewardRecordDao.insert(merchantSales);
+            merchantSalesRewardRecordDao.insertEntity(merchantSales);
+            updateId = merchantSales.getId();
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;//order状态更新失败
+        }
+
+        int usedCode = EOrderRewardWithdrawRecord.USED_RECORD.getCode();
+        try{
+            if(ids.size()>0 && updateId != null){
+                orderRewardWithdrawRecordDao.updateUsedStatus(usedCode,ids,updateId);
+            }else{
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return false;//order状态更新失败
             }
-
+        }catch(Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;//order状态更新失败
         }
         return true;
-
     }
-
-    //2-4   统计并拷贝==============================================================================
-
-    //2-5   打开拷贝锁标记==========================================================================
-
 
     /**
      * 非预计内，防止有接口调用需求，更新记录录为已读状怘(1-2更新记录状态)
-     * @param ids
-     * @return
      */
     @Override
     public boolean updateCopiedStatus(List<Long> ids){
@@ -158,6 +169,5 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
         }catch (Exception e){
             return false;
         }
-
     }
 }

@@ -5,7 +5,8 @@
 
 
     <select id="reward_mch_list" parameterType="io.treasure.vo.MerchantSalesRewardRecordVo" resultType="io.treasure.vo.RewardMchList">
-        select merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceeds,eat_time
+
+        select merchant_id as merchant_id,sum(merchant_proceeds) as sales_volume, count(*) as order_volume,merchant_proceed
         from ct_master_order
         <where>
             <if test="minValue != null and minValue != ''">
@@ -49,5 +50,30 @@
 
        </where>
     </select>
+    <update id="updateAuditStatusByIds" parameterType="io.treasure.vo.MchRewardUpdateQuery">
+        update merchant_sales_reward_record set audit_status = #{status},audit_comment = #{comment},method=#{method}
+        <where>
+            id in
+            <foreach collection="ids" item="ids" separator="," open="(" close=")">
+                #{ids,jdbcType = BIGINT}
+            </foreach>
+        </where>
+    </update>
+
+    <sql id="insert_base_columns">
+        m_id,commission_volume,sales_volume
+--         with_draw_time,stop_pmt,deleted
+    </sql>
+    <sql id="insert_and_select">
+    #{mId},#{commissionVolume},#{salesVolume}
+--     #{withDrawTime},#{stopPmt},#{deleted}
+    </sql>
+    <update id="insertEntity" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO merchant_sales_reward_record
+            ( m_id,method,cash_out_status,audit_status,audit_comment,with_draw_time,stop_pmt,commission_volume,sales_volume)
+        value
+        (#{mId},#{method},#{cashOutStatus},#{auditStatus},#{auditComment},#{withDrawTime},#{stopPmt},#{commissionVolume},#{salesVolume})
+    </update>
 
 </mapper>
