@@ -2,8 +2,10 @@ package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.ClientUserDao;
+import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.CouponRuleEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.utils.TimeUtil;
@@ -24,7 +26,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
 
-    private Double coinsLimit = 50d;
+    @Autowired(required = false)
+    private CouponRuleDao couponRuleDao;
 
     @Override
     public BigDecimal getClientActivityCoinsVolume(Long clientUser_id){
@@ -33,7 +36,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("use_status",0);
-        queryWrapper.le("got_pmt",now());
+        //queryWrapper.le("got_pmt",now());
         queryWrapper.ge("expire_pmt",now());
         queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
         MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
@@ -43,8 +46,10 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     }
     @Override
     public BigDecimal getClientCanUseTotalCoinsVolume(Long clientUser_id){
+        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        Integer coinsLimit = couponRuleEntity.getConsumeLimit();
         BigDecimal clientActivityCoinsVolume = getClientActivityCoinsVolume(clientUser_id);
-        if(clientActivityCoinsVolume.doubleValue()>coinsLimit){
+        if(clientActivityCoinsVolume.doubleValue()>coinsLimit.doubleValue()){
             clientActivityCoinsVolume = new BigDecimal(coinsLimit);
         }
         ClientUserEntity clientUserEntity = clientUserDao.selectById(clientUser_id);
@@ -109,7 +114,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("use_status",0);
-        queryWrapper.le("got_pmt",new Date());
+        //queryWrapper.le("got_pmt",new Date());
         queryWrapper.ge("expire_pmt",new Date());
         queryWrapper.orderByAsc("expire_pmt");
         List<MulitCouponBoundleEntity> resourceEntities = null;
@@ -121,7 +126,6 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             e.printStackTrace();
             return false;
         }
-
 
         List<Long> maxedOuts = new ArrayList<>();
         BigDecimal surplusCoins = coins;
@@ -145,6 +149,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
                 surplusId = item.getId();
                 i=resourceEntities.size();
+                surplusCoins = surplusCoins.add(item.getConsumeValue());
+
             }
         }
         try {
@@ -157,7 +163,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             if (surplusId != null) {
                 List<Long> idTmp = new ArrayList<>();
                 idTmp.add(surplusId);
-                mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins);
+                BigDecimal couponValueLast = mulitCouponBoundleDao.selectById(surplusId).getCouponValue();
+                if(surplusCoins.compareTo(couponValueLast)==0){
+                    mulitCouponBoundleDao.updateStatusByIds(idTmp, null);
+                }else{
+                    mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins);
+                }
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -165,5 +177,23 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }
         return true;
     }
+    public CouponRuleEntity getCouponRuleEntity(){
+        return couponRuleDao.selectById(1);
+    }
+    @Override
+    public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins){
+
+        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        Date expireTime = couponRuleEntity.getExpireTime();
+
+        MulitCouponBoundleEntity entity = new MulitCouponBoundleEntity();
+        entity.setOwnerId(clientUser_id);
+        entity.setCouponValue(coins);
+        entity.setType(1);
+        entity.setUseStatus(0);
+        entity.setExpirePmt(expireTime);
+        mulitCouponBoundleDao.insert(entity);
+    }
+
 
 }

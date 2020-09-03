@@ -22,6 +22,24 @@
         </foreach>
 
     </update>
+    <update id="resumeStatusByIds">
+        update mulit_coupon_boundle
+        set
+        <choose>
+            <when test="consumeValue != null and consumeValue != ''">
+                consume_value = #{consumeValue}
+            </when>
+            <otherwise>
+                consume_value = coupon_value,
+                use_status = 0
+            </otherwise>
+        </choose>
+        where id in
+        <foreach collection="ids" item="ids" separator="," open="(" close=")">
+            #{ids,jdbcType = BIGINT}
+        </foreach>
+
+    </update>
 
 
 </mapper>
