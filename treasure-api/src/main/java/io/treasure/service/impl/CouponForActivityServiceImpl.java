@@ -1,6 +1,7 @@
 package io.treasure.service.impl;
 
 import io.treasure.dao.MulitCouponBoundleDao;
+import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.vo.ClientCoinsForActivityQueryVo;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
 
     public BigDecimal getClientCoinsVolume(ClientCoinsForActivityQueryVo vo){
-            return null;
+        MulitCouponBoundleEntity entity = vo.getMulitCouponBoundleEntity();
+
+        return null;
     }
 
 
