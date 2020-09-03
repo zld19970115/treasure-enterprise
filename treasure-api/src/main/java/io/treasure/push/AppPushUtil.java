@@ -138,7 +138,7 @@ public class AppPushUtil {
         Notify notify = new Notify();
         notify.setTitle(title);
         notify.setContent(text);
-        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.jubao.UNI809BFD1/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title="+title+";S.content="+text+";S.payload=lixian;end");
+        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.dcloud.UNI9B4313D/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title="+title+";S.content="+text+";S.payload=lixian;end");
 //        notify.setIntent("intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=io.jubao.UNI809BFD1;S.UP-OL-SU=true;S.title="+title+";S.content="+text+";S.payload=test;end");
         notify.setType(GtReq.NotifyInfo.Type._intent);
         template.set3rdNotifyInfo(notify);//设置第三方通知
