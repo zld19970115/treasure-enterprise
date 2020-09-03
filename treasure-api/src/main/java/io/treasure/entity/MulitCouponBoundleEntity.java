@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("mulit_coupon_boundle")
-public class mulitCouponBoundleEntity {
+public class MulitCouponBoundleEntity {
     @TableId
     private Long id;
     private String couponId;

@@ -1,14 +1,8 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.dto.AppVersionDTO;
-import io.treasure.entity.AppVersionEntity;
-import io.treasure.entity.mulitCouponBoundleEntity;
+import io.treasure.entity.MulitCouponBoundleEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * APP版本号表
@@ -17,7 +11,7 @@ import java.util.Map;
  * @since 1.0.0 2019-10-10
  */
 @Mapper
-public interface MulitCouponBoundleDao extends BaseDao<mulitCouponBoundleEntity> {
+public interface MulitCouponBoundleDao extends BaseDao<MulitCouponBoundleEntity> {
 
 
 }
