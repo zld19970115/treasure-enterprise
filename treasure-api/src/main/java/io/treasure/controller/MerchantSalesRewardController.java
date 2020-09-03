@@ -3,6 +3,8 @@ package io.treasure.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -302,7 +304,9 @@ public class MerchantSalesRewardController {
 
         Page<MerchantSalesRewardRecordEntity> map = new Page<MerchantSalesRewardRecordEntity>(index,itemNum);
         IPage<MerchantSalesRewardRecordEntity> pages = merchantSalesRewardRecordDao.selectPage(map, queryWrapper);
-
+        for(MerchantSalesRewardRecordEntity obj : pages.getRecords()) {
+            obj.setMerName(merchantDao.selectById(obj.getMId()).getName());
+        }
         return new Result().ok(pages);
     }
 
@@ -311,11 +315,11 @@ public class MerchantSalesRewardController {
     @Login
     @PutMapping("refuse")
     @ApiOperation("拒绝提现-只包括id就可以")
-    public Result refuse(@RequestBody List<MerchantSalesRewardRecordEntity> entities){
-
-        if(entities.size()==0)
-            return new Result().ok("no content");
-
+    public Result refuse(Long rid){
+        MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
+        obj.setId(rid);
+        List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
+        entities.add(obj);
 
         MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
         List<Long> ids = new ArrayList<>();
@@ -329,15 +333,17 @@ public class MerchantSalesRewardController {
         merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
 
         List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
-        for(int i=0;i<entities.size();i++){
-            MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
-            Integer auditStatus = entity.getAuditStatus();
-            if(auditStatus == 2){
-                MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
-                if(merchantEntity != null){
-                    BigDecimal value = new BigDecimal(entity.getCommissionVolume().toString());
-                    if(merchantEntity.getMobile() != null){
-                        sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
+        if(smsEntities.size() > 0) {
+            for(int i=0;i<entities.size();i++){
+                MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
+                Integer auditStatus = entity.getAuditStatus();
+                if(auditStatus == 2){
+                    MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+                    if(merchantEntity != null){
+                        BigDecimal value = new BigDecimal(entity.getCommissionVolume().toString());
+                        if(merchantEntity.getMobile() != null){
+                            sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
+                        }
                     }
                 }
             }
@@ -353,10 +359,11 @@ public class MerchantSalesRewardController {
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result agree(@RequestBody List<MerchantSalesRewardRecordEntity> entities){
-
-        if(entities.size()==0)
-            return new Result().ok("no content");
+    public Result agree(Long aid){
+        MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
+        obj.setId(aid);
+        List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
+        entities.add(obj);
 
         MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
         List<Long> ids = new ArrayList<>();
