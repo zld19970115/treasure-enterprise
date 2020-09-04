@@ -712,6 +712,12 @@ public class MerchantController {
         return new Result().ok(merchantService.updateRecommend(id, recommend));
     }
 
+    @GetMapping("updateCommissionType")
+    @ApiOperation("分佣类型")
+    public Result updateCommissionType(@RequestParam Long id ,@RequestParam Integer type){
+        return new Result().ok(merchantService.updateCommissionType(id, type));
+    }
+
     @GetMapping("updateParty")
     @ApiOperation("聚餐")
     public Result updateParty(@RequestParam Long id ,@RequestParam Integer recommend){

@@ -313,9 +313,9 @@ public class MerchantSalesRewardController {
 
     @CrossOrigin
     @Login
-    @PutMapping("refuse")
+    @GetMapping("refuse")
     @ApiOperation("拒绝提现-只包括id就可以")
-    public Result refuse(Long rid){
+    public Result refuse(@RequestParam  Long rid){
         MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
         obj.setId(rid);
         List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
@@ -353,13 +353,13 @@ public class MerchantSalesRewardController {
 
     @CrossOrigin
     @Login
-    @PutMapping("agree")
+    @GetMapping("agree")
     @ApiOperation("同意提现-只包含id就可以")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
             @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
     })
-    public Result agree(Long aid){
+    public Result agree(@RequestParam Long aid){
         MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
         obj.setId(aid);
         List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
@@ -400,9 +400,9 @@ public class MerchantSalesRewardController {
     @Login
     @GetMapping("params")
     @ApiOperation("销售奖励参数")
-    @ApiImplicitParam(name="id",value = "参数id",dataType = "int",defaultValue = "3",paramType = "query",required = false)
+    @ApiImplicitParam(name="id",value = "参数id",dataType = "Long",defaultValue = "3",paramType = "query",required = false)
 
-    public Result getParams(Integer id){
+    public Result getParams(Long id){
         if(id != null){
             MerchantSalesRewardEntity merchantSalesRewardEntity = merchantSalesRewardDao.selectById(id);
             return new Result().ok(merchantSalesRewardEntity);
@@ -416,7 +416,7 @@ public class MerchantSalesRewardController {
     @Login
     @PutMapping("params")
     @ApiOperation("修改记录")
-    public Result setParams(MerchantSalesRewardEntity entity){
+    public Result setParams(@RequestBody MerchantSalesRewardEntity entity){
         if(entity.getId() == null)
             return new Result().ok("failure:id is null");
         try{

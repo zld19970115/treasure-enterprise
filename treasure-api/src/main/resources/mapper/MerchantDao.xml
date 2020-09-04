@@ -338,6 +338,10 @@
 
     </update>
 
+    <update id="updateCommissionType">
+        update ct_merchant set commission_type = #{type} where id = #{id}
+    </update>
+
     <select id="selectCommissionList" resultType="io.treasure.dto.MerchantDTO">
         select id,mobile,create_date,days,commission_type
         from ct_merchant

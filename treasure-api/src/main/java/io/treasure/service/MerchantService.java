@@ -44,6 +44,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     Integer AuditMerchantStatus(Long id);
     List<MakeListDTO>  selectName(Map<String, Object> params);
     Integer updateRecommend(Long id, Integer recommend);
+    Integer updateCommissionType(Long id, Integer type);
     Integer updateParty(Long id, Integer recommend);
     Integer updateSpecial(Long id, Integer recommend);
     PageData<MerchantDTO> search(Map<String, Object> params);

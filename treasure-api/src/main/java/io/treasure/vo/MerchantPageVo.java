@@ -150,4 +150,6 @@ public class MerchantPageVo {
 
     private String clientId;
 
+    private Integer commissionType;
+
 }
