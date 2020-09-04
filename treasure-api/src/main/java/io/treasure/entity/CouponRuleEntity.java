@@ -14,7 +14,7 @@ public class CouponRuleEntity {
     private Integer subjectType;
     private Integer subjectId;
     private Integer expire_type;
-    private Integer keeyLongTime;
+    private Integer keepLongTime;
     private Date expireTime;
     private Integer consumeLimit;
 }

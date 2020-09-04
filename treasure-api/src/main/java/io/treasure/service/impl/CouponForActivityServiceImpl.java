@@ -223,8 +223,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
 //=====================================================================================================================
 
-
-    private SignedRewardSpecifyTimeEntity getParamsById(Long id){
+    @Override
+    public SignedRewardSpecifyTimeEntity getParamsById(Long id){
         Long requireId = id==null?1:id;
         SignedRewardSpecifyTimeEntity signedParamsById = signedRewardSpecifyTimeService.getSignedParamsById(requireId);
         return signedParamsById;
@@ -237,8 +237,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         String count = "count";
 
         SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
-        Integer person_amount = signedParamsById.getPerson_amount();
-        Integer reward_value = signedParamsById.getReward_value();
+        Integer person_amount = signedParamsById.getPersonAmount();
+        Integer reward_value = signedParamsById.getRewardValue();
         BigDecimal sumForSignedReward = getSumForSignedReward();
         Integer personNumberForSignedReward = getPersonNumberForSignedReward();
         if(person_amount> personNumberForSignedReward && reward_value.doubleValue() > sumForSignedReward.doubleValue()){
@@ -257,8 +257,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     public BigDecimal getSumForSignedReward() throws ParseException {
 
         SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
-        Date start_pmt = signedParamsById.getStart_pmt();
-        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
         Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
         Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
 
@@ -277,8 +277,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     public Integer getPersonNumberForSignedReward() throws ParseException {
 
         SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
-        Date start_pmt = signedParamsById.getStart_pmt();
-        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
         Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
         Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
 
@@ -296,14 +296,10 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     public Boolean clientCheckForSignedForReward(Long clientUser_id) throws ParseException {
 
         SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
-        Date start_pmt = signedParamsById.getStart_pmt();
-        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
         Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
         Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
-
-        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
-        if(!betweenTime)
-            return false;
 
         Integer timesLimit = signedParamsById.getTimes();
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();

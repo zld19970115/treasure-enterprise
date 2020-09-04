@@ -12,11 +12,11 @@ public class SignedRewardSpecifyTimeEntity {
 
     @TableId
     private Long id;                        //
-    private Integer reward_type;            // int null comment '1宝币',
-    private Integer reward_value;           // int null comment '奖励值',
-    private Integer person_amount;          // int null comment '人员数量',
-    private Date start_pmt;                 // datetime;// null comment '开始时间标记,每天',
-    private Date ending_pmt;                // datetime null comment '结束时间,每天',
+    private Integer rewardType;            // int null comment '1宝币',
+    private Integer rewardValue;           // int null comment '奖励值',
+    private Integer personAmount;          // int null comment '人员数量',
+    private Date startPmt;                 // datetime;// null comment '开始时间标记,每天',
+    private Date endingPmt;                // datetime null comment '结束时间,每天',
     private Integer times;
 
 }

@@ -340,7 +340,7 @@ public class TimeUtil {
     public static Date getCurrentDateAndTime(Date date) throws ParseException {
         String hms = sdfHms.format(date);
         String ymd = sdfYmd.format(new Date());
-        Date result = simpleDateFormat.parse(hms + " " + ymd);
+        Date result = simpleDateFormat.parse(ymd + " " + hms);
         return result;
     }
 

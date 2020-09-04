@@ -39,9 +39,9 @@ public class SharingActivityRandomUtil {
 
     public static BigDecimal getRandomCoins(BigDecimal max,int residueDegree){
         int mValue = Integer.parseInt(max.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_DOWN).toPlainString());
-        int iValue = residueDegree>20?residueDegree*2:residueDegree;
+        int iValue = residueDegree>20?residueDegree*5:residueDegree*2;
 
-        int res = (int)(Math.random()*(mValue-iValue))+iValue;
+        int res = (int)(Math.random()*(mValue-iValue))+1;
         BigDecimal resBD = new BigDecimal(res+"").divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
         return resBD;
     }

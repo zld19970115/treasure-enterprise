@@ -52,7 +52,6 @@ public class CouponForActivityController {
 
     @GetMapping("activity_coins_list")
     @ApiOperation("查询活动宝币列表")
-
     @ApiImplicitParams({
             @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true),
             @ApiImplicitParam(name = "page", value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
@@ -79,29 +78,41 @@ public class CouponForActivityController {
         int bdCount = Integer.parseInt(signedActivityCoinsNumberInfo.get(count));
         BigDecimal dbValue = new BigDecimal(signedActivityCoinsNumberInfo.get(value));
 
-        Boolean rBoolean = couponForActivityService.clientCheckForSignedForReward(clientId);
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+        SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
+        if(!betweenTime){
+            vo.setSignedRewardSpecifyTimeEntity(signedParamsById);
+            vo.setRewardValue(new BigDecimal("0"));
+            vo.setComment("今日活动已结束，请明天再来吧！");
+            return new Result().ok(vo);
+        }
+
+        Boolean rBoolean = couponForActivityService.clientCheckForSignedForReward(clientId);//客户参加本活动次数是否未超限
         if(rBoolean){
             if(bdCount>0 && dbValue.doubleValue()>0){
                 BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoins(dbValue, bdCount);
-                SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
+                if(bdCount == 1)
+                    randomCoins = dbValue;
                 vo.setRewardValue(randomCoins);
                 vo.setComment("恭喜获得"+randomCoins+"宝币！");
                 try{
                     couponForActivityService.insertClientActivityRecord(clientId,randomCoins,3);
                     return new Result().ok(vo);
                 }catch (Exception e){
+                    e.printStackTrace();
                     vo.setComment("服务器忙，请稍候重试！");
                     return new Result().ok(vo);
                 }
             }else{
-                SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
                 vo.setRewardValue(new BigDecimal("0"));
                 vo.setComment("红包已经抢完了，下次要点来！");
                 return new Result().ok(vo);
             }
 
         }else{
-            SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
             vo.setRewardValue(new BigDecimal("0"));
             vo.setComment("已经参与过本活动了，下次再来吧！");
             return new Result().ok(vo);
