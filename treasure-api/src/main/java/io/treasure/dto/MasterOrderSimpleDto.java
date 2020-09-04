@@ -61,4 +61,7 @@ public class MasterOrderSimpleDto extends MasterOrderExtendsDto {
 
 	private BigDecimal pay_coins;
 
+	private BigDecimal activityCoins;
+
+
 }

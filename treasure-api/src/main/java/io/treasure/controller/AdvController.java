@@ -65,4 +65,5 @@ public class AdvController {
         return new Result<AdvertisementEntity>().ok(advertisementService.selectById(id));
     }
 
+
 }
