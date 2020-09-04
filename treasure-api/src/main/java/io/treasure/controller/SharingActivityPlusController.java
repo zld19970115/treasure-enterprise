@@ -806,8 +806,8 @@ public class SharingActivityPlusController {
             if(value >= 0 && resBalance.compareTo(balanceLimit)<0){
 
                 if((resBalance.add(new BigDecimal(value+""))).compareTo(balanceLimit) >= 0){
-                    client.setBalance(balanceLimit);
-                    clientUserDao.updateById(client);
+                    client.setBalance(balanceLimit);/////////////////////
+                    clientUserDao.updateById(client);///////////////////////////
 
                     BigDecimal amount = new BigDecimal("0");
                     amount = balanceLimit.subtract(resBalance);
