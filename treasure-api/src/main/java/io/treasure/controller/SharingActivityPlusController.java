@@ -738,7 +738,7 @@ public class SharingActivityPlusController {
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
-                updateBalanceRecord(initiator,gift,4);
+                updateBalanceRecord(initiator,gift,1);
                 break;
 
             case 3://奖励菜品    怎样给商家展示或者到商家使用
@@ -759,6 +759,8 @@ public class SharingActivityPlusController {
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
                 updateBalanceRecord(initiator,balance,4);
+                //////////////////////////////////
+
                 break;
 
         }
@@ -778,11 +780,23 @@ public class SharingActivityPlusController {
                 break;
             case 4://宝币
                 updateBalanceRecord(clientUser,rewardValue,4);
+                //////////////////////////////////
+
                 break;
         }
     }
 
-
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param client
+     * @param value
+     * @param type
+     */
     public void updateBalanceRecord(ClientUserEntity client,Integer value,int type){
 
         if(type == 4)//宝币
