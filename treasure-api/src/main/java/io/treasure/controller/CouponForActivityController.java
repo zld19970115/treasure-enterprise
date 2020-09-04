@@ -128,6 +128,26 @@ public class CouponForActivityController {
         return new Result().ok(signedActivityCoinsNumberInfo);
     }
 
+    @GetMapping("is_ontime")
+    @ApiOperation("是否活动中")
+    public Result isOnTime() throws ParseException {
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+        Result result = new Result();
+        if(betweenTime){
+            result.setMsg("inprocess");
+            result.setCode(200);
+            result.setData(1);
+            return result;
+        }
+        result.setMsg("expire");
+        result.setCode(200);
+        result.setData(-1);
+        return result;
+    }
+
 //======================================================================================================================
     @GetMapping("consume_test")
     @ApiOperation("宝币扣除测试")
