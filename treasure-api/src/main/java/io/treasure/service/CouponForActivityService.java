@@ -18,10 +18,10 @@ public interface CouponForActivityService {
     BigDecimal getClientActivityCoinsVolume(Long clientUser_id);
     BigDecimal getClientCanUseTotalCoinsVolume(Long clientUser_id);
     boolean coinsIsEnable(Long clientUser_id,BigDecimal coins);
-    void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins);
-    boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins);
+    void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId);
+    boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId);
     void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins);
-    void resumeAllCoinsRecord(Long clientUser_id,BigDecimal coins);
+    void resumeAllCoinsRecord(Long clientUser_id,String orderId);
     BigDecimal signedForReward(Long clientUser_id);
 
     Boolean clientCheckForSignedForReward(Long clientUser_id) throws ParseException;

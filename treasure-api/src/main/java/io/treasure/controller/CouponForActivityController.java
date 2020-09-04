@@ -149,20 +149,6 @@ public class CouponForActivityController {
     }
 
 //======================================================================================================================
-    @GetMapping("consume_test")
-    @ApiOperation("宝币扣除测试")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true),
-            @ApiImplicitParam(name="consumeValue",value = "宝币消费值",dataType = "double",paramType = "query",required = true),
-    })
-    public Result getRequestWithDrawList(Long clientId, Double consumeValue){
-        try{
-            couponForActivityService.updateCoinsConsumeRecord(clientId,new BigDecimal(consumeValue));
-            new Result().ok("success");
-        }catch (Exception e){
-            new Result().error("failure");
-        }
-        return new Result().ok("success");
-    }
+
 
 }

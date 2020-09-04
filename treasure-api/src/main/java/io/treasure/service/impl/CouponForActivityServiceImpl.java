@@ -5,14 +5,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
+import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.entity.*;
 import io.treasure.service.CouponForActivityService;
+import io.treasure.service.MasterOrderService;
 import io.treasure.service.SignedRewardSpecifyTimeService;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.xml.crypto.Data;
 import java.math.BigDecimal;
@@ -31,6 +37,12 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
     @Autowired(required = false)
     private CouponRuleDao couponRuleDao;
+
+    @Autowired(required = false)
+    MasterOrderDao masterOrderDao;
+
+    @Autowired
+    private MasterOrderService masterOrderService;
 
     @Autowired
     private SignedRewardSpecifyTimeService signedRewardSpecifyTimeService;
@@ -74,8 +86,16 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }
         return true;
     }
+
+    /**
+     * 用于付款调用
+     * @param clientUser_id
+     * @param coins
+     * @param orderId
+     * @return
+     */
     @Override
-    public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins){
+    public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
 
         BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);
         if(coins.compareTo(clientCanUseTotalCoinsVolume)>0){
@@ -89,15 +109,15 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             clientUserDao.updateById(clientUserEntity);
             BigDecimal subtract = coins.subtract(balance);
 
-            updateActivityCoinsConsumeRecord(clientUser_id,balance);
+            updateActivityCoinsConsumeRecord(clientUser_id,balance,orderId);
 
         }else{
             //正常扣除
             BigDecimal canUseActivityCoins = getClientActivityCoinsVolume(clientUser_id);
             if(canUseActivityCoins.compareTo(coins)>=0){
-                updateActivityCoinsConsumeRecord(clientUser_id,coins);
+                updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId);
             }else{
-                updateActivityCoinsConsumeRecord(clientUser_id,canUseActivityCoins);
+                updateActivityCoinsConsumeRecord(clientUser_id,canUseActivityCoins,orderId);
                 BigDecimal subtract = coins.subtract(canUseActivityCoins);
 
                 ClientUserEntity clientUserEntity = clientUserDao.selectById(clientUser_id);
@@ -113,16 +133,19 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             }
         }
     }
+
+
     @Override
-    public boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins){
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
 
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("use_status",0);
-        //queryWrapper.le("got_pmt",new Date());
         queryWrapper.ge("expire_pmt",new Date());
         queryWrapper.orderByAsc("expire_pmt");
+
         List<MulitCouponBoundleEntity> resourceEntities = null;
         try {
             resourceEntities = mulitCouponBoundleDao.selectList(queryWrapper);
@@ -175,14 +198,20 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                 }else{
                     mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins);
                 }
-
             }
+
+            MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+            masterOrderEntity.setActivityCoins(coins);
+            masterOrderDao.updateById(masterOrderEntity);
+
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
             return false;
         }
         return true;
     }
+
     public CouponRuleEntity getCouponRuleEntity(){
         return couponRuleDao.selectById(1);
     }
@@ -201,8 +230,21 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         mulitCouponBoundleDao.insert(entity);
     }
 
+    /**
+     * 用于退款调用
+     * @param clientUser_id
+     * @param orderId
+     */
     @Override
-    public void resumeAllCoinsRecord(Long clientUser_id,BigDecimal coins){
+    public void resumeAllCoinsRecord(Long clientUser_id,String orderId){
+
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
+        BigDecimal payCoins = masterOrderEntity.getPayCoins();//，此数加到用户活动宝币中
+        BigDecimal userBalance = new BigDecimal("0");
+        userBalance = payCoins.subtract(activityCoins);//1,此数加到用户余额中
+
+        resumeActivityCoinsRecord(clientUser_id,activityCoins);
 
     }
 
@@ -216,10 +258,6 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         return null;
     }
 
-
-    //private insertSignedForReward(Long clientUser_id,BigDecimal reward){
-
-  //  }
 
 //=====================================================================================================================
 
