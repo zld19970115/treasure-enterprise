@@ -35,7 +35,6 @@ public class OrderSimpleEntity{
 	private BigDecimal payCoins;
 	private BigDecimal activityCoins;
 
-
 	private String contactNumber;
 
 	private String originPrice;

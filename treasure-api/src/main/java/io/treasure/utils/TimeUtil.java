@@ -322,4 +322,26 @@ public class TimeUtil {
         return null;
     }
 
+    public static Integer convertTimeToInt(Date target){
+        String startStr = sdfHms.format(target);
+        String[] split = startStr.split(":");
+        if(split.length != 3)
+            return 0;
+        return Integer.parseInt(split[0])*100+Integer.parseInt(split[1])*10+Integer.parseInt(split[2]);
+    }
+    public static boolean isBetweenTime(Date start,Date stop){
+        int startInt = convertTimeToInt(start);
+        int stopInt = convertTimeToInt(stop);
+        int nowInt = convertTimeToInt(new Date());
+        if(startInt <= nowInt && stopInt >= nowInt)
+            return true;
+        return false;
+    }
+    public static Date getCurrentDateAndTime(Date date) throws ParseException {
+        String hms = sdfHms.format(date);
+        String ymd = sdfYmd.format(new Date());
+        Date result = simpleDateFormat.parse(hms + " " + ymd);
+        return result;
+    }
+
 }

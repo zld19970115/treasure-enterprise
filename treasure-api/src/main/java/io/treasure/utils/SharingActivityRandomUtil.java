@@ -4,6 +4,8 @@ import lombok.NoArgsConstructor;
 import org.junit.Test;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 //没使用sb管理
 @NoArgsConstructor
 public class SharingActivityRandomUtil {
@@ -35,5 +37,13 @@ public class SharingActivityRandomUtil {
         return tmp;
     }
 
+    public static BigDecimal getRandomCoins(BigDecimal max,int residueDegree){
+        int mValue = Integer.parseInt(max.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_DOWN).toPlainString());
+        int iValue = residueDegree>20?residueDegree*2:residueDegree;
+
+        int res = (int)(Math.random()*(mValue-iValue))+iValue;
+        BigDecimal resBD = new BigDecimal(res+"").divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
+        return resBD;
+    }
 
 }

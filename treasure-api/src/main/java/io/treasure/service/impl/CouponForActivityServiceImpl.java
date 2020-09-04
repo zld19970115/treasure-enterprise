@@ -1,20 +1,23 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MulitCouponBoundleDao;
-import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.CouponRuleEntity;
-import io.treasure.entity.MulitCouponBoundleEntity;
+import io.treasure.entity.*;
 import io.treasure.service.CouponForActivityService;
+import io.treasure.service.SignedRewardSpecifyTimeService;
 import io.treasure.utils.TimeUtil;
+import io.treasure.vo.MerchantSalesRewardRecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 import static java.time.LocalDate.now;
 
@@ -28,6 +31,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
     @Autowired(required = false)
     private CouponRuleDao couponRuleDao;
+
+    @Autowired
+    private SignedRewardSpecifyTimeService signedRewardSpecifyTimeService;
 
     @Override
     public BigDecimal getClientActivityCoinsVolume(Long clientUser_id){
@@ -199,6 +205,161 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     public void resumeAllCoinsRecord(Long clientUser_id,BigDecimal coins){
 
     }
+
+
+
+    @Override
+    public BigDecimal signedForReward(Long clientUser_id){
+
+
+
+        return null;
+    }
+
+
+    //private insertSignedForReward(Long clientUser_id,BigDecimal reward){
+
+  //  }
+
+//=====================================================================================================================
+
+
+    private SignedRewardSpecifyTimeEntity getParamsById(Long id){
+        Long requireId = id==null?1:id;
+        SignedRewardSpecifyTimeEntity signedParamsById = signedRewardSpecifyTimeService.getSignedParamsById(requireId);
+        return signedParamsById;
+    }
+
+    @Override
+    public Map<String,String> getSignedActivityCoinsNumberInfo() throws ParseException {
+        Map<String,String> map = new HashMap<>();
+        String value = "value";
+        String count = "count";
+
+        SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
+        Integer person_amount = signedParamsById.getPerson_amount();
+        Integer reward_value = signedParamsById.getReward_value();
+        BigDecimal sumForSignedReward = getSumForSignedReward();
+        Integer personNumberForSignedReward = getPersonNumberForSignedReward();
+        if(person_amount> personNumberForSignedReward && reward_value.doubleValue() > sumForSignedReward.doubleValue()){
+            Integer res_count = person_amount- personNumberForSignedReward;
+            map.put(count,res_count+"");
+            BigDecimal res_value = new BigDecimal(reward_value).subtract(sumForSignedReward).setScale(2,BigDecimal.ROUND_DOWN);
+            map.put(value,res_value+"");
+            return map;
+        }else{
+            map.put(count,0+"");
+            map.put(value,0+"");
+            return map;
+        }
+    }
+
+    public BigDecimal getSumForSignedReward() throws ParseException {
+
+        SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
+        Date start_pmt = signedParamsById.getStart_pmt();
+        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
+        Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
+
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type",1);
+        queryWrapper.ge("get_method",3);
+        queryWrapper.ge("got_pmt",startConvert);
+        queryWrapper.le("got_pmt",endingConvert);
+        queryWrapper.select("sum(coupon_value) as coupon_value");
+        MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
+        if(mulitCouponBoundleEntity == null)
+            return new BigDecimal("0");
+        BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
+        return couponValue;
+    }
+    public Integer getPersonNumberForSignedReward() throws ParseException {
+
+        SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
+        Date start_pmt = signedParamsById.getStart_pmt();
+        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
+        Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
+
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type",1);
+        queryWrapper.ge("get_method",3);
+        queryWrapper.ge("got_pmt",startConvert);
+        queryWrapper.le("got_pmt",endingConvert);
+
+        Integer count = mulitCouponBoundleDao.selectCount(queryWrapper);
+        return count;
+    }
+
+    @Override
+    public Boolean clientCheckForSignedForReward(Long clientUser_id) throws ParseException {
+
+        SignedRewardSpecifyTimeEntity signedParamsById = getParamsById(null);
+        Date start_pmt = signedParamsById.getStart_pmt();
+        Date ending_pmt = signedParamsById.getEnding_pmt();
+        Date startConvert = TimeUtil.getCurrentDateAndTime(start_pmt);
+        Date endingConvert = TimeUtil.getCurrentDateAndTime(ending_pmt);
+
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+        if(!betweenTime)
+            return false;
+
+        Integer timesLimit = signedParamsById.getTimes();
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientUser_id);
+        queryWrapper.eq("type",1);
+        queryWrapper.ge("get_method",3);
+
+        queryWrapper.ge("got_pmt",startConvert);
+        queryWrapper.le("got_pmt",endingConvert);
+
+        Integer times = mulitCouponBoundleDao.selectCount(queryWrapper);
+        if(times < timesLimit)
+            return true;
+        return false;
+    }
+
+    @Override
+    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method){
+
+        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        Date expireTime = couponRuleEntity.getExpireTime();
+
+        MulitCouponBoundleEntity mulitCouponBoundleEntity = new MulitCouponBoundleEntity();
+        mulitCouponBoundleEntity.setOwnerId(clientId);
+        mulitCouponBoundleEntity.setType(1);
+        mulitCouponBoundleEntity.setGetMethod(method);
+        mulitCouponBoundleEntity.setUseStatus(0);
+        mulitCouponBoundleEntity.setCouponValue(bd);
+        mulitCouponBoundleEntity.setConsumeValue(new BigDecimal("0"));
+        mulitCouponBoundleEntity.setGotPmt(new Date());
+        mulitCouponBoundleEntity.setExpirePmt(expireTime);
+
+        mulitCouponBoundleDao.insert(mulitCouponBoundleEntity);
+    }
+
+    @Override
+    public IPage<MulitCouponBoundleEntity> getRecordByClientId(Long clientUser_id,boolean onlyEnable,Integer page,Integer num){
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientUser_id);
+        queryWrapper.eq("type",1);
+
+        if(onlyEnable){
+            queryWrapper.ge("expire_pmt",new Date());
+        }
+
+        Integer indexs = page == null?0:page;
+        Integer pagesNums = num==null?10:num;
+        if(indexs >0)
+            indexs --;
+
+        Page<MulitCouponBoundleEntity> map = new Page<MulitCouponBoundleEntity>(indexs,pagesNums);
+        IPage<MulitCouponBoundleEntity> pages = mulitCouponBoundleDao.selectPage(map, queryWrapper);
+
+        return pages;
+    }
+
 
 
 }
