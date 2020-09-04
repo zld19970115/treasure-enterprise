@@ -124,8 +124,8 @@ public class CouponForActivityController {
     @GetMapping("sr_info")
     @ApiOperation("签到领宝币信息")
     public Result signedRewardInfo() throws ParseException {
-        Map<String, String> signedActivityCoinsNumberInfo = couponForActivityService.getSignedActivityCoinsNumberInfo();
-        return new Result().ok(signedActivityCoinsNumberInfo);
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+        return new Result().ok(signedParamsById);
     }
 
     @GetMapping("is_ontime")
