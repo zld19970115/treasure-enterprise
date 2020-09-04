@@ -83,8 +83,9 @@ public class CouponForActivityController {
         Date ending_pmt = signedParamsById.getEndingPmt();
         boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
         SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
+        vo.setSignedRewardSpecifyTimeEntity(signedParamsById);
+
         if(!betweenTime){
-            vo.setSignedRewardSpecifyTimeEntity(signedParamsById);
             vo.setRewardValue(new BigDecimal("0"));
             vo.setComment("今日活动已结束，请明天再来吧！");
             return new Result().ok(vo);
