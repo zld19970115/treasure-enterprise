@@ -17,4 +17,5 @@ public interface CouponForActivityService {
     void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins);
     boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins);
     void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins);
+    void resumeAllCoinsRecord(Long clientUser_id,BigDecimal coins);
 }

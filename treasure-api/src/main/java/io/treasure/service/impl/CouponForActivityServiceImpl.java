@@ -195,5 +195,10 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         mulitCouponBoundleDao.insert(entity);
     }
 
+    @Override
+    public void resumeAllCoinsRecord(Long clientUser_id,BigDecimal coins){
+
+    }
+
 
 }

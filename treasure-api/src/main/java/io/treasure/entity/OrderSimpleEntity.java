@@ -33,6 +33,7 @@ public class OrderSimpleEntity{
 	private String icon;
 	private String clientid;
 	private BigDecimal payCoins;
+	private BigDecimal activityCoins;
 
 
 	private String contactNumber;

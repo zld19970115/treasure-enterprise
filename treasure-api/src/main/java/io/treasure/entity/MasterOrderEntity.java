@@ -166,6 +166,8 @@ public class MasterOrderEntity extends BaseEntity {
 
 	private BigDecimal payCoins;
 
+	private BigDecimal activityCoins;
+
 
 
 }
