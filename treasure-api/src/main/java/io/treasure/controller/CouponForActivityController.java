@@ -121,6 +121,13 @@ public class CouponForActivityController {
 
     }
 
+    @GetMapping("signed_reward_info")
+    @ApiOperation("签到领宝币信息")
+    public Result signedRewardInfo() throws ParseException {
+        Map<String, String> signedActivityCoinsNumberInfo = couponForActivityService.getSignedActivityCoinsNumberInfo();
+        return new Result().ok(signedActivityCoinsNumberInfo);
+    }
+
 //======================================================================================================================
     @GetMapping("consume_test")
     @ApiOperation("宝币扣除测试")
