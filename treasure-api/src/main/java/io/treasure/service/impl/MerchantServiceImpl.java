@@ -267,6 +267,11 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
     }
 
     @Override
+    public Integer updateCommissionType(Long id, Integer type) {
+        return baseDao.updateCommissionType(id, type);
+    }
+
+    @Override
     public Integer updateParty(Long id, Integer recommend) {
         return baseDao.updateParty(id, recommend);
     }

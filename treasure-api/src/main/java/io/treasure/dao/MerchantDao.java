@@ -45,6 +45,7 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
     void updateAuditById(@Param("id") long id, @Param("auditStatus") int auditStatus);
     List<MakeListDTO> selectName(Map<String, Object> params);
     Integer updateRecommend(@Param("id") Long id, @Param("recommend") Integer recommend);
+    Integer updateCommissionType(@Param("id") Long id, @Param("type") Integer type);
     Integer updateParty(@Param("id") Long id, @Param("recommend") Integer recommend);
     Integer updateSpecial(@Param("id") Long id, @Param("recommend") Integer recommend);
     List<MerchantDTO> selectbYGoods(Map<String, Object> params);
