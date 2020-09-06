@@ -1,10 +1,7 @@
 package io.treasure.task;
 
 import com.alipay.api.AlipayApiException;
-import io.treasure.task.item.ClientMemberGradeAssessment;
-import io.treasure.task.item.OrderClear;
-import io.treasure.task.item.OrderForBm;
-import io.treasure.task.item.WithdrawCommissionForMerchant;
+import io.treasure.task.item.*;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +20,8 @@ public class Task {
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
     @Autowired
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
+    @Autowired
+    private CoinsActivity coinsActivity;
     //处理次数记录
     private int taskInProcess = 0;
 
@@ -46,9 +45,12 @@ public class Task {
         if(!withdrawCommissionForMerchant.isInProcess())
             withdrawCommissionForMerchant.startWithdrarw();
 
+        //发送提醒短信，提醒抢红包
+        if(coinsActivity.isOntime() && coinsActivity.isInProcess()== false && coinsActivity.getTaskCounter()<1){
+            coinsActivity.sentMsgToClientUsers();
+        }
+
    }
-
-
 
     //=========================基本状态锁定===============================
     public boolean isInProcess(){
@@ -68,6 +70,7 @@ public class Task {
         orderClear.resetTaskCounter();
         clientMemberGradeAssessment.resetAllTaskCounter();
         withdrawCommissionForMerchant.resetAllTaskCounter();
+        coinsActivity.resetAllTaskCounter();
     }
 
 
