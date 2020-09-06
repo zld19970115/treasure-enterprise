@@ -22,6 +22,8 @@ public class Task {
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
     @Autowired
     private CoinsActivity coinsActivity;
+    @Autowired
+    private ReseverRoomRecord reseverRoomRecord;
     //处理次数记录
     private int taskInProcess = 0;
 
@@ -48,6 +50,10 @@ public class Task {
         //发送提醒短信，提醒抢红包
         if(coinsActivity.isOntime() && coinsActivity.isInProcess()== false && coinsActivity.getTaskCounter()<1){
             coinsActivity.sentMsgToClientUsers();
+        }
+
+        if(reseverRoomRecord.isOntime() && reseverRoomRecord.isInProcess()==false && reseverRoomRecord.getTaskCounter()<1){
+            reseverRoomRecord.checkReserverRoomRecord();
         }
 
    }

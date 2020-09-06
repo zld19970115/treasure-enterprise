@@ -38,4 +38,6 @@ public interface MerchantRoomDao extends BaseDao<MerchantRoomEntity> {
     List<MerchantRoomParamsDTO> selectRoomParam();
 
     List<RoomPCDto> selectRoomPC(Map<String, Object> params);
+
+    List<MerchantRoomEntity> selectEnableList();
 }

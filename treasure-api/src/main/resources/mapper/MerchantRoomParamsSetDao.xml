@@ -78,4 +78,21 @@
 
     </select>
 
+    <update id="insertEmptyRecord" >
+        INSERT INTO ct_merchant_room_params_set
+            (room_params_id,room_id,room_name,type,state,status,use_date,creator)
+        SELECT #{roomParamsId},#{roomId},#{roomName},#{type},#{state},#{status},#{usdDate},#{creator}
+        FROM DUAL
+        WHERE NOT EXISTS
+            (
+                SELECT creator FROM ct_merchant_room_params_set
+                WHERE
+                    room_params_id = #{roomParamsId}
+                    and room_id = #{roomId}
+                    and use_date = #{usdDate}
+            )
+
+
+    </update>
+
 </mapper>
