@@ -8,6 +8,7 @@ import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.entity.*;
+import io.treasure.service.ClientUserService;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.SignedRewardSpecifyTimeService;
@@ -34,6 +35,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     private MulitCouponBoundleDao mulitCouponBoundleDao;
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
+
+    @Autowired
+    private ClientUserService clientUserService;
 
     @Autowired(required = false)
     private CouponRuleDao couponRuleDao;
@@ -62,6 +66,12 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             return new BigDecimal("0");
         return mulitCouponBoundleEntity.getCouponValue();
     }
+
+    /**
+     * 返回可以使用的宝币总值
+     * @param clientUser_id
+     * @return
+     */
     @Override
     public BigDecimal getClientCanUseTotalCoinsVolume(Long clientUser_id){
         CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
@@ -88,16 +98,15 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     }
 
     /**
-     * 用于付款调用
      * @param clientUser_id
-     * @param coins
+     * @param coins 使用宝币付款，并扣除宝币的值
      * @param orderId
      * @return
      */
     @Override
     public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
 
-        BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);
+        BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);//可以使用的宝币总数
         if(coins.compareTo(clientCanUseTotalCoinsVolume)>0){
             System.out.println("并发问题：抵扣超限,将提前扣除["+ TimeUtil.simpleDateFormat.format(new Date())+":"+clientUser_id+","+clientCanUseTotalCoinsVolume+"-"+coins+"]");
 
@@ -115,12 +124,12 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             //正常扣除
             BigDecimal canUseActivityCoins = getClientActivityCoinsVolume(clientUser_id);
             if(canUseActivityCoins.compareTo(coins)>=0){
-                updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId);
+                updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId); //只扣除活动宝币里的值
             }else{
                 updateActivityCoinsConsumeRecord(clientUser_id,canUseActivityCoins,orderId);
                 BigDecimal subtract = coins.subtract(canUseActivityCoins);
 
-                ClientUserEntity clientUserEntity = clientUserDao.selectById(clientUser_id);
+                ClientUserEntity clientUserEntity = clientUserDao.selectById(clientUser_id); //扣除充值宝币的钱
                 BigDecimal balance = clientUserEntity.getBalance();
                 BigDecimal newBalance = balance.subtract(subtract);
                 if(newBalance.doubleValue()>=0d){
@@ -202,7 +211,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
             MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
             masterOrderEntity.setActivityCoins(coins);
-            masterOrderDao.updateById(masterOrderEntity);
+            masterOrderDao.updateById(masterOrderEntity);   //记录订单扣除记录
 
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -230,6 +239,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         mulitCouponBoundleDao.insert(entity);
     }
 
+
     /**
      * 用于退款调用
      * @param clientUser_id
@@ -241,23 +251,23 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
         BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
         BigDecimal payCoins = masterOrderEntity.getPayCoins();//，此数加到用户活动宝币中
+        if(payCoins.doubleValue()<=0)
+            return;
         BigDecimal userBalance = new BigDecimal("0");
-        userBalance = payCoins.subtract(activityCoins);//1,此数加到用户余额中
+        userBalance = payCoins.subtract(activityCoins);         //1,此数加到用户余额中
 
-        resumeActivityCoinsRecord(clientUser_id,activityCoins);
+        //恢复用户中宝币记录
+        ClientUserEntity clientUserEntity = clientUserService.selectById(clientUser_id);
+        BigDecimal balance = clientUserEntity.getBalance();
+        balance = balance.add(userBalance);
+        clientUserEntity.setBalance(balance);
+        clientUserService.updateById(clientUserEntity);
+
+        //恢复活动中宝币记录
+        if(activityCoins.doubleValue()>0)
+            resumeActivityCoinsRecord(clientUser_id,activityCoins);
 
     }
-
-
-
-    @Override
-    public BigDecimal signedForReward(Long clientUser_id){
-
-
-
-        return null;
-    }
-
 
 //=====================================================================================================================
 

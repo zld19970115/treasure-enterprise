@@ -290,10 +290,14 @@ public class PayServiceImpl implements PayService {
 
         //更新用户宝币数量
 
+        /*
         BigDecimal balance = clientUserEntity.getBalance();
         balance = balance.subtract(masterOrderEntity.getPayCoins());
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
+        */
+        //第一处   -扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(clientUserEntity.getId(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
 
         //Long clientUser_id,BigDecimal coins,String orderId
         //couponForActivityService.updateCoinsConsumeRecord(,masterOrderEntity.getPayCoins());
@@ -303,6 +307,13 @@ public class PayServiceImpl implements PayService {
         return mapRtn;
     }
 
+
+    /**
+     * 冲值?
+     * @param total_amount
+     * @param out_trade_no
+     * @return
+     */
     @Override
     public Map<String, String> cashWxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
@@ -389,6 +400,14 @@ public class PayServiceImpl implements PayService {
         return mapRtn;
     }
 
+
+    /**
+     * 支付宝退款
+     * @param orderNo
+     * @param refund_fee
+     * @param goodId
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result aliRefund(String orderNo, String refund_fee, Long goodId) {
@@ -480,7 +499,10 @@ public class PayServiceImpl implements PayService {
                 BigDecimal a = new BigDecimal("0");
 
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
+                //第一处   -扣除宝币
 
+                //退还宝币----2此方法是否沿用，不确定,原来的宝币扣除从哪里写的
+                couponForActivityService.resumeAllCoinsRecord(allGoods.getCreator(),allGoods.getOrderId());
 
 //                    //返还赠送金
 //                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
@@ -499,6 +521,9 @@ public class PayServiceImpl implements PayService {
                     SlaveOrderEntity slaveOrderEntity = slaveOrderEntityList.get(i);
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
+
+                        //退还宝币----3此方法是否沿用，不确定
+                        couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                 }
 
@@ -720,6 +745,11 @@ public class PayServiceImpl implements PayService {
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 
+
+                //退还宝币----3此方法是否沿用，不确定
+                couponForActivityService.resumeAllCoinsRecord(order.getCreator(),orderNo);
+
+
                 return result.ok(true);
             } else {
                 masterOrderEntity.setRefundId(refundNo);
@@ -731,14 +761,20 @@ public class PayServiceImpl implements PayService {
                     SlaveOrderEntity slaveOrderEntity = slaveOrderEntityList.get(i);
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
+
+                        //退还宝币----3此方法是否沿用，不确定
+                        couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                     slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
+
+
                 }
                 masterOrderService.updateSlaveOrderPointDeduction(a, a, orderNo);
                 return result.ok(true);
             }
 
         }
+
         return result.ok(false);
     }
 
@@ -969,14 +1005,18 @@ public class PayServiceImpl implements PayService {
         //扣除用户的宝币
         //System.out.println("position 4 : "+masterOrderEntity.toString());
         //更新用户宝币数量
-
+        /*
         ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
         BigDecimal balance = clientUserEntity.getBalance();
         balance = balance.subtract(masterOrderEntity.getPayCoins());
         clientUserEntity.setBalance(balance);
+        */
+        //第一处   -扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(clientId,masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
+        BigDecimal balance = couponForActivityService.getClientCanUseTotalCoinsVolume(clientId);
 
-        if(balance.compareTo(new BigDecimal("0"))<0){
-            clientUserEntity.setBalance(new BigDecimal("0"));
+        if(balance.compareTo(masterOrderEntity.getPayCoins())<0){
+
             System.out.println("订单"+out_trade_no+"用户宝币余额不足");
 
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -984,8 +1024,6 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【非法操作-宝币不足】");
             return mapRtn;
         }
-
-        clientUserService.updateById(clientUserEntity);
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
@@ -1163,6 +1201,9 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
+
+        //第一处   -扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(masterOrderEntity.getCreator(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
