@@ -15,6 +15,7 @@ import io.treasure.service.impl.SignedRewardSpecifyTimeServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.SignedRewardSpecifyTimeVo;
+import io.treasure.vo.SignedRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -125,7 +126,27 @@ public class CouponForActivityController {
     @ApiOperation("签到领宝币信息")
     public Result signedRewardInfo() throws ParseException {
         SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+
         return new Result().ok(signedParamsById);
+    }
+
+    @GetMapping("sr_info_plus")
+    @ApiOperation("签到领宝币信息")
+    public Result signedRewardInfoPlus() throws ParseException {
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+
+        String value = "value";//剩侠宝币的值
+        String count = "count";//剩余数量的值
+
+        Map<String, String> signedActivityCoinsNumberInfo = couponForActivityService.getSignedActivityCoinsNumberInfo();
+        int bdCount = Integer.parseInt(signedActivityCoinsNumberInfo.get(count));
+        BigDecimal dbValue = new BigDecimal(signedActivityCoinsNumberInfo.get(value));
+        SignedRewardVo s = new SignedRewardVo();
+        s.setSignedRewardSpecifyTimeEntity(signedParamsById);
+        s.setValue(dbValue);
+        s.setCount(bdCount);
+
+        return new Result().ok(s);
     }
 
     @GetMapping("is_ontime")

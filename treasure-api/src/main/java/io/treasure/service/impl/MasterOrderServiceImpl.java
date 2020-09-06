@@ -117,6 +117,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private OrderRewardWithdrawRecordService orderRewardWithdrawRecordService;
 
+    @Autowired
+    private CouponForActivityService couponForActivityService;
+
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
         String id = (String) params.get("id");
@@ -597,9 +600,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         }
                         if (pay_coins.compareTo(num) == 1) {
                             BigDecimal balance = clientUserDTO.getBalance();
-                            BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
-                            clientUserDTO.setBalance(abc);
-                            clientUserService.update(clientUserDTO);
+                            //BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
+                            //clientUserDTO.setBalance(abc);
+                            //clientUserService.update(clientUserDTO);
+
+                            //2-->退还宝币
+                            couponForActivityService.resumeAllCoinsRecord(clientUserDTO.getId(),order.getOrderId());
+
+
                         }
                         if (order.getPOrderId().equals("0") && order.getReservationType() == Constants.ReservationType.ONLYGOODRESERVATION.getValue()) {
                             List<MasterOrderEntity> orderByPOrderId = masterOrderService.getOrderByPOrderId(order.getOrderId());
@@ -1924,9 +1932,12 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         BigDecimal num = new BigDecimal("0");
                         if (pay_coins.compareTo(num) == 1) {
                             BigDecimal balance = clientUserDTO.getBalance();
-                            BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
-                            clientUserDTO.setBalance(abc);
-                            clientUserService.update(clientUserDTO);
+                            //BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
+                            //clientUserDTO.setBalance(abc);
+                            //clientUserService.update(clientUserDTO);
+
+                            //2-->退还宝币
+                            couponForActivityService.resumeAllCoinsRecord(clientUserDTO.getId(),dto.getOrderId());
                         }
 
                     }

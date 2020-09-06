@@ -296,18 +296,15 @@ public class PayServiceImpl implements PayService {
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
         */
-        //第一处   -扣除宝币
+        //1-->扣除宝币
         couponForActivityService.updateCoinsConsumeRecord(clientUserEntity.getId(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
-
-        //Long clientUser_id,BigDecimal coins,String orderId
-        //couponForActivityService.updateCoinsConsumeRecord(,masterOrderEntity.getPayCoins());
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
     }
 
-
+//========================
     /**
      * 冲值?
      * @param total_amount
@@ -501,8 +498,8 @@ public class PayServiceImpl implements PayService {
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 //第一处   -扣除宝币
 
-                //退还宝币----2此方法是否沿用，不确定,原来的宝币扣除从哪里写的
-                couponForActivityService.resumeAllCoinsRecord(allGoods.getCreator(),allGoods.getOrderId());
+                //2-->退还宝币
+                //couponForActivityService.resumeAllCoinsRecord(allGoods.getCreator(),allGoods.getOrderId());
 
 //                    //返还赠送金
 //                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
@@ -522,8 +519,8 @@ public class PayServiceImpl implements PayService {
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
 
-                        //退还宝币----3此方法是否沿用，不确定
-                        couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
+                        //3-->退还宝币
+                        //couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                 }
 
@@ -746,8 +743,8 @@ public class PayServiceImpl implements PayService {
                 slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 
 
-                //退还宝币----3此方法是否沿用，不确定
-                couponForActivityService.resumeAllCoinsRecord(order.getCreator(),orderNo);
+                //4-->退还宝币
+                //couponForActivityService.resumeAllCoinsRecord(order.getCreator(),orderNo);
 
 
                 return result.ok(true);
@@ -762,8 +759,8 @@ public class PayServiceImpl implements PayService {
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
 
-                        //退还宝币----3此方法是否沿用，不确定
-                        couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
+                        //5-->退还宝币
+                        //couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                     slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 
@@ -777,7 +774,15 @@ public class PayServiceImpl implements PayService {
 
         return result.ok(false);
     }
+//======================================
 
+    /**
+     *
+     * @param orderNo 宝币退款业务
+     * @param refund_fee
+     * @param goodId
+     * @return
+     */
     @Override
     public Result CashRefund(String orderNo, String refund_fee, Long goodId) {
         Map<String, String> reqData = new HashMap<>();
@@ -821,11 +826,18 @@ public class PayServiceImpl implements PayService {
         }
 
         String refundNo = OrderUtil.getRefundOrderIdByTime(userId);
+
+        //返还
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         BigDecimal balance = clientUserEntity.getBalance();
-        BigDecimal add = balance.add(refundAmount);
+        BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
+        BigDecimal add = balance.add(refundAmount.subtract(activityCoins));
         clientUserEntity.setBalance(add);
+
         clientUserService.updateById(clientUserEntity);
+        couponForActivityService.resumeActivityCoinsRecord(userId,activityCoins);
+
+
         if (goodId != null) {
             //将退款ID更新到refundOrder表中refund_id
             refundOrderService.updateRefundId(refundNo, orderNo, goodId);
@@ -1011,7 +1023,7 @@ public class PayServiceImpl implements PayService {
         balance = balance.subtract(masterOrderEntity.getPayCoins());
         clientUserEntity.setBalance(balance);
         */
-        //第一处   -扣除宝币
+        //6-->扣除宝币
         couponForActivityService.updateCoinsConsumeRecord(clientId,masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
         BigDecimal balance = couponForActivityService.getClientCanUseTotalCoinsVolume(clientId);
 
@@ -1030,6 +1042,12 @@ public class PayServiceImpl implements PayService {
         return mapRtn;
     }
 
+    /**
+     * 支付宝充值???
+     * @param total_amount
+     * @param out_trade_no
+     * @return
+     */
     @Override
     public Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
@@ -1101,6 +1119,9 @@ public class PayServiceImpl implements PayService {
         entiry.setBalance(balance);
         entiry.setUserId(clientUserEntity.getId());
         userTransactionDetailsService.insert(entiry);
+
+
+
 
         //1----更新用户分级内容
         clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
@@ -1202,7 +1223,7 @@ public class PayServiceImpl implements PayService {
             return mapRtn;
         }
 
-        //第一处   -扣除宝币
+        //7-->扣除宝币
         couponForActivityService.updateCoinsConsumeRecord(masterOrderEntity.getCreator(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
 
         mapRtn.put("return_code", "SUCCESS");
