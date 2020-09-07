@@ -53,13 +53,11 @@ public class ChargeCashController {
             @ApiImplicitParam(name = "total_fee", value = "订单总金额(元)", required = true, paramType = "query")
     })
     public Result chargrCash(String total_fee, String orderNo) throws IOException {
+        String out_trade_no = orderNo; // 调用业务
+        BigDecimal total_amount = new BigDecimal(total_fee); //单位分变成元
 
-        // 调用业务
-        String out_trade_no = orderNo;
-        //单位分变成元
-        BigDecimal total_amount = new BigDecimal(total_fee);
-        Map<String, String> responseMap = chargeCashService.cashNotify(total_amount, out_trade_no);
-        return new Result().ok(responseMap);
+        Result result = chargeCashService.cashNotifySimple(total_amount, out_trade_no);
+        return result;
     }
     @Login
     @PostMapping("getCashId")

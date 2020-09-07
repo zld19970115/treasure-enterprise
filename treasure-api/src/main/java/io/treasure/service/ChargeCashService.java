@@ -22,7 +22,8 @@ import java.util.Map;
 public interface ChargeCashService extends CrudService<ChargeCashEntity, ChargeCashDTO> {
     Result orderSave(ChargeCashDTO dto, ClientUserEntity user) throws ParseException;
     ChargeCashDTO selectByCashOrderId(String cashOrderId);
-    Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) throws IOException;
+    Result cashNotifySimple(BigDecimal total_amount, String out_trade_no) throws IOException;
+    Map<String, String> cashNotifyCopy(BigDecimal total_amount, String out_trade_no) throws IOException;
 
     /**
      * 查询全部用户充值记录

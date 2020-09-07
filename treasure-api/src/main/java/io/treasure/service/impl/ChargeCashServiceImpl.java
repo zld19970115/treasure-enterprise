@@ -27,7 +27,9 @@ import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -119,9 +121,132 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     public ChargeCashDTO selectByCashOrderId(String cashOrderId) {
         return baseDao.selectByCashOrderId(cashOrderId);
     }
+
+    public Result notifyResult(String msg,Integer code){
+        Result result = new Result();
+        result.setMsg(msg);
+        result.setCode(code);
+        return result;
+    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public Result cashNotifySimple(BigDecimal total_amount, String out_trade_no) throws IOException {
+
+        MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
+
+        if(masterOrderEntity != null){
+            if(masterOrderEntity.getStatus()!= Constants.OrderStatus.NOPAYORDER.getValue()&&masterOrderEntity.getStatus()!=Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+                return notifyResult("宝币-支付已经完成",0);
+            }
+
+            if(masterOrderEntity.getPayMoney().compareTo(total_amount)!=0){
+                System.out.println("宝币-支付金额不一致");
+                return notifyResult("宝币-支付金额不一致",500);
+            }
+
+            ClientUserEntity userEntity = clientUserService.selectById(masterOrderEntity.getCreator());
+            Long id = userEntity.getId();
+            BigDecimal clientCanUseTotalCoinsVolume = couponForActivityService.getClientCanUseTotalCoinsVolume(id);
+            if (clientCanUseTotalCoinsVolume.compareTo(total_amount)<0){
+                return notifyResult("宝币-余额不足!!",500);
+            }
+
+            //db option flag 1
+            if(masterOrderEntity.getStatus()==Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()){
+                if(masterOrderEntity.getReservationId()!=null&&masterOrderEntity.getReservationId()>0){
+                    merchantRoomParamsSetService.updateStatus(masterOrderEntity.getReservationId(), MerchantRoomEnm.STATE_USE_YEA.getType());
+                }
+            }
+
+            masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+            masterOrderEntity.setResponseStatus(1);//提升排序
+            masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
+            masterOrderEntity.setPayDate(new Date());
+            masterOrderDao.updateById(masterOrderEntity);
+            List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+
+            BigDecimal a = new BigDecimal(0);
+            for (SlaveOrderEntity slaveOrderEntity : slaveOrderEntities) {
+                a = a.add(slaveOrderEntity.getFreeGold());
+            }
+
+            BigDecimal gift = userEntity.getGift();
+            gift=gift.subtract(a);
+            userEntity.setGift(gift);
+
+            //6-->扣除宝币
+            couponForActivityService.updateCoinsConsumeRecord(userEntity.getId(),total_amount,masterOrderEntity.getOrderId());
+
+            Date date = new Date();
+            recordGiftService.insertRecordGift2(userEntity.getId(),date,gift,a);
+
+            MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+            if(merchantUserEntity!=null){
+                SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            }
+
+            WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
+            wsPool.sendMessageToUser(wsByUser, 2+"");
+
+
+            //至此
+            if(masterOrderEntity.getReservationType()!=Constants.ReservationType.ONLYROOMRESERVATION.getValue()){
+                List<SlaveOrderEntity> slaveOrderEntitys=slaveOrderService.selectByOrderId(out_trade_no);
+                //System.out.println("position 2 : "+slaveOrderEntitys);
+                /****************************************************************************************/
+                if(slaveOrderEntitys==null){
+                    return notifyResult("宝币-未打到订单",500);
+                }else{
+                    slaveOrderEntitys.forEach(slaveOrderEntity -> {
+                        slaveOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
+                    });
+                    try{
+                        slaveOrderService.updateBatchById(slaveOrderEntitys);
+                    }catch (Exception e){
+                        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                        return notifyResult("宝币-支付失败",500);
+                    }
+                }
+            }
+
+            MerchantDTO merchantDto=merchantService.get(masterOrderEntity.getMerchantId());
+
+            if(null!=merchantDto){
+
+                MerchantUserDTO userDto= merchantUserService.get(merchantDto.getCreator());
+                List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
+
+                if(list.size() > 0){
+                    String clientId=list.get(0).getClientId();
+                    if(StringUtils.isNotBlank(clientId)){
+                        for (int i = 0; i < list.size(); i++) {
+                            AppPushUtil.pushToSingleMerchant("订单管理","您有新的订单，请注意查收！",list.get(i).getClientId());
+                        }
+                        StimmeEntity stimmeEntity = new StimmeEntity();
+                        Date date1 = new Date();
+                        stimmeEntity.setCreateDate(date1);
+                        stimmeEntity.setOrderId(masterOrderEntity.getOrderId());
+                        stimmeEntity.setType(1);
+                        stimmeEntity.setMerchantId(masterOrderEntity.getMerchantId());
+                        stimmeEntity.setCreator(masterOrderEntity.getCreator());
+                        stimmeService.insert(stimmeEntity);
+                    }
+                }
+            }else{
+
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                System.out.println("宝币-支付失败:无法获取商户会员无clientId信息");
+            }
+            return notifyResult("宝币-支付成功",0);
+        }else{
+            return notifyResult("宝币-订单不存在",500);
+        }
+
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, String> cashNotify(BigDecimal total_amount, String out_trade_no) throws IOException {
+    public Map<String, String> cashNotifyCopy(BigDecimal total_amount, String out_trade_no) throws IOException {
         Map<String, String> mapRtn = new HashMap<>(2);
 
         MasterOrderEntity masterOrderEntity=masterOrderDao.selectByOrderId(out_trade_no);
@@ -323,8 +448,6 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             }
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
-
-
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
