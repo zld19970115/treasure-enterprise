@@ -29,4 +29,5 @@ public interface CouponForActivityService {
     Map<String,String> getSignedActivityCoinsNumberInfo() throws ParseException;
     IPage<MulitCouponBoundleEntity> getRecordByClientId(Long clientUser_id,boolean onlyEnable,Integer page,Integer num);
     SignedRewardSpecifyTimeEntity getParamsById(Long id);
+
 }

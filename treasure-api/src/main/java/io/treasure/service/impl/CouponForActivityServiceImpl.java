@@ -366,6 +366,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
     @Override
     public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method){
+        Integer maxLimit = 200;
 
         CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
         Date expireTime = couponRuleEntity.getExpireTime();
@@ -375,7 +376,23 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         mulitCouponBoundleEntity.setType(1);
         mulitCouponBoundleEntity.setGetMethod(method);
         mulitCouponBoundleEntity.setUseStatus(0);
-        mulitCouponBoundleEntity.setCouponValue(bd);
+        if(maxLimit == 0){
+            mulitCouponBoundleEntity.setCouponValue(bd);
+        }else{
+            BigDecimal clientActivityCoinsVolume = getClientActivityCoinsVolume(clientId);
+            BigDecimal sum = bd.add(clientActivityCoinsVolume);
+            if(clientActivityCoinsVolume.doubleValue() < maxLimit.doubleValue()){
+                if(sum.doubleValue() <= maxLimit.doubleValue()){
+                    mulitCouponBoundleEntity.setCouponValue(bd);
+                }else{
+                    BigDecimal sub = new BigDecimal(maxLimit+"");
+                    sub = sub.subtract(bd);
+                    mulitCouponBoundleEntity.setCouponValue(bd);
+                }
+            }else{
+                return;
+            }
+        }
         mulitCouponBoundleEntity.setConsumeValue(new BigDecimal("0"));
         mulitCouponBoundleEntity.setGotPmt(new Date());
         mulitCouponBoundleEntity.setExpirePmt(expireTime);

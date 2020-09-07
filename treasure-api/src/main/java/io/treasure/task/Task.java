@@ -53,6 +53,7 @@ public class Task {
         }
 
         if(reseverRoomRecord.isOntime() && reseverRoomRecord.isInProcess()==false && reseverRoomRecord.getTaskCounter()<1){
+            System.out.println("定时生成房间记录！！");
             reseverRoomRecord.checkReserverRoomRecord();
         }
 

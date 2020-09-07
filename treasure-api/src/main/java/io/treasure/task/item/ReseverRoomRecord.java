@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord {
 
-  private String startTime = "2020-01-01 19:50:00";
+  private String startTime = "2020-01-01 02:00:00";
   private Integer reserverDaysLong = 7;//最多可预订7天的，0~6
     private String creator = "15303690053";
 
@@ -99,24 +99,23 @@ public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord 
               entity.setStatus(1);      //显示
               entity.setUseDate(bookRoomVos.get(j).getSTime());//开始时间
               entity.setCreator(Long.parseLong(creator));
-              if(!isExist(entity,bookRoomVos.get(j))){
+              if(!isExist(entity,bookRoomVos.get(j),merchantRoomEntity.getId())){
                   merchantRoomParamsSetDao.insert(entity);
-                  System.out.println("插入房间记录");
+                  System.out.println("插入房间记录(i,j)"+i+","+j);
               }
-
           }
-
       }
   }
 
-  public boolean isExist(MerchantRoomParamsSetEntity entity,BookRoomVo bookRoomVo){
+  public boolean isExist(MerchantRoomParamsSetEntity entity,BookRoomVo bookRoomVo,Long room_id){
       QueryWrapper<MerchantRoomParamsSetEntity> queryWrapper = new QueryWrapper<>();
 
       queryWrapper.eq("room_params_id",bookRoomVo.getId());
-      queryWrapper.eq("room_id",entity.getId());
+      queryWrapper.eq("room_id",room_id);
       queryWrapper.eq("use_date",bookRoomVo.getSTime());
-
+      System.out.println("check(room_params_id,room_id,use_date)"+bookRoomVo.getId()+","+room_id+","+bookRoomVo.getSTime());
       List<MerchantRoomParamsSetEntity> merchantRoomParamsSetEntities = merchantRoomParamsSetDao.selectList(queryWrapper);
+      System.out.println();
       if(merchantRoomParamsSetEntities.size()>0)
           return true;
       return false;

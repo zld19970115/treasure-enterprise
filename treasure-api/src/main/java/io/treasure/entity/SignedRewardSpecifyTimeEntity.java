@@ -18,5 +18,8 @@ public class SignedRewardSpecifyTimeEntity {
     private Date startPmt;                 // datetime;// null comment '开始时间标记,每天',
     private Date endingPmt;                // datetime null comment '结束时间,每天',
     private Integer times;
+    private Integer maxValue;
+    private Integer minValue;
+    private Integer activityMode;            //1数量模式，2仅范围模式
 
 }
