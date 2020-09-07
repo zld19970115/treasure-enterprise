@@ -75,7 +75,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public BigDecimal getClientCanUseTotalCoinsVolume(Long clientUser_id){
         CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        Integer coinsLimit = couponRuleEntity.getConsumeLimit();
+        Integer coinsLimit = couponRuleEntity.getConsumeLimit();//消费限值
+
         BigDecimal clientActivityCoinsVolume = getClientActivityCoinsVolume(clientUser_id);
         if(clientActivityCoinsVolume.doubleValue()>coinsLimit.doubleValue()){
             clientActivityCoinsVolume = new BigDecimal(coinsLimit);
@@ -107,6 +108,10 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
 
         BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);//可以使用的宝币总数
+
+        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        Integer coinsLimit = couponRuleEntity.getConsumeLimit();//消费限值
+
         if(coins.compareTo(clientCanUseTotalCoinsVolume)>0){
             System.out.println("并发问题：抵扣超限,将提前扣除["+ TimeUtil.simpleDateFormat.format(new Date())+":"+clientUser_id+","+clientCanUseTotalCoinsVolume+"-"+coins+"]");
 
@@ -123,6 +128,11 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }else{
             //正常扣除
             BigDecimal canUseActivityCoins = getClientActivityCoinsVolume(clientUser_id);
+            BigDecimal coinsLimitDB = new BigDecimal(coinsLimit+"");
+            if(canUseActivityCoins.compareTo(coinsLimitDB)>0){
+                canUseActivityCoins = coinsLimitDB;         //宝币限额
+            }
+
             if(canUseActivityCoins.compareTo(coins)>=0){
                 updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId); //只扣除活动宝币里的值
             }else{
@@ -382,6 +392,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             BigDecimal clientActivityCoinsVolume = getClientActivityCoinsVolume(clientId);
             BigDecimal sum = bd.add(clientActivityCoinsVolume);
             if(clientActivityCoinsVolume.doubleValue() < maxLimit.doubleValue()){
+
                 if(sum.doubleValue() <= maxLimit.doubleValue()){
                     mulitCouponBoundleEntity.setCouponValue(bd);
                 }else{

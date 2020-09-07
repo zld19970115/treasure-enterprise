@@ -1,12 +1,14 @@
 package io.treasure.task;
 
 import com.alipay.api.AlipayApiException;
+import io.treasure.service.CouponForActivityService;
 import io.treasure.task.item.*;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 
 @Component
@@ -24,6 +26,8 @@ public class Task {
     private CoinsActivity coinsActivity;
     @Autowired
     private ReseverRoomRecord reseverRoomRecord;
+    @Autowired
+    CouponForActivityService couponForActivityService;
     //处理次数记录
     private int taskInProcess = 0;
 
@@ -56,6 +60,7 @@ public class Task {
             System.out.println("定时生成房间记录！！");
             reseverRoomRecord.checkReserverRoomRecord();
         }
+
 
    }
 
