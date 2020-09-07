@@ -237,6 +237,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins){
 
+        if(coins.doubleValue()==0)
+            return;
         CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
         Date expireTime = couponRuleEntity.getExpireTime();
 
