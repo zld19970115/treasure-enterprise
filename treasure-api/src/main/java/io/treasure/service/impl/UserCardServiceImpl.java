@@ -13,6 +13,7 @@ import io.treasure.dto.CardInfoDTO;
 import io.treasure.dto.RecordGiftDTO;
 import io.treasure.entity.CardInfoEntity;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.service.CouponForActivityService;
 import io.treasure.service.UserCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     private UserCardDao userCardDao;
     @Autowired
     private RecordGiftDao recordGiftDao;
-
+    @Autowired
+    private CouponForActivityService couponForActivityService;
     @Override
     public QueryWrapper<CardInfoEntity> getWrapper(Map<String, Object> params) {
         return null;
@@ -112,15 +114,18 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
             return new Result().error("充值已达到上限次数");
         }
 
-        BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
-        clientUserEntity.setBalance(money);
-        clientUserService.updateById(clientUserEntity);
+//        BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
+//        clientUserEntity.setBalance(money);
+//        clientUserService.updateById(clientUserEntity);
 
         Date date = new Date();
         cardInfoEntity.setStatus(3);
         cardInfoEntity.setBindCardDate(date);
         cardInfoEntity.setBindCardUser(userId);
         baseDao.updateById(cardInfoEntity);
+
+        couponForActivityService.insertClientActivityRecord(userId,cardInfoEntity.getMoney(),1);
+
 
       recordGiftService.insertRecordBalance(userId,date,clientUserEntity.getBalance(),cardInfoEntity.getMoney());
 
