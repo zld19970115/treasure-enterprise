@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.entity.TakeoutOrdersEntity;
 import io.treasure.jra.impl.MerchantMessageJRA;
@@ -66,6 +67,15 @@ public class TestController {
         couponForActivityService.resumeAllCoinsRecord(1296633686118285313L,"coins-test");
     }
 
+    @GetMapping("insertTest")
+    @ApiOperation("活动充值测试")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "clientId", value = "id", paramType = "query",required=true, dataType="long"),
+            @ApiImplicitParam(name = "value", value = "钱数", paramType = "query",required=true, dataType="String")
+    })
+    public void insertTest(Long clientId,String value){
+        couponForActivityService.insertClientActivityRecord(clientId,new BigDecimal(value),1);
+    }
 
 
 }

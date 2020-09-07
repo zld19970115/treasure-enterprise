@@ -397,8 +397,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                     mulitCouponBoundleEntity.setCouponValue(bd);
                 }else{
                     BigDecimal sub = new BigDecimal(maxLimit+"");
-                    sub = sub.subtract(bd);
-                    mulitCouponBoundleEntity.setCouponValue(bd);
+                    sub = sub.subtract(clientActivityCoinsVolume);
+                    mulitCouponBoundleEntity.setCouponValue(sub);
                 }
             }else{
                 return;
