@@ -53,21 +53,27 @@ public class BannerServiceImpl extends CrudServiceImpl<BannerDao, BannerEntity, 
             return 0;
         }
         BannerEntity obj = new BannerEntity();
-        obj.setTypeId(dto.getTypeId());
+        if(dto.getTypeId() != null)  {
+            obj.setTypeId(dto.getTypeId());
+        }
         obj.setId(dto.getId());
         obj.setType(dto.getType());
         obj.setImgUrl(dto.getImgUrl());
         obj.setSort(dto.getSort());
+        obj.setUrl(dto.getUrl());
         return baseDao.updateById(obj);
     }
 
     @Override
     public int insert(BannerDto dto) {
         BannerEntity obj = new BannerEntity();
-        obj.setTypeId(dto.getTypeId());
+        if(dto.getTypeId() != null)  {
+            obj.setTypeId(dto.getTypeId());
+        }
         obj.setType(dto.getType());
         obj.setImgUrl(dto.getImgUrl());
         obj.setSort(dto.getSort());
+        obj.setUrl(dto.getUrl());
         return baseDao.insert(obj);
     }
 }
