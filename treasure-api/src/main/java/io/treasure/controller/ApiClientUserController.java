@@ -31,6 +31,7 @@ import io.treasure.dto.UserWithdrawDTO;
 import io.treasure.entity.*;
 import io.treasure.push.AppPushUtil;
 import io.treasure.service.*;
+import io.treasure.service.impl.CouponForActivityServiceImpl;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.vo.AppLoginCheckVo;
 import io.treasure.vo.LevelVo;
@@ -84,6 +85,10 @@ public class ApiClientUserController {
     private ClientUserDao clientUserDao;
     @Autowired
     private UserWithdrawService userWithdrawService;
+
+    @Autowired
+    private CouponForActivityService couponForActivityService;
+
     @Login
     @GetMapping("page")
     @ApiOperation("分页")
@@ -105,6 +110,12 @@ public class ApiClientUserController {
     @ApiOperation("信息")
     public Result<ClientUserDTO> get(@PathVariable("id") Long id) {
         ClientUserDTO data = clientUserService.get(id);
+        BigDecimal clientActivityCoinsVolume = couponForActivityService.getClientActivityCoinsVolume(id);
+        if(clientActivityCoinsVolume.doubleValue()>0){
+            BigDecimal balance = data.getBalance();
+            balance = balance.add(clientActivityCoinsVolume);
+            data.setBalance(balance);
+        }
         return new Result<ClientUserDTO>().ok(data);
     }
     @Login

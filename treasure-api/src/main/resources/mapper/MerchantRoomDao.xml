@@ -249,4 +249,14 @@
             <![CDATA[ and date_format(create_date, '%Y-%m-%d') <= #{endDate} ]]>
         </if>
     </select>
+
+    <select id="selectEnableList" resultType="io.treasure.entity.MerchantRoomEntity">
+        select id,merchant_id,name,type from ct_merchant_room mr
+        where status = 1
+        and exists(
+            select id from ct_merchant me
+            where me.id = merchant_id
+            and status = 1
+            )
+    </select>
 </mapper>

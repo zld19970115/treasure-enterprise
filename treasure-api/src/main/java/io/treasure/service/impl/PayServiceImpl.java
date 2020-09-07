@@ -107,6 +107,8 @@ public class PayServiceImpl implements PayService {
     private UserTransactionDetailsService userTransactionDetailsService;
     @Autowired
     private ClientMemberGradeAssessment clientMemberGradeAssessment;
+    @Autowired
+    private CouponForActivityService couponForActivityService;
 
     private Long platform_super = 1203867983016017922L;
 
@@ -143,7 +145,9 @@ public class PayServiceImpl implements PayService {
 
         BigDecimal payMoney = masterOrderEntity.getPayMoney();
         BigDecimal payCoins = masterOrderEntity.getPayCoins();
+
         payMoney = payMoney.subtract(payCoins).setScale(2,BigDecimal.ROUND_HALF_DOWN);
+
         //System.out.println("与发来的值进行对比(payMoney,total_amount)："+payMoney+","+total_amount);
         if (payMoney.compareTo(total_amount) != 0) {
             System.out.println("微信支付：支付失败！请联系管理员！【支付金额不一致】");
@@ -283,17 +287,30 @@ public class PayServiceImpl implements PayService {
             return mapRtn;
         }
         //System.out.println("position 4 : "+masterOrderEntity.toString());
+
         //更新用户宝币数量
+
+        /*
         BigDecimal balance = clientUserEntity.getBalance();
         balance = balance.subtract(masterOrderEntity.getPayCoins());
         clientUserEntity.setBalance(balance);
         clientUserService.updateById(clientUserEntity);
+        */
+        //1-->扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(clientUserEntity.getId(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
     }
 
+//========================
+    /**
+     * 冲值?
+     * @param total_amount
+     * @param out_trade_no
+     * @return
+     */
     @Override
     public Map<String, String> cashWxNotify(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
@@ -380,6 +397,14 @@ public class PayServiceImpl implements PayService {
         return mapRtn;
     }
 
+
+    /**
+     * 支付宝退款
+     * @param orderNo
+     * @param refund_fee
+     * @param goodId
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result aliRefund(String orderNo, String refund_fee, Long goodId) {
@@ -471,7 +496,10 @@ public class PayServiceImpl implements PayService {
                 BigDecimal a = new BigDecimal("0");
 
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
+                //第一处   -扣除宝币
 
+                //2-->退还宝币
+                //couponForActivityService.resumeAllCoinsRecord(allGoods.getCreator(),allGoods.getOrderId());
 
 //                    //返还赠送金
 //                    slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
@@ -490,6 +518,9 @@ public class PayServiceImpl implements PayService {
                     SlaveOrderEntity slaveOrderEntity = slaveOrderEntityList.get(i);
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
+
+                        //3-->退还宝币
+                        //couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                 }
 
@@ -711,6 +742,11 @@ public class PayServiceImpl implements PayService {
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 
+
+                //4-->退还宝币
+                //couponForActivityService.resumeAllCoinsRecord(order.getCreator(),orderNo);
+
+
                 return result.ok(true);
             } else {
                 masterOrderEntity.setRefundId(refundNo);
@@ -722,17 +758,31 @@ public class PayServiceImpl implements PayService {
                     SlaveOrderEntity slaveOrderEntity = slaveOrderEntityList.get(i);
                     if (slaveOrderEntity.getRefundId() == null || slaveOrderEntity.getRefundId().length() == 0) {
                         slaveOrderEntity.setRefundId(refundNo);
+
+                        //5-->退还宝币
+                        //couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                     slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
+
+
                 }
                 masterOrderService.updateSlaveOrderPointDeduction(a, a, orderNo);
                 return result.ok(true);
             }
 
         }
+
         return result.ok(false);
     }
+//======================================
 
+    /**
+     *
+     * @param orderNo 宝币退款业务
+     * @param refund_fee
+     * @param goodId
+     * @return
+     */
     @Override
     public Result CashRefund(String orderNo, String refund_fee, Long goodId) {
         Map<String, String> reqData = new HashMap<>();
@@ -776,11 +826,18 @@ public class PayServiceImpl implements PayService {
         }
 
         String refundNo = OrderUtil.getRefundOrderIdByTime(userId);
+
+        //返还
         ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
         BigDecimal balance = clientUserEntity.getBalance();
-        BigDecimal add = balance.add(refundAmount);
+        BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
+        BigDecimal add = balance.add(refundAmount.subtract(activityCoins));
         clientUserEntity.setBalance(add);
+
         clientUserService.updateById(clientUserEntity);
+        couponForActivityService.resumeActivityCoinsRecord(userId,activityCoins);
+
+
         if (goodId != null) {
             //将退款ID更新到refundOrder表中refund_id
             refundOrderService.updateRefundId(refundNo, orderNo, goodId);
@@ -960,14 +1017,18 @@ public class PayServiceImpl implements PayService {
         //扣除用户的宝币
         //System.out.println("position 4 : "+masterOrderEntity.toString());
         //更新用户宝币数量
-
+        /*
         ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
         BigDecimal balance = clientUserEntity.getBalance();
         balance = balance.subtract(masterOrderEntity.getPayCoins());
         clientUserEntity.setBalance(balance);
+        */
+        //6-->扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(clientId,masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
+        BigDecimal balance = couponForActivityService.getClientCanUseTotalCoinsVolume(clientId);
 
-        if(balance.compareTo(new BigDecimal("0"))<0){
-            clientUserEntity.setBalance(new BigDecimal("0"));
+        if(balance.compareTo(masterOrderEntity.getPayCoins())<0){
+
             System.out.println("订单"+out_trade_no+"用户宝币余额不足");
 
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -976,13 +1037,17 @@ public class PayServiceImpl implements PayService {
             return mapRtn;
         }
 
-        clientUserService.updateById(clientUserEntity);
-
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");
         return mapRtn;
     }
 
+    /**
+     * 支付宝充值???
+     * @param total_amount
+     * @param out_trade_no
+     * @return
+     */
     @Override
     public Map<String, String> cashExecAliCallBack(BigDecimal total_amount, String out_trade_no) {
         Map<String, String> mapRtn = new HashMap<>(2);
@@ -1054,6 +1119,9 @@ public class PayServiceImpl implements PayService {
         entiry.setBalance(balance);
         entiry.setUserId(clientUserEntity.getId());
         userTransactionDetailsService.insert(entiry);
+
+
+
 
         //1----更新用户分级内容
         clientMemberGradeAssessment.growUpGrade(clientUserEntity.getId());
@@ -1154,6 +1222,9 @@ public class PayServiceImpl implements PayService {
             mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户信息】");
             return mapRtn;
         }
+
+        //7-->扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(masterOrderEntity.getCreator(),masterOrderEntity.getPayCoins(),masterOrderEntity.getOrderId());
 
         mapRtn.put("return_code", "SUCCESS");
         mapRtn.put("return_msg", "OK");

@@ -33,4 +33,7 @@ public interface MerchantRoomParamsSetDao extends BaseDao<MerchantRoomParamsSetE
     void deleteFreeRecord(@Param("roomId") long roomId);
 
     Integer existLockedRoom(@Param("roomId") long roomId);
+
+    void insertEmptyRecord(MerchantRoomParamsSetEntity entity);
+
 }

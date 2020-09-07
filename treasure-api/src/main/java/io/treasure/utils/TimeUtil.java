@@ -344,4 +344,20 @@ public class TimeUtil {
         return result;
     }
 
+    public static Date formatHmToYmdHms(String hmTime,Date ymd,int addDays) throws ParseException {
+        String hmsTime = ":00";
+        if(hmTime.contains(":")){
+            String[] split = hmTime.split(":");
+            String hour = split[0].length()==1?"0"+split[0]:split[0];
+            String second = split[1].length()==1?"0"+split[1]:split[1];
+            hmsTime = hour+":"+second+":00";
+        }
+        String ymdString = sdfYmd.format(ymd);
+
+        Date tmp = simpleDateFormat.parse(ymdString+" "+hmsTime);
+        long time = tmp.getTime()+1000*24*60*60*addDays;
+        return new Date(time);
+
+    }
+
 }

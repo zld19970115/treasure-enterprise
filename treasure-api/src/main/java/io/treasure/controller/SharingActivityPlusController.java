@@ -65,6 +65,8 @@ public class SharingActivityPlusController {
     private QRCodeService qrCodeService;
     @Autowired
     private SharingRewardGoodsRecordService sharingRewardGoodsRecordService;
+    @Autowired
+    private CouponForActivityService couponForActivityService;
     @Autowired(required = false)
     private RecordGiftDao recordGiftDao;
     private BigDecimal balanceLimit = new BigDecimal("200");
@@ -738,7 +740,7 @@ public class SharingActivityPlusController {
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
-                updateBalanceRecord(initiator,gift,4);
+                updateBalanceRecord(initiator,gift,1);
                 break;
 
             case 3://奖励菜品    怎样给商家展示或者到商家使用
@@ -759,6 +761,8 @@ public class SharingActivityPlusController {
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
                 updateBalanceRecord(initiator,balance,4);
+                //////////////////////////////////
+
                 break;
 
         }
@@ -778,37 +782,48 @@ public class SharingActivityPlusController {
                 break;
             case 4://宝币
                 updateBalanceRecord(clientUser,rewardValue,4);
+                //////////////////////////////////
+
                 break;
         }
     }
 
-
+    /**
+     *
+     *
+     *
+     *
+     *
+     *
+     * @param client
+     * @param value
+     * @param type
+     */
     public void updateBalanceRecord(ClientUserEntity client,Integer value,int type){
 
         if(type == 4)//宝币
         {
-            BigDecimal resBalance = client.getBalance();
+            //====================================================================
+           BigDecimal resCoins = couponForActivityService.getClientActivityCoinsVolume(client.getId());
+
+           BigDecimal newCoins = new BigDecimal(value+"");
+
             //奖励值大于0并且原始值小于宝币限值
-            if(value >= 0 && resBalance.compareTo(balanceLimit)<0){
-
-                if((resBalance.add(new BigDecimal(value+""))).compareTo(balanceLimit) >= 0){
-                    client.setBalance(balanceLimit);
-                    clientUserDao.updateById(client);
-
-                    BigDecimal amount = new BigDecimal("0");
-                    amount = balanceLimit.subtract(resBalance);
-                    //代付金为6宝币为13
-                    addRecordFromRecordGift(client,13,amount,balanceLimit);
-
-
+            if(value >= 0 && (resCoins.add(newCoins)).compareTo(balanceLimit)>0){
+                if(resCoins.doubleValue()>balanceLimit.doubleValue()){
+                    return;
                 }else{
-                    clientUserService.addBalanceByUserid(client.getId()+"",value+"");
-                    //代付金为6宝币为13
-                    BigDecimal balance = new BigDecimal(value+"");
-                    balance = resBalance.add(balance);
-                    addRecordFromRecordGift(client,13,new BigDecimal(value),balance);
+                    newCoins = balanceLimit.subtract(resCoins);
                 }
             }
+
+            couponForActivityService.insertClientActivityRecord(client.getId(),newCoins,2);
+
+            BigDecimal balance = client.getBalance();
+            balance = balance.add(resCoins).add(newCoins);
+            //注意此余额会随时间变动，因为活动获取得余额会失效
+            addRecordFromRecordGift(client,13,newCoins,balance);
+            //==================================================================================
         }else if(type == 1)
         {
             if(value >= 0)

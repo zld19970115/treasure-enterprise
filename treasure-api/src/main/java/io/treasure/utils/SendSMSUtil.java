@@ -417,13 +417,15 @@ public class SendSMSUtil {
     private static String commissionWithdrawSuccessCode = "SMS_200185322";//佣金成功
     private static String commissionWithdrawFailuredCode = "SMS_200190315";//佣金有误会
     private static String commissionService = "SMS_200175495";//佣金提现申请
+    private static String coinActivityNotifyCode ="" ;//申请后填入
     private static String signName = "聚宝科技";
 
     public enum CommissionNotifyType{
         SUCESS_NOTIFY,
         DENIED_NOTIFY,
         REQUIRE_NOTIFY,
-        SERVICE_NOTIFY;
+        SERVICE_NOTIFY,
+        COINS_ACTIVITY_NOTIFY;
     }
     public boolean commissionNotify(String mobile,String mchName,String value,CommissionNotifyType type) {
 
@@ -444,6 +446,9 @@ public class SendSMSUtil {
                 break;
             case SERVICE_NOTIFY:
                 templateCode = commissionService;
+                break;
+            case COINS_ACTIVITY_NOTIFY:
+                templateCode = coinActivityNotifyCode;
                 break;
         }
 

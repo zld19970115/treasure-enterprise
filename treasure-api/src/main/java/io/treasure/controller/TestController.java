@@ -9,12 +9,15 @@ import io.treasure.common.utils.Result;
 import io.treasure.entity.TakeoutOrdersEntity;
 import io.treasure.jra.impl.MerchantMessageJRA;
 import io.treasure.jro.MerchantMessage;
+import io.treasure.service.CouponForActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/notify_test")
@@ -47,6 +50,20 @@ public class TestController {
 
         return new Result().ok(counterByOrderDao);
 
+    }
+
+    @Autowired
+    CouponForActivityService couponForActivityService;
+
+    @GetMapping("scoins")
+    @ApiOperation("扣除coins测试")
+    public void subCoins(){
+        couponForActivityService.updateCoinsConsumeRecord(1296633686118285313L,new BigDecimal("50"),"coins-test");
+    }
+    @GetMapping("acoins")
+    @ApiOperation("恢复coins测试")
+    public void subaCoins(){
+        couponForActivityService.resumeAllCoinsRecord(1296633686118285313L,"coins-test");
     }
 
 

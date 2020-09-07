@@ -63,6 +63,8 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
     @Autowired
     MerchantServiceImpl merchantService;
     @Autowired
+    private CouponForActivityService couponForActivityService;
+    @Autowired
     private IWXPay wxPay;
 
     //@Autowired
@@ -187,7 +189,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
         masterOrderEntity.setPayDate(new Date());
         masterOrderDao.updateById(masterOrderEntity);
-     List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
+        List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
         //System.out.println("position 5 : "+slaveOrderEntities.toString());
 
         BigDecimal a = new BigDecimal(0);
@@ -201,10 +203,17 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
         gift=gift.subtract(a);
         clientUserEntity1.setGift(gift);
         System.out.println("wxNotify04==============gift+"+gift);
-        BigDecimal balance = clientUserEntity1.getBalance();
-        BigDecimal subtract = balance.subtract(total_amount);
-        clientUserEntity1.setBalance(subtract);
-        clientUserService.updateById(clientUserEntity1);
+
+        /*      迟国强--注释
+        //BigDecimal balance = clientUserEntity1.getBalance();
+        //BigDecimal subtract = balance.subtract(total_amount);
+        //clientUserEntity1.setBalance(subtract);
+        //clientUserService.updateById(clientUserEntity1);
+        */
+        //6-->扣除宝币
+        couponForActivityService.updateCoinsConsumeRecord(clientUserEntity1.getId(),total_amount,masterOrderEntity.getOrderId());
+
+
         Date date = new Date();
         recordGiftService.insertRecordGift2(clientUserEntity1.getId(),date,gift,a);
 
