@@ -27,4 +27,6 @@ public class BannerDto {
      */
     private Long typeId;
 
+    private String url;
+
 }

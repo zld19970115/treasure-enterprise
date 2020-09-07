@@ -58,5 +58,7 @@ public class BannerEntity {
      */
     private long updater;
 
+    private String url;
+
 
 }

@@ -309,6 +309,7 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
                 map.put("integral",vo.getIntegral());
                 map.put("balance",vo.getBalance());
                 map.put("gift",vo.getGift());
+                map.put("display",vo.getDisplay());
             }
         }
         return new PageTotalRowData<>(page.getResult(),page.getTotal(),map);

@@ -14,6 +14,7 @@
         <result property="createDate" column="create_date"/>
         <result property="creator" column="creator"/>
         <result property="updater" column="updater"/>
+        <result property="url" column="url"/>
     </resultMap>
 
     <select id="getAllBanner" parameterType="io.treasure.entity.BannerEntity" resultType="io.treasure.entity.BannerEntity">
