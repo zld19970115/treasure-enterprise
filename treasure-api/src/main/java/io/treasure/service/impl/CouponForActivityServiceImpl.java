@@ -244,7 +244,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         entity.setOwnerId(clientUser_id);
         entity.setCouponValue(coins);
         entity.setType(1);
+        entity.setGetMethod(4);
         entity.setUseStatus(0);
+        entity.setGotPmt(new Date());
         entity.setExpirePmt(expireTime);
         mulitCouponBoundleDao.insert(entity);
     }
