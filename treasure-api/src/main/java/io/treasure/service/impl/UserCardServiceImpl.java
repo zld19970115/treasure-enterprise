@@ -106,8 +106,9 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         if (clientUserEntity==null){
             return new Result().error("请登录");
         }
-        if( clientUserEntity.getBalance().compareTo(a)==1){
-            return new Result().error("宝币余额大于200不可充值");
+        BigDecimal clientActivityCoinsVolume = couponForActivityService.getClientActivityCoinsVolume(userId);
+        if( clientActivityCoinsVolume.compareTo(a)==1){
+            return new Result().error("有效期宝币余额大于200不可充值");
         }
         List<RecordGiftDTO> recordGiftDTOS = recordGiftDao.selectByUserIdandstatus(userId, 12);
         if (recordGiftDTOS.size()>=2){
