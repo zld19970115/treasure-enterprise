@@ -5,9 +5,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MulitCouponBoundleDao;
+import io.treasure.dao.SignedRewardSpecifyTimeDao;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
 import io.treasure.service.CouponForActivityService;
@@ -17,9 +19,7 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.SignedRewardSpecifyTimeVo;
 import io.treasure.vo.SignedRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -38,6 +38,8 @@ public class CouponForActivityController {
     private CouponForActivityService couponForActivityService;
     @Autowired
     private SignedRewardSpecifyTimeServiceImpl signedRewardSpecifyTimeService;
+    @Autowired(required = false)
+    private SignedRewardSpecifyTimeDao signedRewardSpecifyTimeDao;
 
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
@@ -247,6 +249,54 @@ public class CouponForActivityController {
     }
 
 //======================================================================================================================
+//总后台       ======      活动参数设置
+
+    /**
+     * 取得签到领宝币
+     * @return
+     */
+    @GetMapping("coins_params")
+    @ApiOperation("取得活动参数")
+    @ApiImplicitParam(name="id",value = "参数id",dataType = "long",paramType = "query",required = false)
+    public Result getCoinsActivityParams(Long id){
+        SignedRewardSpecifyTimeEntity signedParamsById = signedRewardSpecifyTimeService.getSignedParamsById(null);
+        return new Result().ok(signedParamsById);
+    }
+    /**
+     * 修改签到领宝币参数
+     * @param entity
+     * @return
+     */
+    @PostMapping("coins_params")
+    @ApiOperation("修改活动参数,id只能为1")
+    public Result updateCoinActivityParams(@RequestBody SignedRewardSpecifyTimeEntity entity) throws ParseException {
+        if(entity.getMinValue()==null)
+            entity.setMinValue(1);
+        if(entity.getMaxValue()==null)
+            entity.setMaxValue(5);
+        if(entity.getActivityMode() != 1 && entity.getActivityMode() != 2)
+            entity.setActivityMode(1);
+        if(entity.getTimes() == null)
+            entity.setTimes(1);
+        if(entity.getEndingPmt()==null)
+            entity.setEndingPmt(TimeUtil.simpleDateFormat.parse("2020-12-30 10:00:00"));
+        if(entity.getStartPmt()==null)
+            entity.setStartPmt(TimeUtil.simpleDateFormat.parse("2020-09-01 10:00:00"));
+        if(entity.getPersonAmount() == null)
+            entity.setPersonAmount(50);
+        if(entity.getRewardValue() == null)
+            entity.setRewardValue(50);
+        if(entity.getRewardType()==null)
+            entity.setRewardType(1);
+        if(entity.getId()== null)
+            entity.setId(1L);
+        try{
+            signedRewardSpecifyTimeDao.updateById(entity);
+            return new Result().ok("success");
+        }catch (Exception e){
+            return new Result().error("failure");
+        }
+    }
 
 
 }

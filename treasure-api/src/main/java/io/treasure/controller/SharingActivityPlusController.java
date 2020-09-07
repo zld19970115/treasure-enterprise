@@ -789,12 +789,7 @@ public class SharingActivityPlusController {
     }
 
     /**
-     *
-     *
-     *
-     *
-     *
-     *
+
      * @param client
      * @param value
      * @param type
