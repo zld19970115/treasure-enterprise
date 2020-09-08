@@ -25,14 +25,15 @@ public class CoinsActivity extends TaskCommon implements ICoinsActivity {
     private SendSMSUtil sendSMSUtil;
     public void sentMsgToClientUsers(){
         lockedProcessLock();
+        System.out.println("计数0"+getTaskCounter());
         updateTaskCounter();  //更新执行程序计数器
-
+        System.out.println("计数1"+getTaskCounter());
         List<ClientUserEntity> clientUsers = getClientUsers();
 
         for(int i=0;i<clientUsers.size();i++){
             String mobile = clientUsers.get(i).getMobile();
             if(mobile != null){
-                if (!mobile.contains("已注销")){
+                if (!mobile.contains("已注销") && mobile != null){
                     System.out.println("邀请参加抢宝币活动  "+mobile+"  ==!");
                     //sendSMSUtil.commissionNotify(mobile,"平台","无限", SendSMSUtil.CommissionNotifyType.COINS_ACTIVITY_NOTIFY);
                 }

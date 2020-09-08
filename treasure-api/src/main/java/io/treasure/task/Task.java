@@ -52,11 +52,11 @@ public class Task {
             withdrawCommissionForMerchant.startWithdrarw();
 
         //发送提醒短信，提醒抢红包
-        if(coinsActivity.isOntime() && coinsActivity.isInProcess()== false && coinsActivity.getTaskCounter()<1){
+        if(coinsActivity.isOntime() && !coinsActivity.isInProcess() && coinsActivity.getTaskCounter()==0){
             coinsActivity.sentMsgToClientUsers();
         }
 
-        if(reseverRoomRecord.isOntime() && reseverRoomRecord.isInProcess()==false && reseverRoomRecord.getTaskCounter()<1){
+        if(reseverRoomRecord.isOntime() && !reseverRoomRecord.isInProcess() && reseverRoomRecord.getTaskCounter()<1){
             System.out.println("定时生成房间记录！！");
             reseverRoomRecord.checkReserverRoomRecord();
         }
@@ -83,6 +83,7 @@ public class Task {
         clientMemberGradeAssessment.resetAllTaskCounter();
         withdrawCommissionForMerchant.resetAllTaskCounter();
         coinsActivity.resetAllTaskCounter();
+        reseverRoomRecord.resetAllTaskCounter();
     }
 
 

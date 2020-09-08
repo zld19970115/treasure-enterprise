@@ -82,7 +82,6 @@ public class ApiWXAppPayController {
         OrderDTO orderDTO=masterOrderService.getOrder(orderNo);
         MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderNo);
 
-
         if(orderDTO.getStatus().intValue()!= Constants.OrderStatus.NOPAYORDER.getValue()){
             return result.error(-1,"非未支付订单，请选择未支付订单支付！");
         }

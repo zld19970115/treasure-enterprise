@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord {
 
-  private String startTime = "2020-01-01 02:00:00";
+  private String startTime = "2020-01-01 00:00:00";
   private Integer reserverDaysLong = 7;//最多可预订7天的，0~6
     private String creator = "15303690053";
 
@@ -94,6 +94,7 @@ public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord 
               entity.setRoomParamsId(bookRoomVos.get(j).getId());//1,2,3,4
               entity.setRoomId(merchantRoomEntity.getId());
               entity.setRoomName(merchantRoomEntity.getName());
+              entity.setMerchantId(merchantRoomEntity.getMerchantId());
               entity.setType(merchantRoomEntity.getType());
               entity.setState(0);       //未使用
               entity.setStatus(1);      //显示
