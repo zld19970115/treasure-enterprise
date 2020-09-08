@@ -32,7 +32,7 @@ public class Task {
     private int taskInProcess = 0;
 
     @Scheduled(fixedDelay = 10000)
-    public void TaskManager() throws ParseException, AlipayApiException {
+    public void TaskManager() throws Exception {
 
         orderForBm.getOrderByYwy();
         //0,复位所有定时任务
