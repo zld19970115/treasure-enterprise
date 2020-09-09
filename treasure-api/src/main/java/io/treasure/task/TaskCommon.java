@@ -14,9 +14,6 @@ public class TaskCommon {
     @Setter
     private String runTimeEveryDay;
 
-
-
-
     public void resetTaskCounter(){
         taskCounter = 0;
     }

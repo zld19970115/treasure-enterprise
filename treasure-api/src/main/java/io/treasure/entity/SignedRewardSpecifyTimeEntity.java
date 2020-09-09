@@ -15,14 +15,13 @@ public class SignedRewardSpecifyTimeEntity {
     private Integer rewardType;            // int null comment '1宝币',
     private Integer rewardValue;           // int null comment '奖励值',
     private Integer personAmount;          // int null comment '人员数量',
-    private Date startPmt;                 // datetime;// null comment '开始时间标记,每天',
-    private Date endingPmt;                // datetime null comment '结束时间,每天',
+    private Date startPmt;                 // datetime;// null comment '开始时间标记',
+    private Date endingPmt;                // datetime null comment '结束时间',
     private Integer times;
     private Integer maxValue;
     private Integer minValue;
     private Integer activityMode;           //1数量模式，2仅范围模式
-
-    private Integer timesInTimeRange;       //
+    private Integer onceInTimeRange;        //
     private Long couponActivityId;          //
 
     /*
