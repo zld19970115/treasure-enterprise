@@ -9,20 +9,16 @@
 package io.treasure.dao;
 
 import io.treasure.common.dao.BaseDao;
-import io.treasure.entity.UserPushEntity;
-import io.treasure.vo.UserPushVo;
+import io.treasure.dto.SysSmsTemplateDTO;
+import io.treasure.entity.SysSmsTemplateEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface UserPushDao extends BaseDao<UserPushEntity> {
+public interface SysSmsTemplateDao extends BaseDao<SysSmsTemplateEntity> {
 
-    UserPushEntity selectByCid(String clientId);
-
-    UserPushEntity selectByUserId(Long userId);
-
-    List<UserPushVo> pageList(Map map);
+    List<SysSmsTemplateDTO> pageList(Map map);
 
 }
