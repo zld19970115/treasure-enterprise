@@ -16,4 +16,6 @@ public class SharingActivityExtendsEntity {
     private Integer helperRewardAmount = 0;// int(10) NOT NULL COMMENT '奖励数量',
     private Long    helperRewardId;// bigint(20) DEFAULT NULL COMMENT '奖励商品或菜品id',
     private Integer minimumCharge;//最低消费
+    private Integer validityLong;
+    private Integer validityUnit;
 }

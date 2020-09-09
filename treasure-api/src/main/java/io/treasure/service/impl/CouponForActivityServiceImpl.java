@@ -3,10 +3,12 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.MulitCouponBoundleDao;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.*;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.CouponForActivityService;
@@ -105,7 +107,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
      * @return
      */
     @Override
-    public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
+    public void updateCoinsConsumeRecord(Long clientUser_id, BigDecimal coins, String orderId){
 
         BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);//可以使用的宝币总数
 
@@ -237,20 +239,59 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins){
 
+
         if(coins.doubleValue()==0)
             return;
-        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        Date expireTime = couponRuleEntity.getExpireTime();
+        //        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();1
+//        Date expireTime = couponRuleEntity.getExpireTime();
+//
+//        MulitCouponBoundleEntity entity = new MulitCouponBoundleEntity();
+//        entity.setOwnerId(clientUser_id);
+//        entity.setCouponValue(coins);
+//        entity.setType(1);
+//        entity.setGetMethod(4);
+//        entity.setUseStatus(0);
+//        entity.setGotPmt(new Date());
+//        entity.setExpirePmt(expireTime);
+//        mulitCouponBoundleDao.insert(entity);
+        BigDecimal zero = new BigDecimal("0");
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectRecord(clientUser_id);
+        for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities) {
+            BigDecimal consumeValue = mulitCouponBoundleEntity.getConsumeValue();
+            if (coins.compareTo(consumeValue)> -1){
+                mulitCouponBoundleEntity.setConsumeValue(zero);
+                coins= coins.subtract(consumeValue);
+                mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+            }else {
+                BigDecimal subtract1 = consumeValue.subtract(coins);
+                mulitCouponBoundleEntity.setConsumeValue(subtract1);
+                mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                break;
+            }
+            if (coins.compareTo(zero) == 0){
+                break;
+            }
+        }
+        if (coins.compareTo(zero)==1){
+            List<MulitCouponBoundleEntity> mulitCouponBoundleEntities1 = mulitCouponBoundleDao.selectByStatus(clientUser_id);
+            for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities1) {
+                BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
+                if (coins.compareTo(couponValue)> -1){
+                    mulitCouponBoundleEntity.setUseStatus(0);
+                    coins= coins.subtract(couponValue);
+                    mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                }else {
+                    mulitCouponBoundleEntity.setUseStatus(0);
+                    mulitCouponBoundleEntity.setConsumeValue(coins);
+                    mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                    break;
+                }
 
-        MulitCouponBoundleEntity entity = new MulitCouponBoundleEntity();
-        entity.setOwnerId(clientUser_id);
-        entity.setCouponValue(coins);
-        entity.setType(1);
-        entity.setGetMethod(4);
-        entity.setUseStatus(0);
-        entity.setGotPmt(new Date());
-        entity.setExpirePmt(expireTime);
-        mulitCouponBoundleDao.insert(entity);
+            }
+
+
+        }
+
     }
 
 
@@ -373,17 +414,23 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.le("got_pmt",endingConvert);
 
         Integer times = mulitCouponBoundleDao.selectCount(queryWrapper);
-        if(times < timesLimit)
-            return true;
+        if(times < timesLimit){
+            boolean b = allowJoinInTimeRange(signedParamsById, clientUser_id);
+            if(b){
+                return true;
+            }else{
+                return false;
+            }
+        }
         return false;
     }
 
     @Override
-    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method){
+    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
         Integer maxLimit = 200;
 
-        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        Date expireTime = couponRuleEntity.getExpireTime();
+        //CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        //Date expireTime = couponRuleEntity.getExpireTime();
 
         MulitCouponBoundleEntity mulitCouponBoundleEntity = new MulitCouponBoundleEntity();
         mulitCouponBoundleEntity.setOwnerId(clientId);
@@ -410,6 +457,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }
         mulitCouponBoundleEntity.setConsumeValue(new BigDecimal("0"));
         mulitCouponBoundleEntity.setGotPmt(new Date());
+        Date expireTime = TimeUtil.calculateAddDate(validity, actityValidityUnit);
         mulitCouponBoundleEntity.setExpirePmt(expireTime);
 
         mulitCouponBoundleDao.insert(mulitCouponBoundleEntity);
@@ -434,6 +482,29 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         IPage<MulitCouponBoundleEntity> pages = mulitCouponBoundleDao.selectPage(map, queryWrapper);
 
         return pages;
+    }
+
+    /**
+     *  规定时间内仅能抢一次,超限则显示false
+     * @return
+     */
+    public boolean allowJoinInTimeRange(SignedRewardSpecifyTimeEntity entity,Long clientUser_id){
+        Integer days = entity.getOnceInTimeRange();
+        Date beforeTime = TimeUtil.getBeforeTime(days);
+
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientUser_id);
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("get_method",3);
+        queryWrapper.ge("got_pmt",beforeTime);
+        queryWrapper.le("got_pmt",now());
+
+        Integer res = mulitCouponBoundleDao.selectCount(queryWrapper);
+        if(res==null)
+            res = 0;
+        if(res>0)
+            return false;
+        return true;
     }
 
 

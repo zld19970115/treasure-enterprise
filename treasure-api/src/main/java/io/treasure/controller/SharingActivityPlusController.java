@@ -6,9 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
-import io.treasure.dao.ClientUserDao;
-import io.treasure.dao.RecordGiftDao;
-import io.treasure.dao.SharingActivityLogDao;
+import io.treasure.dao.*;
 import io.treasure.dto.SharingActivityDTO;
 import io.treasure.enm.ESharingActivity;
 import io.treasure.enm.ESharingInitiator;
@@ -44,9 +42,6 @@ public class SharingActivityPlusController {
     private ClientUserService clientUserService;
     @Autowired
     private TokenService tokenService;
-
-    @Autowired(required = false)
-    private ClientUserDao clientUserDao;
     @Autowired
     private SharingActivityService sharingActivityService;
     @Autowired
@@ -55,18 +50,17 @@ public class SharingActivityPlusController {
     private SharingInitiatorService sharingInitiatorService;
     @Autowired
     private SharingActivityLogService sharingActivityLogService;
-    @Autowired(required = false)
-    private SharingActivityLogDao sharingActivityLogDao;
     @Autowired
     private SharingAndDistributionParamsService sharingAndDistributionParamsService;
     @Autowired
     private DistributionRewardServiceImpl distributionRewardService;
     @Autowired
-    private QRCodeService qrCodeService;
-    @Autowired
     private SharingRewardGoodsRecordService sharingRewardGoodsRecordService;
     @Autowired
     private CouponForActivityService couponForActivityService;
+    @Autowired(required = false)
+    private SharingActivityExtendsDao sharingActivityExtendsDao;
+
     @Autowired(required = false)
     private RecordGiftDao recordGiftDao;
     private BigDecimal balanceLimit = new BigDecimal("200");
@@ -665,7 +659,7 @@ public class SharingActivityPlusController {
             //给助力者发奖励
             insertSharingActivityLog(saId,initiatorId,mobile,itemReward,inProcess.getProposeId());
             messageStr = "助力成功："+itemReward+saItem.getRewardUnit()+"!";
-            prizesHelper(mobile,extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount());
+            prizesHelper(mobile,extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount(),saItem.getSaId());
 
         }else{
             //助力活动达限或超限
@@ -684,13 +678,13 @@ public class SharingActivityPlusController {
                 sharingInitiatorService.updateById(inProcess);                                              //重新更新表格状态
                 insertSharingActivityLog(saId, initiatorId, mobile, finalReward, inProcess.getProposeId());                     //更新助力记录：获得还需助力的费用值
                 prizesInitiator(saItem, clientUserEntity);                                                                           //给发起者奖励
-                prizesHelper(mobile, extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount());  //给助力用户发奖励
+                prizesHelper(mobile, extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount(),saItem.getSaId());  //给助力用户发奖励
                 messageStr =  getHelpedSuccessMessage(extendsInfo);                          //更新成功消息
 
             }else if(completeCount <allPersonLimit && sharingMethod == ESharingActivity.SharingMethod.INFINITE_METHOD.getCode()){//无限模式下允许用户仍可获得奖励
 
                 insertSharingActivityLog(saId, initiatorId, mobile, 0, inProcess.getProposeId());                     //更新助力记录：获得还需助力的费用值
-                prizesHelper(mobile, extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount());  //给助力用户发奖励
+                prizesHelper(mobile, extendsInfo.getHelperRewardType(),extendsInfo.getHelperRewardAmount(),saItem.getSaId());  //给助力用户发奖励
                 messageStr =  getHelpedSuccessMessage(extendsInfo);                          //更新成功消息
 
             }else{
@@ -735,12 +729,12 @@ public class SharingActivityPlusController {
     }
 
     //给发起者发奖金
-    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator){
+    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator) throws ParseException {
         Long initiatorId = initiator.getId();
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
-                updateBalanceRecord(initiator,gift,1);
+                updateBalanceRecord(initiator,gift,1,sharingActivityEntity.getSaId());
                 break;
 
             case 3://奖励菜品    怎样给商家展示或者到商家使用
@@ -754,13 +748,13 @@ public class SharingActivityPlusController {
                 rewardGoodsentity.setExpireTime(sharingActivityEntity.getCloseDate());
                 rewardGoodsentity.setUpdatePmt(new Date());
                 rewardGoodsentity.setGoodsNum(sharingActivityEntity.getRewardAmount());
-                rewardGoodsentity.setStatus(ESharingRewardGoods.REWARD_ENABLE.getCode());
+                rewardGoodsentity.setStatus(ESharingRewardGoods.Status.REWARD_ENABLE.getCode());
 
                 sharingRewardGoodsRecordService.insertItem(rewardGoodsentity);
                 break;
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
-                updateBalanceRecord(initiator,balance,4);
+                updateBalanceRecord(initiator,balance,4,sharingActivityEntity.getSaId());
                 //////////////////////////////////
 
                 break;
@@ -769,7 +763,7 @@ public class SharingActivityPlusController {
     }
 
     //给助力者发奖金
-    private void prizesHelper(String mobile,int rewardType,int rewardValue){
+    private void prizesHelper(String mobile,int rewardType,int rewardValue,Integer saId) throws ParseException {
 
         ClientUserEntity clientUser = clientUserService.getByMobile(mobile);
         if(clientUser == null)
@@ -778,10 +772,10 @@ public class SharingActivityPlusController {
         switch(rewardType)
         {
             case 1://代付金
-                updateBalanceRecord(clientUser,rewardValue,1);
+                updateBalanceRecord(clientUser,rewardValue,1,saId);
                 break;
             case 4://宝币
-                updateBalanceRecord(clientUser,rewardValue,4);
+                updateBalanceRecord(clientUser,rewardValue,4,saId);
                 //////////////////////////////////
 
                 break;
@@ -794,7 +788,7 @@ public class SharingActivityPlusController {
      * @param value
      * @param type
      */
-    public void updateBalanceRecord(ClientUserEntity client,Integer value,int type){
+    public void updateBalanceRecord(ClientUserEntity client,Integer value,int type,Integer saId) throws ParseException {
 
         if(type == 4)//宝币
         {
@@ -811,8 +805,19 @@ public class SharingActivityPlusController {
                     newCoins = balanceLimit.subtract(resCoins);
                 }
             }
+            SharingActivityExtendsEntity sharingActivityExtendsEntity = sharingActivityExtendsDao.selectById(saId);
 
-            couponForActivityService.insertClientActivityRecord(client.getId(),newCoins,2);
+            Integer validityLong = sharingActivityExtendsEntity.getValidityLong();
+            Integer validityUnit = sharingActivityExtendsEntity.getValidityUnit();
+
+            ESharingRewardGoods.ActityValidityUnit currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_DAYS;
+            if(validityUnit == ESharingRewardGoods.ActityValidityUnit.UNIT_WEEKS.getCode()){
+                currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_WEEKS;
+            }else if(validityUnit == ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS.getCode()){
+                currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS;
+            }
+
+            couponForActivityService.insertClientActivityRecord(client.getId(),newCoins,2,validityLong,currentUnit);
 
             BigDecimal balance = client.getBalance();
             balance = balance.add(resCoins).add(newCoins);

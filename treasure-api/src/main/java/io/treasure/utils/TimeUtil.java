@@ -1,6 +1,7 @@
 package io.treasure.utils;
 
 import io.treasure.enm.ECommission;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import org.junit.Test;
 
@@ -23,19 +24,6 @@ public class TimeUtil {
     public static SimpleDateFormat days = new SimpleDateFormat("D",Locale.CHINESE);
     public static SimpleDateFormat week = new SimpleDateFormat("E",Locale.CHINESE);
 
-    /**
-     * 每天早上8点复位所有需要复位的内容
-     * */
-    public static boolean resetTaskStatusTime(){
-        String tmp = sdfHm.format(new Date());
-        String[] tmps = tmp.split(":");
-        int intNow = Integer.parseInt(tmps[0])*60+Integer.parseInt(tmps[1]);
-        if(intNow >= 480 &&intNow<500){
-            return true;
-        }else{
-            return false;
-        }
-    }
     /**
      * 得到凌晨5点钟的时间
      * hour指定时间
@@ -357,7 +345,37 @@ public class TimeUtil {
         Date tmp = simpleDateFormat.parse(ymdString+" "+hmsTime);
         long time = tmp.getTime()+1000*24*60*60*addDays;
         return new Date(time);
+    }
 
+    public static Date calculateAddDate(Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
+        Date date = new Date();
+        long oneDay = 24*60*60*1000;
+        switch (actityValidityUnit){
+            case UNIT_DAYS:
+                return new Date(date.getTime()+oneDay*validity);
+            case UNIT_WEEKS:
+                return new Date(date.getTime()+oneDay*validity*7);
+            case UNIT_MONTHS:
+                int year = Integer.parseInt(sdfYear.format(date));
+                int month = Integer.parseInt(sdfM.format(date));
+                String monthStr = null;
+                if((month+validity)>12){
+                    year++;
+                    month = month+validity -12;
+                }else{
+                    month = month+validity;
+                }
+                monthStr = month>9?month+"":"0"+month;
+
+                String result = year+"-"+monthStr+simpleDateFormat.format(date).substring(7);
+                return simpleDateFormat.parse(result);
+        }
+        return new Date();
+    }
+
+    //取得指定天数前的时间
+    public static Date getBeforeTime(int days){
+        return new Date(new Date().getTime()-days*24*60*60*1000);
     }
 
 }

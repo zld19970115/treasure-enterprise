@@ -28,7 +28,6 @@ public class MulitCouponBoundleEntity {
     private BigDecimal consumeValue;
     private Date gotPmt;
     private Date expirePmt;
-
     private Integer Deleted;
 
 }

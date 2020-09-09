@@ -40,6 +40,14 @@
         </foreach>
 
     </update>
+    <select id="selectRecord" resultType="io.treasure.entity.MulitCouponBoundleEntity">
+        select * from mulit_coupon_boundle where owner_id = #{clientUser_id} and use_status = 0 and consume_value != 0 and expire_pmt > now()
+
+
+    </select>
+    <select id="selectByStatus" resultType="io.treasure.entity.MulitCouponBoundleEntity">
+         select * from mulit_coupon_boundle where owner_id = #{clientUser_id} and use_status = 1 order by expire_pmt desc
+    </select>
 
 
 </mapper>
