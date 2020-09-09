@@ -20,5 +20,7 @@ public class SharingRewardGoodsRecordDTO {
     private Integer goodsNum;
     private Date expireTime;
     private Date updatePmt;
+    private Integer orderStatus; //订单状态
+    private Date consumePmt;    //消费日期
 
 }

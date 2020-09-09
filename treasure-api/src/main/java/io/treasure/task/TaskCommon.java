@@ -10,6 +10,10 @@ public class TaskCommon {
 
     private boolean taskLock = false;
 
+    @Getter
+    @Setter
+    private String runTimeEveryDay;
+
 
 
 

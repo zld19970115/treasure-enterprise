@@ -30,13 +30,15 @@ public class Task {
     CouponForActivityService couponForActivityService;
     //处理次数记录
     private int taskInProcess = 0;
+    private String resetTaskCounterTime = "2020-09-09 06:00:00";
+    int n= 0;
 
     @Scheduled(fixedDelay = 10000)
     public void TaskManager() throws Exception {
 
         orderForBm.getOrderByYwy();
         //0,复位所有定时任务
-        if(TimeUtil.resetTaskStatusTime()){
+        if(TimeUtil.isOnTime(TimeUtil.simpleDateFormat.parse(resetTaskCounterTime),15)){
             resetAllCounter();
         }
         //1,自动清台任务+加销奖励
@@ -53,7 +55,9 @@ public class Task {
 
         //发送提醒短信，提醒抢红包
         if(coinsActivity.isOntime() && !coinsActivity.isInProcess() && coinsActivity.getTaskCounter()==0){
+            System.out.println("第"+n+"次");
             coinsActivity.sentMsgToClientUsers();
+
         }
 
         if(reseverRoomRecord.isOntime() && !reseverRoomRecord.isInProcess() && reseverRoomRecord.getTaskCounter()<1){

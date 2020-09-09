@@ -754,7 +754,7 @@ public class SharingActivityPlusController {
                 rewardGoodsentity.setExpireTime(sharingActivityEntity.getCloseDate());
                 rewardGoodsentity.setUpdatePmt(new Date());
                 rewardGoodsentity.setGoodsNum(sharingActivityEntity.getRewardAmount());
-                rewardGoodsentity.setStatus(ESharingRewardGoods.REWARD_ENABLE.getCode());
+                rewardGoodsentity.setStatus(ESharingRewardGoods.Status.REWARD_ENABLE.getCode());
 
                 sharingRewardGoodsRecordService.insertItem(rewardGoodsentity);
                 break;

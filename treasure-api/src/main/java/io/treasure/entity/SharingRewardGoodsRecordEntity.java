@@ -22,4 +22,6 @@ public class SharingRewardGoodsRecordEntity {
     private Integer goodsNum;   //商品数量
     private Date expireTime;    //过期时间
     private Date updatePmt;     //更新时间
+    private Integer orderStatus; //订单状态
+    private Date consumePmt;    //消费日期
 }

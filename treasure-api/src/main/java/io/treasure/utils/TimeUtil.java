@@ -24,19 +24,6 @@ public class TimeUtil {
     public static SimpleDateFormat week = new SimpleDateFormat("E",Locale.CHINESE);
 
     /**
-     * 每天早上8点复位所有需要复位的内容
-     * */
-    public static boolean resetTaskStatusTime(){
-        String tmp = sdfHm.format(new Date());
-        String[] tmps = tmp.split(":");
-        int intNow = Integer.parseInt(tmps[0])*60+Integer.parseInt(tmps[1]);
-        if(intNow >= 480 &&intNow<500){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    /**
      * 得到凌晨5点钟的时间
      * hour指定时间
      * */
