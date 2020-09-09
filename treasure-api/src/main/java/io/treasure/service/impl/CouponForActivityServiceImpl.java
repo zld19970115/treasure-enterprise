@@ -380,7 +380,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     }
 
     @Override
-    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit){
+    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
         Integer maxLimit = 200;
 
         //CouponRuleEntity couponRuleEntity = getCouponRuleEntity();

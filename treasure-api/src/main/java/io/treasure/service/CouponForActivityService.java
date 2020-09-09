@@ -25,7 +25,7 @@ public interface CouponForActivityService {
     void resumeAllCoinsRecord(Long clientUser_id,String orderId);
 
     Boolean clientCheckForSignedForReward(Long clientUser_id) throws ParseException;
-    void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit);
+    void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException;
 
     Map<String,String> getSignedActivityCoinsNumberInfo() throws ParseException;
     IPage<MulitCouponBoundleEntity> getRecordByClientId(Long clientUser_id,boolean onlyEnable,Integer page,Integer num);

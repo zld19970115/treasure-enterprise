@@ -10,6 +10,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.dao.SignedRewardSpecifyTimeDao;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
 import io.treasure.service.CouponForActivityService;
@@ -88,11 +89,21 @@ public class CouponForActivityController {
         SignedRewardSpecifyTimeVo vo = new SignedRewardSpecifyTimeVo();
         vo.setSignedRewardSpecifyTimeEntity(signedParamsById);
 
+        Integer validityLong = signedParamsById.getValidityLong();
+        Integer validityUnit = signedParamsById.getValidityUnit();
+        ESharingRewardGoods.ActityValidityUnit currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_DAYS;
+        if(validityUnit == ESharingRewardGoods.ActityValidityUnit.UNIT_WEEKS.getCode()){
+            currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_WEEKS;
+        }else if(validityUnit == ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS.getCode()){
+            currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS;
+        }
+
         if(!betweenTime){
             vo.setRewardValue(new BigDecimal("0"));
             vo.setComment("今日活动已结束，请明天再来吧！");
             return new Result().ok(vo);
         }
+
         Integer activityMode = signedParamsById.getActivityMode();
 
         Boolean rBoolean = couponForActivityService.clientCheckForSignedForReward(clientId);//客户参加本活动次数是否未超限
@@ -109,7 +120,7 @@ public class CouponForActivityController {
                         vo.setRewardValue(randomCoins);
                         vo.setComment("恭喜获得"+randomCoins+"宝币！");
                         try{
-                            couponForActivityService.insertClientActivityRecord(clientId,randomCoins,3);
+                            couponForActivityService.insertClientActivityRecord(clientId,randomCoins,3,validityLong,currentUnit);
                             return new Result().ok(vo);
                         }catch (Exception e){
                             e.printStackTrace();
@@ -131,7 +142,7 @@ public class CouponForActivityController {
                         try{
                             vo.setRewardValue(rewardCoins);
                             vo.setComment("恭喜获得"+rewardCoins+"宝币！");
-                            couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3);
+                            couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3,validityLong,currentUnit);
                             return new Result().ok(vo);
                         }catch (Exception e){
                             e.printStackTrace();
@@ -146,7 +157,7 @@ public class CouponForActivityController {
                         try{
                             vo.setRewardValue(rewardCoins);
                             vo.setComment("恭喜获得"+rewardCoins+"宝币！");
-                            couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3);
+                            couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3,validityLong,currentUnit);
                             return new Result().ok(vo);
 
                         }catch (Exception e){
