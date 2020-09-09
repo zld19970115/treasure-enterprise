@@ -9,7 +9,6 @@ public class TaskCommon {
     private int taskCounter = 0;
 
     private boolean taskLock = false;
-
     @Getter
     @Setter
     private String runTimeEveryDay;

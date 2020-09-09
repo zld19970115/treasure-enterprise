@@ -2,6 +2,7 @@ package io.treasure.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
@@ -24,7 +25,7 @@ public interface CouponForActivityService {
     void resumeAllCoinsRecord(Long clientUser_id,String orderId);
 
     Boolean clientCheckForSignedForReward(Long clientUser_id) throws ParseException;
-    void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method);
+    void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit);
 
     Map<String,String> getSignedActivityCoinsNumberInfo() throws ParseException;
     IPage<MulitCouponBoundleEntity> getRecordByClientId(Long clientUser_id,boolean onlyEnable,Integer page,Integer num);

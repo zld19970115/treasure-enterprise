@@ -23,6 +23,8 @@ public class SignedRewardSpecifyTimeEntity {
     private Integer activityMode;           //1数量模式，2仅范围模式
     private Integer onceInTimeRange;        //
     private Long couponActivityId;          //
+    private Integer validityLong;//int null comment '有效期长';
+    private Integer validityUnit;//int null comment '1:天,2:个星期,3:个月';
 
     /*
     alter table signed_reward_specify_time modify times int null comment '单次活动的次数限制';

@@ -7,6 +7,7 @@ import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.MulitCouponBoundleDao;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.*;
 import io.treasure.service.ClientUserService;
 import io.treasure.service.CouponForActivityService;
@@ -105,7 +106,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
      * @return
      */
     @Override
-    public void updateCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
+    public void updateCoinsConsumeRecord(Long clientUser_id, BigDecimal coins, String orderId){
 
         BigDecimal clientCanUseTotalCoinsVolume = getClientCanUseTotalCoinsVolume(clientUser_id);//可以使用的宝币总数
 
@@ -379,11 +380,11 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     }
 
     @Override
-    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method){
+    public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit){
         Integer maxLimit = 200;
 
-        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        Date expireTime = couponRuleEntity.getExpireTime();
+        //CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
+        //Date expireTime = couponRuleEntity.getExpireTime();
 
         MulitCouponBoundleEntity mulitCouponBoundleEntity = new MulitCouponBoundleEntity();
         mulitCouponBoundleEntity.setOwnerId(clientId);
@@ -410,6 +411,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }
         mulitCouponBoundleEntity.setConsumeValue(new BigDecimal("0"));
         mulitCouponBoundleEntity.setGotPmt(new Date());
+        Date expireTime = TimeUtil.calculateAddDate(validity, actityValidityUnit);
         mulitCouponBoundleEntity.setExpirePmt(expireTime);
 
         mulitCouponBoundleDao.insert(mulitCouponBoundleEntity);

@@ -1,6 +1,7 @@
 package io.treasure.utils;
 
 import io.treasure.enm.ECommission;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import org.junit.Test;
 
@@ -344,7 +345,32 @@ public class TimeUtil {
         Date tmp = simpleDateFormat.parse(ymdString+" "+hmsTime);
         long time = tmp.getTime()+1000*24*60*60*addDays;
         return new Date(time);
+    }
 
+    public static Date calculateAddDate(Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
+        Date date = new Date();
+        long oneDay = 24*60*60*1000;
+        switch (actityValidityUnit){
+            case UNIT_DAYS:
+                return new Date(date.getTime()+oneDay*validity);
+            case UNIT_WEEKS:
+                return new Date(date.getTime()+oneDay*validity*7);
+            case UNIT_MONTHS:
+                int year = Integer.parseInt(sdfYear.format(date));
+                int month = Integer.parseInt(sdfM.format(date));
+                String monthStr = null;
+                if((month+validity)>12){
+                    year++;
+                    month = month+validity -12;
+                }else{
+                    month = month+validity;
+                }
+                monthStr = month>9?month+"":"0"+month;
+
+                String result = year+"-"+monthStr+simpleDateFormat.format(date).substring(7);
+                return simpleDateFormat.parse(result);
+        }
+        return new Date();
     }
 
 }

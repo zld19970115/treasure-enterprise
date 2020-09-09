@@ -35,7 +35,6 @@ public class  ESharingRewardGoods {
         private int code;
         private String msg;
 
-
         OrderStatus(int code,String msg){
             this.code = code;
             this.msg = msg;
@@ -49,8 +48,24 @@ public class  ESharingRewardGoods {
         }
     }
 
+    public enum ActityValidityUnit{
+        UNIT_DAYS(1,"天"),             //
+        UNIT_WEEKS(2,"星期"),               //
+        UNIT_MONTHS(3,"月");
 
+        private int code;
+        private String msg;
 
+        ActityValidityUnit(int code,String msg){
+            this.code = code;
+            this.msg = msg;
+        }
 
-
+        public int getCode(){
+            return this.code;
+        }
+        public String getMsg(){
+            return this.msg;
+        }
+    }
 }
