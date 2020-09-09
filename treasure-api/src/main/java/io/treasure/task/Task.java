@@ -1,6 +1,8 @@
 package io.treasure.task;
 
 import com.alipay.api.AlipayApiException;
+import io.treasure.dao.SharingActivityExtendsDao;
+import io.treasure.entity.SharingActivityExtendsEntity;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.task.item.*;
 import io.treasure.utils.TimeUtil;
@@ -28,6 +30,8 @@ public class Task {
     private ReseverRoomRecord reseverRoomRecord;
     @Autowired
     CouponForActivityService couponForActivityService;
+    @Autowired(required = false)
+    SharingActivityExtendsDao sharingActivityExtendsDao;
     //处理次数记录
     private int taskInProcess = 0;
     private String resetTaskCounterTime = "2020-09-09 06:00:00";
@@ -64,9 +68,7 @@ public class Task {
             System.out.println("定时生成房间记录！！");
             reseverRoomRecord.checkReserverRoomRecord();
         }
-
-
-   }
+    }
 
     //=========================基本状态锁定===============================
     public boolean isInProcess(){

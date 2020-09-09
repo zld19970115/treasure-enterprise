@@ -222,7 +222,11 @@ public class CouponForActivityController {
             result.setData(-1);
             return result;
         }
-
+        result.setMsg("inProcess");
+        result.setCode(200);
+        result.setData(1);
+        return result;
+       /*
         String value = "value";//剩侠宝币的值
         String count = "count";//剩余数量的值
 
@@ -252,11 +256,8 @@ public class CouponForActivityController {
                 }
                 break;
         }
+        */
 
-        result.setMsg("inProcess");
-        result.setCode(200);
-        result.setData(1);
-        return result;
     }
 
 //======================================================================================================================

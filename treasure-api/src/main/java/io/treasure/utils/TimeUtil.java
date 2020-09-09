@@ -373,4 +373,9 @@ public class TimeUtil {
         return new Date();
     }
 
+    //取得指定天数前的时间
+    public static Date getBeforeTime(int days){
+        return new Date(new Date().getTime()-days*24*60*60*1000);
+    }
+
 }

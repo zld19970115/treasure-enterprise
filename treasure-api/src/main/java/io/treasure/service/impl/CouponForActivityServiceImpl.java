@@ -3,6 +3,7 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
 import io.treasure.dao.MasterOrderDao;
@@ -413,8 +414,14 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         queryWrapper.le("got_pmt",endingConvert);
 
         Integer times = mulitCouponBoundleDao.selectCount(queryWrapper);
-        if(times < timesLimit)
-            return true;
+        if(times < timesLimit){
+            boolean b = allowJoinInTimeRange(signedParamsById, clientUser_id);
+            if(b){
+                return true;
+            }else{
+                return false;
+            }
+        }
         return false;
     }
 
@@ -475,6 +482,29 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         IPage<MulitCouponBoundleEntity> pages = mulitCouponBoundleDao.selectPage(map, queryWrapper);
 
         return pages;
+    }
+
+    /**
+     *  规定时间内仅能抢一次,超限则显示false
+     * @return
+     */
+    public boolean allowJoinInTimeRange(SignedRewardSpecifyTimeEntity entity,Long clientUser_id){
+        Integer days = entity.getOnceInTimeRange();
+        Date beforeTime = TimeUtil.getBeforeTime(days);
+
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientUser_id);
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("get_method",3);
+        queryWrapper.ge("got_pmt",beforeTime);
+        queryWrapper.le("got_pmt",now());
+
+        Integer res = mulitCouponBoundleDao.selectCount(queryWrapper);
+        if(res==null)
+            res = 0;
+        if(res>0)
+            return false;
+        return true;
     }
 
 

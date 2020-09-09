@@ -43,7 +43,6 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         return null;
     }
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public  Result selectByIdAndPassword(long id, String password,long userId) {

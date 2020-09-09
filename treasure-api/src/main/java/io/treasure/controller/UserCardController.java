@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class UserCardController {
     @Login
     @GetMapping("/selectMartCouponForBalance")
     @ApiOperation("用户充值宝币(用卡)")
-    public Result selectMartCouponForBalance(@RequestParam long userId, @RequestParam long id , @RequestParam String password){
+    public Result selectMartCouponForBalance(@RequestParam long userId, @RequestParam long id , @RequestParam String password) throws ParseException {
 
         Result result = userCardService.selectMartCouponForBalance(id, password, userId);
 
