@@ -42,9 +42,6 @@ public class SharingActivityPlusController {
     private ClientUserService clientUserService;
     @Autowired
     private TokenService tokenService;
-
-    @Autowired(required = false)
-    private ClientUserDao clientUserDao;
     @Autowired
     private SharingActivityService sharingActivityService;
     @Autowired
@@ -53,14 +50,10 @@ public class SharingActivityPlusController {
     private SharingInitiatorService sharingInitiatorService;
     @Autowired
     private SharingActivityLogService sharingActivityLogService;
-    @Autowired(required = false)
-    private SharingActivityLogDao sharingActivityLogDao;
     @Autowired
     private SharingAndDistributionParamsService sharingAndDistributionParamsService;
     @Autowired
     private DistributionRewardServiceImpl distributionRewardService;
-    @Autowired
-    private QRCodeService qrCodeService;
     @Autowired
     private SharingRewardGoodsRecordService sharingRewardGoodsRecordService;
     @Autowired
@@ -736,7 +729,7 @@ public class SharingActivityPlusController {
     }
 
     //给发起者发奖金
-    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator){
+    private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator) throws ParseException {
         Long initiatorId = initiator.getId();
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
