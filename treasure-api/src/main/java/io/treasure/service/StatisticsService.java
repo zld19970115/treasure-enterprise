@@ -3,6 +3,7 @@ package io.treasure.service;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.CrudService;
 import io.treasure.dto.*;
+import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.vo.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,4 +47,5 @@ public interface StatisticsService extends CrudService<MasterOrderEntity, Master
     FmisHomeVo merchantPcHome(Map<String, Object> params);
     PointsConfigDto pointsConfigInfo();
     void updatePointsConfig(Map<String, Object> params);
+    PageData selectMerPushUser(Map<String, Object> map);
 }

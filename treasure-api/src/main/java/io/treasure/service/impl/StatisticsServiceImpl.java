@@ -10,6 +10,7 @@ import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.StatisticsDao;
 import io.treasure.dto.*;
+import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.CategoryEntity;
 import io.treasure.entity.MasterOrderEntity;
 import io.treasure.service.CategoryService;
@@ -516,6 +517,13 @@ public class StatisticsServiceImpl
     @Override
     public void updatePointsConfig(Map<String, Object> params) {
         baseDao.updatePointsConfig(params);
+    }
+
+    @Override
+    public PageData selectMerPushUser(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        Page<MerPushUserVo> page = (Page) baseDao.selectMerPushUser(params);
+        return new PageData(page.getResult(),page.getTotal());
     }
 
 }

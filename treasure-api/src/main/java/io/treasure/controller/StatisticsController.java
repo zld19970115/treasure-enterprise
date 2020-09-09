@@ -9,6 +9,7 @@ import io.treasure.common.constant.Constant;
 import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dto.*;
+import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.service.UserTransactionDetailsService;
 import io.treasure.service.impl.MerchantServiceImpl;
@@ -347,6 +348,17 @@ public class StatisticsController {
     public Result updatePointsConfig(@ApiIgnore @RequestParam Map<String, Object> params) {
         statisticsService.updatePointsConfig(params);
         return new Result<>().ok("");
+    }
+
+    @Login
+    @GetMapping("selectMerPushUser")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData<MerPushUserVo>> selectMerPushUser(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData<MerPushUserVo>>().ok(statisticsService.selectMerPushUser(params));
     }
 
 }
