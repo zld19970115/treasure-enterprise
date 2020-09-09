@@ -11,6 +11,7 @@ import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.UserCardDao;
 import io.treasure.dto.CardInfoDTO;
 import io.treasure.dto.RecordGiftDTO;
+import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.CardInfoEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.service.CouponForActivityService;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +86,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     }
 
     @Override
-    public Result selectMartCouponForBalance(long id, String password, long userId) {
+    public Result selectMartCouponForBalance(long id, String password, long userId) throws ParseException {
 
         CardInfoEntity cardInfoEntity = baseDao.selectByIdAndPasswordandType(id, password);
         if (cardInfoEntity==null){
@@ -115,7 +117,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
             return new Result().error("充值已达到上限次数");
         }
 
-//        BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
+ //       BigDecimal money = cardInfoEntity.getMoney().add(clientUserEntity.getBalance());
 //        clientUserEntity.setBalance(money);
 //        clientUserService.updateById(clientUserEntity);
 
@@ -125,7 +127,7 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         cardInfoEntity.setBindCardUser(userId);
         baseDao.updateById(cardInfoEntity);
 
-        couponForActivityService.insertClientActivityRecord(userId,cardInfoEntity.getMoney(),1);
+        couponForActivityService.insertClientActivityRecord(userId,cardInfoEntity.getMoney(),1,1, ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS);
 
 
       recordGiftService.insertRecordBalance(userId,date,clientUserEntity.getBalance(),cardInfoEntity.getMoney());

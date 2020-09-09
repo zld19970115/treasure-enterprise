@@ -238,20 +238,59 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins){
 
+
         if(coins.doubleValue()==0)
             return;
-        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        Date expireTime = couponRuleEntity.getExpireTime();
+        //        CouponRuleEntity couponRuleEntity = getCouponRuleEntity();1
+//        Date expireTime = couponRuleEntity.getExpireTime();
+//
+//        MulitCouponBoundleEntity entity = new MulitCouponBoundleEntity();
+//        entity.setOwnerId(clientUser_id);
+//        entity.setCouponValue(coins);
+//        entity.setType(1);
+//        entity.setGetMethod(4);
+//        entity.setUseStatus(0);
+//        entity.setGotPmt(new Date());
+//        entity.setExpirePmt(expireTime);
+//        mulitCouponBoundleDao.insert(entity);
+        BigDecimal zero = new BigDecimal("0");
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectRecord(clientUser_id);
+        for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities) {
+            BigDecimal consumeValue = mulitCouponBoundleEntity.getConsumeValue();
+            if (coins.compareTo(consumeValue)> -1){
+                mulitCouponBoundleEntity.setConsumeValue(zero);
+                coins= coins.subtract(consumeValue);
+                mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+            }else {
+                BigDecimal subtract1 = consumeValue.subtract(coins);
+                mulitCouponBoundleEntity.setConsumeValue(subtract1);
+                mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                break;
+            }
+            if (coins.compareTo(zero) == 0){
+                break;
+            }
+        }
+        if (coins.compareTo(zero)==1){
+            List<MulitCouponBoundleEntity> mulitCouponBoundleEntities1 = mulitCouponBoundleDao.selectByStatus(clientUser_id);
+            for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities1) {
+                BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
+                if (coins.compareTo(couponValue)> -1){
+                    mulitCouponBoundleEntity.setUseStatus(0);
+                    coins= coins.subtract(couponValue);
+                    mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                }else {
+                    mulitCouponBoundleEntity.setUseStatus(0);
+                    mulitCouponBoundleEntity.setConsumeValue(coins);
+                    mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+                    break;
+                }
 
-        MulitCouponBoundleEntity entity = new MulitCouponBoundleEntity();
-        entity.setOwnerId(clientUser_id);
-        entity.setCouponValue(coins);
-        entity.setType(1);
-        entity.setGetMethod(4);
-        entity.setUseStatus(0);
-        entity.setGotPmt(new Date());
-        entity.setExpirePmt(expireTime);
-        mulitCouponBoundleDao.insert(entity);
+            }
+
+
+        }
+
     }
 
 
