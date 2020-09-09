@@ -52,4 +52,5 @@ public interface StatisticsDao extends BaseDao<MasterOrderEntity> {
     PointsConfigDto pointsConfigInfo();
     void updatePointsConfig(Map<String, Object> params);
     DaysTogetherPageDTO daysTogetherPageTotalRow(Map<String, Object> params);
+    List<MerPushUserVo> selectMerPushUser(Map<String, Object> params);
 }
