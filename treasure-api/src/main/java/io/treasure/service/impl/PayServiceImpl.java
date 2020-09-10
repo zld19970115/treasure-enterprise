@@ -827,15 +827,15 @@ public class PayServiceImpl implements PayService {
 
         String refundNo = OrderUtil.getRefundOrderIdByTime(userId);
 
-        //返还
-        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
-        BigDecimal balance = clientUserEntity.getBalance();
-        BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
-        BigDecimal add = balance.add(refundAmount.subtract(activityCoins));
-        clientUserEntity.setBalance(add);
-
-        clientUserService.updateById(clientUserEntity);
-        couponForActivityService.resumeActivityCoinsRecord(userId,activityCoins);
+//        //返还
+//        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+//        BigDecimal balance = clientUserEntity.getBalance();
+//        BigDecimal activityCoins = masterOrderEntity.getActivityCoins();
+//        BigDecimal add = balance.add(refundAmount.subtract(activityCoins));
+//        clientUserEntity.setBalance(add);
+//
+//        clientUserService.updateById(clientUserEntity);
+//        couponForActivityService.resumeActivityCoinsRecord(userId,activityCoins);
 
 
         if (goodId != null) {
