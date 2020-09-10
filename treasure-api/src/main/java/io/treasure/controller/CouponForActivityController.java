@@ -241,9 +241,12 @@ public class CouponForActivityController {
         boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
         Result result = new Result();
 
-        Date date = new Date();
+        long now = new Date().getTime();
         boolean onTimeRange = false;
-        if(start_pmt.getTime()>=date.getTime() && date.getTime()<=ending_pmt.getTime()){
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
             onTimeRange = true;
         }
 
