@@ -57,7 +57,7 @@ public class CouponForActivityController {
     @GetMapping("activity_coins_list")
     @ApiOperation("查询活动宝币列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true),
+            @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = false),
             @ApiImplicitParam(name = "page", value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
             @ApiImplicitParam(name = "index", value = "每页显示记录数", paramType = "query",required = true, dataType="int") ,
             @ApiImplicitParam(name = "enableOnly", value = "1仅有效记录，2全部", paramType = "query", dataType="int")
@@ -67,6 +67,7 @@ public class CouponForActivityController {
         boolean only = false;
         if(enableOnly == 1)
             only = true;
+
         IPage<MulitCouponBoundleEntity> recordByClientId = couponForActivityService.getRecordByClientId(clientId, only, page, index);
         return new Result().ok(recordByClientId);
     }

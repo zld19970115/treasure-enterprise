@@ -467,7 +467,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public IPage<MulitCouponBoundleEntity> getRecordByClientId(Long clientUser_id,boolean onlyEnable,Integer page,Integer num){
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("owner_id",clientUser_id);
+        if(clientUser_id != null)
+            queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
 
         if(onlyEnable){
