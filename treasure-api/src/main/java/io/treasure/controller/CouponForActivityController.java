@@ -8,9 +8,11 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.dao.SignedRewardSpecifyTimeDao;
 import io.treasure.enm.ESharingRewardGoods;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
 import io.treasure.service.CouponForActivityService;
@@ -28,6 +30,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static cn.hutool.core.date.SystemClock.now;
 
 @RestController
 @RequestMapping("/about_coins")
@@ -71,7 +75,8 @@ public class CouponForActivityController {
         IPage<MulitCouponBoundleEntity> recordByClientId = couponForActivityService.getRecordByClientId(clientId, only, page, index);
         return new Result().ok(recordByClientId);
     }
-
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
     @GetMapping("signed_reward")
     @ApiOperation("签到领宝币")
     @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true)
@@ -79,6 +84,8 @@ public class CouponForActivityController {
         String value = "value";//剩侠宝币的值
         String count = "count";//剩余数量的值
         Result result = new Result();
+        ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
+
 
         Map<String, String> signedActivityCoinsNumberInfo = couponForActivityService.getSignedActivityCoinsNumberInfo();
         int bdCount = Integer.parseInt(signedActivityCoinsNumberInfo.get(count));
@@ -100,13 +107,31 @@ public class CouponForActivityController {
             currentUnit = ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS;
         }
 
-        if(!betweenTime){
+        if (clientUserEntity == null){
             vo.setRewardValue(new BigDecimal("0"));
-            vo.setComment("今日活动已结束，请明天再来吧！");
+            vo.setComment("用户id无效,请先登录或注册！");
             result.setCode(500);
             result.setData(vo);
             return result;
         }
+
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+
+        if(!betweenTime||!onTimeRange){
+            vo.setRewardValue(new BigDecimal("0"));
+            vo.setComment("本次本日活动已到期！");
+            result.setCode(500);
+            result.setData(vo);
+            return result;
+        }
+
 
         Integer activityMode = signedParamsById.getActivityMode();
 
@@ -239,7 +264,16 @@ public class CouponForActivityController {
         boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
         Result result = new Result();
 
-        if(!betweenTime){
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+
+        if(!betweenTime||!onTimeRange){
             result.setMsg("expire");
             result.setCode(200);
             result.setData(-1);

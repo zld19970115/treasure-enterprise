@@ -254,14 +254,17 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 //        entity.setGotPmt(new Date());
 //        entity.setExpirePmt(expireTime);
 //        mulitCouponBoundleDao.insert(entity);
+
         BigDecimal zero = new BigDecimal("0");
         List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectRecord(clientUser_id);
+
         for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities) {
             BigDecimal consumeValue = mulitCouponBoundleEntity.getConsumeValue();
             if (coins.compareTo(consumeValue)> -1){
                 mulitCouponBoundleEntity.setConsumeValue(zero);
                 coins= coins.subtract(consumeValue);
                 mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+
             }else {
                 BigDecimal subtract1 = consumeValue.subtract(coins);
                 mulitCouponBoundleEntity.setConsumeValue(subtract1);
@@ -278,6 +281,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                 BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
                 if (coins.compareTo(couponValue)> -1){
                     mulitCouponBoundleEntity.setUseStatus(0);
+                    mulitCouponBoundleEntity.setConsumeValue(zero);
                     coins= coins.subtract(couponValue);
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                 }else {
@@ -287,10 +291,10 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                     break;
                 }
-
+                if (coins.compareTo(zero) == 0){
+                    break;
+                }
             }
-
-
         }
 
     }
@@ -429,9 +433,6 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
         Integer maxLimit = 200;
-
-        //CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        //Date expireTime = couponRuleEntity.getExpireTime();
 
         MulitCouponBoundleEntity mulitCouponBoundleEntity = new MulitCouponBoundleEntity();
         mulitCouponBoundleEntity.setOwnerId(clientId);
