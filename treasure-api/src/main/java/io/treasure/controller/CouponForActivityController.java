@@ -77,6 +77,7 @@ public class CouponForActivityController {
     public Result signedReward(Long clientId) throws ParseException {
         String value = "value";//剩侠宝币的值
         String count = "count";//剩余数量的值
+        Result result = new Result();
 
         Map<String, String> signedActivityCoinsNumberInfo = couponForActivityService.getSignedActivityCoinsNumberInfo();
         int bdCount = Integer.parseInt(signedActivityCoinsNumberInfo.get(count));
@@ -101,7 +102,9 @@ public class CouponForActivityController {
         if(!betweenTime){
             vo.setRewardValue(new BigDecimal("0"));
             vo.setComment("今日活动已结束，请明天再来吧！");
-            return new Result().ok(vo);
+            result.setCode(500);
+            result.setData(vo);
+            return result;
         }
 
         Integer activityMode = signedParamsById.getActivityMode();
@@ -121,16 +124,22 @@ public class CouponForActivityController {
                         vo.setComment("恭喜获得"+randomCoins+"宝币！");
                         try{
                             couponForActivityService.insertClientActivityRecord(clientId,randomCoins,3,validityLong,currentUnit);
-                            return new Result().ok(vo);
+                            result.setCode(200);
+                            result.setData(vo);
+                            return result;
                         }catch (Exception e){
                             e.printStackTrace();
                             vo.setComment("服务器忙，请稍候重试！");
-                            return new Result().ok(vo);
+                            result.setCode(500);
+                            result.setData(vo);
+                            return result;
                         }
                     }else{
                         vo.setRewardValue(new BigDecimal("0"));
                         vo.setComment("红包已经抢完了，下次要点来！");
-                        return new Result().ok(vo);
+                        result.setCode(500);
+                        result.setData(vo);
+                        return result;
                     }
                 default://仅范围模式
                     Integer maxValue = signedParamsById.getMaxValue();
@@ -143,12 +152,17 @@ public class CouponForActivityController {
                             vo.setRewardValue(rewardCoins);
                             vo.setComment("恭喜获得"+rewardCoins+"宝币！");
                             couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3,validityLong,currentUnit);
-                            return new Result().ok(vo);
+                            result.setCode(200);
+                            result.setData(vo);
+                            return result;
+
                         }catch (Exception e){
                             e.printStackTrace();
                             vo.setRewardValue(new BigDecimal("0"));
                             vo.setComment("服务器忙，请稍候重试！");
-                            return new Result().ok(vo);
+                            result.setCode(500);
+                            result.setData(vo);
+                            return result;
                         }
 
                     }else if(dbValue.doubleValue()>=minValue){
@@ -158,25 +172,33 @@ public class CouponForActivityController {
                             vo.setRewardValue(rewardCoins);
                             vo.setComment("恭喜获得"+rewardCoins+"宝币！");
                             couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3,validityLong,currentUnit);
-                            return new Result().ok(vo);
+                            result.setCode(200);
+                            result.setData(vo);
+                            return result;
 
                         }catch (Exception e){
                             e.printStackTrace();
                             vo.setRewardValue(new BigDecimal("0"));
                             vo.setComment("服务器忙，请稍候重试！");
-                            return new Result().ok(vo);
+                            result.setCode(500);
+                            result.setData(vo);
+                            return result;
                         }
                     }else{
                         vo.setRewardValue(new BigDecimal("0"));
                         vo.setComment("红包已经抢完了，下次要点来！");
-                        return new Result().ok(vo);
+                        result.setCode(500);
+                        result.setData(vo);
+                        return result;
                     }
             }
 
         }else{
             vo.setRewardValue(new BigDecimal("0"));
             vo.setComment("已经参与过本活动了，下次再来吧！");
-            return new Result().ok(vo);
+            result.setCode(500);
+            result.setData(vo);
+            return result;
         }
     }
 
