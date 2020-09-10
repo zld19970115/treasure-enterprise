@@ -254,6 +254,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 //        entity.setGotPmt(new Date());
 //        entity.setExpirePmt(expireTime);
 //        mulitCouponBoundleDao.insert(entity);
+
         BigDecimal zero = new BigDecimal("0");
         List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectRecord(clientUser_id);
         for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities) {
@@ -429,9 +430,6 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     public void insertClientActivityRecord(Long clientId,BigDecimal bd,Integer method,Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
         Integer maxLimit = 200;
-
-        //CouponRuleEntity couponRuleEntity = getCouponRuleEntity();
-        //Date expireTime = couponRuleEntity.getExpireTime();
 
         MulitCouponBoundleEntity mulitCouponBoundleEntity = new MulitCouponBoundleEntity();
         mulitCouponBoundleEntity.setOwnerId(clientId);
