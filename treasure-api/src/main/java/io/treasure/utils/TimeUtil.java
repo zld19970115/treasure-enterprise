@@ -315,7 +315,7 @@ public class TimeUtil {
         String[] split = startStr.split(":");
         if(split.length != 3)
             return 0;
-        return Integer.parseInt(split[0])*100+Integer.parseInt(split[1])*10+Integer.parseInt(split[2]);
+        return Integer.parseInt(split[0])*60*60+Integer.parseInt(split[1])*60+Integer.parseInt(split[2]);
     }
     public static boolean isBetweenTime(Date start,Date stop){
         int startInt = convertTimeToInt(start);

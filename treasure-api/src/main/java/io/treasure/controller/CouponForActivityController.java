@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.hutool.core.date.SystemClock.now;
+
 @RestController
 @RequestMapping("/about_coins")
 @Api(tags="宝币相关内容")
@@ -239,7 +241,16 @@ public class CouponForActivityController {
         boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
         Result result = new Result();
 
-        if(!betweenTime){
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+
+        if(!betweenTime||!onTimeRange){
             result.setMsg("expire");
             result.setCode(200);
             result.setData(-1);
