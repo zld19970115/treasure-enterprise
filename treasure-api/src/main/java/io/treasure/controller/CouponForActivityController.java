@@ -21,6 +21,7 @@ import io.treasure.service.CouponForActivityService;
 import io.treasure.service.impl.SignedRewardSpecifyTimeServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
+import io.treasure.vo.CounterDownVo;
 import io.treasure.vo.SignedRewardSpecifyTimeVo;
 import io.treasure.vo.SignedRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,6 +252,79 @@ public class CouponForActivityController {
         return new Result().ok(signedParamsById);
     }
 
+    @GetMapping("count_down")
+    @ApiOperation("活动倒计时")
+    public Result countDown() throws ParseException {
+        Result result = new Result();
+        CounterDownVo counterDownVo = new CounterDownVo();
+
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+        if(onTimeRange){
+            if(betweenTime){
+                Date date = TimeUtil.contentTimeAndDate(ending_pmt, true);
+                counterDownVo.setCountDown(date);
+                counterDownVo.setStatus(2);
+                result.setData(counterDownVo);
+                //1活动已结束，2活动进行中，3活动马上开始,4活动已过期
+                result.setCode(200);
+                return result;
+
+            }else{//今日活动已过期或者未到期
+                Date compareDate = TimeUtil.contentTimeAndDate(start_pmt, true);
+                String format = TimeUtil.simpleDateFormat.format(compareDate);
+                System.out.println(format);
+                long time = compareDate.getTime();
+                long timeNow = new Date().getTime();
+
+                if(timeNow<time){//活动未开始
+                    Date date = TimeUtil.contentTimeAndDate(start_pmt, true);
+                    counterDownVo.setCountDown(date);
+                    counterDownVo.setStatus(3);
+                    result.setData(counterDownVo);
+                    result.setCode(200);
+                    return result;
+                }else{
+                    Date date = TimeUtil.contentTimeAndDate(start_pmt, false);
+                    String f1 = TimeUtil.simpleDateFormat.format(date);
+                    System.out.println(f1);
+                    counterDownVo.setCountDown(date);
+                    counterDownVo.setStatus(1);
+                    result.setData(counterDownVo);
+                    result.setCode(200);
+                    return result;
+                }//活动已结束
+            }
+        }else{//活动已过期
+            if(start_pmt.getTime()>new Date().getTime()){
+
+                counterDownVo.setStatus(3);
+                counterDownVo.setCountDown(start_pmt);
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+
+            }else{
+                counterDownVo.setStatus(4);
+                counterDownVo.setCountDown(new Date());
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+            }
+
+        }
+    }
     @GetMapping("sr_info_plus")
     @ApiOperation("签到领宝币信息")
     public Result signedRewardInfoPlus() throws ParseException {

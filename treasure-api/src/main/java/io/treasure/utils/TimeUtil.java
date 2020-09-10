@@ -378,4 +378,18 @@ public class TimeUtil {
         return new Date(new Date().getTime()-days*24*60*60*1000);
     }
 
+    public static Date contentTimeAndDate(Date date,boolean todayOrTomm) throws ParseException {
+        String hms = sdfHms.format(date);
+        String ymd = null;
+        if(todayOrTomm){
+            ymd = sdfYmd.format(new Date());
+        }else{
+            Date date2 = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+            ymd = sdfYmd.format(date2);
+        }
+
+        Date result = simpleDateFormat.parse(ymd + " " + hms);
+        return result;
+    }
+
 }
