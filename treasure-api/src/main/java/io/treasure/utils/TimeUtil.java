@@ -375,7 +375,9 @@ public class TimeUtil {
 
     //取得指定天数前的时间
     public static Date getBeforeTime(int days){
-        return new Date(new Date().getTime()-days*24*60*60*1000);
+        Long tmp = new Date().getTime();
+        tmp = tmp - -days*24*60*60*1000;
+        return new Date(tmp);
     }
 
     public static Date contentTimeAndDate(Date date,boolean todayOrTomm) throws ParseException {
