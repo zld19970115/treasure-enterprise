@@ -7,11 +7,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.dao.SignedRewardSpecifyTimeDao;
 import io.treasure.enm.ESharingRewardGoods;
+import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
@@ -23,6 +25,7 @@ import io.treasure.vo.SignedRewardSpecifyTimeVo;
 import io.treasure.vo.SignedRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -75,6 +78,18 @@ public class CouponForActivityController {
         IPage<MulitCouponBoundleEntity> recordByClientId = couponForActivityService.getRecordByClientId(clientId, only, page, index);
         return new Result().ok(recordByClientId);
     }
+
+    @Login
+    @GetMapping("getActivityCoinsListNew")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData> getActivityCoinsListNew(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData>().ok(couponForActivityService.pageList(params));
+    }
+
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
     @GetMapping("signed_reward")
