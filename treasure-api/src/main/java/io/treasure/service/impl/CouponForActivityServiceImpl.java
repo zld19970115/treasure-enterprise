@@ -281,8 +281,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                     coins= coins.subtract(couponValue);
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                 }else {
+                    BigDecimal subtract = couponValue.subtract(coins);
                     mulitCouponBoundleEntity.setUseStatus(0);
-                    mulitCouponBoundleEntity.setConsumeValue(coins);
+                    mulitCouponBoundleEntity.setConsumeValue(subtract);
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                     break;
                 }
