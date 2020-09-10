@@ -3,6 +3,8 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
@@ -336,6 +338,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         Long requireId = id==null?1:id;
         SignedRewardSpecifyTimeEntity signedParamsById = signedRewardSpecifyTimeService.getSignedParamsById(requireId);
         return signedParamsById;
+    }
+
+    @Override
+    public PageData pageList(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        com.github.pagehelper.Page page = (com.github.pagehelper.Page) mulitCouponBoundleDao.pageList(params);
+        return new PageData<>(page.getResult(),page.getTotal());
     }
 
     @Override

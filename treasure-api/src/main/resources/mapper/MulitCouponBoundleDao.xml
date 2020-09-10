@@ -49,5 +49,43 @@
          select * from mulit_coupon_boundle where owner_id = #{clientUser_id} and use_status = 1 order by expire_pmt desc
     </select>
 
+    <select id="pageList" resultType="io.treasure.dto.MulitCouponBoundleNewDto">
+        SELECT
+            mu.*, ct.mobile,
+            (
+                CASE
+                WHEN mu.expire_pmt > NOW() THEN
+                    0
+                ELSE
+                    1
+                END
+
+        ) as flag
+        FROM
+            `mulit_coupon_boundle` mu
+        LEFT JOIN ct_client_user ct ON mu.owner_id = ct.id
+        WHERE
+            mu.deleted = 0
+            <if test="expirePmt != null and expirePmt == 0 ">
+                and mu.expire_pmt > now()
+            </if>
+            <if test="expirePmt != null and expirePmt == 1 ">
+                and mu.expire_pmt &lt;= now()
+            </if>
+            <if test="useStatus != null">
+                and mu.use_status = #{useStatus}
+            </if>
+            <if test="startTime != null and startTime!=''" >
+                and date_format(mu.got_pmt, '%Y-%m-%d') &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime1=''" >
+                and date_format(mu.got_pmt, '%Y-%m-%d') &lt;= #{endTime}
+            </if>
+            <if test="mobile != null and mobile=''" >
+                and ct.mobile = #{mobile}
+            </if>
+        ORDER BY
+            mu.got_pmt DESC
+    </select>
 
 </mapper>

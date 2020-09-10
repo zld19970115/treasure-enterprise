@@ -28,16 +28,16 @@ public class AdvController {
 
     @GetMapping("startupPageUser")
     @ApiOperation("启动页广告")
-    public Result<String> startupPageUser(Integer type) {
+    public Result startupPageUser(Integer type) {
         Map<String, Object> params = Maps.newHashMap();
         params.put("page", 1);
         params.put("limit", 100);
         params.put("type", type);
         List<AdvertisementEntity> list = advertisementService.pageList(params).getList();
         if(list != null && list.size() > 0) {
-            return new Result<String>().ok(list.get(0).getImage());
+            return new Result().ok(list.get(0));
         }
-        return new Result<String>().ok("");
+        return new Result().ok("");
     }
 
     @Login
