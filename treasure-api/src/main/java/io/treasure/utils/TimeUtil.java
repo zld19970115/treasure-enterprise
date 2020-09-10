@@ -384,8 +384,7 @@ public class TimeUtil {
         if(todayOrTomm){
             ymd = sdfYmd.format(new Date());
         }else{
-            Date date1 = new Date();
-            Date date2 = new Date(date1.getTime() + 24 * 60 * 60 * 60);
+            Date date2 = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
             ymd = sdfYmd.format(date2);
         }
 

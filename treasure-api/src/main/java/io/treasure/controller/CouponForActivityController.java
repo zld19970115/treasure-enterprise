@@ -268,10 +268,12 @@ public class CouponForActivityController {
 
             }else{//今日活动已过期或者未到期
                 Date compareDate = TimeUtil.contentTimeAndDate(start_pmt, true);
+                String format = TimeUtil.simpleDateFormat.format(compareDate);
+                System.out.println(format);
                 long time = compareDate.getTime();
                 long timeNow = new Date().getTime();
 
-                if(timeNow>time){//活动未开始
+                if(timeNow<time){//活动未开始
                     Date date = TimeUtil.contentTimeAndDate(start_pmt, true);
                     counterDownVo.setCountDown(date);
                     counterDownVo.setStatus(3);
@@ -280,6 +282,8 @@ public class CouponForActivityController {
                     return result;
                 }else{
                     Date date = TimeUtil.contentTimeAndDate(start_pmt, false);
+                    String f1 = TimeUtil.simpleDateFormat.format(date);
+                    System.out.println(f1);
                     counterDownVo.setCountDown(date);
                     counterDownVo.setStatus(1);
                     result.setData(counterDownVo);
@@ -288,10 +292,22 @@ public class CouponForActivityController {
                 }//活动已结束
             }
         }else{//活动已过期
-            counterDownVo.setStatus(4);
-            result.setData(counterDownVo);
-            result.setCode(200);
-            return result;
+            if(start_pmt.getTime()>new Date().getTime()){
+
+                counterDownVo.setStatus(3);
+                counterDownVo.setCountDown(start_pmt);
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+
+            }else{
+                counterDownVo.setStatus(4);
+                counterDownVo.setCountDown(new Date());
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+            }
+
         }
     }
     @GetMapping("sr_info_plus")
