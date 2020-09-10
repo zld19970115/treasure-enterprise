@@ -279,6 +279,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                 BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
                 if (coins.compareTo(couponValue)> -1){
                     mulitCouponBoundleEntity.setUseStatus(0);
+                    mulitCouponBoundleEntity.setConsumeValue(zero);
                     coins= coins.subtract(couponValue);
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                 }else {
@@ -288,7 +289,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                     mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
                     break;
                 }
-
+                if (coins.compareTo(zero) == 0){
+                    break;
+                }
             }
 
 
