@@ -162,6 +162,7 @@ public class ChargeCashServiceImpl extends CrudServiceImpl<ChargeCashDao, Charge
             masterOrderEntity.setResponseStatus(1);//提升排序
             masterOrderEntity.setPayMode(Constants.PayMode.BALANCEPAY.getValue());
             masterOrderEntity.setPayDate(new Date());
+            masterOrderEntity.setPayCoins(total_amount);
             masterOrderDao.updateById(masterOrderEntity);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(masterOrderEntity.getOrderId());
 
