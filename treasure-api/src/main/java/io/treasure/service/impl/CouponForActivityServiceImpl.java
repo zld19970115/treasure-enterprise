@@ -504,12 +504,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         Integer days = entity.getOnceInTimeRange();
         Date beforeTime = TimeUtil.getBeforeTime(days);
 
+        String format = TimeUtil.simpleDateFormat.format(beforeTime);
+        System.out.println(format);
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("get_method",3);
         queryWrapper.ge("got_pmt",beforeTime);
-        queryWrapper.le("got_pmt",now());
 
         Integer res = mulitCouponBoundleDao.selectCount(queryWrapper);
         if(res==null)
