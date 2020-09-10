@@ -11,4 +11,6 @@ public class AdvertisementDto {
 
     private Integer type;
 
+    private String url;
+
 }

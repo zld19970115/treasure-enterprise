@@ -7,6 +7,7 @@
         <result property="id" column="id"/>
         <result property="image" column="image"/>
         <result property="type" column="type"/>
+        <result property="url" column="url"/>
     </resultMap>
 
     <select id="pageList" resultType="io.treasure.entity.AdvertisementEntity">
