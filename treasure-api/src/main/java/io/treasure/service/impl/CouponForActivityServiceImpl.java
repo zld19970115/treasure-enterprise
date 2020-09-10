@@ -257,12 +257,14 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
         BigDecimal zero = new BigDecimal("0");
         List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectRecord(clientUser_id);
+
         for (MulitCouponBoundleEntity mulitCouponBoundleEntity : mulitCouponBoundleEntities) {
             BigDecimal consumeValue = mulitCouponBoundleEntity.getConsumeValue();
             if (coins.compareTo(consumeValue)> -1){
                 mulitCouponBoundleEntity.setConsumeValue(zero);
                 coins= coins.subtract(consumeValue);
                 mulitCouponBoundleDao.updateById(mulitCouponBoundleEntity);
+
             }else {
                 BigDecimal subtract1 = consumeValue.subtract(coins);
                 mulitCouponBoundleEntity.setConsumeValue(subtract1);
@@ -293,8 +295,6 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                     break;
                 }
             }
-
-
         }
 
     }
