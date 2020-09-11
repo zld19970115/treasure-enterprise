@@ -373,10 +373,11 @@ public class TimeUtil {
         return new Date();
     }
 
+
     //取得指定天数前的时间
     public static Date getBeforeTime(int days){
-        Long tmp = new Date().getTime();
-        tmp = tmp - -days*24*60*60*1000;
+        Long sub = days*24*60*60*1000L;
+        Long tmp = new Date().getTime()-sub;
         return new Date(tmp);
     }
 

@@ -274,7 +274,7 @@ public class CouponForActivityController {
         if(onTimeRange){
             if(betweenTime){
                 Date date = TimeUtil.contentTimeAndDate(ending_pmt, true);
-                counterDownVo.setCountDown(date);
+                counterDownVo.setCountDown(date.getTime());
                 counterDownVo.setStatus(2);
                 result.setData(counterDownVo);
                 //1活动已结束，2活动进行中，3活动马上开始,4活动已过期
@@ -290,7 +290,7 @@ public class CouponForActivityController {
 
                 if(timeNow<time){//活动未开始
                     Date date = TimeUtil.contentTimeAndDate(start_pmt, true);
-                    counterDownVo.setCountDown(date);
+                    counterDownVo.setCountDown(date.getTime());
                     counterDownVo.setStatus(3);
                     result.setData(counterDownVo);
                     result.setCode(200);
@@ -299,7 +299,7 @@ public class CouponForActivityController {
                     Date date = TimeUtil.contentTimeAndDate(start_pmt, false);
                     String f1 = TimeUtil.simpleDateFormat.format(date);
                     System.out.println(f1);
-                    counterDownVo.setCountDown(date);
+                    counterDownVo.setCountDown(date.getTime());
                     counterDownVo.setStatus(1);
                     result.setData(counterDownVo);
                     result.setCode(200);
@@ -310,14 +310,14 @@ public class CouponForActivityController {
             if(start_pmt.getTime()>new Date().getTime()){
 
                 counterDownVo.setStatus(3);
-                counterDownVo.setCountDown(start_pmt);
+                counterDownVo.setCountDown(start_pmt.getTime());
                 result.setData(counterDownVo);
                 result.setCode(200);
                 return result;
 
             }else{
                 counterDownVo.setStatus(4);
-                counterDownVo.setCountDown(new Date());
+                counterDownVo.setCountDown(new Date().getTime());
                 result.setData(counterDownVo);
                 result.setCode(200);
                 return result;
