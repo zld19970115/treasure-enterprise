@@ -10,7 +10,6 @@ public class  ESharingRewardGoods {
         private int code;
         private String msg;
 
-
         Status(int code,String msg){
             this.code = code;
             this.msg = msg;
@@ -24,9 +23,6 @@ public class  ESharingRewardGoods {
         }
     }
     public enum OrderStatus{
-
-        //不允许单独吃一个赠菜
-        //1预订，2接单，3今日缺货，4请到店改同价菜品
         REQUIRE_GIFT_ORDER(1,"预计"),             //
         ACEPT_GIFT_ORDER(2,"接授"),               //
         SALE_OUT_TODAY(3,"今日售完"),             //
@@ -36,6 +32,27 @@ public class  ESharingRewardGoods {
         private String msg;
 
         OrderStatus(int code,String msg){
+            this.code = code;
+            this.msg = msg;
+        }
+
+        public int getCode(){
+            return this.code;
+        }
+        public String getMsg(){
+            return this.msg;
+        }
+    }
+
+    public enum GoodsType{
+
+        DISHES_TYPE(5,"菜品"),             //
+        GOODS_TYPE(6,"商品");               //
+
+        private int code;
+        private String msg;
+
+        GoodsType(int code,String msg){
             this.code = code;
             this.msg = msg;
         }

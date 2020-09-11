@@ -53,6 +53,8 @@ public class CouponForActivityController {
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
 
+    private static String dbValueString = null;
+
     @GetMapping("can_use_coins")
     @ApiOperation("查询可用的宝币数量")
     @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true)
@@ -338,6 +340,48 @@ public class CouponForActivityController {
         BigDecimal dbValue = new BigDecimal(signedActivityCoinsNumberInfo.get(value));
         SignedRewardVo s = new SignedRewardVo();
         s.setSignedRewardSpecifyTimeEntity(signedParamsById);
+
+
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+        if(!betweenTime||!onTimeRange){
+            Integer minValue = signedParamsById.getMinValue();
+            if(dbValue.doubleValue()>minValue){
+                if(minValue>10){
+                    minValue = minValue -10;
+                    dbValue = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(minValue+""),new BigDecimal(1+""));
+                    if(dbValueString == null){
+                        dbValueString = dbValue.toString();
+                    }
+                }else if(minValue >2){
+                    minValue = minValue -1;
+                    dbValue = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(minValue+""),new BigDecimal(1+""));
+                    if(dbValueString == null){
+                        dbValueString = dbValue.toString();
+                    }
+                }else{
+                    dbValue = new BigDecimal("0");
+                    if(dbValueString == null){
+                        dbValueString = "0";
+                    }
+                }
+            }
+
+            s.setValue(new BigDecimal(dbValueString));
+            s.setCount(bdCount);
+            return new Result().ok(s);
+        }
+        dbValueString = null;
+
         s.setValue(dbValue);
         s.setCount(bdCount);
 
