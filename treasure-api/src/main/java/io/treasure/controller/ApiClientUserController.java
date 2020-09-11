@@ -937,7 +937,7 @@ public class ApiClientUserController {
     @GetMapping("/pushMerPC")
     @ApiOperation("PC端推送商户")
     public Result pushMerPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
-        AppPushUtil.pushToSingleMerchant(title, text, clientId);
+        AppPushUtil.pushToSingleMerchantPC(title, text, clientId);
         return new Result().ok("成功");
     }
 
