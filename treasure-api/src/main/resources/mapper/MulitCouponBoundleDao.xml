@@ -75,6 +75,9 @@
             <if test="useStatus != null">
                 and mu.use_status = #{useStatus}
             </if>
+            <if test="getMethod != null">
+                and mu.get_method = #{getMethod}
+            </if>
             <if test="startTime != null and startTime!=''" >
                 and date_format(mu.got_pmt, '%Y-%m-%d') &gt;= #{startTime}
             </if>
