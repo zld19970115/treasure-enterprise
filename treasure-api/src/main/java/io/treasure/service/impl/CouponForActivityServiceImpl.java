@@ -3,6 +3,8 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CouponRuleDao;
@@ -339,6 +341,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     }
 
     @Override
+    public PageData pageList(Map<String, Object> params) {
+        PageHelper.startPage(Integer.parseInt(params.get("page")+""),Integer.parseInt(params.get("limit")+""));
+        com.github.pagehelper.Page page = (com.github.pagehelper.Page) mulitCouponBoundleDao.pageList(params);
+        return new PageData<>(page.getResult(),page.getTotal());
+    }
+
+    @Override
     public Map<String,String> getSignedActivityCoinsNumberInfo() throws ParseException {
         Map<String,String> map = new HashMap<>();
         String value = "value";
@@ -495,12 +504,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         Integer days = entity.getOnceInTimeRange();
         Date beforeTime = TimeUtil.getBeforeTime(days);
 
+        String format = TimeUtil.simpleDateFormat.format(beforeTime);
+        System.out.println(format);
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
         queryWrapper.eq("get_method",3);
         queryWrapper.ge("got_pmt",beforeTime);
-        queryWrapper.le("got_pmt",now());
 
         Integer res = mulitCouponBoundleDao.selectCount(queryWrapper);
         if(res==null)

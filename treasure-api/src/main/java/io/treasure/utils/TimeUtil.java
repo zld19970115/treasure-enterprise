@@ -373,9 +373,26 @@ public class TimeUtil {
         return new Date();
     }
 
+
     //取得指定天数前的时间
     public static Date getBeforeTime(int days){
-        return new Date(new Date().getTime()-days*24*60*60*1000);
+        Long sub = days*24*60*60*1000L;
+        Long tmp = new Date().getTime()-sub;
+        return new Date(tmp);
+    }
+
+    public static Date contentTimeAndDate(Date date,boolean todayOrTomm) throws ParseException {
+        String hms = sdfHms.format(date);
+        String ymd = null;
+        if(todayOrTomm){
+            ymd = sdfYmd.format(new Date());
+        }else{
+            Date date2 = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+            ymd = sdfYmd.format(date2);
+        }
+
+        Date result = simpleDateFormat.parse(ymd + " " + hms);
+        return result;
     }
 
 }

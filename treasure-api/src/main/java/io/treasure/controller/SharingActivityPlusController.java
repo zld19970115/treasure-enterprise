@@ -731,11 +731,13 @@ public class SharingActivityPlusController {
     //给发起者发奖金
     private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator) throws ParseException {
         Long initiatorId = initiator.getId();
+
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
                 updateBalanceRecord(initiator,gift,1,sharingActivityEntity.getSaId());
                 break;
+            case 2://商品
 
             case 3://奖励菜品    怎样给商家展示或者到商家使用
                 SharingRewardGoodsRecordEntity rewardGoodsentity = new SharingRewardGoodsRecordEntity();
@@ -913,7 +915,7 @@ public class SharingActivityPlusController {
      * @return
      */
     @GetMapping("mch_sa_list")
-    @ApiOperation("根据商家获取去助力")
+    @ApiOperation("根据商家获取助力列表")
     public Result listByMerchant(long merchantId){
         List<SharingActivityEntity> list = sharingActivityService.getListByMerchantIdAndStatus(merchantId,null);
         if (list.size()>0){

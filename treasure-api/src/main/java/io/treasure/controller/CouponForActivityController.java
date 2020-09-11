@@ -7,11 +7,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.annotation.Login;
 import io.treasure.common.constant.Constant;
+import io.treasure.common.page.PageData;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.dao.SignedRewardSpecifyTimeDao;
 import io.treasure.enm.ESharingRewardGoods;
+import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
@@ -19,10 +21,12 @@ import io.treasure.service.CouponForActivityService;
 import io.treasure.service.impl.SignedRewardSpecifyTimeServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
+import io.treasure.vo.CounterDownVo;
 import io.treasure.vo.SignedRewardSpecifyTimeVo;
 import io.treasure.vo.SignedRewardVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -48,6 +52,8 @@ public class CouponForActivityController {
 
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
+
+    private static String dbValueString = null;
 
     @GetMapping("can_use_coins")
     @ApiOperation("查询可用的宝币数量")
@@ -75,6 +81,18 @@ public class CouponForActivityController {
         IPage<MulitCouponBoundleEntity> recordByClientId = couponForActivityService.getRecordByClientId(clientId, only, page, index);
         return new Result().ok(recordByClientId);
     }
+
+    @Login
+    @GetMapping("getActivityCoinsListNew")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = Constant.PAGE, value = "当前页码，从1开始", paramType = "query", required = true, dataType="int") ,
+            @ApiImplicitParam(name = Constant.LIMIT, value = "每页显示记录数", paramType = "query",required = true, dataType="int")
+    })
+    public Result<PageData> getActivityCoinsListNew(@ApiIgnore @RequestParam Map<String, Object> params) {
+        return new Result<PageData>().ok(couponForActivityService.pageList(params));
+    }
+
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
     @GetMapping("signed_reward")
@@ -236,6 +254,79 @@ public class CouponForActivityController {
         return new Result().ok(signedParamsById);
     }
 
+    @GetMapping("count_down")
+    @ApiOperation("活动倒计时")
+    public Result countDown() throws ParseException {
+        Result result = new Result();
+        CounterDownVo counterDownVo = new CounterDownVo();
+
+        SignedRewardSpecifyTimeEntity signedParamsById = couponForActivityService.getParamsById(null);
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+        if(onTimeRange){
+            if(betweenTime){
+                Date date = TimeUtil.contentTimeAndDate(ending_pmt, true);
+                counterDownVo.setCountDown(date.getTime());
+                counterDownVo.setStatus(2);
+                result.setData(counterDownVo);
+                //1活动已结束，2活动进行中，3活动马上开始,4活动已过期
+                result.setCode(200);
+                return result;
+
+            }else{//今日活动已过期或者未到期
+                Date compareDate = TimeUtil.contentTimeAndDate(start_pmt, true);
+                String format = TimeUtil.simpleDateFormat.format(compareDate);
+                System.out.println(format);
+                long time = compareDate.getTime();
+                long timeNow = new Date().getTime();
+
+                if(timeNow<time){//活动未开始
+                    Date date = TimeUtil.contentTimeAndDate(start_pmt, true);
+                    counterDownVo.setCountDown(date.getTime());
+                    counterDownVo.setStatus(3);
+                    result.setData(counterDownVo);
+                    result.setCode(200);
+                    return result;
+                }else{
+                    Date date = TimeUtil.contentTimeAndDate(start_pmt, false);
+                    String f1 = TimeUtil.simpleDateFormat.format(date);
+                    System.out.println(f1);
+                    counterDownVo.setCountDown(date.getTime());
+                    counterDownVo.setStatus(1);
+                    result.setData(counterDownVo);
+                    result.setCode(200);
+                    return result;
+                }//活动已结束
+            }
+        }else{//活动已过期
+            if(start_pmt.getTime()>new Date().getTime()){
+
+                counterDownVo.setStatus(3);
+                counterDownVo.setCountDown(start_pmt.getTime());
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+
+            }else{
+                counterDownVo.setStatus(4);
+                counterDownVo.setCountDown(new Date().getTime());
+                result.setData(counterDownVo);
+                result.setCode(200);
+                return result;
+            }
+
+        }
+    }
     @GetMapping("sr_info_plus")
     @ApiOperation("签到领宝币信息")
     public Result signedRewardInfoPlus() throws ParseException {
@@ -249,6 +340,48 @@ public class CouponForActivityController {
         BigDecimal dbValue = new BigDecimal(signedActivityCoinsNumberInfo.get(value));
         SignedRewardVo s = new SignedRewardVo();
         s.setSignedRewardSpecifyTimeEntity(signedParamsById);
+
+
+        Date start_pmt = signedParamsById.getStartPmt();
+        Date ending_pmt = signedParamsById.getEndingPmt();
+        boolean betweenTime = TimeUtil.isBetweenTime(start_pmt, ending_pmt);
+        long now = new Date().getTime();
+        boolean onTimeRange = false;
+        long stime = start_pmt.getTime();
+        long etime = ending_pmt.getTime();
+
+        if(now>=stime && now <= etime){
+            onTimeRange = true;
+        }
+        if(!betweenTime||!onTimeRange){
+            Integer minValue = signedParamsById.getMinValue();
+            if(dbValue.doubleValue()>minValue){
+                if(minValue>10){
+                    minValue = minValue -10;
+                    dbValue = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(minValue+""),new BigDecimal(1+""));
+                    if(dbValueString == null){
+                        dbValueString = dbValue.toString();
+                    }
+                }else if(minValue >2){
+                    minValue = minValue -1;
+                    dbValue = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(minValue+""),new BigDecimal(1+""));
+                    if(dbValueString == null){
+                        dbValueString = dbValue.toString();
+                    }
+                }else{
+                    dbValue = new BigDecimal("0");
+                    if(dbValueString == null){
+                        dbValueString = "0";
+                    }
+                }
+            }
+
+            s.setValue(new BigDecimal(dbValueString));
+            s.setCount(bdCount);
+            return new Result().ok(s);
+        }
+        dbValueString = null;
+
         s.setValue(dbValue);
         s.setCount(bdCount);
 

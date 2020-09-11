@@ -15,6 +15,7 @@ public class SharingRewardGoodsRecordEntity {
     @TableId
     private Long csrId;         //id
     private Long clientId;      //客户id
+    private Integer goodsType;  //5菜品，6商品
     private Integer status;     //状态
     private Integer activityId; //活动id
     private Long merchantId;    //商家id

@@ -15,4 +15,6 @@ public class AdvertisementEntity {
 
     private Integer type;
 
+    private String url;
+
 }
