@@ -54,6 +54,4 @@ public class SharingActivityDTO implements Serializable {
       private Integer rewardLimit;  //活动奖励高限
       private Integer sharingMethod;// int(2) DEFAULT '1' COMMENT '1-人数方式，2-，3-',
 
-
-
 }

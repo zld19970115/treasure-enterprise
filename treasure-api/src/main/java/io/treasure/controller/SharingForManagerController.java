@@ -1,5 +1,6 @@
 package io.treasure.controller;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -181,7 +183,7 @@ public class SharingForManagerController {
 
     @Login
     @PostMapping("/sharing_item")
-    @ApiOperation("更新活动")
+    @ApiOperation("更新活动!!")
     public Result updateSharingItem(@RequestBody SharingActivityEntity entity){
         int saId = entity.getSaId()==null?0:entity.getSaId();
         QueryWrapper<SharingActivityEntity> queryWrapper = new QueryWrapper<>();
@@ -195,25 +197,113 @@ public class SharingForManagerController {
 
     @Login
     @PutMapping("/sharing_item")
-    @ApiOperation("插入新活动")
+    @ApiOperation("插入新活动(助力者无奖，有效期30天)!!")
     public Result insertSharingItem(@RequestBody SharingActivityDTO dto){
         //效验数据
         ValidatorUtils.validateEntity(dto, AddGroup.class, DefaultGroup.class);
-
+        //插入默认对象
+        SharingActivityExtendsEntity extendsEntity = new SharingActivityExtendsEntity();
+        extendsEntity.setMinimumCharge(0);
+        extendsEntity.setValidityUnit(3);
+        extendsEntity.setValidityLong(30);
+        extendsEntity.setHelperRewardAmount(0);
+        extendsEntity.setHelperRewardType(1);
+        sharingActivityExtendsDao.insertOne(extendsEntity);
+        Integer saeId = extendsEntity.getSaeId();
+        dto.setSaId(saeId);
         sharingActivityForDtoDao.insert(dto);
-
-        /*
-        SharingActivityExtendsEntity sharingActivityExtendsEntity = new SharingActivityExtendsEntity();
-        if(dto.getSaId() != null){
-            sharingActivityExtendsEntity.setSaeId(dto.getSaId());
-        }else{
-
-        }
-        sharingActivityExtendsDao.insert(sharingActivityExtendsEntity);
-        */
 
         return new Result().ok("added new record");
     }
+    public SharingActivityEntity saValidityAndInit(SharingActivityEntity sharingActivityEntity){
+        if(sharingActivityEntity == null)
+            return null;
+        Date openDate = sharingActivityEntity.getOpenDate();
+        Date closeDate = sharingActivityEntity.getCloseDate();
+
+        Long rewardMchId = sharingActivityEntity.getRewardMchId();
+        Long rewardId = sharingActivityEntity.getRewardId();//商品id
+        String subject = sharingActivityEntity.getSubject();//主题
+        if(rewardMchId == null|| rewardId == null|| subject == null || openDate==null || closeDate == null)
+            return null;
+        sharingActivityEntity.setCreator(rewardMchId);
+
+        Long oDate = openDate.getTime();
+        Long cDate = closeDate.getTime();
+        if(oDate>cDate)
+            return null;
+
+        Integer helpersNum = sharingActivityEntity.getHelpersNum();
+        if(helpersNum == null)
+            sharingActivityEntity.setHelpersNum(10);
+        Integer rewardAmount = sharingActivityEntity.getRewardAmount();
+        if(rewardAmount == null)
+            sharingActivityEntity.setRewardAmount(1);
+        Integer sharingMethod = sharingActivityEntity.getSharingMethod();//'1' COMMENT '1-标准模式，2-无限模式,
+        if(sharingMethod == null)
+            sharingActivityEntity.setSharingMethod(1);
+        Integer radio = sharingActivityEntity.getRadio();
+        if(radio == null)
+            sharingActivityEntity.setRadio(1);
+
+        Integer inStoreOnly = sharingActivityEntity.getInStoreOnly();
+        if(inStoreOnly == null)
+            sharingActivityEntity.setInStoreOnly(1);
+        Integer proposeTimes = sharingActivityEntity.getProposeTimes();
+        if(proposeTimes == null)
+            sharingActivityEntity.setProposeTimes(3);
+        Integer repeatableTimes = sharingActivityEntity.getRepeatableTimes();
+        if(repeatableTimes == null)
+            sharingActivityEntity.setRepeatableTimes(1);
+        Integer personLimit = sharingActivityEntity.getPersonLimit();
+        if(personLimit == null)
+            sharingActivityEntity.setPersonLimit(50);
+        Integer rewardLimit = sharingActivityEntity.getRewardLimit();
+        if(rewardLimit == null)
+            sharingActivityEntity.setRewardLimit(50);
+        String rewardUnit = sharingActivityEntity.getRewardUnit();//默认 改为盘
+        if(rewardUnit == null)
+            sharingActivityEntity.setRewardUnit("盘");
+        return sharingActivityEntity;
+    }
+    public SharingActivityExtendsEntity saExtendsValidityAndInit(SharingActivityExtendsEntity sharingActivityExtendsEntity){
+        if(sharingActivityExtendsEntity == null)
+            return null;
+        Integer validityLong = sharingActivityExtendsEntity.getValidityLong();
+        Integer validityUnit = sharingActivityExtendsEntity.getValidityUnit();
+        if(validityLong == null || validityUnit == null)
+            return null;
+
+        Integer helperRewardAmount = sharingActivityExtendsEntity.getHelperRewardAmount();
+        if(helperRewardAmount == null){
+            sharingActivityExtendsEntity.setHelperRewardAmount(0);
+        }
+
+        if(helperRewardAmount >0){
+            //助力者也发放奖品
+            Integer helperRewardType = sharingActivityExtendsEntity.getHelperRewardType();
+            if(helperRewardType == null){
+                sharingActivityExtendsEntity.setHelperRewardType(1);
+            }
+
+            if(helperRewardType == 3 || helperRewardType == 4){
+                Long helperRewardId = sharingActivityExtendsEntity.getHelperRewardId();
+                if(helperRewardId == null){
+                    return null;
+                }
+            }
+        }else{
+            Integer helperRewardType = sharingActivityExtendsEntity.getHelperRewardType();
+            if(helperRewardType == null){
+                sharingActivityExtendsEntity.setHelperRewardType(1);
+            }
+        }
+        Integer minimumCharge = sharingActivityExtendsEntity.getMinimumCharge();
+        if(minimumCharge == null)
+            sharingActivityExtendsEntity.setMinimumCharge(0);
+        return sharingActivityExtendsEntity;
+    }
+
     @Login
     @PutMapping("/sharing_combo_item")
     @ApiOperation("插入新活动")
@@ -221,14 +311,34 @@ public class SharingForManagerController {
         //效验数据
         ValidatorUtils.validateEntity(vo.getSharingActivityDto(), AddGroup.class, DefaultGroup.class);
 
-        sharingActivityForDtoDao.insert(vo.getSharingActivityDto());
-        sharingActivityExtendsDao.insert(vo.getSharingActivityExtendsEntity());
+        Result result = new Result();
+        SharingActivityEntity resSa = vo.getSharingActivityDto();
+        SharingActivityExtendsEntity resSae = vo.getSharingActivityExtendsEntity();
+        SharingActivityEntity saEntity = saValidityAndInit(resSa);
+        SharingActivityExtendsEntity saExtendsEntity = saExtendsValidityAndInit(resSae);
 
-        return new Result().ok("added new record");
+        if(saEntity==null || saExtendsEntity == null){
+            result.setCode(500);
+            result.setMsg("require params error!");
+            return result;
+        }
+        try{
+
+            sharingActivityExtendsDao.insertOne(saExtendsEntity);
+            Integer saeId = saExtendsEntity.getSaeId();
+            saEntity.setSaId(saeId);
+            sharingActivityDao.insert(saEntity);
+
+        }catch (Exception e){
+            result.setCode(500);
+            e.printStackTrace();
+            result.setMsg("database operate error!");
+            return result;
+        }
+        result.setCode(200);
+        result.setMsg("success");
+        return result;
     }
-
-
-
 
     @CrossOrigin
     @Login
@@ -248,9 +358,11 @@ public class SharingForManagerController {
     @PostMapping("/sharing_extends_item")
     @ApiOperation("更新活动续表")
     public Result updateSharingExtendsItem(@RequestBody SharingActivityExtendsEntity entity){
-        int saeId = entity.getSaeId()==null?0:entity.getSaeId();
+        if(entity.getSaeId() == null)
+            return new Result().error("params is null");
+
         QueryWrapper<SharingActivityExtendsEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("saeId",saeId);
+        queryWrapper.eq("saeId",entity.getSaeId());
         SharingActivityExtendsEntity saeEntity = sharingActivityExtendsDao.selectOne(queryWrapper);
         if(saeEntity == null)
             return new Result().error("null object or params error");
@@ -258,6 +370,90 @@ public class SharingForManagerController {
         return new Result().ok("has been updated");
     }
 
+    //=========================================================================================================
+    public Result simpleResult(Integer code,String msg,Object o){
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        result.setData(o);
+        return result;
+    }
+
+    @Autowired(required = false)
+    private RewardGoodsDao rewardGoodsDao;
+    //sharing_reward_goods_record 相关接口
+
+    public RewardGoodsEntity checkRewardGoodsEntity(RewardGoodsEntity entity){
+
+        /*
+        private Long id;                    //bigint unsigned auto_increment comment '菜品ID'  primary key,
+        private String name;                //char(32)          default ''   not null   comment '菜品名称',
+        private Long mch_id;                //bigint            default 0    null       comment '商户id',
+        private Long dishes_id;             //bigint                         null       comment '菜品id',
+        private Integer status;             //int(2)            default 0    null comment '状态(0禁用，1使用)',
+        private Long catelog_id;            //暂时不用独立分类，后面根据需求再添加
+        private BigDecimal price;           //decimal(10, 2)    default 0.00 null comment '菜品原价格',
+        private String units;               //char(10)                      null comment '单位',
+        private String icon;                //char(255)         default ''  null comment '图片',
+        private String qrcode;              //char(255)                     null comment '二维码',
+        private String description;         //char(128)         default ''  null comment '菜品描述',
+        private String remarks;             //char(128)         default ''  null comment '备注信息',
+        private Integer deleted;            //int(2)            default 0   null comment '逻辑删除',
+        private Date update_date;           //datetime                      null comment '更新时间'
+        */
+        return null;
+    }
+    public Result insertOne(RewardGoodsEntity entity){
+        Result result = new Result();
+        RewardGoodsEntity rewardGoodsEntity = checkRewardGoodsEntity(entity);
+        if(rewardGoodsEntity != null){
+            try{
+                rewardGoodsDao.insert(entity);
+            }catch (Exception e){
+                result.setCode(500);
+                result.setMsg("db exception");
+            }
+            result.setCode(200);
+            result.setMsg("success");
+        }
+
+        result.setCode(500);
+        result.setMsg("params error");
+        return result;
+    }
+
+
+    public Result updateOne(RewardGoodsEntity entity){
+        Result result = new Result();
+
+        if(entity.getId() == null)
+            return null;
+
+
+
+        return null;
+    }
+
+
+    public Result selectList(){
+        Result result = new Result();
+
+
+
+        return null;
+    }
+
+    /**
+     * 查询商家所有发布的活动列表
+     */
+    public Result selectSharingActivitys(){
+        Result result = new Result();
+
+
+        return null;
+    }
+
+    //==============================================================================================================
     @CrossOrigin
     @Login
     @GetMapping("/distribution_relation_list")
@@ -384,9 +580,4 @@ public class SharingForManagerController {
         distributionParamsDao.updateById(entity);
         return new Result().ok("update complete");
     }
-
-
-
-
-
 }

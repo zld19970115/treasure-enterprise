@@ -35,4 +35,8 @@ public interface CouponForActivityService {
 
     PageData pageList(Map<String, Object> map);
 
+    Boolean checkClientDrawTimes(Long clientId) throws ParseException;
+
+    BigDecimal getCanUseCurrentActivityRewardAmount(Long clientId);
+
 }
