@@ -3,6 +3,24 @@
 
 <mapper namespace="io.treasure.dao.SharingActivityExtendsDao">
 
+    <update id="insertOne" useGeneratedKeys="true" keyProperty="saeId">
 
+        insert into sharing_activity_extends
+        (helper_reward_type,helper_reward_amount,
+
+        <if test="helperRewardId != null and helperRewardId != ''">
+            helper_reward_id,
+        </if>
+
+        minimum_charge,validity_long,validity_unit)
+        value(#{helperRewardType},#{helperRewardAmount},
+
+        <if test="helperRewardId != null and helperRewardId != ''">
+            #{helperRewardId},
+        </if>
+
+        #{minimumCharge},#{validityLong},#{validityUnit})
+
+    </update>
 
 </mapper>

@@ -307,7 +307,7 @@ public class SendSMSUtil {
         Map map=new HashMap();
         map.put("code",number);
         String template= JSON.toJSONString(map);
-        String data=send.send(phoneNumber, "聚宝科技", "SMS_165340734", template);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_202560547", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
@@ -373,7 +373,7 @@ public class SendSMSUtil {
         Map map=new HashMap();
         map.put("code",number);
         String template= JSON.toJSONString(map);
-        String data=send.send(phoneNumber, "聚宝科技", "SMS_165340734", template);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_202560547", template);
         JSONObject jsonObject=JSONObject.parseObject(data);
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
