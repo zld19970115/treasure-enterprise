@@ -26,6 +26,10 @@ public class SharingActivityRandomUtil {
         if(minLimit<1)   minLimit = 1;
     }
 
+    public static int getRandomPos(int startPos, int stopPos) {
+        return ((int)(Math.random()*stopPos)+startPos);
+    }
+
     public int getRandomValue(){
         return (int)(Math.random()*(maxLimit-minLimit))+minLimit;
     }

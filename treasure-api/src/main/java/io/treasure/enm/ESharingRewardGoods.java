@@ -73,6 +73,12 @@ public class  ESharingRewardGoods {
         private int code;
         private String msg;
 
+        public static ActityValidityUnit fromCode(Integer expireTimeUnitCode) {
+            for(ActityValidityUnit tmpUnit:ActityValidityUnit.values())
+                if(tmpUnit.getCode() == expireTimeUnitCode)
+                    return tmpUnit;
+            return null;
+        }
         ActityValidityUnit(int code,String msg){
             this.code = code;
             this.msg = msg;
