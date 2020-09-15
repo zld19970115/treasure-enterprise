@@ -30,7 +30,7 @@ public class CoinsActivitiesController {
 
     @GetMapping("info")
     @ApiOperation("活动信息")
-    public Result getCoinsActivityInfo(){
+    public Result getCoinsActivityInfo() throws ParseException {
         return coinsActivitiesService.getCoinsActivityInfo();
     }
 
