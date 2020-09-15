@@ -473,8 +473,11 @@
         <if test="status != null">
             and ctmo.`status` = #{status}
         </if>
-        <if test="payMode != null">
+        <if test="payMode != null and payMode != 11">
             and ctmo.pay_mode = #{payMode}
+        </if>
+        <if test="payMode != null and payMode == 11">
+            and ctmo.pay_mode != 1 and pay_coins > 0
         </if>
         <if test="mobile != null and mobile.trim() != ''">
             and u.mobile like CONCAT('%',#{mobile},'%')
