@@ -13,6 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 
+/**
+ * 还差抢宝币机器人===============================================================
+ * 虚拟奖池，=================================================================
+ * 奖金剩余值=====================================================================
+ * 另外微信key过期需要处理=============================================================
+ * 测宝币上限是否有问题=====================================================================
+ */
+
+
 @RestController
 @RequestMapping("/coins_activity")
 @Api(tags="宝币活动(当前)")
@@ -39,6 +48,7 @@ public class CoinsActivitiesController {
     public Result getCountDownInfo() throws ParseException {
         return coinsActivitiesService.getCountDownInfo();
     }
+
 
 
 }

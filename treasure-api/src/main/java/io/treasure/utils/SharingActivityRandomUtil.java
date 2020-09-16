@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 //没使用sb管理
 @NoArgsConstructor
@@ -28,6 +30,25 @@ public class SharingActivityRandomUtil {
 
     public static int getRandomPos(int startPos, int stopPos) {
         return ((int)(Math.random()*stopPos)+startPos);
+    }
+
+    public static List<Integer> initatorFirstPrizePosList(int startPos, int stopPos, Integer maxmum) {
+        List<Integer> list = new ArrayList<>();
+
+        while(list.size() < maxmum){
+            int randomPos = getRandomPos(startPos, stopPos);
+            boolean b = false;
+            for(int i=0;i<list.size();i++){
+                if(list.get(i)==randomPos){
+                    b = true;
+                }
+            }
+            if(!b){
+                System.out.println("加入:"+randomPos);
+                list.add(randomPos);
+            }
+        }
+        return list;
     }
 
     public int getRandomValue(){

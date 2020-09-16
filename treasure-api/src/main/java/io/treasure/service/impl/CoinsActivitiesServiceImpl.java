@@ -35,8 +35,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
     private CoinsActivitiesDao coinsActivitiesDao;
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
-
-    private static List<Double> jackpotList = new ArrayList<>();
+    private static List<Integer> posList = new ArrayList<>();
 
     /**
      * @param id 1系统默认参数 2本次活动(2020-0915这次)当前
@@ -286,9 +285,18 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         int recordsNumToday = getRecordsNumToday(coinsActivity);
         int firstPersonNum = coinsActivity.getHeadPersonNum();
         if(recordsNumToday<firstPersonNum){
+            if(recordsNumToday == 0){
+                posList.clear();
+            }
             return checkSegmentSubStatus(coinsActivity,true,recordsNumToday,firstPersonNum,clientId);
         }else{
             Integer bodySegmentNum = coinsActivity.getBodySegmentNum();
+            if((recordsNumToday - firstPersonNum)== 0){
+                posList.clear();
+            }else if((recordsNumToday - firstPersonNum)%bodySegmentNum == 0){
+                posList.clear();
+            }
+
             int target = (recordsNumToday - firstPersonNum)== 0?0:(recordsNumToday - firstPersonNum)%bodySegmentNum;
             return checkSegmentSubStatus(coinsActivity,false,target,firstPersonNum,clientId);
         }
@@ -332,13 +340,17 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                        return true;
                    }
                    //!==============================================================================
-                   //
-                   //
-                   //
-
-                   int tmpPos = SharingActivityRandomUtil.getRandomPos(startPos,stopPos);
-                   System.out.println(tmpPos);
-                   if(tmpPos==currentPos){
+                   if(posList.size() == 0){
+                       posList = SharingActivityRandomUtil.initatorFirstPrizePosList(startPos,stopPos,maxmum);
+                   }
+                   boolean inRange = false;
+                   for(int i = 0;i<posList.size();i++){
+                       Integer pos = posList.get(i);
+                       if(pos == currentPos){
+                           inRange = true;
+                       }
+                   }
+                   if(inRange){
                        return true;
                    }else{
                        return false;
