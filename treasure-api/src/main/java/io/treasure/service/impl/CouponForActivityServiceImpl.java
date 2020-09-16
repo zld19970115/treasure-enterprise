@@ -520,6 +520,47 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         return true;
     }
 
+    public Boolean checkClientDrawTimes(Long clientId) throws ParseException {
+        Date date = new Date();
+        String current = TimeUtil.sdfYmd.format(date)+ " 00:00:00";
+        Date parse = TimeUtil.simpleDateFormat.parse(current);
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientId);
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("get_method",3);
+        queryWrapper.ge("got_pmt",parse);
 
+        Integer res = mulitCouponBoundleDao.selectCount(queryWrapper);
+        if(res==null)
+            res = 0;
+        if(res>0)
+            return false;
+        return true;
+    }
+
+    public BigDecimal getCanUseCurrentActivityRewardAmount(Long clientId){
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        if(clientId == null) return new BigDecimal("1000");
+
+        queryWrapper.eq("owner_id",clientId);
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("get_method",3);
+        queryWrapper.ge("expire_pmt",new Date());
+        queryWrapper.select("sum(coupon_value - consume_value) as coupon_value,id");
+
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectList(queryWrapper);
+        if(mulitCouponBoundleEntities.size()>0){
+            MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleEntities.get(0);
+            if(mulitCouponBoundleEntity != null){
+                BigDecimal couponValue = mulitCouponBoundleEntity.getCouponValue();
+                return couponValue;
+            }else{
+                return  new BigDecimal("0");
+            }
+
+        }else{
+            return new BigDecimal("0");
+        }
+    }
 
 }

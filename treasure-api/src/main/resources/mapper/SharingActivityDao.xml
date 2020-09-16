@@ -3,7 +3,6 @@
 
 <mapper namespace="io.treasure.dao.SharingActivityDao">
 
-
     <select id="getListByMerchantIdAndStatus" resultType="io.treasure.entity.SharingActivityEntity">
         select  * from sharing_activity where reward_mch_id =#{merchantId}
         and date_format(close_date, '%Y-%m-%d') >= #{now}

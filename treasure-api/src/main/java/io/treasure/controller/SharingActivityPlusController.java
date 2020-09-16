@@ -1,6 +1,9 @@
 package io.treasure.controller;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.extension.api.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,6 +21,7 @@ import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.HelpSharingActivityVo;
 import io.treasure.vo.ProposeSharingActivityVo;
+import io.treasure.vo.SAComboForMchVo;
 import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +64,8 @@ public class SharingActivityPlusController {
     private CouponForActivityService couponForActivityService;
     @Autowired(required = false)
     private SharingActivityExtendsDao sharingActivityExtendsDao;
+    @Autowired(required = false)
+    private SharingActivityDao sharingActivityDao;
 
     @Autowired(required = false)
     private RecordGiftDao recordGiftDao;
@@ -731,34 +737,51 @@ public class SharingActivityPlusController {
     //给发起者发奖金
     private void prizesInitiator(SharingActivityEntity sharingActivityEntity,ClientUserEntity initiator) throws ParseException {
         Long initiatorId = initiator.getId();
-
+        Integer goodsType = null;
         switch(sharingActivityEntity.getRewardType()){
             case 1://代付金
                 Integer gift = sharingActivityEntity.getRewardAmount();
                 updateBalanceRecord(initiator,gift,1,sharingActivityEntity.getSaId());
                 break;
             case 2://商品
-
+                goodsType = ESharingRewardGoods.GoodsType.GOODS_TYPE.getCode();
             case 3://奖励菜品    怎样给商家展示或者到商家使用
+                //注意商品数量限值最大为========================================2超过则按2处理
+                if(goodsType != null)
+                    goodsType = ESharingRewardGoods.GoodsType.DISHES_TYPE.getCode();
+
                 SharingRewardGoodsRecordEntity rewardGoodsentity = new SharingRewardGoodsRecordEntity();
                 rewardGoodsentity.setActivityId(sharingActivityEntity.getSaId());
                 rewardGoodsentity.setClientId(initiatorId);
-                rewardGoodsentity.setGoodsId(sharingActivityEntity.getRewardId());
-                rewardGoodsentity.setMerchantId(sharingActivityEntity.getRewardMchId());
-
-                //过期时间属于需要添加的字段---默认为活动结束时间
-                rewardGoodsentity.setExpireTime(sharingActivityEntity.getCloseDate());
-                rewardGoodsentity.setUpdatePmt(new Date());
-                rewardGoodsentity.setGoodsNum(sharingActivityEntity.getRewardAmount());
                 rewardGoodsentity.setStatus(ESharingRewardGoods.Status.REWARD_ENABLE.getCode());
+                rewardGoodsentity.setGoodsType(goodsType);
+                rewardGoodsentity.setMerchantId(sharingActivityEntity.getRewardMchId());
+                rewardGoodsentity.setGoodsId(sharingActivityEntity.getRewardId());
+                Integer rewardAmount = sharingActivityEntity.getRewardAmount();
+                if(rewardAmount>2)
+                    rewardAmount = 2;
+                rewardGoodsentity.setGoodsNum(rewardAmount);
+                rewardGoodsentity.setUpdatePmt(new Date());
 
+                SharingActivityExtendsEntity extendsInfoById = sharingActivityExtendsService.getExtendsInfoById(sharingActivityEntity.getSaId());
+                if(extendsInfoById != null){
+                    Integer validityLong = extendsInfoById.getValidityLong();
+                    Integer validityUnit = extendsInfoById.getValidityUnit();
+                    ESharingRewardGoods.ActityValidityUnit vu = ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS;
+                    if(validityUnit == 1){
+                        vu = ESharingRewardGoods.ActityValidityUnit.UNIT_DAYS;
+                    }else if(validityUnit == 2){
+                        vu = ESharingRewardGoods.ActityValidityUnit.UNIT_WEEKS;
+                    }
+                    Date date = TimeUtil.calculateAddDate(validityLong, vu);
+                    rewardGoodsentity.setExpireTime(date);
+                }
                 sharingRewardGoodsRecordService.insertItem(rewardGoodsentity);
                 break;
             case 4://宝币
                 Integer balance = sharingActivityEntity.getRewardAmount();
                 updateBalanceRecord(initiator,balance,4,sharingActivityEntity.getSaId());
                 //////////////////////////////////
-
                 break;
 
         }
@@ -880,7 +903,7 @@ public class SharingActivityPlusController {
     }
 
     @PostMapping("mch_propose_sa")
-    @ApiOperation("商家发布助力活动")
+    @ApiOperation("商家发布助力活动(停用)")
     public Result mchProposeSharingActivity(@RequestBody SharingActivityDTO sharingActivityDTO){
         List<SharingActivityEntity> oneByMerchantIdAndStatus = sharingActivityService.getListByMerchantIdAndStatus(sharingActivityDTO.getRewardMchId(),null);
         if (oneByMerchantIdAndStatus.size()>0){
@@ -924,5 +947,6 @@ public class SharingActivityPlusController {
             return new Result().ok("没有助力信息");
         }
     }
+
 }
 

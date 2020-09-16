@@ -12,4 +12,5 @@ import java.util.List;
 @Mapper
 public interface SharingActivityDao extends BaseDao<SharingActivityEntity>{
     List<SharingActivityEntity> getListByMerchantIdAndStatus(long MerchantId , Date now);
+
 }

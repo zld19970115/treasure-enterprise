@@ -832,7 +832,7 @@
         IFNULL(SUM( case when `status` = 10 then merchant_proceeds else 0 end ),0) as merchantTotalCash,
         IFNULL(SUM( case when `status` = 10 then gift_money else 0 end ),0) as giftTotalCash,
         <if test="merchantId == null">
-            IFNULL(SUM( case when `status` = 10 and pay_mode = 1 then pay_money else 0 end ),0) as balanceTotalCash,
+            IFNULL(SUM( case when `status` = 10 then pay_coins else 0 end ),0) as balanceTotalCash,
             IFNULL(SUM( case when `status` = 10 and pay_mode = 2 then pay_money else 0 end ),0) as aliTotalCash,
             IFNULL(SUM( case when `status` = 10 and pay_mode = 3 then pay_money else 0 end ),0) as wxTotalCash,
         </if>

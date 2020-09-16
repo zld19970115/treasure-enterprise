@@ -42,16 +42,16 @@ import static cn.hutool.core.date.SystemClock.now;
 @Api(tags="宝币相关内容")
 public class CouponForActivityController {
 
-
     @Autowired
     private CouponForActivityService couponForActivityService;
     @Autowired
     private SignedRewardSpecifyTimeServiceImpl signedRewardSpecifyTimeService;
     @Autowired(required = false)
     private SignedRewardSpecifyTimeDao signedRewardSpecifyTimeDao;
-
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
 
     private static String dbValueString = null;
 
@@ -93,8 +93,6 @@ public class CouponForActivityController {
         return new Result<PageData>().ok(couponForActivityService.pageList(params));
     }
 
-    @Autowired(required = false)
-    private ClientUserDao clientUserDao;
     @GetMapping("signed_reward")
     @ApiOperation("签到领宝币")
     @ApiImplicitParam(name="clientId",value = "用户表id",dataType = "long",paramType = "query",required = true)
@@ -153,7 +151,10 @@ public class CouponForActivityController {
 
         Integer activityMode = signedParamsById.getActivityMode();
 
-        Boolean rBoolean = couponForActivityService.clientCheckForSignedForReward(clientId);//客户参加本活动次数是否未超限
+        //Boolean rBoolean = couponForActivityService.clientCheckForSignedForReward(clientId);//客户参加本活动次数是否未超限
+        Boolean rBoolean = couponForActivityService.checkClientDrawTimes(clientId);//客户参加本活动次数是否未超限
+
+        BigDecimal canUseAmount = couponForActivityService.getCanUseCurrentActivityRewardAmount(clientId);
         if(rBoolean){
 
             switch(activityMode){
@@ -161,23 +162,44 @@ public class CouponForActivityController {
 
                     //常规模式
                     if(bdCount>0 && dbValue.doubleValue()>0){
-                        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoins(dbValue, bdCount);
-                        if(bdCount == 1)
-                            randomCoins = dbValue;
-                        vo.setRewardValue(randomCoins);
-                        vo.setComment("恭喜获得"+randomCoins+"宝币！");
-                        try{
-                            couponForActivityService.insertClientActivityRecord(clientId,randomCoins,3,validityLong,currentUnit);
-                            result.setCode(200);
-                            result.setData(vo);
-                            return result;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            vo.setComment("服务器忙，请稍候重试！");
+                        if(canUseAmount.doubleValue() >= 50){
+                            //用户抢到的未消费的宝币值达到50
+                            vo.setRewardValue(new BigDecimal("0"));
+                            vo.setComment("宝币仓已满，请消费后再来抢红包！");
                             result.setCode(500);
                             result.setData(vo);
                             return result;
+
+                        }else{
+
+                            BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoins(dbValue, bdCount);
+                            if(bdCount == 1)
+                                randomCoins = dbValue;
+                            vo.setRewardValue(randomCoins);
+                            BigDecimal realyCoins = new BigDecimal("0");
+
+                            if((canUseAmount.add(randomCoins)).doubleValue()<50){
+                                realyCoins = randomCoins;
+                                vo.setComment("恭喜获得"+randomCoins+"宝币！");
+                            }else{
+                                realyCoins = new BigDecimal("50").subtract(canUseAmount);
+                                vo.setComment("恭喜获得"+realyCoins+"宝币！宝币仓已满，请消费后再来抢红包!");
+                            }
+                            try{
+                                //加后宝币的值也不能超过50元
+                                couponForActivityService.insertClientActivityRecord(clientId,realyCoins,3,validityLong,currentUnit);
+                                result.setCode(200);
+                                result.setData(vo);
+                                return result;
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                vo.setComment("服务器忙，请稍候重试！");
+                                result.setCode(500);
+                                result.setData(vo);
+                                return result;
+                            }
                         }
+
                     }else{
                         vo.setRewardValue(new BigDecimal("0"));
                         vo.setComment("红包已经抢完了，下次要点来！");
@@ -190,23 +212,44 @@ public class CouponForActivityController {
                     Integer minValue = signedParamsById.getMinValue();
                     BigDecimal rewardCoins = new BigDecimal("0");
                     if(dbValue.doubleValue()>maxValue){
+                        //活动有效
                         rewardCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(maxValue+""),new BigDecimal(minValue+""));
 
-                        try{
-                            vo.setRewardValue(rewardCoins);
-                            vo.setComment("恭喜获得"+rewardCoins+"宝币！");
-                            couponForActivityService.insertClientActivityRecord(clientId,rewardCoins,3,validityLong,currentUnit);
-                            result.setCode(200);
-                            result.setData(vo);
-                            return result;
-
-                        }catch (Exception e){
-                            e.printStackTrace();
+                        //活动值与是否超过了限值
+                        if(canUseAmount.doubleValue()>=50){
+                            //用户抢到的未消费的宝币值达到50
                             vo.setRewardValue(new BigDecimal("0"));
-                            vo.setComment("服务器忙，请稍候重试！");
+                            vo.setComment("宝币仓已满，请消费后再来抢红包！");
                             result.setCode(500);
                             result.setData(vo);
                             return result;
+                        }else{
+
+                            BigDecimal realyCoins = new BigDecimal("0");
+
+                            if((canUseAmount.add(rewardCoins)).doubleValue()<50){
+                                realyCoins = rewardCoins;
+                                vo.setComment("恭喜获得"+rewardCoins+"宝币！");
+                            }else{
+                                realyCoins = new BigDecimal("50").subtract(canUseAmount);
+                                vo.setComment("恭喜获得"+realyCoins+"宝币!");
+                            }
+                            try{
+                                vo.setRewardValue(rewardCoins);
+                                //vo.setComment("恭喜获得"+rewardCoins+"宝币！");
+                                couponForActivityService.insertClientActivityRecord(clientId,realyCoins,3,validityLong,currentUnit);
+                                result.setCode(200);
+                                result.setData(vo);
+                                return result;
+
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                vo.setRewardValue(new BigDecimal("0"));
+                                vo.setComment("服务器忙，请稍候重试！");
+                                result.setCode(500);
+                                result.setData(vo);
+                                return result;
+                            }
                         }
 
                     }else if(dbValue.doubleValue()>=minValue){
