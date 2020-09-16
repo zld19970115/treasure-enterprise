@@ -5,11 +5,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.CoinsActivitiesDao;
+import io.treasure.entity.CoinsActivitiesEntity;
+import io.treasure.entity.SignedRewardSpecifyTimeEntity;
 import io.treasure.service.CoinsActivitiesService;
+import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -29,6 +31,9 @@ public class CoinsActivitiesController {
 
     @Autowired
     private CoinsActivitiesService coinsActivitiesService;
+
+    @Autowired(required = false)
+    private CoinsActivitiesDao coinsActivitiesDao;
 
     @GetMapping("draw_coins")
     @ApiOperation("抢宝币")
@@ -54,6 +59,33 @@ public class CoinsActivitiesController {
     public Result getFirstPrizeList() throws ParseException {
         return coinsActivitiesService.getFirstPrizeList();
     }
+
+    @GetMapping("coins_params")
+    @ApiOperation("取得活动参数(重写的)")
+    @ApiImplicitParam(name="id",value = "参数id",dataType = "long",paramType = "query",required = false)
+    public Result getCoinsActivityParams(Long id){
+        CoinsActivitiesEntity coinsActivityById = coinsActivitiesService.getCoinsActivityById(2L, false);
+        return new Result().ok(coinsActivityById);
+    }
+
+    /**
+     * 修改签到领宝币参数
+     * @param entity
+     * @return
+     */
+    @PostMapping("coins_params")
+    @ApiOperation("修改活动参数(重写的)")
+    public Result updateCoinActivityParams(@RequestBody CoinsActivitiesEntity entity) throws ParseException {
+
+        entity.setId(2L);
+        try{
+            coinsActivitiesDao.updateById(entity);
+            return new Result().ok("success");
+        }catch (Exception e){
+            return new Result().error("failure");
+        }
+    }
+
 
 
 
