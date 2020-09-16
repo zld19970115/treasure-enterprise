@@ -68,8 +68,9 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         Long divi = visualJackpot.longValue()/sub;
         int tmp = (divi.intValue())*4;
         BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp), new BigDecimal(commonWinMinmum+""));
-
-        visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
+        if(visualRemain != null){
+            visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
+        }
     }
     /**
      * @param id 1系统默认参数 2本次活动(2020-0915这次)当前
@@ -363,38 +364,32 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 realyFirstPrizeNum ++;
         }
 
-        if(realyFirstPrizeNum < maxmum){
-            //有可能产生大奖
-            int currentPos = records+1;
-           if(currentPos >= startPos && currentPos <= stopPos){
-               if(currentPos == stopPos){
-                   return true;
-               }else{
-                   if(startPos == stopPos){
-                       return true;
-                   }
-                   //!==============================================================================
-                   if(posList.size() == 0){
-                       posList = SharingActivityRandomUtil.initatorFirstPrizePosList(startPos,stopPos,maxmum+1);
-                   }
-                   boolean inRange = false;
-                   for(int i = 0;i<posList.size();i++){
-                       Integer pos = posList.get(i);
-                       if(pos == currentPos){
-                           inRange = true;
-                       }
-                   }
-                   if(inRange){
-                       return true;
-                   }else{
-                       return false;
-                   }
-
-               }
-           }else return false;
-        }else{
-           return false;
+        if(realyFirstPrizeNum >= maxmum){
+            return false;
         }
+        //有可能产生大奖
+        int currentPos = records+1;
+        if(currentPos < startPos || currentPos > stopPos){
+            return false;
+        }
+       if(currentPos == stopPos){
+           return true;
+       }
+
+       //!========================在范围产生大奖范围内且不是最后一个======================================================
+       if(posList.size() == 0){
+           posList = SharingActivityRandomUtil.initatorFirstPrizePosList(startPos,stopPos,maxmum+1);
+           System.out.println("大将将在以下位置产生："+posList);
+       }
+       boolean inRange = false;
+       for(int i = 0;i<posList.size();i++){
+           Integer pos = posList.get(i);
+           System.out.println("当前位置："+currentPos+",奖金位置："+pos);
+           if(pos == currentPos){
+               return true;
+           }
+       }
+       return false;
     }
 
     /**
@@ -412,7 +407,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
 
             Integer prizePosS = coinsActivity.getBodyPrizePosS();
             Integer prizePosE = coinsActivity.getBodyPrizePosE();
-
+            if(prizePosS > (pos+1) || prizePosE < (pos+1))
+                return false;
             if(checkFirstPrizeInSegmentSubStatus(coinsActivity,null,pos,clientId,prizePosS,prizePosE)){
                 return true;
             }else{
@@ -424,6 +420,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             Integer prizePosS = coinsActivity.getFirstPrizePosS();
             Integer prizePosE = coinsActivity.getFirstPrizePosE();
 
+            if(prizePosS > (pos+1) || prizePosE < (pos+1))
+                return false;
             if(checkFirstPrizeInSegmentSubStatus(coinsActivity,firstPrizeNum,pos,clientId,prizePosS,prizePosE)){
                 return true;
             }else{
