@@ -325,6 +325,16 @@ public class TimeUtil {
             return true;
         return false;
     }
+    public static boolean isBetweenDate(Date start,Date stop){
+        long startLong = start.getTime();
+        long stopLong = stop.getTime();
+        long target = new Date().getTime();
+
+        if(startLong <= target && stopLong >= target)
+            return true;
+        return false;
+    }
+
     public static Date getCurrentDateAndTime(Date date) throws ParseException {
         String hms = sdfHms.format(date);
         String ymd = sdfYmd.format(new Date());
@@ -347,6 +357,15 @@ public class TimeUtil {
         return new Date(time);
     }
 
+    public static Date calculateSubDate(Date preferenceYmd,Date preferenctHms,Long days) throws ParseException {
+        preferenceYmd = preferenceYmd==null?new Date():preferenceYmd;
+        String ymd = sdfYmd.format(preferenceYmd);
+        String hms = sdfHms.format(preferenctHms);
+        Long tmp = simpleDateFormat.parse(ymd+" "+hms).getTime();
+        tmp = tmp - days*24*60*60*1000;
+        System.out.println("当前时间为："+simpleDateFormat.format(tmp));
+        return new Date(tmp);
+    }
     public static Date calculateAddDate(Integer validity, ESharingRewardGoods.ActityValidityUnit actityValidityUnit) throws ParseException {
         Date date = new Date();
         long oneDay = 24*60*60*1000;

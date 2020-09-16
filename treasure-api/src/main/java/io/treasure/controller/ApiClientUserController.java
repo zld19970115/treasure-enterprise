@@ -39,6 +39,7 @@ import io.treasure.vo.PageTotalRowData;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.jacoco.agent.rt.internal_43f5073.core.internal.flow.IFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
@@ -85,7 +86,10 @@ public class ApiClientUserController {
     private ClientUserDao clientUserDao;
     @Autowired
     private UserWithdrawService userWithdrawService;
-
+    @Autowired
+    private MerchantUserService merchantUserService;
+    @Autowired
+    private MerchantService merchantService;
     @Autowired
     private CouponForActivityService couponForActivityService;
 
@@ -203,6 +207,8 @@ public class ApiClientUserController {
     })
     public Result register(String tel) {
         Result result = SendSMSUtil.sendCodeForRegister(tel, smsConfig);
+        String msg = result.getMsg();
+        clientUserDao.insertMobileAndCode(msg,tel);
         return result;
     }
 
@@ -244,12 +250,13 @@ public class ApiClientUserController {
     @ApiOperation("用户登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile", value = "手机号", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "code", value = "验证码",  paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "bmId", value = "业务元id",  paramType = "query", dataType = "Long"),
             @ApiImplicitParam(name = "unionid", value = "unionid", paramType = "query", dataType = "String")
     })
-    public Result login(String mobile,Long bmId ,String unionid) {
+    public Result login(String mobile,Long bmId,String code ,String unionid) {
         //用户登录
-        Result  result = clientUserService.login(mobile,bmId,unionid);
+        Result  result = clientUserService.login(mobile,code,bmId,unionid);
      //   clientUserService.updateCID(cid, mobile);
         return new Result().ok(result);
     }
@@ -940,5 +947,25 @@ public class ApiClientUserController {
         AppPushUtil.pushToSingleMerchantPC(title, text, clientId);
         return new Result().ok("成功");
     }
-
+    @GetMapping("/userpushMer")
+    @ApiOperation("呼叫服务员")
+    public Result userpushMer(@RequestParam String orderId) {
+        MasterOrderEntity masterOrderEntity = masterOrderService.selectByOrderId(orderId);
+        if (masterOrderEntity==null){
+            return new Result().error("没找到此订单，请稍后再试");
+        }
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
+        if (merchantUserEntity==null){
+            return new Result().error("商户不存在，请稍后再试");
+        }
+        MerchantEntity merchantEntity = merchantService.selectById(masterOrderEntity.getMerchantId());
+        if (merchantEntity==null){
+            return new Result().error("商户不存在，请稍后再试");
+        }
+        String title = "呼叫服务员";
+        String text = "用户"+masterOrderEntity.getCreator()+"呼叫服务员，订单号为"+orderId;
+        AppPushUtil.pushToSingleMerchantPC(title, text, merchantUserEntity.getClientId());
+        SendSMSUtil.userTofwy(merchantEntity.getMobile(), masterOrderEntity.getCreator(),orderId,smsConfig);
+        return new Result().ok("成功");
+    }
 }

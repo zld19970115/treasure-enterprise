@@ -381,7 +381,28 @@ public class SendSMSUtil {
         }
         return result;
     }
-
+    /**
+     * 获取验证码
+     * @param phoneNumber
+     * @param smsConfig
+     * @return
+     */
+    public static boolean userTofwy(String phoneNumber,Long user ,String order,SMSConfig smsConfig) {
+        boolean ret=false;
+        SMSSend send=new SMSSend(smsConfig);
+        Map map=new HashMap();
+        map.put("value",user);
+        String pwd = order.substring(order.length() - 6);
+        map.put("order",pwd);
+        String template= JSON.toJSONString(map);
+        String data=send.send(phoneNumber, "聚宝科技", "SMS_202568080", template);
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String code=jsonObject.get("Code").toString();
+        if("OK".equals(code)){
+            ret=true;
+        }
+        return ret;
+    }
     /**
      *
      * @param phoneNumber
