@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.sms.SMSSend;
 import io.treasure.common.utils.Result;
+import io.treasure.service.MerchantService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -378,6 +379,7 @@ public class SendSMSUtil {
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
             result.ok(number);
+
         }
         return result;
     }
