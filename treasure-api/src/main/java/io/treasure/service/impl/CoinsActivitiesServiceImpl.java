@@ -3,17 +3,21 @@ package io.treasure.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CoinsActivitiesDao;
 import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.enm.ECoinsActivities;
 import io.treasure.enm.ESharingRewardGoods;
+import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.CoinsActivitiesEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
+import io.treasure.service.ClientUserService;
 import io.treasure.service.CoinsActivitiesService;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.CoinsActivityVo;
 import io.treasure.vo.CounterDownVo;
+import io.treasure.vo.PrizeUserInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +40,9 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
     @Autowired(required = false)
     private MulitCouponBoundleDao mulitCouponBoundleDao;
     private static List<Integer> posList = new ArrayList<>();
+    @Autowired(required = false)
+    private ClientUserDao clientUserDao;
+    private Date gotFrizeDate = null;
 
     /**
      * @param id 1系统默认参数 2本次活动(2020-0915这次)当前
@@ -341,7 +348,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                    }
                    //!==============================================================================
                    if(posList.size() == 0){
-                       posList = SharingActivityRandomUtil.initatorFirstPrizePosList(startPos,stopPos,maxmum);
+                       posList = SharingActivityRandomUtil.initatorFirstPrizePosList(startPos,stopPos,maxmum+1);
                    }
                    boolean inRange = false;
                    for(int i = 0;i<posList.size();i++){
@@ -584,7 +591,9 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                     //生成普通奖,并返回
                     Integer commonWinMaxmum = entity.getCommonWinMaxmum();
                     Integer commonWinMinmum = entity.getCommonWinMinmum();
-                    rewardCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(commonWinMaxmum+""),new BigDecimal(commonWinMinmum+""));
+                    BigDecimal bigDecimal = new BigDecimal(commonWinMaxmum + "");
+                    bigDecimal = bigDecimal.subtract(new BigDecimal("0.01"));
+                    rewardCoins = SharingActivityRandomUtil.getRandomCoinsInRange(bigDecimal,new BigDecimal(commonWinMinmum+""));
                 }
                 //insertCoinsActivityRecordByClientId(CoinsActivitiesEntity coinsActivity,Long clientId,BigDecimal award,Integer method, ESharingRewardGoods.ActityValidityUnit actityValidityUnit)
                 Double aDouble = insertCoinsActivityRecordByClientId(entity, clientId, rewardCoins, 3);
@@ -654,6 +663,58 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                         new CounterDownVo(new Date().getTime(),4,"系统活动参数异常!!")
                         );
         }
+    }
+
+    public List<PrizeUserInfoVo> getFrizeDateInfo() throws ParseException {
+
+        List<PrizeUserInfoVo> res = new ArrayList<>();
+        CoinsActivitiesEntity coinsActivityById = getCoinsActivityById(2L, false);
+        Integer prizeMinmun = coinsActivityById.getPrizeMinmun();
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("use_status",0);
+        queryWrapper.eq("get_method",3);
+        queryWrapper.ge("coupon_value",prizeMinmun);//大于等于
+        Date openingPmt = coinsActivityById.getOpeningPmt();
+        Date date = TimeUtil.contentTimeAndDate(openingPmt, true);
+        if(gotFrizeDate == null){
+            queryWrapper.ge("got_pmt",date);//用今天的时间
+        }else{
+            queryWrapper.ge("got_pmt",gotFrizeDate);
+        }
+        queryWrapper.orderByAsc("got_pmt");
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectList(queryWrapper);
+
+        if(mulitCouponBoundleEntities.size()>0){
+            gotFrizeDate = mulitCouponBoundleEntities.get(0).getGotPmt();//更新时间参数
+        }
+        for(int i=0;i<mulitCouponBoundleEntities.size();i++){
+            MulitCouponBoundleEntity entity = mulitCouponBoundleEntities.get(i);
+            ClientUserEntity clientUserEntity = clientUserDao.selectById(entity.getOwnerId());
+            if(clientUserEntity != null){
+                if(clientUserEntity.getMobile() != null){
+                    String mobile = clientUserEntity.getMobile();
+                    mobile = mobile.substring(0,3)+"****"+mobile.substring(7);
+                    res.add(
+                            new PrizeUserInfoVo(entity.getOwnerId(),mobile,entity.getCouponValue().doubleValue())
+                    );
+                }
+            }
+        }
+        Integer prizeMaxmum = coinsActivityById.getPrizeMaxmum();
+        if(res.size()<5){
+            //生成随机假数
+            int tmpNum = 5- res.size();
+            List<PrizeUserInfoVo> resx = SharingActivityRandomUtil.generateVisualMobile(tmpNum,prizeMaxmum,prizeMinmun);
+            for(int j = 0;j<resx.size();j++){
+                res.add(resx.get(j));
+            }
+        }
+        return res;
+    }
+    public Result getFirstPrizeList() throws ParseException {
+        List<PrizeUserInfoVo> frizeDateInfo = getFrizeDateInfo();
+        return coinActivityResult(200,"first_prize_mobiles",frizeDateInfo);
     }
 
 }

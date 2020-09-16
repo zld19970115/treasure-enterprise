@@ -1,5 +1,6 @@
 package io.treasure.utils;
 
+import io.treasure.vo.PrizeUserInfoVo;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,8 @@ public class SharingActivityRandomUtil {
         return list;
     }
 
+
+
     public int getRandomValue(){
         return (int)(Math.random()*(maxLimit-minLimit))+minLimit;
     }
@@ -82,7 +85,40 @@ public class SharingActivityRandomUtil {
         BigDecimal resBD = new BigDecimal(res+"").divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);
         return resBD;
     }
+    public static String generateMobileHeader(){
+        int[] ints = {132,134,135,136,137,138,139,147,150,151,152,155,157,158,159,182,183,187,188,139};
+        int randomPos = getRandomPos(0, ints.length-1);
+        int anInt = ints[randomPos];
+        return anInt+"";
+    }
+    public static String generateMobileBody(){
+        int[] ints = {0,1,2,3,4,5,6,7,8,9,6};
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<4;i++){
+            int randomPos = getRandomPos(0, ints.length-1);
+            sb.append(randomPos+"");
+        }
+        return sb.toString().trim();
+    }
+    //生成随机手机号13
+    public static String randomVisualMobile(){
+        StringBuilder sb = new StringBuilder();
 
-
+        String header = generateMobileHeader();
+        sb.append(header);
+        return sb.toString()+"****"+generateMobileBody();
+    }
+    public static List<PrizeUserInfoVo> generateVisualMobile(int tmpNum,int maxMum,int minMum) {
+        List<PrizeUserInfoVo> res = new ArrayList<>();
+        for(int i=0;i<tmpNum;i++){
+            String visualMobile = randomVisualMobile();
+            BigDecimal randomCoinsInRange = getRandomCoinsInRange(new BigDecimal(maxMum + ""), new BigDecimal(minMum + ""));
+            PrizeUserInfoVo p = new PrizeUserInfoVo();
+            p.setAwardsAmount(randomCoinsInRange.doubleValue());
+            p.setMobile(visualMobile);
+            res.add(p);
+        }
+        return res;
+    }
 
 }

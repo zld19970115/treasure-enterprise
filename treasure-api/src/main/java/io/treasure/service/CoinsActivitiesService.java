@@ -46,4 +46,6 @@ public interface CoinsActivitiesService {
     Result clientDraw(Long clientId) throws ParseException;
     Result getCoinsActivityInfo() throws ParseException;
     Result getCountDownInfo() throws ParseException;
+
+    Result getFirstPrizeList() throws ParseException;
 }

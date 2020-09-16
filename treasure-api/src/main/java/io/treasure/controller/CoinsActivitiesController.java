@@ -49,6 +49,12 @@ public class CoinsActivitiesController {
         return coinsActivitiesService.getCountDownInfo();
     }
 
+    @GetMapping("first_prize_list")
+    @ApiOperation("头奖列表")
+    public Result getFirstPrizeList() throws ParseException {
+        return coinsActivitiesService.getFirstPrizeList();
+    }
+
 
 
 }
