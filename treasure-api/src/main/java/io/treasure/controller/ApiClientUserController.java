@@ -209,6 +209,8 @@ public class ApiClientUserController {
         Result result = SendSMSUtil.sendCodeForRegister(tel, smsConfig);
         Object resultData = result.getData();
       //  System.out.println("resultData"+resultData.toString()+"45555555555555555555555555555555555555555555555555555555555555555555555555555555555");
+
+        clientUserDao.deletecode(tel);
         clientUserDao.insertMobileAndCode(resultData.toString(),tel);
         return result;
     }
