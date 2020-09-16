@@ -716,9 +716,18 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                         );
             case 4://4活动已过期
 
-                return coinActivityResult(501,"来晚了，本活动已结束!!",
-                        new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
-                        );
+                Date openingPmt4 = entity.getOpeningPmt();
+                Long now4 = new Date().getTime();
+                if(openingPmt4.getTime()>now4){
+                    return coinActivityResult(501,"距活动即将开始!!",
+                            new CounterDownVo(openingPmt4.getTime(),3,"距活动即将开始!!")
+                    );
+                }else{
+                    return coinActivityResult(501,"来晚了，本活动已结束!!",
+                            new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
+                    );
+                }
+
             default://5活动参数错误
 
                 return coinActivityResult(501,"系统活动参数异常!!",
