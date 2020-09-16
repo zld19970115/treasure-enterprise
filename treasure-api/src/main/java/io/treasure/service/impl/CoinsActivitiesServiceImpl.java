@@ -205,7 +205,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         ESharingRewardGoods.ActityValidityUnit eTimeUnit = ESharingRewardGoods.ActityValidityUnit.fromCode(expireTimeUnit);
 
         if(eTimeUnit != null)
-            TimeUtil.calculateAddDate(expireTimeLong, eTimeUnit);
+            return TimeUtil.calculateAddDate(expireTimeLong, eTimeUnit);
         return null;
     }
 //======================================以上基本活动处理=======================================================
@@ -472,7 +472,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         queryWrapper.eq("type",1);
         queryWrapper.eq("get_method",3);
 
-        Date date = TimeUtil.calculateSubDate(new Date(), openingPmt, drawDays.longValue());
+        Date date = TimeUtil.calculateSubDate(new Date(), openingPmt, drawDays.longValue()-1);
         System.out.println("校验时间"+date);
         queryWrapper.ge("got_pmt",date);
 
@@ -529,8 +529,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id",clientUser_id);
         queryWrapper.eq("type",1);
-        queryWrapper.eq("use_status",0);
         queryWrapper.eq("get_method",3);
+        queryWrapper.eq("use_status",0);
         queryWrapper.ge("expire_pmt",now());
         queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
         MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
@@ -682,7 +682,6 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             return coinActivityResultWithCoinsActivity(200,"success",coinsActivityVo,true);
         }
         //还差时间相关信息
-
     }
 
     public Result coinActivityResult(int code, String msg, Object data){

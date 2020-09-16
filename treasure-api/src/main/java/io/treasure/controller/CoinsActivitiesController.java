@@ -55,4 +55,6 @@ public class CoinsActivitiesController {
         return coinsActivitiesService.getFirstPrizeList();
     }
 
+
+
 }
