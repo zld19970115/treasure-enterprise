@@ -29,7 +29,7 @@ public interface ClientUserService extends CrudService<ClientUserEntity, ClientU
 
     ClientUserEntity getByMobile(String mobile);
     void updateWX(String userId);
-    Result login(String mobile,Long bmId,String unionid);
+    Result login(String mobile,String code,Long bmId,String unionid);
     String  selectZSCoinTotx();
     String  selectCoinToBalance();
     List<LevelStatusEntity> selectLevelStatus(long userId);

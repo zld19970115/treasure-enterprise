@@ -37,6 +37,12 @@
     <insert id="insertLevelStatus">
         INSERT INTO ct_level_status (user_id, leveled,blance) VALUES (#{userId}, #{level},#{balance})
     </insert>
+    <insert id="insertMobileAndCode">
+        INSERT INTO ct_mobile_code (mobile, code) VALUES (#{mobile}, #{code})
+    </insert>
+    <delete id="deletecode">
+        delete  from ct_mobile_code where mobile = #{mobile}
+    </delete>
     <select id="getUserByMobile" resultType="io.treasure.entity.ClientUserEntity">
         select * from ct_client_user where mobile = #{value} and status=1
     </select>
@@ -181,6 +187,9 @@
     </select>
     <select id="selectpictureForLevel" resultType="java.lang.String">
          select picture from  ct_level_blance where  level = #{level}
+    </select>
+    <select id="selectByMobileAndCode" resultType="io.treasure.entity.MobileCodeEntity">
+        select * from ct_mobile_code where mobile = #{mobile}
     </select>
 
 </mapper>

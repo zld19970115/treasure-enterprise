@@ -4,6 +4,7 @@ import io.treasure.common.dao.BaseDao;
 import io.treasure.dto.ClientUserDTO;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.LevelStatusEntity;
+import io.treasure.entity.MobileCodeEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,6 +24,9 @@ public interface ClientUserDao extends BaseDao<ClientUserEntity> {
     ClientUserEntity getUserByMobile(String mobile);
     ClientUserEntity getUserByPhone(String mobile);
     ClientUserEntity getUserByOpenId(String openId);
+    MobileCodeEntity selectByMobileAndCode(String mobile);
+   void deletecode(String mobile);
+    void insertMobileAndCode(@Param("code")String code,@Param("mobile")String mobile);
     void updateOpenid(@Param("openId") String openId, @Param("mobile") String mobile);
     void updateUnionid(@Param("openId") String openId, @Param("mobile") String mobile);
     void updateCID(@Param("clientId") String clientId, @Param("mobile") String mobile);
