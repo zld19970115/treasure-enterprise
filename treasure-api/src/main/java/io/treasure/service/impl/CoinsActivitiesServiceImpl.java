@@ -574,6 +574,13 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 return coinActivityResult(501,"今日活动已结束，明天再抢吧!!",coinsActivityVo);
             case 2://2活动进行中
                 //活动进行中
+                ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
+                if (clientUserEntity == null){
+                    coinsActivityVo.setRewardValue(new BigDecimal("0"));
+                    coinsActivityVo.setComment("用户id无效,请先登录或注册！");
+                    return coinActivityResult(501,"用户id无效,请先登录或注册！",coinsActivityVo);
+                }
+
                 Boolean timesStatusEveryDay = checkTimesEveryDay(entity, clientId);
                 boolean timesStatusTimeRange = checkTimesTimeRange(entity, clientId);
                 if(!timesStatusEveryDay || !timesStatusTimeRange){
@@ -701,13 +708,18 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 }
             }
         }
-        Integer prizeMaxmum = coinsActivityById.getPrizeMaxmum();
-        if(res.size()<5){
-            //生成随机假数
-            int tmpNum = 5- res.size();
-            List<PrizeUserInfoVo> resx = SharingActivityRandomUtil.generateVisualMobile(tmpNum,prizeMaxmum,prizeMinmun);
-            for(int j = 0;j<resx.size();j++){
-                res.add(resx.get(j));
+        double remaining = jackpotRemaining(coinsActivityById).doubleValue();
+        Integer realyJackpot = coinsActivityById.getRealyJackpot();
+        int diff = prizeMinmun*5;
+        if((realyJackpot.doubleValue() - remaining)>diff){
+            Integer prizeMaxmum = coinsActivityById.getPrizeMaxmum();
+            if(res.size()<5){
+                //生成随机假数
+                int tmpNum = 5- res.size();
+                List<PrizeUserInfoVo> resx = SharingActivityRandomUtil.generateVisualMobile(tmpNum,prizeMaxmum,prizeMinmun);
+                for(int j = 0;j<resx.size();j++){
+                    res.add(resx.get(j));
+                }
             }
         }
         return res;
