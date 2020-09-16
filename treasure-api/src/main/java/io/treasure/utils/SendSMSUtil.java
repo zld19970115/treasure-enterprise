@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.sms.SMSSend;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.ClientUserDao;
+import io.treasure.service.MerchantService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,8 @@ import java.util.Map;
  */
 @Component
 public class SendSMSUtil {
-
+    @Autowired
+    private static ClientUserDao clientUserDao;
     /**
      * 新订单通知
      * @param phoneNumber
@@ -378,6 +381,7 @@ public class SendSMSUtil {
         String code=jsonObject.get("Code").toString();
         if("OK".equals(code)){
             result.ok(number);
+            clientUserDao.insertMobileAndCode(number,phoneNumber);
         }
         return result;
     }
