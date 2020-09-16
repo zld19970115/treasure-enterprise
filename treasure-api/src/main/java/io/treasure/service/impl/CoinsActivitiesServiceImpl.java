@@ -1,7 +1,6 @@
 package io.treasure.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
 import io.treasure.common.utils.Result;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.CoinsActivitiesDao;
@@ -11,7 +10,6 @@ import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.CoinsActivitiesEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
-import io.treasure.service.ClientUserService;
 import io.treasure.service.CoinsActivitiesService;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
@@ -43,7 +41,36 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
     @Autowired(required = false)
     private ClientUserDao clientUserDao;
     private Date gotFrizeDate = null;
+    private static BigDecimal visualRemain = null;
+    private static BigDecimal visualResultForClose = new BigDecimal("0");
 
+    public void updateVisualJackpot() throws ParseException {
+        CoinsActivitiesEntity entity = getCoinsActivityById(2L, false);
+        int onTime = isOnTime(entity);
+        Integer visualJackpot = entity.getVisualJackpot();
+        if(onTime != 2){
+            visualRemain = new BigDecimal(visualJackpot+"");
+            return;
+        }
+        Integer commonWinMinmum = entity.getCommonWinMinmum();
+        Integer prizeMaxmum = entity.getPrizeMaxmum()*5;
+        BigDecimal tmpBD = jackpotRemaining(entity);
+        if(tmpBD.doubleValue()<prizeMaxmum){
+            visualRemain = new BigDecimal("0");
+        }
+        Date openingPmt = entity.getOpeningPmt();
+        Date closingPmt = entity.getClosingPmt();
+        Date date0 = TimeUtil.contentTimeAndDate(openingPmt, true);
+        Date date1 = TimeUtil.contentTimeAndDate(closingPmt, true);
+        Long sub = (date1.getTime() - date0.getTime())/10000;
+        if(visualJackpot <= 0)
+            return;
+        Long divi = visualJackpot.longValue()/sub;
+        int tmp = (divi.intValue())*4;
+        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp), new BigDecimal(commonWinMinmum+""));
+
+        visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
+    }
     /**
      * @param id 1系统默认参数 2本次活动(2020-0915这次)当前
      * @param defaultParams
@@ -512,7 +539,6 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         return mulitCouponBoundleEntity.getCouponValue();
     }
 
-
     /**
      *  4修改用户====增加抢宝币记录
      * @param clientId
@@ -552,11 +578,29 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         }
     }
     //==========================================层级调用--业务===========================================================
-    public Result coinActivityResult(int code,String msg,Object data){
+
+    public Result coinActivityResultWithCoinsActivity(int code, String msg, CoinsActivityVo coinsActivityVo,boolean isOver){
         Result result = new Result();
         result.setCode(code);
         result.setMsg(msg);
-        result.setData(data);
+        CoinsActivityVo vo = coinsActivityVo;
+        CoinsActivitiesEntity coinsActivitiesEntity = vo.getCoinsActivitiesEntity();
+        if(coinsActivitiesEntity != null){
+
+            if(visualRemain == null){
+                visualRemain = new BigDecimal(coinsActivitiesEntity.getVisualJackpot()+"");
+            }
+            if(!isOver){
+                BigDecimal rewardValue = vo.getRewardValue();
+                vo.setRewardValue(rewardValue.add(new BigDecimal(visualRemain+"")));//剩余奖值
+            }else{
+                Integer visualJackpot = coinsActivitiesEntity.getVisualJackpot();
+                Integer realyJackpot = coinsActivitiesEntity.getRealyJackpot();
+                Integer sum = visualJackpot+realyJackpot;
+                vo.setRewardValue(new BigDecimal(sum+""));//剩余奖值
+            }
+        }
+        result.setData(vo);
         return result;
     }
 
@@ -571,21 +615,21 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         switch (onTime){
             case 1://1活动已结束
                 coinsActivityVo.setComment("今日活动已结束，明天再抢吧!!");
-                return coinActivityResult(501,"今日活动已结束，明天再抢吧!!",coinsActivityVo);
+                return coinActivityResultWithCoinsActivity(501,"今日活动已结束，明天再抢吧!!",coinsActivityVo,true);
             case 2://2活动进行中
                 //活动进行中
                 ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
                 if (clientUserEntity == null){
                     coinsActivityVo.setRewardValue(new BigDecimal("0"));
                     coinsActivityVo.setComment("用户id无效,请先登录或注册！");
-                    return coinActivityResult(501,"用户id无效,请先登录或注册！",coinsActivityVo);
+                    return coinActivityResultWithCoinsActivity(501,"用户id无效,请先登录或注册！",coinsActivityVo,false);
                 }
 
                 Boolean timesStatusEveryDay = checkTimesEveryDay(entity, clientId);
                 boolean timesStatusTimeRange = checkTimesTimeRange(entity, clientId);
                 if(!timesStatusEveryDay || !timesStatusTimeRange){
                     coinsActivityVo.setComment("您已参加过本活动了!!");
-                    return coinActivityResult(501,"您已参加过本活动了!!",coinsActivityVo);
+                    return coinActivityResultWithCoinsActivity(501,"您已参加过本活动了!!",coinsActivityVo,false);
                 }
                 boolean b = shouldBeFirstPrize(entity,clientId);
                 BigDecimal rewardCoins = new BigDecimal("0");
@@ -607,24 +651,23 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 if(aDouble>0){
                     coinsActivityVo.setComment("恭喜获得"+aDouble+"宝币!!");
                     coinsActivityVo.setRewardValue(jackpotRemaining(entity));
-                    return coinActivityResult(200,"恭喜获得"+aDouble+"宝币!!",coinsActivityVo);
+                    return coinActivityResultWithCoinsActivity(200,"恭喜获得"+aDouble+"宝币!!",coinsActivityVo,false);
                 }else{
                     coinsActivityVo.setComment("宝币仓已满，请消费后再来抢红包!!");
-                    return coinActivityResult(501,"宝币仓已满，请消费后再来抢红包!!",coinsActivityVo);
+                    return coinActivityResultWithCoinsActivity(501,"宝币仓已满，请消费后再来抢红包!!",coinsActivityVo,false);
                 }
 
             case 3://3活动马上开始
                 coinsActivityVo.setComment("活动马上开始!!");
-                return coinActivityResult(501,"活动马上开始!!",coinsActivityVo);
+                return coinActivityResultWithCoinsActivity(501,"活动马上开始!!",coinsActivityVo,true);
             case 4://4活动已过期
                 coinsActivityVo.setComment("来晚了，宝币已经抢完了!!");
-                return coinActivityResult(501,"来晚了，宝币已经抢完了!!",coinsActivityVo);
+                return coinActivityResultWithCoinsActivity(501,"来晚了，宝币已经抢完了!!",coinsActivityVo,true);
             default://5活动参数错误
                 coinsActivityVo.setComment("系统活动参数异常!!");
-                return coinActivityResult(501,"系统活动参数异常!!",coinsActivityVo);
+                return coinActivityResultWithCoinsActivity(501,"系统活动参数异常!!",coinsActivityVo,true);
         }
     }
-
     public Result getCoinsActivityInfo() throws ParseException {
         CoinsActivityVo coinsActivityVo = new CoinsActivityVo();
 
@@ -632,10 +675,23 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         coinsActivityVo.setCoinsActivitiesEntity(entity);
         coinsActivityVo.setComment("success");
         coinsActivityVo.setRewardValue(jackpotRemaining(entity));
+        int onTime = isOnTime(entity);
+        if(onTime == 2){
+            return coinActivityResultWithCoinsActivity(200,"success",coinsActivityVo,false);
+        }else{
+            return coinActivityResultWithCoinsActivity(200,"success",coinsActivityVo,true);
+        }
         //还差时间相关信息
-        return coinActivityResult(200,"success",coinsActivityVo);
+
     }
 
+    public Result coinActivityResult(int code, String msg, Object data){
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        result.setData(data);
+        return result;
+    }
     public Result getCountDownInfo() throws ParseException {
 
         CoinsActivitiesEntity entity = getCoinsActivityById(2L, false);
@@ -650,9 +706,11 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             case 2://2活动进行中
                 Date closingPmt = entity.getClosingPmt();
                 Date date2 = TimeUtil.contentTimeAndDate(closingPmt, true);
+
                 return coinActivityResult(501,"抢宝币活动正在进行中!!",
                         new CounterDownVo(date2.getTime(),2,"抢宝币活动正在进行中!!")
                         );
+
             case 3://3活动马上开始
                 Date openingPmt3 = entity.getOpeningPmt();
                 Date date3 = TimeUtil.contentTimeAndDate(openingPmt3, true);
@@ -724,9 +782,18 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         }
         return res;
     }
+
+    public Result coinActivityResultWithPrizeUser(int code,String msg,List<PrizeUserInfoVo> frizeDateInfo){
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        result.setData(frizeDateInfo);
+        return result;
+    }
+
     public Result getFirstPrizeList() throws ParseException {
         List<PrizeUserInfoVo> frizeDateInfo = getFrizeDateInfo();
-        return coinActivityResult(200,"first_prize_mobiles",frizeDateInfo);
+        return coinActivityResultWithPrizeUser(200,"first_prize_mobiles",frizeDateInfo);
     }
 
 }
