@@ -23,6 +23,10 @@ public interface MulitCouponBoundleDao extends BaseDao<MulitCouponBoundleEntity>
     void resumeStatusByIds(@Param("ids") List<Long> ids,@Param("consumeValue") BigDecimal consumeValue);
     List<MulitCouponBoundleEntity> selectRecord(Long clientUser_id);
     List<MulitCouponBoundleEntity> selectByStatus(Long clientUser_id);
+    List<MulitCouponBoundleEntity> selectByMothod(@Param("userId")Long userId,@Param("Status")int Status);
+    List<MulitCouponBoundleEntity> selectCOUNTByMothod(int Status);
+    int selectByrule(int status);
+    int selectByrule1(int status);
     List<MulitCouponBoundleNewDto> pageList(Map map);
 
 }

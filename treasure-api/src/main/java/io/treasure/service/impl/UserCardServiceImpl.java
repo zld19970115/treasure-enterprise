@@ -7,13 +7,16 @@ import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import io.treasure.common.page.PageData;
 import io.treasure.common.service.impl.CrudServiceImpl;
 import io.treasure.common.utils.Result;
+import io.treasure.dao.MulitCouponBoundleDao;
 import io.treasure.dao.RecordGiftDao;
 import io.treasure.dao.UserCardDao;
 import io.treasure.dto.CardInfoDTO;
+import io.treasure.dto.MulitCouponBoundleNewDto;
 import io.treasure.dto.RecordGiftDTO;
 import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.CardInfoEntity;
 import io.treasure.entity.ClientUserEntity;
+import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.service.UserCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +45,8 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
     public QueryWrapper<CardInfoEntity> getWrapper(Map<String, Object> params) {
         return null;
     }
-
+    @Autowired
+    private MulitCouponBoundleDao mulitCouponBoundleDao;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public  Result selectByIdAndPassword(long id, String password,long userId) {
@@ -132,6 +136,23 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
       recordGiftService.insertRecordBalance(userId,date,clientUserEntity.getBalance(),cardInfoEntity.getMoney());
 
         return new Result().ok("充值成功");
+    }
+
+    @Override
+    public Result getOneBalance(long userId) throws ParseException {
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectByMothod(userId, 4);
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities1 = mulitCouponBoundleDao.selectCOUNTByMothod(4);
+        if (mulitCouponBoundleEntities.size()>0){
+            return  new Result().error("您已经领取过了");
+        }
+        int i = mulitCouponBoundleDao.selectByrule(4);
+        int i1 = mulitCouponBoundleDao.selectByrule1(4);
+        if(mulitCouponBoundleEntities1.size()>=i1){
+            return  new Result().error("人数超限");
+        }
+        BigDecimal a = new BigDecimal(i+"");
+        couponForActivityService.insertClientActivityRecord(userId,a,4,1, ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS);
+        return new Result().error("成功领取"+a+"宝币");
     }
 
 
