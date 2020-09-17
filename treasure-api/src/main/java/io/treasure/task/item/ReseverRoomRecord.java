@@ -7,7 +7,8 @@ import io.treasure.dao.MerchantRoomParamsSetDao;
 import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.entity.MerchantRoomParamsEntity;
 import io.treasure.entity.MerchantRoomParamsSetEntity;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.IReseverRoomRecord;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.BookRoomVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.*;
 
+/**
+ * 生成空房记录----生成自此时间段到未来6天共7天的空记录
+ */
 @Service
 public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord {
 

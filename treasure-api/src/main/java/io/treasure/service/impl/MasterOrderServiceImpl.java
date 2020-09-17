@@ -1872,11 +1872,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result caleclUpdate(long id, long verify, Date date, String verify_reason) {
+    public Result caleclUpdate(long id, long verify, Date date, String verify_reason,boolean isAutoRefund) {//
         MasterOrderDTO dto = get(id);
         int status = dto.getStatus();
         if (status == Constants.OrderStatus.NOPAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
+            //2-------超时自动退单状态更新
+            if(isAutoRefund)
+                status_new = Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue();
+
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             for (SlaveOrderEntity s : slaveOrderEntities) {
@@ -1891,8 +1895,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().ok("成功取消订单");
         } else if (status == Constants.OrderStatus.PAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
-            //baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
-
+            //2-------超时自动退单状态更新
+            if(isAutoRefund)
+                status_new = Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue();
             //==========================================================================更新排序分类:001
             baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason, 2);
 

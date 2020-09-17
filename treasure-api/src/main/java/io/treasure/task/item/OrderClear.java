@@ -1,24 +1,22 @@
 package io.treasure.task.item;
 
 import io.treasure.dao.ClearOrderDao;
-import io.treasure.enm.Constants;
 import io.treasure.service.MasterOrderService;
 import io.treasure.service.impl.DistributionRewardServiceImpl;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.IOrderClear;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.DistributionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
- * 定时清台
+ * 定时进行清台业务-----停用
  */
 @Service
 public class OrderClear extends TaskCommon implements IOrderClear {
