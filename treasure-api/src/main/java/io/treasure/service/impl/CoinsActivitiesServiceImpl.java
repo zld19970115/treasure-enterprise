@@ -697,28 +697,37 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             case 1://1活动已结束
                 Date openingPmt = entity.getOpeningPmt();
                 Date date1 = TimeUtil.contentTimeAndDate(openingPmt, false);
-                return coinActivityResult(501,"今日活动已结束，明天再抢吧!!",
-                        new CounterDownVo(date1.getTime(),1,"今日活动已结束，明天再抢吧!!")
+                return coinActivityResult(501,"距离活动开始还有：",
+                        new CounterDownVo(date1.getTime(),1,"距离活动开始还有：")
                         );
             case 2://2活动进行中
                 Date closingPmt = entity.getClosingPmt();
                 Date date2 = TimeUtil.contentTimeAndDate(closingPmt, true);
 
-                return coinActivityResult(501,"抢宝币活动正在进行中!!",
-                        new CounterDownVo(date2.getTime(),2,"抢宝币活动正在进行中!!")
+                return coinActivityResult(501,"距离活动结束还有：",
+                        new CounterDownVo(date2.getTime(),2,"距离活动结束还有：")
                         );
 
             case 3://3活动马上开始
                 Date openingPmt3 = entity.getOpeningPmt();
                 Date date3 = TimeUtil.contentTimeAndDate(openingPmt3, true);
-                return coinActivityResult(501,"活动马上开始!!",
+                return coinActivityResult(501,"距离活动开始还有：",
                         new CounterDownVo(date3.getTime(),3,"活动马上开始!!")
                         );
             case 4://4活动已过期
 
-                return coinActivityResult(501,"来晚了，本活动已结束!!",
-                        new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
-                        );
+                Date openingPmt4 = entity.getOpeningPmt();
+                Long now4 = new Date().getTime();
+                if(openingPmt4.getTime()>now4){
+                    return coinActivityResult(501,"距离活动开始还有：",
+                            new CounterDownVo(openingPmt4.getTime(),3,"距离活动开始还有：")
+                    );
+                }else{
+                    return coinActivityResult(501,"来晚了，本活动已结束!!",
+                            new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
+                    );
+                }
+
             default://5活动参数错误
 
                 return coinActivityResult(501,"系统活动参数异常!!",
@@ -756,10 +765,12 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             if(clientUserEntity != null){
                 if(clientUserEntity.getMobile() != null){
                     String mobile = clientUserEntity.getMobile();
-                    mobile = mobile.substring(0,3)+"****"+mobile.substring(7);
-                    res.add(
-                            new PrizeUserInfoVo(entity.getOwnerId(),mobile,entity.getCouponValue().doubleValue())
-                    );
+                    if(mobile.length()==11){
+                        mobile = mobile.substring(0,3)+"****"+mobile.substring(7);
+                        res.add(
+                                new PrizeUserInfoVo(entity.getOwnerId(),mobile,entity.getCouponValue().doubleValue())
+                        );
+                    }
                 }
             }
         }
