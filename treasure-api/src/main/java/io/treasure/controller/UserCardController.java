@@ -54,6 +54,14 @@ public class UserCardController {
 
         return new Result().ok(result);
     }
+    @Login
+    @GetMapping("/getOneBalance")
+    @ApiOperation("用户充值宝币(扫码)")
+    public Result getOneBalance(@RequestParam long userId) throws ParseException {
+        Result result = userCardService.getOneBalance(userId);
+        return new Result().ok(result);
+    }
+
     @GetMapping("/makePageList")
     @ApiOperation("列表PC")
     @ApiImplicitParams({
