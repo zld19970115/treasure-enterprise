@@ -275,7 +275,7 @@ public class PayServiceImpl implements PayService {
                     System.out.println("无法发送提醒短消息！请联系管理员！【无法获取商户会员无clientId信息】");
                 }
             } else {
-                System.out.println("支付失败！请联系管理员！【无法获取商户会员信息】");
+                System.out.println("无法发送提醒短消息！请联系管理员！【无法获取商户会员信息】");
             }
         } else {
 
@@ -967,11 +967,13 @@ public class PayServiceImpl implements PayService {
         if (userDto == null) {
 
            // System.out.println("position==========13");
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            mapRtn.put("return_code", "FAIL");
-            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            mapRtn.put("return_code", "FAIL");
+//            mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员信息】");
+//
+//            return mapRtn;
+            System.out.println("将无法发送提醒消息！请联系管理员！【无法获取商户会员无clientId信息】");
 
-            return mapRtn;
 
         } else {
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(masterOrderEntity.getMerchantId());
@@ -997,10 +999,11 @@ public class PayServiceImpl implements PayService {
             } else {
 
                // System.out.println("position==========17");
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                mapRtn.put("return_code", "FAIL");
-                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
-                return mapRtn;
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                mapRtn.put("return_code", "FAIL");
+//                mapRtn.put("return_msg", "支付失败！请联系管理员！【无法获取商户会员无clientId信息】");
+//                return mapRtn;
+                System.out.println("无法发送提醒消息！请联系管理员！【无法获取商户会员无clientId信息】");
 
             }
         }

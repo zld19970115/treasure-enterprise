@@ -712,7 +712,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 Date openingPmt3 = entity.getOpeningPmt();
                 Date date3 = TimeUtil.contentTimeAndDate(openingPmt3, true);
                 return coinActivityResult(501,"距离活动开始还有：",
-                        new CounterDownVo(date3.getTime(),3,"活动马上开始!!")
+                        new CounterDownVo(date3.getTime(),3,"距离活动开始还有：")
                         );
             case 4://4活动已过期
 

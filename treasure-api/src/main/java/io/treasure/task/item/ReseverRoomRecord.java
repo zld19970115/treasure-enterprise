@@ -7,6 +7,7 @@ import io.treasure.dao.MerchantRoomParamsSetDao;
 import io.treasure.entity.MerchantRoomEntity;
 import io.treasure.entity.MerchantRoomParamsEntity;
 import io.treasure.entity.MerchantRoomParamsSetEntity;
+import io.treasure.service.MerchantRoomService;
 import io.treasure.task.TaskCommon;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.BookRoomVo;
@@ -19,12 +20,14 @@ import java.util.*;
 @Service
 public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord {
 
-  private String startTime = "2020-01-01 00:00:00";
+  private String startTime = "2020-01-01 09:50:00";
   private Integer reserverDaysLong = 7;//最多可预订7天的，0~6
     private String creator = "15303690053";
 
     @Autowired(required = false)
     private MerchantRoomDao merchantRoomDao;
+    @Autowired
+    private MerchantRoomService merchantRoomService;
     @Autowired(required = false)
     private MerchantRoomParamsDao merchantRoomParamsDao;
     @Autowired(required = false)
@@ -45,10 +48,11 @@ public class ReseverRoomRecord extends TaskCommon implements IReseverRoomRecord 
 
       //取得包房列表
       List<MerchantRoomEntity> merchantRoomEntities = merchantRoomDao.selectEnableList();
-
       for(int i=0;i<merchantRoomEntities.size();i++){
           generateReserverRoomEmptyRecord(merchantRoomParams,date,merchantRoomEntities.get(i));
       }
+
+
       //======================================
       freeProcessLock();
   }
