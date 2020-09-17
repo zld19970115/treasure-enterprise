@@ -3,13 +3,13 @@ package io.treasure.task.item;
 import com.alipay.api.AlipayApiException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.common.sms.SMSConfig;
-
 import io.treasure.dao.MerchantDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.service.*;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.IWithdrawCommissionForMerchant;
 import io.treasure.utils.TimeUtil;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 客户评级定时任务
+ * 自动更新用户销售返佣相关业务
  */
 @Component
 @Data
-public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdrawCommissionForMerchant{
+public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdrawCommissionForMerchant {
 
         @Autowired(required = false)
         private MerchantWithdrawDao merchantWithdrawDao;

@@ -127,4 +127,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     MasterOrderEntity payCoinsSumByOrderId(String orderId);
 
     MasterOrderEntity selectOrderInfo(Long id);
+    List<MasterOrderEntity> scanAutoRefundOrders(@Param("unPayDate")Date unPayDate,
+                                                    @Param("paidDate")Date paidDate);
 }

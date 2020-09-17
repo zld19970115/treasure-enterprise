@@ -1,4 +1,4 @@
-package io.treasure.task.item;
+package io.treasure.task.item.interfaces;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.entity.ChargeCashEntity;

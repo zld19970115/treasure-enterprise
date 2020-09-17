@@ -27,7 +27,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @Configuration
 @EnableSwagger2
-@Profile({"dev","test","prod"})
+@Profile({"dev","test"})
 public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {

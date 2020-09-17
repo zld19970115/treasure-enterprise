@@ -2,12 +2,11 @@ package io.treasure.task.item;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.ClientUserDao;
-import io.treasure.dao.SignedRewardSpecifyTimeDao;
 import io.treasure.entity.ClientUserEntity;
-import io.treasure.entity.GoodEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
 import io.treasure.service.CouponForActivityService;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.ICoinsActivity;
 import io.treasure.utils.SendSMSUtil;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,9 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 宝币活动定时发送提醒短信业务--暂时停用
+ */
 @Component
 public class CoinsActivity extends TaskCommon implements ICoinsActivity {
 
