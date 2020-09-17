@@ -39,11 +39,11 @@ public class AutoCancelOrders extends TaskCommon {
             updateScheduleDelayValue(clazz);
         }else
             if(delayCounter < delayTimes){
-            System.out.println("未达到次数"+delayCounter+","+delayTimes);
+            //System.out.println("未达到次数"+delayCounter+","+delayTimes);
             freeProcessLock();
             return;
         }
-        System.out.println("scaning");
+        //System.out.println("scaning");
         List<MasterOrderEntity> orders = scanTimeOutOrders();
         for(int i=0;i<orders.size();i++){
             System.out.println(orders.get(i).toString());

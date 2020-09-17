@@ -66,8 +66,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         if(visualJackpot <= 0)
             return;
         Long divi = visualJackpot.longValue()/sub;
-        int tmp = (divi.intValue())*4;
-        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp), new BigDecimal(commonWinMinmum+""));
+        int tmp = (divi.intValue())*6;
+        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp+""), new BigDecimal(commonWinMinmum+""));
         if(visualRemain != null){
             visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
         }
