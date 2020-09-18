@@ -710,7 +710,7 @@
         select id,order_id from ct_master_order
         where (status = 1
             and
-            #{unPayDate}>pay_date
+            #{unPayDate}>create_date
         )or (
         status = 4
             and

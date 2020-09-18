@@ -2,6 +2,9 @@ package io.treasure.task.base;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import java.lang.reflect.Method;
 
 public class TaskCommon {
 
@@ -36,5 +39,13 @@ public class TaskCommon {
     }
     public void resetAllTaskLock(){
         taskLock = false;
+    }
+
+    public Long getScheduleDelayValue(Class<?> clazz) throws NoSuchMethodException {
+
+        Method targetMethod = clazz.getMethod("TaskManager");
+        Scheduled annotation = targetMethod.getAnnotation(Scheduled.class);
+        long delay = annotation.fixedDelay();
+        return delay;
     }
 }

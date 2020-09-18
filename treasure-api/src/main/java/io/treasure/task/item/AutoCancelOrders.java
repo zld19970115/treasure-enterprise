@@ -39,7 +39,7 @@ public class AutoCancelOrders extends TaskCommon {
             updateScheduleDelayValue(clazz);
         }else
             if(delayCounter < delayTimes){
-            //System.out.println("未达到次数"+delayCounter+","+delayTimes);
+            System.out.println("refund_wait:"+delayCounter+","+delayTimes);
             freeProcessLock();
             return;
         }
@@ -64,15 +64,13 @@ public class AutoCancelOrders extends TaskCommon {
         return orders;
     }
     public void execAutoCancelOrder(long id){
+        System.out.println("exec_auto_refund:"+id);
         masterOrderService.caleclUpdate(id,verify,new Date(),"time_out_refund",true);
     }
 
     public Long updateScheduleDelayValue(Class<?> clazz) throws NoSuchMethodException {
 
-        Method targetMethod = clazz.getMethod("TaskManager");
-        Scheduled annotation = targetMethod.getAnnotation(Scheduled.class);
-        long delay = annotation.fixedDelay();
-
+        long delay = getScheduleDelayValue(clazz);
         delayTimes = unPayExpireDate/delay;
         return delay;
     }

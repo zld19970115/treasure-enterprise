@@ -1910,12 +1910,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     gif = gif.add(s.getFreeGold());
                 }
             }
+
             ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
             BigDecimal gift = clientUserDTO.getGift();
             BigDecimal addgif = gift.add(gif);
             clientUserDTO.setGift(addgif);
             clientUserService.update(clientUserDTO);
 
+            /*
+            ClientUserEntity clientUser = clientUserService.getClientUser(dto.getCreator());
+            BigDecimal gift = clientUser.getGift();
+            BigDecimal addgift = gift.add(gift);
+            clientUser.setGift(addgift);
+            clientUserService.updateById(clientUser);
+            */
 
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                 //同时将包房或者桌设置成未使用状态
@@ -1936,13 +1944,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         BigDecimal pay_coins = order.getPayCoins();
                         BigDecimal num = new BigDecimal("0");
                         if (pay_coins.compareTo(num) == 1) {
-                            BigDecimal balance = clientUserDTO.getBalance();
+                            //BigDecimal balance = clientUserDTO.getBalance();
                             //BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
                             //clientUserDTO.setBalance(abc);
                             //clientUserService.update(clientUserDTO);
 
-                            //2-->退还宝币
+                            //2-->退还宝币  dto.getCreator()
                             couponForActivityService.resumeAllCoinsRecord(clientUserDTO.getId(),dto.getOrderId());
+                            //couponForActivityService.resumeAllCoinsRecord(dto.getCreator(),dto.getOrderId());
                         }
 
                     }
