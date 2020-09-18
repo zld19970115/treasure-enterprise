@@ -69,7 +69,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(forceRunOnce == true)
                         return true;
 
-              String dString = "2020-01-01 13:10:00";
+              String dString = "2020-01-01 13:42:00";
               Date parse = TimeUtil.simpleDateFormat.parse(dString);
              return TimeUtil.isOnTime(parse,10);
         }
@@ -82,7 +82,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
         public void commissionWithdraw() throws AlipayApiException {
                 QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.select("sum(commission_volume) as commission_volume");
+                queryWrapper.select("commission_volume");
                 queryWrapper.eq("cash_out_status",1);//未提现
                 queryWrapper.eq("audit_status",1);//同意提现
 
@@ -90,14 +90,17 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
                 for(int i=0;i<entities.size();i++){
                         MerchantSalesRewardRecordEntity entity = entities.get(i);
-                        Integer method = entity.getMethod();
+                        if(entity != null){
+                                Integer method = entity.getMethod();
 
-                        if(method == 2){
-                                commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
-                        }else if(method == 1){
-                                commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                                if(method == 2){
+                                        commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
+                                }else if(method == 1){
+                                        commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                                }
+                                System.out.println("withdraw commission - id"+entity.getId());
                         }
-                        System.out.println("withdraw commission - id"+entity.getId());
+
                 }
         }
 
