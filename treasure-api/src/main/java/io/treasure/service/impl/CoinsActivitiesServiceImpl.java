@@ -723,8 +723,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                             new CounterDownVo(openingPmt4.getTime(),3,"距离活动开始还有：")
                     );
                 }else{
-                    return coinActivityResult(501,"来晚了，本活动已结束!!",
-                            new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
+                    return coinActivityResult(501,"您来晚了，请关注下次活动!",
+                            new CounterDownVo(new Date().getTime(),4,"您来晚了，请关注下次活动!")
                     );
                 }
 
