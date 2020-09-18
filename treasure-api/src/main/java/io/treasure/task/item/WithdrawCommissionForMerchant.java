@@ -69,7 +69,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(forceRunOnce == true)
                         return true;
 
-              String dString = "2020-01-01 00:00:00";
+              String dString = "2020-01-01 13:10:00";
               Date parse = TimeUtil.simpleDateFormat.parse(dString);
              return TimeUtil.isOnTime(parse,10);
         }
@@ -82,7 +82,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
         public void commissionWithdraw() throws AlipayApiException {
                 QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.select("sum(reward_value) as reward_value");
+                queryWrapper.select("sum(commission_volume) as commission_volume");
                 queryWrapper.eq("cash_out_status",1);//未提现
                 queryWrapper.eq("audit_status",1);//同意提现
 
