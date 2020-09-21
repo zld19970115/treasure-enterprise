@@ -423,6 +423,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
 
                 //return new Result().ok("订单翻台成功！");
+                //id为订单id
                 return updateCommissionRecordAndReturn(id);
             } else {
                 return new Result().error("无法获取店铺信息!");

@@ -2,6 +2,7 @@ package io.treasure.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -353,15 +354,11 @@ public class MerchantSalesRewardController {
 
     @CrossOrigin
     @Login
-    @GetMapping("agree")
-    @ApiOperation("同意提现-只包含id就可以")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "编号", paramType = "query", required = true, dataType="long"),
-            @ApiImplicitParam(name = "verify", value = "审核人", paramType = "query", required = true, dataType="long")
-    })
-    public Result agree(@RequestParam Long aid){
+    @PostMapping("refuse")
+    @ApiOperation("拒绝提现-只包括id就可以")
+    public Result refuseX(@RequestBody  Long rid){
         MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
-        obj.setId(aid);
+        obj.setId(rid);
         List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
         entities.add(obj);
 
@@ -372,11 +369,61 @@ public class MerchantSalesRewardController {
             ids.add(id);
         }
         mchRewardUpdateQuery.setIds(ids);
-        mchRewardUpdateQuery.setStatus(1);
+        mchRewardUpdateQuery.setStatus(2);
+        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
         merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
-        //执行提现操作
-        withdrawCommissionForMerchant.setForceRunOnce(true);
-        withdrawCommissionForMerchant.resetTaskCounter();
+
+        List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
+        if(smsEntities.size() > 0) {
+            for(int i=0;i<entities.size();i++){
+                MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
+                Integer auditStatus = entity.getAuditStatus();
+                if(auditStatus == 2){
+                    MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+                    if(merchantEntity != null){
+                        BigDecimal value = new BigDecimal(entity.getCommissionVolume().toString());
+                        if(merchantEntity.getMobile() != null){
+                            sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
+                        }
+                    }
+                }
+            }
+        }
+        return new Result().ok("refused");
+    }
+
+    @CrossOrigin
+    @Login
+    @PostMapping("agree")
+    @ApiOperation("同意提现-只包含id就可以")
+    public Result agree(@RequestBody Long mId){
+
+        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("m_id",mId);
+        queryWrapper.eq("cash_out_status",1);
+        queryWrapper.eq("audit_status",3);
+        BigDecimal applyForValue = new BigDecimal("0");
+        List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
+
+        if(entities.size()==0){
+            return new Result().ok("没有找到返佣提现请求！！");
+        }
+        List<Long> ids = new ArrayList<>();
+        for(int i=0;i<entities.size();i++){
+            ids.add(entities.get(i).getId());
+            applyForValue = applyForValue.add(entities.get(i).getCommissionVolume());
+        }
+        MchRewardUpdateQuery query = new MchRewardUpdateQuery();
+        query.setIds(ids);
+        query.setStatus(1);//同意
+        query.setMethod(null);//1微信，2支付宝
+        query.setComment("同意提现");
+        merchantSalesRewardRecordDao.updateAuditStatusByIds(query);
+
+        //更新商户反佣相关费用值
+        MerchantEntity merchantEntity = merchantDao.selectById(mId);
+        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
+        merchantDao.updateById(merchantEntity);
 
         return new Result().ok("agreed");
     }
@@ -400,18 +447,58 @@ public class MerchantSalesRewardController {
     @Login
     @GetMapping("params")
     @ApiOperation("销售奖励参数")
-    @ApiImplicitParam(name="id",value = "参数id",dataType = "Long",defaultValue = "3",paramType = "query",required = false)
-
-    public Result getParams(Long id){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value = "参数id",dataType = "Long",paramType = "query",required = false),
+            @ApiImplicitParam(name="mId",value = "商家id",dataType = "Long",paramType = "query",required = false)
+    })
+    public Result getParams(Long id,Long mId){
         if(id != null){
             MerchantSalesRewardEntity merchantSalesRewardEntity = merchantSalesRewardDao.selectById(id);
             return new Result().ok(merchantSalesRewardEntity);
         }else{
-            List<MerchantSalesRewardEntity> merchantSalesRewardEntities = merchantSalesRewardDao.selectList(null);
-            return new Result().ok(merchantSalesRewardEntities);
+            if(mId != null){
+                //根据类型，单个
+                MerchantEntity merchantEntity = merchantDao.selectById(mId);
+                if(merchantEntity != null){
+                    Integer commissionType = merchantEntity.getCommissionType();
+                    if(commissionType != null){
+                        QueryWrapper<MerchantSalesRewardEntity> queryWrapper = new QueryWrapper<>();
+                        queryWrapper.eq("merchant_type",commissionType);
+                        List<MerchantSalesRewardEntity> merchantSalesRewardEntities = merchantSalesRewardDao.selectList(queryWrapper);
+                        return new Result().ok(merchantSalesRewardEntities);
+                    }else{
+                        return new Result().ok(null);
+                    }
+                }else{
+                    return new Result().ok(null);
+                }
+            }else{
+                //列表
+                List<MerchantSalesRewardEntity> merchantSalesRewardEntities = merchantSalesRewardDao.selectList(null);
+                return new Result().ok(merchantSalesRewardEntities);
+            }
+
         }
     }
 
+    @CrossOrigin
+    @Login
+    @PostMapping("params")
+    @ApiOperation("插入新记录")
+    public Result insertParams(@RequestBody MerchantSalesRewardEntity entity){
+        QueryWrapper<MerchantSalesRewardEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("merchant_type",entity.getMerchantType());
+        List<MerchantSalesRewardEntity> merchantSalesRewardEntities = merchantSalesRewardDao.selectList(queryWrapper);
+        if(merchantSalesRewardEntities.size() > 0)
+            return  new Result().ok("exist already!");
+        try{
+            entity.setId(null);
+            merchantSalesRewardDao.insert(entity);
+        }catch (Exception e){
+            return new Result().ok("exception");
+        }
+        return new Result().ok("success");
+    }
     @CrossOrigin
     @Login
     @PutMapping("params")
@@ -427,16 +514,4 @@ public class MerchantSalesRewardController {
         return new Result().ok("success");
     }
 
-    @CrossOrigin
-    @Login
-    @PostMapping("params")
-    @ApiOperation("创建参数(仅初始时使用)")
-    public Result insertOne(@RequestBody MerchantSalesRewardEntity entity) {
-        try{
-            merchantSalesRewardDao.insert(entity);
-        }catch (Exception e){
-            return new Result().ok("exception");
-        }
-        return new Result().ok("插入完成");
-    }
 }
