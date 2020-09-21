@@ -311,83 +311,25 @@ public class MerchantSalesRewardController {
         return new Result().ok(pages);
     }
 
-
-    @CrossOrigin
-    @Login
-    @GetMapping("refuse")
-    @ApiOperation("拒绝提现-只包括id就可以")
-    public Result refuse(@RequestParam  Long rid){
-        MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
-        obj.setId(rid);
-        List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
-        entities.add(obj);
-
-        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
-        List<Long> ids = new ArrayList<>();
-        for(int i=0;i<entities.size();i++){
-            Long id = entities.get(i).getId();
-            ids.add(id);
-        }
-        mchRewardUpdateQuery.setIds(ids);
-        mchRewardUpdateQuery.setStatus(2);
-        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
-        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
-
-        List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
-        if(smsEntities.size() > 0) {
-            for(int i=0;i<entities.size();i++){
-                MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
-                Integer auditStatus = entity.getAuditStatus();
-                if(auditStatus == 2){
-                    MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
-                    if(merchantEntity != null){
-                        BigDecimal value = new BigDecimal(entity.getCommissionVolume().toString());
-                        if(merchantEntity.getMobile() != null){
-                            sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
-                        }
-                    }
-                }
-            }
-        }
-        return new Result().ok("refused");
-    }
-
     @CrossOrigin
     @Login
     @PostMapping("refuse")
-    @ApiOperation("拒绝提现-只包括id就可以")
+    @ApiOperation("拒绝提现-单条")
     public Result refuseX(@RequestBody  Long rid){
-        MerchantSalesRewardRecordEntity obj = new MerchantSalesRewardRecordEntity();
-        obj.setId(rid);
-        List<MerchantSalesRewardRecordEntity> entities = Lists.newArrayList();
-        entities.add(obj);
 
-        MchRewardUpdateQuery mchRewardUpdateQuery = new MchRewardUpdateQuery();
-        List<Long> ids = new ArrayList<>();
-        for(int i=0;i<entities.size();i++){
-            Long id = entities.get(i).getId();
-            ids.add(id);
-        }
-        mchRewardUpdateQuery.setIds(ids);
-        mchRewardUpdateQuery.setStatus(2);
-        mchRewardUpdateQuery.setComment(entities.get(0).getAuditComment());
-        merchantSalesRewardRecordDao.updateStatusByIds(mchRewardUpdateQuery);
-
-        List<MerchantSalesRewardRecordEntity> smsEntities = merchantSalesRewardRecordDao.selectBatchIds(ids);
-        if(smsEntities.size() > 0) {
-            for(int i=0;i<entities.size();i++){
-                MerchantSalesRewardRecordEntity entity = smsEntities.get(i);
-                Integer auditStatus = entity.getAuditStatus();
-                if(auditStatus == 2){
-                    MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
-                    if(merchantEntity != null){
-                        BigDecimal value = new BigDecimal(entity.getCommissionVolume().toString());
-                        if(merchantEntity.getMobile() != null){
-                            sendSMSUtil.commissionNotify(merchantEntity.getMobile(),merchantEntity.getName(),value+"", SendSMSUtil.CommissionNotifyType.DENIED_NOTIFY);
-                        }
-                    }
-                }
-            }
+        QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",rid);
+        queryWrapper.eq("cash_out_status",1);
+        queryWrapper.eq("audit_status",3);
+        BigDecimal applyForValue = new BigDecimal("0");
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
+        entity.setAuditComment("拒绝提现");
+        entity.setAuditStatus(2);
+        try{
+            merchantSalesRewardRecordDao.updateById(entity);
+            //更新商户反佣相关费用值
+        }catch (Exception e){
+            return new Result().ok("db error");
         }
         return new Result().ok("refused");
     }
@@ -395,36 +337,27 @@ public class MerchantSalesRewardController {
     @CrossOrigin
     @Login
     @PostMapping("agree")
-    @ApiOperation("同意提现-只包含id就可以")
-    public Result agree(@RequestBody Long mId){
+    @ApiOperation("同意提现-单条")
+    public Result agree(@RequestBody Long id){
 
         QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("m_id",mId);
+        queryWrapper.eq("id",id);
         queryWrapper.eq("cash_out_status",1);
         queryWrapper.eq("audit_status",3);
         BigDecimal applyForValue = new BigDecimal("0");
-        List<MerchantSalesRewardRecordEntity> entities = merchantSalesRewardRecordDao.selectList(queryWrapper);
+        MerchantSalesRewardRecordEntity entity = merchantSalesRewardRecordDao.selectOne(queryWrapper);
+        entity.setAuditComment("同意提现");
+        entity.setAuditStatus(1);
+        try{
+            merchantSalesRewardRecordDao.updateById(entity);
+            //更新商户反佣相关费用值
+            MerchantEntity merchantEntity = merchantDao.selectById(entity.getMId());
+            merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
+            merchantDao.updateById(merchantEntity);
 
-        if(entities.size()==0){
-            return new Result().ok("没有找到返佣提现请求！！");
+        }catch (Exception e){
+            return new Result().ok("db error");
         }
-        List<Long> ids = new ArrayList<>();
-        for(int i=0;i<entities.size();i++){
-            ids.add(entities.get(i).getId());
-            applyForValue = applyForValue.add(entities.get(i).getCommissionVolume());
-        }
-        MchRewardUpdateQuery query = new MchRewardUpdateQuery();
-        query.setIds(ids);
-        query.setStatus(1);//同意
-        query.setMethod(null);//1微信，2支付宝
-        query.setComment("同意提现");
-        merchantSalesRewardRecordDao.updateAuditStatusByIds(query);
-
-        //更新商户反佣相关费用值
-        MerchantEntity merchantEntity = merchantDao.selectById(mId);
-        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(applyForValue));
-        merchantDao.updateById(merchantEntity);
-
         return new Result().ok("agreed");
     }
     public Result rewardCash(@RequestParam Long id,Integer method) throws ParseException {
