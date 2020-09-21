@@ -563,4 +563,20 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         }
     }
 
+    @Override
+    public BigDecimal getClientSharingActivityCoinsVolume(Long clientUser_id){
+
+        QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("owner_id",clientUser_id);
+        queryWrapper.eq("type",1);
+        queryWrapper.eq("use_status",0);
+        queryWrapper.eq("get_method",2);
+        queryWrapper.ge("expire_pmt",now());
+        queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
+        MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
+        if(mulitCouponBoundleEntity == null)
+            return new BigDecimal("0");
+        return mulitCouponBoundleEntity.getCouponValue();
+    }
+
 }

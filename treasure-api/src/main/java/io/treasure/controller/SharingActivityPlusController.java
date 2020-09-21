@@ -69,7 +69,7 @@ public class SharingActivityPlusController {
 
     @Autowired(required = false)
     private RecordGiftDao recordGiftDao;
-    private BigDecimal balanceLimit = new BigDecimal("200");
+    private BigDecimal saLimit = new BigDecimal("160");
 
     @PostMapping("startRelay")
     @ApiOperation("发起助力")
@@ -818,16 +818,16 @@ public class SharingActivityPlusController {
         if(type == 4)//宝币
         {
             //====================================================================
-           BigDecimal resCoins = couponForActivityService.getClientActivityCoinsVolume(client.getId());
+           BigDecimal resCoins = couponForActivityService.getClientSharingActivityCoinsVolume(client.getId());
 
            BigDecimal newCoins = new BigDecimal(value+"");
 
             //奖励值大于0并且原始值小于宝币限值
-            if(value >= 0 && (resCoins.add(newCoins)).compareTo(balanceLimit)>0){
-                if(resCoins.doubleValue()>balanceLimit.doubleValue()){
+            if(value >= 0 && (resCoins.add(newCoins)).compareTo(saLimit)>0){
+                if(resCoins.doubleValue()>saLimit.doubleValue()){
                     return;
                 }else{
-                    newCoins = balanceLimit.subtract(resCoins);
+                    newCoins = saLimit.subtract(resCoins);
                 }
             }
             SharingActivityExtendsEntity sharingActivityExtendsEntity = sharingActivityExtendsDao.selectById(saId);

@@ -7,6 +7,7 @@ import io.treasure.service.CoinsActivitiesService;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.service.MasterOrderService;
 import io.treasure.task.item.*;
+import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -87,6 +88,8 @@ public class Task {
 //        if(!tmp.isInProcess()){
 //            tmp.tmp1();
 //        }
+
+
     }
 
     //=========================基本状态锁定===============================
