@@ -57,8 +57,8 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(!isOnTime() || getTaskCounter() > 0)
                         return;
                 updateTaskCounter();  //更新执行程序计数器
-                if(forceRunOnce == false)
-                        UpdateCommissionRecord();//更新记录内容
+
+                UpdateCommissionRecord();//更新记录内容
 
                 commissionWithdraw();//执行提现操作
                 forceRunOnce = false;
@@ -69,7 +69,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(forceRunOnce == true)
                         return true;
 
-              String dString = "2020-01-01 13:42:00";
+              String dString = "2020-01-01 12:42:00";
               Date parse = TimeUtil.simpleDateFormat.parse(dString);
              return TimeUtil.isOnTime(parse,10);
         }

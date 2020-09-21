@@ -192,7 +192,7 @@ public class MerchantDTO implements Serializable {
 	private BigDecimal commissionWithdraw;
 
 	@ApiModelProperty(value = "返佣商户标识")
-	private BigDecimal commissionType;
+	private Integer commissionType;
 
 	@Override
 	public boolean equals(Object obj) {
