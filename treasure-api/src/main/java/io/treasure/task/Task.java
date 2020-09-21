@@ -5,6 +5,7 @@ import io.treasure.dao.SharingActivityExtendsDao;
 import io.treasure.entity.SharingActivityExtendsEntity;
 import io.treasure.service.CoinsActivitiesService;
 import io.treasure.service.CouponForActivityService;
+import io.treasure.service.MasterOrderService;
 import io.treasure.task.item.*;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class Task {
     SharingActivityExtendsDao sharingActivityExtendsDao;
     @Autowired
     private CoinsActivitiesService coinsActivitiesService;
+    @Autowired
+    private AutoCancelOrders autoCancelOrders;
+    @Autowired
+    Tmp tmp;
+
     //处理次数记录
     private int taskInProcess = 0;
     private String resetTaskCounterTime = "2020-09-09 06:00:00";
@@ -42,12 +48,12 @@ public class Task {
 
     @Scheduled(fixedDelay = 10000)
     public void TaskManager() throws Exception {
-
-        orderForBm.getOrderByYwy();
         //0,复位所有定时任务
         if(TimeUtil.isOnTime(TimeUtil.simpleDateFormat.parse(resetTaskCounterTime),15)){
             resetAllCounter();
         }
+
+        orderForBm.getOrderByYwy();
         //1,自动清台任务+加销奖励
 //        if(orderClear.isInProcess() == false && orderClear.getTaskCounter()<2 && TimeUtil.isClearTime())
 //            orderClear.clearOrder();
@@ -56,22 +62,31 @@ public class Task {
         if(clientMemberGradeAssessment.isInProcess() == false && clientMemberGradeAssessment.isOnTime() && orderClear.getTaskCounter()<1){
             clientMemberGradeAssessment.updateGrade(20);
         }
-        //自动执行用户提现相关操作
+        //自动执行用户提现相关操作----给商家返佣定时业务
         if(!withdrawCommissionForMerchant.isInProcess())
             withdrawCommissionForMerchant.startWithdrarw();
 
+        //更新虚拟抢红钯奖池
+        coinsActivitiesService.updateVisualJackpot();
         //发送提醒短信，提醒抢红包
-        if(coinsActivity.isOntime() && !coinsActivity.isInProcess() && coinsActivity.getTaskCounter()==0){
-            System.out.println("第"+n+"次");
-            coinsActivity.sentMsgToClientUsers();
-
-        }
-
+//        if(coinsActivity.isOntime() && !coinsActivity.isInProcess() && coinsActivity.getTaskCounter()==0){
+//            System.out.println("第"+n+"次");
+//            coinsActivity.sentMsgToClientUsers();
+//        }
+        //生成包房记录相关
         if(reseverRoomRecord.isOntime() && !reseverRoomRecord.isInProcess() && reseverRoomRecord.getTaskCounter()<1){
             System.out.println("定时生成房间记录！！");
             reseverRoomRecord.checkReserverRoomRecord();
         }
-        coinsActivitiesService.updateVisualJackpot();
+        //更新计数器
+
+        autoCancelOrders.updateDelayCounter();
+        if(!autoCancelOrders.isInProcess())
+            autoCancelOrders.execRefund(this.getClass());
+
+//        if(!tmp.isInProcess()){
+//            tmp.tmp1();
+//        }
     }
 
     //=========================基本状态锁定===============================

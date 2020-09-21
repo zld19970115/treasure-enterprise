@@ -89,7 +89,6 @@ public class ClientUserServiceImpl extends CrudServiceImpl<ClientUserDao, Client
             if (mobileCodeEntity==null){
                 return new Result().error("请重新获取验证码");
             }
-
             if (code!=mobileCodeEntity.getCode()&&!code.equals(mobileCodeEntity.getCode())){
                 return new Result().error("验证码错误");
             }

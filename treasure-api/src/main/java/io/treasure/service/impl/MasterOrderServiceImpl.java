@@ -1872,11 +1872,15 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Result caleclUpdate(long id, long verify, Date date, String verify_reason) {
+    public Result caleclUpdate(long id, long verify, Date date, String verify_reason,boolean isAutoRefund) {//
         MasterOrderDTO dto = get(id);
         int status = dto.getStatus();
         if (status == Constants.OrderStatus.NOPAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.CANCELNOPAYORDER.getValue();
+            //2-------超时自动退单状态更新
+            if(isAutoRefund)
+                status_new = Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue();
+
             baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
             List<SlaveOrderEntity> slaveOrderEntities = slaveOrderService.selectByOrderId(dto.getOrderId());
             for (SlaveOrderEntity s : slaveOrderEntities) {
@@ -1891,8 +1895,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             return new Result().ok("成功取消订单");
         } else if (status == Constants.OrderStatus.PAYORDER.getValue()) {
             int status_new = Constants.OrderStatus.MERCHANTREFUSALORDER.getValue();
-            //baseDao.updateStatusAndReason(id, status_new, verify, date, verify_reason);
-
+            //2-------超时自动退单状态更新
+            if(isAutoRefund)
+                status_new = Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue();
             //==========================================================================更新排序分类:001
             baseDao.updateStatusAndReasonPlus(id, status_new, verify, date, verify_reason, 2);
 
@@ -1905,12 +1910,20 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     gif = gif.add(s.getFreeGold());
                 }
             }
+
             ClientUserDTO clientUserDTO = clientUserService.get(dto.getCreator());
             BigDecimal gift = clientUserDTO.getGift();
             BigDecimal addgif = gift.add(gif);
             clientUserDTO.setGift(addgif);
             clientUserService.update(clientUserDTO);
 
+            /*
+            ClientUserEntity clientUser = clientUserService.getClientUser(dto.getCreator());
+            BigDecimal gift = clientUser.getGift();
+            BigDecimal addgift = gift.add(gift);
+            clientUser.setGift(addgift);
+            clientUserService.updateById(clientUser);
+            */
 
             if (null != dto.getReservationId() && dto.getReservationId() > 0) {
                 //同时将包房或者桌设置成未使用状态
@@ -1931,13 +1944,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         BigDecimal pay_coins = order.getPayCoins();
                         BigDecimal num = new BigDecimal("0");
                         if (pay_coins.compareTo(num) == 1) {
-                            BigDecimal balance = clientUserDTO.getBalance();
+                            //BigDecimal balance = clientUserDTO.getBalance();
                             //BigDecimal abc = pay_coins.add(balance).setScale(2, BigDecimal.ROUND_DOWN);
                             //clientUserDTO.setBalance(abc);
                             //clientUserService.update(clientUserDTO);
 
-                            //2-->退还宝币
+                            //2-->退还宝币  dto.getCreator()
                             couponForActivityService.resumeAllCoinsRecord(clientUserDTO.getId(),dto.getOrderId());
+                            //couponForActivityService.resumeAllCoinsRecord(dto.getCreator(),dto.getOrderId());
                         }
 
                     }

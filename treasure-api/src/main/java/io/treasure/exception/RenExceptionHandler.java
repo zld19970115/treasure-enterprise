@@ -38,8 +38,8 @@ public class RenExceptionHandler {
 		result.error(ex.getCode(), ex.getMsg());
 
 		ex.printStackTrace();//打印错误信息
-		logger.error("handleRenException======(p1)"+ex.getCode(),ex.getMsg());//新加
-		System.out.println("(p1xxxxxxxxxxxxxxxxxxxxxxxx)"+ex.getMsg());
+		logger.error("handleRenException======(p1):"+ex.getCode(),ex.getMsg());//新加
+		//System.out.println("(p1xxxxxxxxxxxxxxxxxxxxxxxx)"+ex.getMsg());
 		return result;
 	}
 
@@ -54,7 +54,7 @@ public class RenExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public Result handleException(Exception ex){
 		logger.error("handleException======(p3):"+ex.getMessage(), ex);//修改
-		System.out.println("(p2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)");
+		//System.out.println("(p2xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)");
 		ex.printStackTrace();
 		return new Result().error();
 	}

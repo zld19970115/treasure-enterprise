@@ -8,7 +8,8 @@ import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.entity.*;
 import io.treasure.service.ClientMemberGradeAssessmentService;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.IClientMemberGradeAssessment;
 import io.treasure.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 客户评级定时任务
+ * 用户等级评定任务
  */
 @Component
-public class ClientMemberGradeAssessment extends TaskCommon implements IClientMemberGradeAssessment{
+public class ClientMemberGradeAssessment extends TaskCommon implements IClientMemberGradeAssessment {
 
         @Autowired
         private ClientMemberGradeAssessmentService clientMemberGradeAssessmentService;

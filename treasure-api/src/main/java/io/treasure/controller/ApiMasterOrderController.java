@@ -754,7 +754,7 @@ public class ApiMasterOrderController {
             @ApiImplicitParam(name="verify_reason",value="取消原因",paramType = "query",required = true,dataType = "String")
     })
     public Result calcelUpdate(@RequestParam long id, @RequestParam(value = "verify",defaultValue = "")  long verify, @RequestParam(value = "verify_reason",defaultValue = "")  String verify_reason) throws Exception {
-       return masterOrderService.caleclUpdate(id,verify,new Date(),verify_reason);
+       return masterOrderService.caleclUpdate(id,verify,new Date(),verify_reason,false);
     }
 
     @CrossOrigin

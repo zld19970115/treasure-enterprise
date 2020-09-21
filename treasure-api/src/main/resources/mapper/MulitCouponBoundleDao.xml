@@ -90,5 +90,17 @@
         ORDER BY
             mu.got_pmt DESC
     </select>
+    <select id="selectByMothod" resultType="io.treasure.entity.MulitCouponBoundleEntity">
+        select  * from mulit_coupon_boundle where get_method =#{Status} and owner_id =#{userId}
+    </select>
+    <select id="selectByrule" resultType="java.lang.Integer">
+        select expire_type from coupon_rule where id = #{status}
+    </select>
+    <select id="selectByrule1" resultType="java.lang.Integer">
+        select keep_long_time from coupon_rule where id = #{status}
+    </select>
+    <select id="selectCOUNTByMothod" resultType="io.treasure.entity.MulitCouponBoundleEntity">
+        select  * from mulit_coupon_boundle where get_method =#{Status}
+    </select>
 
 </mapper>

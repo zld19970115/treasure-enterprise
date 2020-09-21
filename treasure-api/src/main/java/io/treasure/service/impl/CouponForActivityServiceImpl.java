@@ -328,7 +328,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         //恢复活动中宝币记录
         if(activityCoins.doubleValue()>0)
             resumeActivityCoinsRecord(clientUser_id,activityCoins);
-
+        System.out.println("45646564646");
     }
 
 //=====================================================================================================================

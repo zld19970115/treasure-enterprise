@@ -30,6 +30,10 @@
         select * from ct_merchant_room  where merchant_id=#{merchantId} and status=#{status} order by id desc
     </select>
 
+    <select id="getParamsSetByMerchantId" resultType="io.treasure.entity.MerchantRoomEntity">
+        select * from ct_merchant_room  where merchant_id=#{merchantId} and status=#{status} order by id desc
+    </select>
+
     <select id="selectRoomAlreadyPage" resultType="io.treasure.dto.MerchantRoomParamsSetDTO">
 
   select

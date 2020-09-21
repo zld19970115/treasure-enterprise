@@ -156,4 +156,28 @@ return url;
         System.out.println("二维码存储地址"+url);
         return url;
     }
+
+    public String qrforsaoma() throws IOException, WriterException {
+
+        // 设置响应流信息
+        QRCodeFactory qrCodeFactory = new QRCodeFactory();
+        //二维码内容
+//        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
+//        String content = ("https://jubaoapp.com:8443/treasure-api/merchant/getById?id="+merchantId);
+//        String content = ("https://jubaoapp.com:8443/treasure-api/pages/reserve/reserve?shopid=" + merchantId + "&type=1");
+//
+        String content = ("https://jubaoapp.com:0053");
+
+        BitMatrix bitMatrix = qrCodeFactory.CreatQrImage(content);
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+
+        BufferedImage posterBufImage = MatrixToImageWriter.toBufferedImage(bitMatrix, new MatrixToImageConfig(Color.BLACK.getRGB(), Color.WHITE.getRGB()));
+        ImageOutputStream imgOut = ImageIO.createImageOutputStream(bs);
+        ImageIO.write(posterBufImage, "jpg", imgOut);
+        final String IMAGE_SUFFIX = "jpg";
+        InputStream inSteam = new ByteArrayInputStream(bs.toByteArray());
+        String url = OSSFactory.build().uploadSuffix(inSteam, IMAGE_SUFFIX);
+        System.out.println("二维码存储地址"+url);
+        return url;
+    }
 }

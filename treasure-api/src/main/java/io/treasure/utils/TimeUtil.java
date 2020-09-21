@@ -299,9 +299,9 @@ public class TimeUtil {
 
         if((diffDays/dLong)>0){
 
-            int tmpValue = diffDays % dayLong;
+            int tmpValue = diffDays % dLong;
             Long eDate = targetDate.getTime() - 24*60*60*1000*tmpValue;
-            Long sDate = eDate - 24*60*60*1000*dayLong;
+            Long sDate = eDate - 24*60*60*1000*dLong;
 
             result.put(sTime,new Date(sDate));
             result.put(eTime,new Date(eDate));

@@ -72,6 +72,7 @@ public class OrderRewardWithdrawRecordServiceImpl implements OrderRewardWithdraw
                 return true;
             }
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println("记录插入异常,请及时处理:"+orderId);
             return false;//记录更新失败
         }
