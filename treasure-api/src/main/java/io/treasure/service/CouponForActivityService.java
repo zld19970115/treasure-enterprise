@@ -32,5 +32,6 @@ public interface CouponForActivityService {
     Boolean checkClientDrawTimes(Long clientId) throws ParseException;
 
     BigDecimal getCanUseCurrentActivityRewardAmount(Long clientId);
+    BigDecimal getClientSharingActivityCoinsVolume(Long clientUser_id);
 
 }
