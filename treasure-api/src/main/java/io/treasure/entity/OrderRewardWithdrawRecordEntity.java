@@ -23,7 +23,7 @@ public class OrderRewardWithdrawRecordEntity{
     private BigDecimal actualPayment;
     private BigDecimal payCoins;
     private BigDecimal platformIncome;
-    private Integer orderVolume;
+    //private Integer orderVolume;
 
     private Date eatTime;
     private Date createPmt;

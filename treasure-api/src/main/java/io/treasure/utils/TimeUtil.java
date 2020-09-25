@@ -1,6 +1,7 @@
 package io.treasure.utils;
 
 import io.treasure.enm.ECommission;
+import io.treasure.enm.EOrderRewardWithdrawRecord;
 import io.treasure.enm.ESharingRewardGoods;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import org.junit.Test;
@@ -215,13 +216,15 @@ public class TimeUtil {
     //取得返佣的开始时与结束时间
     public static Map<String,Date> getCommissionTimeRange(MerchantSalesRewardEntity sysParams,Date regDate) throws ParseException {
         Integer timeMode = sysParams.getTimeMode();//1数量，2开店百分比，3销量百分比
-        switch (timeMode){
-            case 1://1下月一号起可返上月的佣金
-                return getLastMonthRange();
-            case 2://2星期，下个星期可返上个星期的佣金,返回上个星期一和星期天的时间
+        EOrderRewardWithdrawRecord.TimeMode tMode = EOrderRewardWithdrawRecord.TimeMode.fromCode(timeMode);
+        Integer days = sysParams.getDays();
+        switch (tMode){
+            case UNIT_DAYS://1下月一号起可返上月的佣金
+                return getLastDayRange(regDate,null,days);
+            case UNIT_WEEKS://2星期，下个星期可返上个星期的佣金,返回上个星期一和星期天的时间
                 return getLastWeekTimeRange(null);
-            case 3://3，按天数模式，比如7天,返回上一天开始的一定数量的天数
-                return getLastDayRange(regDate,null,null);
+            case UNIT_MONTHS://3，按天数模式，比如7天,返回上一天开始的一定数量的天数
+                return getLastMonthRange();
         }
         return null;
     }
@@ -299,9 +302,9 @@ public class TimeUtil {
 
         if((diffDays/dLong)>0){
 
-            int tmpValue = diffDays % dayLong;
+            int tmpValue = diffDays % dLong;
             Long eDate = targetDate.getTime() - 24*60*60*1000*tmpValue;
-            Long sDate = eDate - 24*60*60*1000*dayLong;
+            Long sDate = eDate - 24*60*60*1000*dLong;
 
             result.put(sTime,new Date(sDate));
             result.put(eTime,new Date(eDate));
@@ -412,6 +415,11 @@ public class TimeUtil {
 
         Date result = simpleDateFormat.parse(ymd + " " + hms);
         return result;
+    }
+
+    public static long getTimeStamp(){
+        long timeStamp = System.currentTimeMillis() / 1000;
+        return timeStamp;
     }
 
 }

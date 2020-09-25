@@ -114,6 +114,9 @@ public class SharingActivityRandomUtil {
             String visualMobile = randomVisualMobile();
             BigDecimal randomCoinsInRange = getRandomCoinsInRange(new BigDecimal(maxMum + ""), new BigDecimal(minMum + ""));
             PrizeUserInfoVo p = new PrizeUserInfoVo();
+            if(randomCoinsInRange.doubleValue()>maxMum){
+                randomCoinsInRange = new BigDecimal(maxMum+"");
+            }
             p.setAwardsAmount(randomCoinsInRange.doubleValue());
             p.setMobile(visualMobile);
             res.add(p);

@@ -3,5 +3,10 @@
 
 <mapper namespace="io.treasure.dao.MerchantSalesRewardDao">
 
+    <select id="selectByMerchantTypeId" resultType="io.treasure.entity.MerchantSalesRewardEntity">
 
+        select * from merchant_sales_reward
+        where merchant_type = #{commissionType}
+
+    </select>
 </mapper>

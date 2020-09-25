@@ -706,5 +706,16 @@
         group by creator
 
     </select>
+    <select id="scanAutoRefundOrders" resultType="io.treasure.entity.MasterOrderEntity">
+        select id,order_id from ct_master_order
+        where (status = 1
+            and
+            #{unPayDate}>create_date
+        )or (
+        status = 4
+            and
+            #{paidDate}>pay_date
+        )
+    </select>
 
 </mapper>

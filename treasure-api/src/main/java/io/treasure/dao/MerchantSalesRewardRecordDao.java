@@ -13,7 +13,6 @@ import java.util.List;
 public interface MerchantSalesRewardRecordDao extends BaseDao<MerchantSalesRewardRecordEntity> {
 
 
-    //void insertBatch(List<MerchantSalesRewardRecordEntity> list);
     List<RewardMchList> reward_mch_list(MerchantSalesRewardRecordVo vo);
     List<RewardMchList> getRewardMchList(List<Long> mIds);
     void updateStatusByIds(MchRewardUpdateQuery query);

@@ -60,6 +60,8 @@ public class ApiApplication extends SpringBootServletInitializer {
 	private Connector createStandardConnector() {
 		Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
 		connector.setPort(port);
+		connector.setURIEncoding("UTF-8");
+		//connector.setUseBodyEncodingForURI(true);
 		return connector;
 	}
 	public static void main(String[] args) {
@@ -81,12 +83,5 @@ public class ApiApplication extends SpringBootServletInitializer {
 		s.start();
 		System.out.println("websocket启动成功");
 	}
-
-//	@Scheduled(fixedDelay = 5000)
-//	public void schedule(){
-//		task.TaskManager();
-//		System.out.println("hh");
-//	}
-
 
 }

@@ -6,11 +6,10 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.dao.MerchantDao;
 import io.treasure.dao.MerchantSalesRewardRecordDao;
 import io.treasure.dao.MerchantWithdrawDao;
-import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
 import io.treasure.service.*;
-import io.treasure.service.impl.CommissionWithdrawServiceImpl;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
+import io.treasure.task.item.interfaces.IWithdrawCommissionForMerchant;
 import io.treasure.utils.TimeUtil;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 客户评级定时任务
+ * 自动更新用户销售返佣相关业务
  */
 @Component
 @Data
-public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdrawCommissionForMerchant{
+public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdrawCommissionForMerchant {
 
         @Autowired(required = false)
         private MerchantWithdrawDao merchantWithdrawDao;
@@ -58,8 +57,8 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(!isOnTime() || getTaskCounter() > 0)
                         return;
                 updateTaskCounter();  //更新执行程序计数器
-                if(forceRunOnce == false)
-                        UpdateCommissionRecord();//更新记录内容
+
+                UpdateCommissionRecord();//更新记录内容
 
                 commissionWithdraw();//执行提现操作
                 forceRunOnce = false;
@@ -70,7 +69,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                 if(forceRunOnce == true)
                         return true;
 
-              String dString = "2020-01-01 00:00:00";
+              String dString = "2020-01-01 12:42:00";
               Date parse = TimeUtil.simpleDateFormat.parse(dString);
              return TimeUtil.isOnTime(parse,10);
         }
@@ -83,7 +82,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
         public void commissionWithdraw() throws AlipayApiException {
                 QueryWrapper<MerchantSalesRewardRecordEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.select("sum(reward_value) as reward_value");
+                queryWrapper.select("commission_volume");
                 queryWrapper.eq("cash_out_status",1);//未提现
                 queryWrapper.eq("audit_status",1);//同意提现
 
@@ -91,14 +90,17 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
 
                 for(int i=0;i<entities.size();i++){
                         MerchantSalesRewardRecordEntity entity = entities.get(i);
-                        Integer method = entity.getMethod();
+                        if(entity != null){
+                                Integer method = entity.getMethod();
 
-                        if(method == 2){
-                                commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
-                        }else if(method == 1){
-                                commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                                if(method == 2){
+                                        commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
+                                }else if(method == 1){
+                                        commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
+                                }
+                                System.out.println("withdraw commission - id"+entity.getId());
                         }
-                        System.out.println("withdraw commission - id"+entity.getId());
+
                 }
         }
 

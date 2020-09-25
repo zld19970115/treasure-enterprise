@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.treasure.dao.GoodDao;
 import io.treasure.entity.GoodEntity;
 import io.treasure.jra.impl.DishesMenuJRA;
-import io.treasure.task.TaskCommon;
+import io.treasure.task.base.TaskCommon;
 import io.treasure.utils.MyPingyInUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 商品pinyin标志列
+ * 给商品增加拼音类型的数据库索引业务
  */
 @Component
 public class InitGoodsDatabase extends TaskCommon {

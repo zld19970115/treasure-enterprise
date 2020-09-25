@@ -66,8 +66,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         if(visualJackpot <= 0)
             return;
         Long divi = visualJackpot.longValue()/sub;
-        int tmp = (divi.intValue())*4;
-        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp), new BigDecimal(commonWinMinmum+""));
+        int tmp = (divi.intValue())*6;
+        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp+""), new BigDecimal(commonWinMinmum+""));
         if(visualRemain != null){
             visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
         }
@@ -530,7 +530,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         queryWrapper.eq("get_method",3);
         queryWrapper.eq("use_status",0);
         queryWrapper.ge("expire_pmt",now());
-        queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
+        queryWrapper.select("sum(coupon_value - consume_value) as coupon_valuecoupon_value");
         MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
         if(mulitCouponBoundleEntity == null)
             return new BigDecimal("0");
@@ -546,6 +546,9 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
      * @throws ParseException
      */
     public Double insertCoinsActivityRecordByClientId(CoinsActivitiesEntity coinsActivity,Long clientId,BigDecimal award,Integer method) throws ParseException {
+        if(award.doubleValue()>coinsActivity.getPrizeMaxmum()){
+            award = new BigDecimal(coinsActivity.getPrizeMaxmum());
+        }
         Integer personalCoinsLimit = coinsActivity.getPersonalCoinsLimit();
         if(personalCoinsLimit == null||personalCoinsLimit ==0)
             return 0d;
@@ -616,6 +619,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 return coinActivityResultWithCoinsActivity(501,"今日活动已结束，明天再抢吧!!",coinsActivityVo,true);
             case 2://2活动进行中
                 //活动进行中
+
                 ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
                 if (clientUserEntity == null){
                     coinsActivityVo.setRewardValue(new BigDecimal("0"));
@@ -636,6 +640,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                     Integer prizeMaxmum = entity.getPrizeMaxmum();
                     Integer prizeMinmun = entity.getPrizeMinmun();
                     rewardCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(prizeMaxmum+""),new BigDecimal(prizeMinmun+""));
+                    System.out.println("大奖("+prizeMaxmum+"-"+prizeMinmun+"):"+rewardCoins);
                 }else{
                     //生成普通奖,并返回
                     Integer commonWinMaxmum = entity.getCommonWinMaxmum();
@@ -643,9 +648,11 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                     BigDecimal bigDecimal = new BigDecimal(commonWinMaxmum + "");
                     bigDecimal = bigDecimal.subtract(new BigDecimal("0.01"));
                     rewardCoins = SharingActivityRandomUtil.getRandomCoinsInRange(bigDecimal,new BigDecimal(commonWinMinmum+""));
+                    System.out.println("小奖("+bigDecimal+"-"+commonWinMinmum+"):"+rewardCoins);
                 }
                 //insertCoinsActivityRecordByClientId(CoinsActivitiesEntity coinsActivity,Long clientId,BigDecimal award,Integer method, ESharingRewardGoods.ActityValidityUnit actityValidityUnit)
                 Double aDouble = insertCoinsActivityRecordByClientId(entity, clientId, rewardCoins, 3);
+
                 if(aDouble>0){
                     coinsActivityVo.setComment("恭喜获得"+aDouble+"宝币!!");
                     coinsActivityVo.setRewardValue(jackpotRemaining(entity));
@@ -712,7 +719,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                 Date openingPmt3 = entity.getOpeningPmt();
                 Date date3 = TimeUtil.contentTimeAndDate(openingPmt3, true);
                 return coinActivityResult(501,"距离活动开始还有：",
-                        new CounterDownVo(date3.getTime(),3,"活动马上开始!!")
+                        new CounterDownVo(date3.getTime(),3,"距离活动开始还有：")
                         );
             case 4://4活动已过期
 
@@ -723,8 +730,8 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
                             new CounterDownVo(openingPmt4.getTime(),3,"距离活动开始还有：")
                     );
                 }else{
-                    return coinActivityResult(501,"来晚了，本活动已结束!!",
-                            new CounterDownVo(new Date().getTime(),4,"来晚了，本活动已结束!!")
+                    return coinActivityResult(501,"您来晚了，请关注下次活动!",
+                            new CounterDownVo(new Date().getTime(),4,"您来晚了，请关注下次活动!")
                     );
                 }
 
@@ -779,9 +786,9 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         int diff = prizeMinmun*5;
         if((realyJackpot.doubleValue() - remaining)>diff){
             Integer prizeMaxmum = coinsActivityById.getPrizeMaxmum();
-            if(res.size()<5){
+            if(res.size()<10){
                 //生成随机假数
-                int tmpNum = 5- res.size();
+                int tmpNum = 10 - res.size();
                 List<PrizeUserInfoVo> resx = SharingActivityRandomUtil.generateVisualMobile(tmpNum,prizeMaxmum,prizeMinmun);
                 for(int j = 0;j<resx.size();j++){
                     res.add(resx.get(j));

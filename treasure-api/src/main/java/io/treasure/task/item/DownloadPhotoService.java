@@ -9,6 +9,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * 通运流--->文件将图片下载到本地业务--暂时停用
+ */
 @Service
 public class DownloadPhotoService {
 

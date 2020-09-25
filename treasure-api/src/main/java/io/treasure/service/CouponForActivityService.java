@@ -1,19 +1,13 @@
 package io.treasure.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.treasure.common.page.PageData;
 import io.treasure.enm.ESharingRewardGoods;
-import io.treasure.entity.ActivityEntity;
-import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
-import io.treasure.utils.TimeUtil;
-
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Map;
 
 public interface CouponForActivityService {
@@ -38,5 +32,6 @@ public interface CouponForActivityService {
     Boolean checkClientDrawTimes(Long clientId) throws ParseException;
 
     BigDecimal getCanUseCurrentActivityRewardAmount(Long clientId);
+    BigDecimal getClientSharingActivityCoinsVolume(Long clientUser_id);
 
 }

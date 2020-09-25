@@ -1,17 +1,16 @@
-package io.treasure.task;
+package io.treasure.task.base;
 
 import lombok.Getter;
-import lombok.Setter;
 
-public class TaskCommon {
+public class TaskSock{
 
     @Getter
     private int taskCounter = 0;
 
     private boolean taskLock = false;
-    @Getter
-    @Setter
-    private String runTimeEveryDay;
+
+
+
 
     public void resetTaskCounter(){
         taskCounter = 0;
