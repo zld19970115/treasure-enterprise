@@ -56,12 +56,25 @@ public class UserCardController {
     }
     @Login
     @GetMapping("/getOneBalance")
-    @ApiOperation("用户充值宝币(扫码)")
+    @ApiOperation("用户充值宝币(扫码1)")
     public Result getOneBalance(@RequestParam long userId) throws ParseException {
         Result result = userCardService.getOneBalance(userId);
         return new Result().ok(result);
     }
-
+    @Login
+    @GetMapping("/getOneBalanceTWO")
+    @ApiOperation("用户充值宝币(扫码2)")
+    public Result getOneBalance2(@RequestParam long userId) throws ParseException {
+        Result result = userCardService.getOneBalance2(userId);
+        return new Result().ok(result);
+    }
+    @Login
+    @GetMapping("/getOneBalancethree")
+    @ApiOperation("用户充值代付金(扫码3)")
+    public Result getOneBalance3(@RequestParam long userId) throws ParseException {
+        Result result = userCardService.getOneBalance3(userId);
+        return new Result().ok(result);
+    }
     @GetMapping("/makePageList")
     @ApiOperation("列表PC")
     @ApiImplicitParams({
