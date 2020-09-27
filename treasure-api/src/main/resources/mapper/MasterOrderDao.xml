@@ -718,4 +718,20 @@
         )
     </select>
 
+    <select id="selectOrders" resultType="io.treasure.entity.MasterOrderEntity">
+        select order_id,pay_money,merchant_proceeds from ct_master_order
+        where p_order_id = 0
+        and check_status = 1
+        and merchant_id =#{mId}
+    </select>
+
+    <select id="checkOrder" resultType="io.treasure.entity.MasterOrderEntity">
+        select count(*) as creator from ct_master_order
+        WHERE
+        p_order_id = #{order_id}
+        and
+        check_status = 1
+        and merchant_proceeds > 0
+    </select>
+
 </mapper>
