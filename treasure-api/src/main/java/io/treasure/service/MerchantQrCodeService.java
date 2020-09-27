@@ -22,7 +22,8 @@ public interface MerchantQrCodeService extends CrudService<MerchantQrCodeEntity,
     void insertMerchantQrCodeByMerchantId(String merchantId) throws IOException, WriterException;
 
     void createQRCodeForBm(String bmID) throws IOException, WriterException;
-
+    void createQRCodeForBm1() throws IOException, WriterException;
+    void createQRCodeForBm2() throws IOException, WriterException;
     /***
      * 根据商户ID查询商户二维码
      */

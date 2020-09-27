@@ -154,6 +154,40 @@ public class UserCardServiceImpl extends CrudServiceImpl<UserCardDao, CardInfoEn
         return new Result().error("成功领取"+a+"宝币");
     }
 
+    @Override
+    public Result getOneBalance2(long userId) throws ParseException {
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities = mulitCouponBoundleDao.selectByMothod(userId, 4);
+        List<MulitCouponBoundleEntity> mulitCouponBoundleEntities1 = mulitCouponBoundleDao.selectCOUNTByMothod(4);
+        if (mulitCouponBoundleEntities.size()>0){
+            return  new Result().error("您已经领取过了");
+        }
+        int i = mulitCouponBoundleDao.selectByrule(5);
+        int i1 = mulitCouponBoundleDao.selectByrule1(5);
+        if(mulitCouponBoundleEntities1.size()>=i1){
+            return  new Result().error("人数超限");
+        }
+        BigDecimal a = new BigDecimal(i+"");
+        couponForActivityService.insertClientActivityRecord(userId,a,4,1, ESharingRewardGoods.ActityValidityUnit.UNIT_MONTHS);
+        return new Result().error("成功领取"+a+"宝币");
+    }
+
+    @Override
+    public Result getOneBalance3(long userId) throws ParseException {
+        ClientUserEntity clientUserEntity = clientUserService.selectById(userId);
+        List<RecordGiftDTO> recordGiftDTOS = recordGiftDao.selectByUserIdandstatus(userId, 15);
+        if (recordGiftDTOS.size()>=1){
+            return new Result().error("充值已达到上限次数");
+        }
+        int i = mulitCouponBoundleDao.selectByrule(6);
+        BigDecimal a = new BigDecimal(i+"");
+        BigDecimal gift = clientUserEntity.getGift();
+        BigDecimal newGift = gift.add(a);
+        clientUserEntity.setGift(newGift);
+        clientUserService.updateById(clientUserEntity);
+        recordGiftDao.insertRecordbyGiftAdmin(userId,clientUserEntity.getMobile(),a,newGift,15,new Date(),userId);
+        return new Result().error("成功领取"+a+"代付金");
+    }
+
 
     @Override
     public PageData<CardInfoDTO> pageList(Map params) {
