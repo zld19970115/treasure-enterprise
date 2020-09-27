@@ -157,7 +157,7 @@ return url;
         return url;
     }
 
-    public String qrforsaoma() throws IOException, WriterException {
+    public static  String qrforsaoma() throws IOException, WriterException {
 
         // 设置响应流信息
         QRCodeFactory qrCodeFactory = new QRCodeFactory();

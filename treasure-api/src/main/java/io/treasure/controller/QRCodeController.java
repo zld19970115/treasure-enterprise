@@ -73,8 +73,22 @@ public class QRCodeController {
         return new Result<Map<String, Object>>().ok(data);
     }
 
+    @GetMapping("createQRCodeForBm1")
+    @ApiOperation("createQRCodeForBm1")
+    public Result createQRCodeForBm1() throws IOException, WriterException {
 
 
+        merchantQrCodeService.createQRCodeForBm1();
+        return new Result<>().ok(1);
+    }
+    @GetMapping("createQRCodeForBm2")
+    @ApiOperation("createQRCodeForBm2")
+    public Result createQRCodeForBm2() throws IOException, WriterException {
+
+
+        merchantQrCodeService.createQRCodeForBm2();
+        return new Result<>().ok(1);
+    }
 
     @CrossOrigin
     @Login

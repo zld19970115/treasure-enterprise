@@ -1,6 +1,7 @@
 package io.treasure.controller;
 
 
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -8,6 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import io.treasure.common.constant.Constant;
 import io.treasure.common.utils.Result;
 import io.treasure.enm.EGeocode;
+import io.treasure.geo.AddressComponent;
+import io.treasure.geo.GeoregeoObj;
+import io.treasure.geo.Regeocodes;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -164,6 +170,110 @@ public class RAddressQueryController {
             }
         }
         return sb.toString();
+    }
+
+
+    /*
+    restapi.amap.com/v3/geocode/regeo?key=您的key&location=116.481488,39.990464&poitype=&radius=1000&extensions=all&batch=false&roadlevel=0
+
+     */
+    @GetMapping("/re_addr")
+    @ApiOperation("逆向地理查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "logAndLat", value = "经度逗号纬度", paramType = "query",required=true, dataType="String"),
+            @ApiImplicitParam(name = "radius", value = "半径1-2-3", paramType = "query",required=false, dataType="int")
+    })
+
+
+    public Result requestReGeoInfoPlus(String logAndLat,Integer radius){
+        int resultCode = 0;
+
+        int rDistance = 1000;
+        if(radius == 2){
+            rDistance = 2000;
+        }else if(radius == 3){
+            rDistance = 3000;
+        }
+
+        URL url = null;;
+        HttpURLConnection conn = null;
+        InputStream inputStream = null;
+        InputStreamReader isReader = null;
+        BufferedReader bufferedReader = null;
+        Map<String,Object> map = new HashMap<>();
+        map.put(EGeocode.RequestLocal.REGEO_KEY.getParamsField(),gaodeKeyValue);
+        map.put(EGeocode.RequestLocal.REGEO_LOCATION.getParamsField(),logAndLat.replaceAll(" ",""));
+        map.put(EGeocode.RequestLocal.regeo_RADIUS.getParamsField(),rDistance);
+        //map.put(EGeocode.RequestLocal.regeo_EXTENSIONS.getParamsField(),"all");
+
+        String params = mapToString(map);
+        try {
+            url = new URL("https://restapi.amap.com/v3/geocode/regeo?"+params);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(true);//允许输出
+            conn.setDoInput(true);//允许写入
+            //conn.setUseCaches(false);
+            //conn.setRequestProperty("Content-Type","application/json;charset=utf-8");
+            conn.connect();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
+            //writer.write(postData);
+            writer.close();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+
+                inputStream = conn.getInputStream();
+                isReader = new InputStreamReader(inputStream);
+                bufferedReader = new BufferedReader(isReader);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                String tmpLine = null;
+                while((tmpLine = bufferedReader.readLine())!= null){
+                    stringBuilder.append(tmpLine);
+                }
+                System.out.println("响应地址："+stringBuilder.toString());
+                return new Result().ok(fromJson(stringBuilder.toString()));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("反地理参数处理异常 exception  ... ...");
+            return new Result().error(null);
+        }finally {
+            try{
+                if(bufferedReader!=null) bufferedReader.close();
+            }catch(Exception e){
+                System.out.println("bufferedReader_close exception  ... ...");
+                return new Result().error(null);
+            }
+            try{
+                if(isReader!=null) isReader.close();
+            }catch(Exception e){
+                System.out.println("isReader_close exception  ... ...");
+                return new Result().error(null);
+            }
+            try{
+                if(inputStream!= null) inputStream.close();
+            }catch(Exception e){
+                System.out.println("inputStream_close exception  ... ...");
+                return new Result().error(null);
+            }
+            try{
+                if(conn!=null) conn.disconnect();
+            }catch(Exception e){
+                System.out.println("conn_disconnect exception  ... ...");
+                return new Result().error(null);
+            }
+        }
+        return new Result().error(null);
+    }
+
+    public GeoregeoObj fromJson(String respString){
+        Gson gson = new Gson();
+        GeoregeoObj georegeoObj = gson.fromJson(respString, GeoregeoObj.class);
+
+        return georegeoObj;
     }
 
 }

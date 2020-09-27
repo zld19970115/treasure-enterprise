@@ -14,6 +14,8 @@ public interface UserCardService extends CrudService<CardInfoEntity, CardInfoDTO
     Result selectByIdAndPassword(long id , String password,long userId);
     Result selectMartCouponForBalance(long id , String password,long userId) throws ParseException;
     Result getOneBalance(long userId) throws ParseException;
+    Result getOneBalance2(long userId) throws ParseException;
+    Result getOneBalance3(long userId) throws ParseException;
     PageData<CardInfoDTO> pageList(Map map);
      List<CardInfoDTO>  selectByNoCode();
     Result openCard(List<Long> ids,Long userId);

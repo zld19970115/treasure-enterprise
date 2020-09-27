@@ -417,4 +417,9 @@ public class TimeUtil {
         return result;
     }
 
+    public static long getTimeStamp(){
+        long timeStamp = System.currentTimeMillis() / 1000;
+        return timeStamp;
+    }
+
 }

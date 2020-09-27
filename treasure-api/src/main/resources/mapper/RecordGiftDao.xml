@@ -35,6 +35,11 @@
          VALUES
         ( default ,#{userId},#{useBalance},#{balance},12,#{date},#{userId});
     </insert>
+    <insert id="insertRecordbyGiftAdmin">
+         insert into ct_record_gift (user_id,transferred_mobile,use_gift,balance_gift,status,create_date,creator )
+         VALUES
+        ( #{userId},#{transferredMobile},#{useGift},#{balanceGift},#{status},#{createDate},#{creator});
+    </insert>
 
     <select id="getAllRecordGoht" resultType="io.treasure.dto.RecordGiftDTO">
         select ccu.name,ccu,username,crg.transferred_mobile,

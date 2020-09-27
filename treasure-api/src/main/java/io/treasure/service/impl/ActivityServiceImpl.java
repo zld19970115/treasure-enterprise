@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -51,6 +52,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ClientUserService clientUserService;
+
+    @Autowired(required = false)
+    RestTemplate restTemplate;
 
     @Override
     public PageData<ActivityEntity> activityPage(Map<String, Object> params) {
