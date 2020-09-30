@@ -111,6 +111,16 @@ public class MerchantQrCodeServiceImpl extends CrudServiceImpl<MerchantQrCodeDao
     }
 
     @Override
+    public void createQRCodeForBm1() throws IOException, WriterException {
+
+    }
+
+    @Override
+    public void createQRCodeForBm2() throws IOException, WriterException {
+
+    }
+
+    @Override
     public MerchantQrCodeEntity getMerchantQrCodeByMerchantId(Long merchantId) throws IOException, WriterException {
         MerchantQrCodeEntity merchantQrCodeByMerchantId = baseDao.getMerchantQrCodeByMerchantId(merchantId);
              if (merchantQrCodeByMerchantId==null){
