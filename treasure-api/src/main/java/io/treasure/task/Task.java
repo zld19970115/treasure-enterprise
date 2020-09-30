@@ -1,11 +1,14 @@
 package io.treasure.task;
 
 import com.alipay.api.AlipayApiException;
+import io.treasure.dao.MerchantDao;
 import io.treasure.dao.SharingActivityExtendsDao;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.SharingActivityExtendsEntity;
 import io.treasure.service.CoinsActivitiesService;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.service.MasterOrderService;
+import io.treasure.service.MerchantService;
 import io.treasure.task.item.*;
 import io.treasure.utils.SharingActivityRandomUtil;
 import io.treasure.utils.TimeUtil;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.List;
 
 @Component
 public class Task {
@@ -40,7 +44,7 @@ public class Task {
     @Autowired
     private AutoCancelOrders autoCancelOrders;
     @Autowired
-    Tmp tmp;
+    private MasterOrderService masterOrderService;
 
     //处理次数记录
     private int taskInProcess = 0;
@@ -89,7 +93,24 @@ public class Task {
 //            tmp.tmp1();
 //        }
 
+
     }
+//    @Autowired(required = false)
+//    private MerchantDao merchantDao;
+//    private int ix = 0;
+//    public void update(){
+//        ix++;
+//        List<MerchantEntity> merchantEntities = merchantDao.selectList(null);
+//
+//        for(int i=0;i<merchantEntities.size();i++){
+//            MerchantEntity merchantEntity = merchantEntities.get(i);
+//            if(merchantEntity != null)
+//            masterOrderService.updateSalesVolume(merchantEntity.getId());//更新销量
+//            System.out.println("更新"+i);
+//        }
+//        System.out.println("销量更新完毕");
+//    }
+
 
     //=========================基本状态锁定===============================
     public boolean isInProcess(){

@@ -127,7 +127,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             clientUserDao.updateById(clientUserEntity);
             BigDecimal subtract = coins.subtract(balance);
 
-            updateActivityCoinsConsumeRecord(clientUser_id,balance,orderId);
+            updateActivityCoinsConsumeRecord(clientUser_id,balance,orderId);//
 
         }else{
             //正常扣除
@@ -138,7 +138,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             }
 
             if(canUseActivityCoins.compareTo(coins)>=0){
-                updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId); //只扣除活动宝币里的值
+                updateActivityCoinsConsumeRecord(clientUser_id,coins,orderId); //只扣除活动宝币里的值//
             }else{
                 updateActivityCoinsConsumeRecord(clientUser_id,canUseActivityCoins,orderId);
                 BigDecimal subtract = coins.subtract(canUseActivityCoins);
@@ -161,6 +161,12 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public boolean updateActivityCoinsConsumeRecord(Long clientUser_id,BigDecimal coins,String orderId){
+
+        boolean b = canConsume(orderId);
+        if(!b){
+            System.out.println("宝币消费记录更新异常,当前订单号:"+orderId+"已经存在,请及时处理!");
+            return false;
+        }
 
         QueryWrapper<MulitCouponBoundleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("owner_id",clientUser_id);
@@ -208,7 +214,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         try {
             //更新卡为使用且无效状态
             if (maxedOuts.size() > 0) {
-                mulitCouponBoundleDao.updateStatusByIds(maxedOuts, null);
+                mulitCouponBoundleDao.updateStatusByIds(maxedOuts, null,orderId);
             }
 
             //减掉剩余的余额
@@ -217,9 +223,9 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
                 idTmp.add(surplusId);
                 BigDecimal couponValueLast = mulitCouponBoundleDao.selectById(surplusId).getCouponValue();
                 if(surplusCoins.compareTo(couponValueLast)==0){
-                    mulitCouponBoundleDao.updateStatusByIds(idTmp, null);
+                    mulitCouponBoundleDao.updateStatusByIds(idTmp, null,orderId);
                 }else{
-                    mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins);
+                    mulitCouponBoundleDao.updateStatusByIds(idTmp, surplusCoins,orderId);
                 }
             }
 
@@ -239,8 +245,13 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         return couponRuleDao.selectById(1);
     }
     @Override
-    public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins){
+    public void resumeActivityCoinsRecord(Long clientUser_id,BigDecimal coins,String orderId){
 
+        boolean b = canResume(orderId);
+        if(!b){
+            System.out.println("当前消费记录不存在：无法返还");
+            return;
+        }
 
         if(coins.doubleValue()==0)
             return;
@@ -299,6 +310,8 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
             }
         }
 
+        clearProcessingFlag(orderId);
+
     }
 
 
@@ -327,7 +340,7 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
 
         //恢复活动中宝币记录
         if(activityCoins.doubleValue()>0)
-            resumeActivityCoinsRecord(clientUser_id,activityCoins);
+            resumeActivityCoinsRecord(clientUser_id,activityCoins,orderId);
         System.out.println("45646564646");
     }
 
@@ -577,6 +590,36 @@ public class CouponForActivityServiceImpl implements CouponForActivityService {
         if(mulitCouponBoundleEntity == null)
             return new BigDecimal("0");
         return mulitCouponBoundleEntity.getCouponValue();
+    }
+
+
+    /**
+     * 检查是否允许恢复,恢复完成后，需要清除原来的这个对象的标记录
+     * @return
+     */
+    public boolean canResume(String orderId){
+        Integer integer = mulitCouponBoundleDao.selectCountByProccessNo(orderId);
+        if(integer == null ||integer == 0)
+            return false;
+        return true;
+    }
+
+    /**
+     * 清除对象的订单标记
+     * @param orderId
+     */
+    public void clearProcessingFlag(String orderId){
+        mulitCouponBoundleDao.clearProcessingFlag(orderId);
+    }
+    /**
+     * 检查是否允许消费宝币，同一个单号在活动中仅能使用一次,如果记录中已经扣除过则不能进行再扣除
+     * @return
+     */
+    public boolean canConsume(String orderId){
+        Integer integer = mulitCouponBoundleDao.selectCountByProccessNo(orderId);
+        if(integer == null || integer ==0)
+            return true;
+        return false;
     }
 
 }
