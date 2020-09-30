@@ -9,9 +9,11 @@
         set
         <choose>
             <when test="consumeValue != null and consumeValue != ''">
+                processing_no = #{order_id},
                 consume_value = #{consumeValue}
             </when>
             <otherwise>
+                processing_no = #{order_id},
                 consume_value = coupon_value,
                 use_status = 1
             </otherwise>
@@ -27,9 +29,11 @@
         set
         <choose>
             <when test="consumeValue != null and consumeValue != ''">
+                processing_no = '0',
                 consume_value = #{consumeValue}
             </when>
             <otherwise>
+                processing_no = '0',
                 consume_value = coupon_value,
                 use_status = 0
             </otherwise>
@@ -102,5 +106,15 @@
     <select id="selectCOUNTByMothod" resultType="io.treasure.entity.MulitCouponBoundleEntity">
         select  * from mulit_coupon_boundle where get_method =#{Status}
     </select>
+
+    <select id="selectCountByProccessNo" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from mulit_coupon_boundle
+        where processing_no = #{orderId}
+    </select>
+
+    <update id="clearProcessingFlag" parameterType="string">
+        update mulit_coupon_boundle set processing_no = '0'
+        where  processing_no = #{orderId}
+    </update>
 
 </mapper>

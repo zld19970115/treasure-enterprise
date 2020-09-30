@@ -17,6 +17,7 @@ import io.treasure.entity.ActivityEntity;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MulitCouponBoundleEntity;
 import io.treasure.entity.SignedRewardSpecifyTimeEntity;
+import io.treasure.service.CoinsActivitiesService;
 import io.treasure.service.CouponForActivityService;
 import io.treasure.service.impl.SignedRewardSpecifyTimeServiceImpl;
 import io.treasure.utils.SharingActivityRandomUtil;
@@ -543,5 +544,38 @@ public class CouponForActivityController {
         }
     }
 
+
+    @GetMapping("can_resume")
+    @ApiOperation("是否可以恢复")
+    @ApiImplicitParam(name="orderId",value = "参数id",dataType = "string",paramType = "query",required = false)
+    public String canResume(String orderId){
+        boolean b = couponForActivityService.canResume(orderId);
+        if(b)
+            return "当前订单记录存在，可以恢复";
+        return "不可以恢复";
+    }
+
+    @GetMapping("clear_flag")
+    @ApiOperation("清理标记-清理后则不能再恢复")
+    @ApiImplicitParam(name="orderId",value = "参数id",dataType = "string",paramType = "query",required = false)
+    public String clearProcessingFlag(String orderId){
+        try{
+            couponForActivityService.clearProcessingFlag(orderId);
+            return "订单记录已经清理完毕";
+        }catch (Exception e){
+            return "订单记录清理异常";
+        }
+
+    }
+
+    @GetMapping("can_consume")
+    @ApiOperation("是否可以消费,在消费同时增加消费标记！！！！！！！！！！！！！！！！")
+    @ApiImplicitParam(name="orderId",value = "参数id",dataType = "string",paramType = "query",required = false)
+    public String canConsume(String orderId){
+        boolean b = couponForActivityService.canConsume(orderId);
+        if(b)
+            return "当前没有当前订单的消费记录，可以进行消费";
+        return "不可以进行消费";
+    }
 
 }

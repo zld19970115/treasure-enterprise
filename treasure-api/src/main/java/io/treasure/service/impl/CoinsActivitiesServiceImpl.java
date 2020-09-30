@@ -811,4 +811,6 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         return coinActivityResultWithPrizeUser(200,"first_prize_mobiles",frizeDateInfo);
     }
 
+
+
 }
