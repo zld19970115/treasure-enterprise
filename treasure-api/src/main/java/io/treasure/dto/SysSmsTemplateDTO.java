@@ -33,4 +33,6 @@ public class SysSmsTemplateDTO implements Serializable {
 
 	private Date time;
 
+	private String reason;
+
 }

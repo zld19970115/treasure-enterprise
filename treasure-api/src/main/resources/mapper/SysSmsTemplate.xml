@@ -12,6 +12,7 @@
         <result property="remark" column="remark"/>
         <result property="state" column="state"/>
         <result property="time" column="time"/>
+        <result property="reason" column="reason"/>
     </resultMap>
 
     <select id="pageList" resultType="io.treasure.dto.SysSmsTemplateDTO">
