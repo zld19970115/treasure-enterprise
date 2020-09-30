@@ -58,17 +58,17 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         if(tmpBD.doubleValue()<prizeMaxmum){
             visualRemain = new BigDecimal("0");
         }
-        Date openingPmt = entity.getOpeningPmt();
-        Date closingPmt = entity.getClosingPmt();
-        Date date0 = TimeUtil.contentTimeAndDate(openingPmt, true);
-        Date date1 = TimeUtil.contentTimeAndDate(closingPmt, true);
-        Long sub = (date1.getTime() - date0.getTime())/10000;
-        if(visualJackpot <= 0)
+
+        if(visualJackpot <= 0){
             return;
-        Long divi = visualJackpot.longValue()/sub;
-        int tmp = (divi.intValue())*6;
-        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(tmp+""), new BigDecimal(commonWinMinmum+""));
+        }
+        BigDecimal randomCoins = SharingActivityRandomUtil.getRandomCoinsInRange(new BigDecimal(prizeMaxmum+""), new BigDecimal(commonWinMinmum+""));
         if(visualRemain != null){
+
+            if(visualRemain.doubleValue()<=0){
+                visualRemain =  new BigDecimal("0");
+                return;
+            }
             visualRemain = visualRemain.subtract(randomCoins).setScale(2,BigDecimal.ROUND_DOWN);
         }
     }
@@ -530,7 +530,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         queryWrapper.eq("get_method",3);
         queryWrapper.eq("use_status",0);
         queryWrapper.ge("expire_pmt",now());
-        queryWrapper.select("sum(coupon_value - consume_value) as coupon_valuecoupon_value");
+        queryWrapper.select("sum(coupon_value - consume_value) as coupon_value");
         MulitCouponBoundleEntity mulitCouponBoundleEntity = mulitCouponBoundleDao.selectOne(queryWrapper);
         if(mulitCouponBoundleEntity == null)
             return new BigDecimal("0");
@@ -591,14 +591,20 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
             if(visualRemain == null){
                 visualRemain = new BigDecimal(coinsActivitiesEntity.getVisualJackpot()+"");
             }
-            if(!isOver){
+            if(visualRemain.doubleValue()<0){
+                visualRemain = new BigDecimal("0");
+            }
+            if(!isOver){//进行中
                 BigDecimal rewardValue = vo.getRewardValue();
+
                 vo.setRewardValue(rewardValue.add(new BigDecimal(visualRemain+"")));//剩余奖值
-            }else{
+                System.out.println("test");
+            }else{//非进行中
                 Integer visualJackpot = coinsActivitiesEntity.getVisualJackpot();
                 Integer realyJackpot = coinsActivitiesEntity.getRealyJackpot();
                 Integer sum = visualJackpot+realyJackpot;
                 vo.setRewardValue(new BigDecimal(sum+""));//剩余奖值
+                System.out.println("test");
             }
         }
         result.setData(vo);
@@ -679,6 +685,7 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         CoinsActivitiesEntity entity = getCoinsActivityById(2L, false);
         coinsActivityVo.setCoinsActivitiesEntity(entity);
         coinsActivityVo.setComment("success");
+
         coinsActivityVo.setRewardValue(jackpotRemaining(entity));
         int onTime = isOnTime(entity);
         if(onTime == 2){
