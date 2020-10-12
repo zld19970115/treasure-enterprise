@@ -487,7 +487,7 @@
 
     <select id="pagePCTotalRow" resultType="io.treasure.vo.OrderVo">
         select
-        IFNULL(sum(ctmo.total_money),0) as totalMoney,
+        IFNULL(sum(ctmo.total_money+ctmo.gift_money),0) as totalMoney,
         IFNULL(sum(ctmo.gift_money),0) as giftMoney,
         IFNULL(sum(ctmo.pay_money),0) as payMoney,
         IFNULL(sum(ctmo.merchant_proceeds),0) as merchantProceeds,
@@ -716,6 +716,22 @@
             and
             #{paidDate}>pay_date
         )
+    </select>
+
+    <select id="selectOrders" resultType="io.treasure.entity.MasterOrderEntity">
+        select order_id,pay_money,merchant_proceeds from ct_master_order
+        where p_order_id = 0
+        and check_status = 1
+        and merchant_id =#{mId}
+    </select>
+
+    <select id="checkOrder" resultType="io.treasure.entity.MasterOrderEntity">
+        select count(*) as creator from ct_master_order
+        WHERE
+        p_order_id = #{order_id}
+        and
+        check_status = 1
+        and merchant_proceeds > 0
     </select>
 
 </mapper>

@@ -19,7 +19,9 @@ import java.util.Map;
 @Mapper
 public interface MulitCouponBoundleDao extends BaseDao<MulitCouponBoundleEntity> {
 
-    void updateStatusByIds(@Param("ids") List<Long> ids,@Param("consumeValue") BigDecimal consumeValue);
+    void updateStatusByIds(@Param("ids") List<Long> ids,
+                           @Param("consumeValue") BigDecimal consumeValue,
+                           @Param("order_id") String order_id);
     void resumeStatusByIds(@Param("ids") List<Long> ids,@Param("consumeValue") BigDecimal consumeValue);
     List<MulitCouponBoundleEntity> selectRecord(Long clientUser_id);
     List<MulitCouponBoundleEntity> selectByStatus(Long clientUser_id);
@@ -29,4 +31,7 @@ public interface MulitCouponBoundleDao extends BaseDao<MulitCouponBoundleEntity>
     int selectByrule1(int status);
     List<MulitCouponBoundleNewDto> pageList(Map map);
 
+    Integer selectCountByProccessNo(String orderId);
+
+    void clearProcessingFlag(String orderId);
 }

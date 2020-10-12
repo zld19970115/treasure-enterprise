@@ -27,6 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -112,7 +113,7 @@ public class SysSmsTemplateController {
 
     @Login
     @GetMapping("/querySmsTemplate")
-    @ApiOperation("删除模板")
+    @ApiOperation("查询模板")
     public Result querySmsTemplate() {
         DefaultProfile profile = DefaultProfile.getProfile(
                 "cn-hangzhou", smsConfig.getAccessKeyId(), smsConfig.getAccessSecret()
@@ -121,21 +122,23 @@ public class SysSmsTemplateController {
         Map<String, Object> map = new HashMap<>();
         map.put("limit",1000);
         map.put("page",1);
-        service.pageList(map).getList().stream().forEach(item -> {
-            if(item.getState() == 0) {
+        List<SysSmsTemplateDTO> list = service.pageList(map).getList();
+        for(SysSmsTemplateDTO info : list) {
+            if (info.getState() != 1) {
                 CommonRequest request = new CommonRequest();
                 request.setSysMethod(MethodType.POST);
                 request.setSysDomain("dysmsapi.aliyuncs.com");
                 request.setSysVersion("2017-05-25");
                 request.setSysAction("QuerySmsTemplate");
                 request.putQueryParameter("RegionId", "cn-hangzhou");
-                request.putQueryParameter("TemplateCode", item.getCode());
+                request.putQueryParameter("TemplateCode", info.getCode());
                 try {
                     CommonResponse response = client.getCommonResponse(request);
                     JSONObject json = JSON.parseObject(response.getData());
-                    if(json.getString("Code").equals("OK")) {
-                        item.setState(json.getInteger("TemplateStatus"));
-                        service.update(item);
+                    if (json.getString("Code").equals("OK")) {
+                        info.setState(json.getInteger("TemplateStatus"));
+                        info.setReason(json.getString("Reason"));
+                        service.update(info);
                     }
                 } catch (ServerException e) {
                     e.printStackTrace();
@@ -143,8 +146,48 @@ public class SysSmsTemplateController {
                     e.printStackTrace();
                 }
             }
-        });
+        }
         return new Result().ok("ok");
+    }
+
+    @Login
+    @PostMapping("/updateSmsTemplate")
+    @ApiOperation("修改模板")
+    public Result updateSmsTemplate(@RequestBody SysSmsTemplateDTO dto) {
+        DefaultProfile profile = DefaultProfile.getProfile(
+                "cn-hangzhou", smsConfig.getAccessKeyId(), smsConfig.getAccessSecret()
+        );
+        IAcsClient client = new DefaultAcsClient(profile);
+        CommonRequest request = new CommonRequest();
+        request.setSysMethod(MethodType.POST);
+        request.setSysDomain("dysmsapi.aliyuncs.com");
+        request.setSysVersion("2017-05-25");
+        request.setSysAction("ModifySmsTemplate");
+        request.putQueryParameter("RegionId", "cn-hangzhou");
+        request.putQueryParameter("TemplateType", dto.getType()+"");
+        request.putQueryParameter("TemplateName", dto.getName()+"");
+        request.putQueryParameter("TemplateCode", dto.getCode());
+        request.putQueryParameter("TemplateContent", dto.getContent());
+        request.putQueryParameter("Remark", dto.getRemark());
+        try {
+            CommonResponse response = client.getCommonResponse(request);
+            JSONObject json = JSON.parseObject(response.getData());
+            if(json.getString("Code").equals("OK")) {
+                service.update(dto);
+            }
+        } catch (ServerException e) {
+            e.printStackTrace();
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+        return new Result().ok("ok");
+    }
+
+    @Login
+    @GetMapping("/selectById")
+    @ApiOperation("查询")
+    public Result querySmsTemplate(Long id) {
+        return new Result().ok(service.selectById(id));
     }
 
     @Login

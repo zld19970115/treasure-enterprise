@@ -294,8 +294,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         Date date = new Date();
         if (null != dto) {
-            masterOrderService.updateSalesVolume(dto.getMerchantId());//更新销量
-
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
             if (result1) {
                 if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
@@ -3224,29 +3222,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             acceptUpdate(id,Constants.OrderStatus.MERCHANTRECEIPTORDER.getValue(),verify,new Date(),"接受订单");
         }
 
-    }
-    //取所有销量的总和
-    public void updateSalesVolume(Long mId){
-        if(mId == null)
-            return;
-        List<MasterOrderEntity> entities = masterOrderDao.selectOrders(mId);
-        int salesVolume = 0;
-        for(int i=0;i<entities.size();i++){
-            MasterOrderEntity masterOrderEntity = entities.get(i);
-            if(masterOrderEntity.getMerchantProceeds().doubleValue()>0){
-                salesVolume++;
-            }else{
-                MasterOrderEntity masterOrderEntity1 = masterOrderDao.checkOrder(masterOrderEntity.getOrderId());
-                if(masterOrderEntity1 != null){
-                    if(masterOrderEntity1.getCreator()>0){
-                        salesVolume ++;
-                    }
-                }
-            }
-        }
-        MerchantEntity merchantEntity = merchantDao.selectById(mId);
-        merchantEntity.setMonthySales(salesVolume);
-        merchantDao.updateById(merchantEntity);
     }
 
 }

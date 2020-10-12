@@ -1092,6 +1092,19 @@ public class ApiMasterOrderController {
             return result.ok(masterOrderVo);
     }
 
+    @GetMapping("/update_sales")
+    @ApiOperation("进行中的订单")
+    @ApiImplicitParam(name = "merchantId", value = "商户id号", paramType = "query", required = true, dataType="Long")
+    public String updateSales(@RequestParam Long merchantId){
+        try{
+            masterOrderService.updateSalesVolume(merchantId);
+        }catch(Exception e){
+            e.printStackTrace();
+            return "error";
+        }
+        return "success";
+    }
+
 
 
 }

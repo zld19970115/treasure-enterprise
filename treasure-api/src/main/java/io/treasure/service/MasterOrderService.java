@@ -187,4 +187,5 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
     public PageData<MerchantOrderDTO> selectInProcessListByMerchantId(Long merchantId,Integer page,Integer limit,String orderId,String orderField,String sortMethod);
 
     void autoAceptOrder(Long id,Long verify,int days);
+    void updateSalesVolume(Long mId);
 }
