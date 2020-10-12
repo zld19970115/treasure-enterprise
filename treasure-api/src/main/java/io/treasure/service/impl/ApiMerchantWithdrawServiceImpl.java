@@ -23,8 +23,11 @@ import io.treasure.config.IWXPay;
 import io.treasure.dao.MerchantWithdrawDao;
 import io.treasure.dto.MerchantDTO;
 import io.treasure.dto.MerchantWithdrawDTO;
+import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantWithdrawEntity;
 import io.treasure.service.ApiMerchantWithdrawService;
+import io.treasure.service.MerchantWithdrawService;
 import io.treasure.utils.AdressIPUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,8 @@ public class ApiMerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWith
     private IWXConfig wxPayConfig;
     @Autowired
     private IWXPay wxPay;
-
+    @Autowired
+    private MerchantWithdrawService merchantWithdrawService;
     @Autowired
     MerchantServiceImpl merchantService;
 
@@ -201,6 +205,97 @@ public class ApiMerchantWithdrawServiceImpl extends CrudServiceImpl<MerchantWith
             }
         } else {
             this.update(dto);
+        }
+        List<MasterOrderEntity> masterOrderEntity = merchantWithdrawService.selectOrderByMartID(dto.getMerchantId());
+        MerchantEntity merchantEntity = merchantService.selectById(dto.getMerchantId());
+        Double wartCash = merchantWithdrawService.selectWaitByMartId(dto.getMerchantId());
+        if (wartCash == null) {
+            wartCash = 0.00;
+        }
+        if (masterOrderEntity == null) {
+            if (null != merchantEntity) {
+                BigDecimal wartcashZore = new BigDecimal("0.00");
+                merchantEntity.setTotalCash(0.00);
+                merchantEntity.setAlreadyCash(0.00);
+                merchantEntity.setNotCash(0.00);
+                merchantEntity.setPointMoney(0.00);
+                merchantEntity.setWartCash(wartcashZore);
+                merchantService.updateById(merchantEntity);
+
+//                //1-1更新返佣
+//
+//
+//                //return new Result().ok("订单翻台成功！");
+//                //id为订单id
+//                return updateCommissionRecordAndReturn(id);
+            }
+        }
+        List<MerchantWithdrawEntity> merchantWithdrawEntities = merchantWithdrawService.selectPoByMartID(dto.getMerchantId());
+        if (merchantWithdrawEntities.size() == 0) {
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());
+
+            BigDecimal wartcashZore = new BigDecimal("0.00");
+            if (null == bigDecimal) {
+                bigDecimal = new BigDecimal("0.00");
+                if (null != merchantEntity) {
+                    if (bigDecimal1 == null) {
+                        bigDecimal1 = new BigDecimal("0.00");
+                    }
+                    merchantEntity.setTotalCash(0.00);
+                    merchantEntity.setAlreadyCash(0.00);
+                    merchantEntity.setNotCash(0.00);
+                    merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+                    merchantEntity.setWartCash(wartcashZore);
+                    merchantService.updateById(merchantEntity);
+
+                    //return new Result().ok("订单翻台成功！");
+//                    return updateCommissionRecordAndReturn(id);
+                }
+            }
+            BigDecimal totalCash = bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
+            merchantEntity.setAlreadyCash(0.00);
+            merchantEntity.setNotCash(bigDecimal.doubleValue());
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcashZore);
+            merchantService.updateById(merchantEntity);
+
+
+            //return new Result().ok("订单翻台成功！");
+//            return updateCommissionRecordAndReturn(id);
+        }
+        if (merchantWithdrawEntities.size() != 0) {
+            BigDecimal wartcash = new BigDecimal(String.valueOf(wartCash));
+            BigDecimal bigDecimal = merchantWithdrawService.selectTotalCath(dto.getMerchantId());//查询总额
+            BigDecimal bigDecimal1 = merchantWithdrawService.selectPointMoney(dto.getMerchantId());//查询扣点总额
+            if (bigDecimal1 == null) {
+                bigDecimal1 = new BigDecimal("0.00");
+            }
+            if (bigDecimal == null) {
+                bigDecimal = new BigDecimal("0.00");
+            }
+            Double aDouble = merchantWithdrawService.selectAlreadyCash(dto.getMerchantId()); //查询已提现总额
+            if (aDouble == null) {
+                aDouble = 0.00;
+            }
+            String allMoney = String.valueOf(merchantWithdrawService.selectByMartId(dto.getMerchantId()));
+            BigDecimal v = new BigDecimal(0);
+            if (allMoney != "null") {
+                v = new BigDecimal(allMoney);
+            }
+            BigDecimal a = bigDecimal.subtract(v);
+            double c = a.doubleValue();
+            BigDecimal totalCash = bigDecimal.add(bigDecimal1);
+            merchantEntity.setTotalCash(totalCash.doubleValue());
+            merchantEntity.setAlreadyCash(aDouble);
+            merchantEntity.setNotCash(c);
+            merchantEntity.setPointMoney(bigDecimal1.doubleValue());
+            merchantEntity.setWartCash(wartcash);
+            merchantService.updateById(merchantEntity);
+
+//            return updateCommissionRecordAndReturn(id);
+            //return new Result().ok("订单翻台成功！");
         }
         return result;
     }
