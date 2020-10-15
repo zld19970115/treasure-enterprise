@@ -13,7 +13,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper=false)
 @TableName("sharing_activity")
 public class SharingActivityEntity {
-
+      @TableId
       private Integer saId;//int(10) NOT NULL AUTO_INCREMENT COMMENT '活动编号',
       private Long creator;         //活动创建者
       private Integer rewardType;// int(2) DEFAULT '1' COMMENT '奖励类型1-代付金，2-商品，3-菜品',
