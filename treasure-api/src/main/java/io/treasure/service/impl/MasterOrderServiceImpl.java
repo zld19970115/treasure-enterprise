@@ -298,7 +298,10 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             //增加1，不可以提前清台
             Long eatTime = dto.getEatTime().getTime();
             if(new Date().getTime()<eatTime){
-                return new Result().error("不可提前进行清台！");
+                Result c = new Result();
+                c.setCode(1);
+                c.setData("不可提前进行清台!");
+                return c;
             }
             masterOrderService.updateSalesVolume(dto.getMerchantId());//更新销量
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
