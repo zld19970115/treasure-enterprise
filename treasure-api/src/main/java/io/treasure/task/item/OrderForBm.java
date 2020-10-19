@@ -32,18 +32,21 @@ public class OrderForBm  extends TaskSock {
             //更新执行程序计数器
             List<OrderDTO> orderDTOS = masterOrderDao.selectForBm();
             for (OrderDTO orderDTO : orderDTOS) {
-                BusinessManagerTrackRecordEntity businessManagerTrackRecordEntity = businessManagerDao.selectByMartId(orderDTO.getMerchantId());
-                if(businessManagerTrackRecordEntity!=null){
-                    BusinessManagerEntity businessManagerEntity = businessManagerDao.selectById(businessManagerTrackRecordEntity.getBmId());
-                    MerchantEntity merchantEntity = merchantDao.selectById(orderDTO.getMerchantId());
-                    System.out.println(businessManagerEntity.getMobile()+orderDTO.getOrderId()+ merchantEntity.getName());
-                    boolean b = SendSMSUtil.MerchantsToBm(businessManagerEntity.getMobile(), orderDTO.getOrderId(), merchantEntity.getName(), smsConfig);
-                    System.out.println(b +"发短信+++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    if (b==true){
-                        masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
-                    }
+               List<BusinessManagerTrackRecordEntity>  businessManagerTrackRecordEntitys = businessManagerDao.selectByMartId(orderDTO.getMerchantId());
+
+                for (BusinessManagerTrackRecordEntity businessManagerTrackRecordEntity : businessManagerTrackRecordEntitys) {
+                        BusinessManagerEntity businessManagerEntity = businessManagerDao.selectById(businessManagerTrackRecordEntity.getBmId());
+                        MerchantEntity merchantEntity = merchantDao.selectById(orderDTO.getMerchantId());
+                        boolean b = SendSMSUtil.MerchantsToBm(businessManagerEntity.getMobile(), orderDTO.getOrderId(), merchantEntity.getName(), smsConfig);
+                        System.out.println(b +"发短信+++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        if (b==true){
+                            masterOrderDao.updateSmsStatus(orderDTO.getOrderId());
+                        }
 
                 }
+
+
+
 
             }
 
