@@ -431,7 +431,7 @@
             ctmo.reservation_type as reservationType,
             ctmo.preferential_type as preferentialType,
             ctmo.discount_id as discountId,
-            date_format(ctmo.eat_time, '%Y-%m-%d %H') as eatTime,
+            date_format(ctmo.eat_time, '%Y-%m-%d %H:%i:%S') as eatTime,
             ctmo.total_money as totalMoney,
             ctmo.gift_money as giftMoney,
             ctmo.pay_money as payMoney,

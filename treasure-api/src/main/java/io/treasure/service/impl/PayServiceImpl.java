@@ -643,7 +643,6 @@ public class PayServiceImpl implements PayService {
 
     /**
      * 微信菜品退款功能
-     *
      * @param orderNo 订单号
      * @param goodId  退菜编号
      * @return
@@ -672,8 +671,6 @@ public class PayServiceImpl implements PayService {
         if (masterOrderEntity.getCheckStatus() == 1) {
             return result.error("已结算不可以退款！");
         }
-        //判断是否可以退款
-
         //判断是否退菜
         if (goodId != null) {
             //退菜
@@ -742,10 +739,8 @@ public class PayServiceImpl implements PayService {
                 //退菜后将订单菜品表中对应菜品平台扣点和商户所得金额清除掉
                 slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
 
-
                 //4-->退还宝币
                 //couponForActivityService.resumeAllCoinsRecord(order.getCreator(),orderNo);
-
 
                 return result.ok(true);
             } else {
@@ -763,8 +758,6 @@ public class PayServiceImpl implements PayService {
                         //couponForActivityService.resumeAllCoinsRecord(slaveOrderEntity.getCreator(),slaveOrderEntity.getOrderId());
                     }
                     slaveOrderService.updateSlaveOrderPointDeduction(a, a, orderNo, goodId);
-
-
                 }
                 masterOrderService.updateSlaveOrderPointDeduction(a, a, orderNo);
                 return result.ok(true);

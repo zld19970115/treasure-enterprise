@@ -6,6 +6,7 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -107,6 +108,7 @@ public class ApiAliAppPayController  {
         // 返回支付相关信息(此处可以直接将getBody中的内容直接返回，无需再做一些其他操作)
         return new Result().ok(alipayResponse.getBody());
     }
+
     @Login
     @PostMapping("/appCashPay")
     @ApiOperation(value="当面付-条码付-现金充值")
@@ -162,4 +164,6 @@ public class ApiAliAppPayController  {
         // 返回支付相关信息(此处可以直接将getBody中的内容直接返回，无需再做一些其他操作)
         return new Result().ok(alipayResponse.getBody());
     }
+
+
 }

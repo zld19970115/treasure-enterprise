@@ -51,6 +51,7 @@ import java.util.*;
 import static io.treasure.enm.EAceptOrder.AUTO_ACEPT_ORDER;
 import static io.treasure.enm.EIncrType.ADD;
 import static io.treasure.enm.EIncrType.SUB;
+import static java.time.Instant.now;
 
 /**
  * 订单表
@@ -294,10 +295,18 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
         Date date = new Date();
         if (null != dto) {
+            //增加1，不可以提前清台
+            Long eatTime = dto.getEatTime().getTime();
+            if(new Date().getTime()<eatTime){
+                Result c = new Result();
+                c.setCode(1);
+                c.setData("不可提前进行清台!");
+                return c;
+            }
             masterOrderService.updateSalesVolume(dto.getMerchantId());//更新销量
-
             boolean result1 = this.judgeRockover(dto.getOrderId(), date);
             if (result1) {
+                //===============================
                 if (dto.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() && dto.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
                         dto.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() && dto.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
                         dto.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue() && dto.getStatus() != Constants.OrderStatus.MERCHANTREFUSALORDER.getValue()) {
@@ -344,7 +353,6 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         }
                     }
                 }
-
                 if(statsDayDetailService.orderCount(dto.getOrderId()) == 0) {
                     statsDayDetailService.insertFinishUpdate(dto);
                     List<MasterOrderDTO> orderByFinance = baseDao.getOrderByFinance(dto.getOrderId());
@@ -352,7 +360,11 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                         statsDayDetailService.insertFinishUpdate(mod);
                     }
                 }
-
+                //增加2-清台时清理被占有用的房间
+                Long reservationId = dto.getReservationId();
+                if(reservationId != null)
+                    merchantRoomParamsSetService.updateStatus(reservationId, MerchantRoomEnm.STATE_USE_NO.getType());
+                //=====================
             } else {
                 Result c = new Result();
                 c.setCode(1);

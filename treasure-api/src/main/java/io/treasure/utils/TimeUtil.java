@@ -7,6 +7,7 @@ import io.treasure.entity.MerchantSalesRewardEntity;
 import org.junit.Test;
 
 import javax.validation.constraints.NotNull;
+import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -404,16 +405,16 @@ public class TimeUtil {
     }
 
     public static Date contentTimeAndDate(Date date,boolean todayOrTomm) throws ParseException {
+       // System.out.println("当前时间:"+date);
         String hms = sdfHms.format(date);
-        String ymd = null;
-        if(todayOrTomm){
-            ymd = sdfYmd.format(new Date());
-        }else{
-            Date date2 = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-            ymd = sdfYmd.format(date2);
-        }
+        long oneDay = 24 * 60 * 60L * 1000L;
+        long dLong = new Date().getTime() + oneDay;
+        Date date2 = new Date(dLong);
 
+        String ymd = todayOrTomm?sdfYmd.format(new Date()):sdfYmd.format(date2);
+        //System.out.println("ymd:"+ymd+",hms:"+hms);
         Date result = simpleDateFormat.parse(ymd + " " + hms);
+        //System.out.println(simpleDateFormat.format(result));
         return result;
     }
 
