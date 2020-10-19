@@ -39,7 +39,7 @@ public class BusinessManagerServiceImpl  extends CrudServiceImpl<BusinessManager
 
     @Override
     public void binding(Integer bmId, String mchId) {
-        BusinessManagerTrackRecordEntity obj = baseDao.selectByMartId(Long.parseLong(mchId));
+        BusinessManagerTrackRecordEntity obj = baseDao.selectByMartIdAndBmid(Long.parseLong(mchId),bmId);
         if(obj != null) {
             baseDao.delLogById(obj.getPid());
         }
