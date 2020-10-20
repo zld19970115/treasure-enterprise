@@ -50,11 +50,26 @@ public class AutoCancelOrders extends TaskCommon {
             Long id = orders.get(i).getId();
             execAutoCancelOrder(id);
         }
+        //处理仅包含房间的订单
+        List<MasterOrderEntity> onlyRoomOrders = scanTimeOutOrderWithRoomOnly();
+        for(int j=0;j<onlyRoomOrders.size();j++){
+            System.out.println("超时订单:"+onlyRoomOrders.get(j).toString());
+            Long id = onlyRoomOrders.get(j).getId();
+            execAutoCancelOrder(id);
+        }
 
         resetDelayCounter();
         freeProcessLock();
     }
 
+    public List<MasterOrderEntity> scanTimeOutOrderWithRoomOnly(){
+        Long date = new Date().getTime();
+        Date unPayDate = new Date(date-unPayExpireDate);
+        Date paidDate = new Date(date - paidExpireDate);
+
+        List<MasterOrderEntity> orders =  masterOrderDao.scanTimeoutOrderWithRoomOnly(unPayDate,paidDate);
+        return orders;
+    }
     public List<MasterOrderEntity> scanTimeOutOrders(){
         Long date = new Date().getTime();
         Date unPayDate = new Date(date-unPayExpireDate);

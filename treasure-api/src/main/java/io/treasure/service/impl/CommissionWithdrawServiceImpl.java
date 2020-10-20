@@ -68,9 +68,9 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
 
         SortedMap<String, String> map = new TreeMap<String, String>();
         if(merchantEntity.getWxStatus() == 1) {
-           map.put("mch_appid","wx6e2e6aa4fa13a6f0");//申请商户号的appid或商户号绑定的appid
+           map.put("mch_appid","wx37dffd395a91d089");//申请商户号的appid或商户号绑定的appid
         } else {
-            map.put("mch_appid","wx55a47af8ae69ae28");//申请商户号的appid或商户号绑定的appid
+            map.put("mch_appid","wx21ea102be3ebdd99");//申请商户号的appid或商户号绑定的appid
         }
         map.put("mchid",wxPayConfig.getMchID());//微信支付分配的商户号
         map.put("nonce_str", WXPayUtil.generateNonceStr());//随机字符串
@@ -91,7 +91,6 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
             //生成交易记录,这一步才调用微信提现接口，上面的是封装参数
             String returnXml=wxPay.requestWithCert("/mmpaymkttransfers/promotion/transfers",map,wxPayConfig.getHttpConnectTimeoutMs(),wxPayConfig.getHttpReadTimeoutMs());
             returnInfo=  WXPayUtil.xmlToMap(returnXml);
-            System.out.println(returnInfo.toString());
             System.out.println(returnInfo.toString());
         } catch (Exception e) {
             System.out.println("返现签名异常");

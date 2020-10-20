@@ -744,4 +744,18 @@
         and date_format(#{month},'%Y%m') = date_format(update_date,'%Y%m')
     </select>
 
+
+
+    <select id="scanTimeoutOrderWithRoomOnly" resultType="io.treasure.entity.MasterOrderEntity">
+        select id,order_id from ct_master_order master
+        where status = 4 and
+        #{paidDate}>create_date
+        and reservation_type = 2
+        and (
+            select count(1) from ct_master_order mo
+            where master.order_id = mo.order_id
+            or master.p_order_id  = mo.order_id
+        ) =1
+
+    </select>
 </mapper>

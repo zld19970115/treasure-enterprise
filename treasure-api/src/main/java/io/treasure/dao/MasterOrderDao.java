@@ -130,6 +130,9 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
     List<MasterOrderEntity> scanAutoRefundOrders(@Param("unPayDate")Date unPayDate,
                                                     @Param("paidDate")Date paidDate);
 
+    List<MasterOrderEntity> scanTimeoutOrderWithRoomOnly(@Param("unPayDate")Date unPayDate,
+                                                 @Param("paidDate")Date paidDate);
+
     List<MasterOrderEntity> selectOrders(Long mId);
 
     MasterOrderEntity checkOrder(String order_id);
