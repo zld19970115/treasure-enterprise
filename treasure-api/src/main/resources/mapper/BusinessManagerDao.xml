@@ -58,5 +58,8 @@
         </where>
         ORDER BY cm.create_date desc
     </select>
+    <select id="selectByMartIdAndBmid" resultType="io.treasure.entity.BusinessManagerTrackRecordEntity">
+         select * from business_manager_track_record where bm_id = #{bmId} and  mch_id = #{martId}
+    </select>
 
 </mapper>

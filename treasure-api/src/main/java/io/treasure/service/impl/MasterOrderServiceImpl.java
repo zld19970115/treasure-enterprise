@@ -2421,35 +2421,28 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             if (order.getPOrderId().equals("0") || orders.size() == 1) {
                 mainOrder = order;
             }
-            if (order.getStatus() != Constants.OrderStatus.NOPAYORDER.getValue() &&
-                    order.getStatus() != Constants.OrderStatus.MERCHANTREFUSALORDER.getValue() &&
-                    order.getStatus() != Constants.OrderStatus.CANCELNOPAYORDER.getValue() &&
-                    order.getStatus() != Constants.OrderStatus.MERCHANTAGREEREFUNDORDER.getValue() &&
-                    order.getStatus() != Constants.OrderStatus.DELETEORDER.getValue() &&
-                    order.getStatus() != Constants.OrderStatus.MERCHANTTIMEOUTORDER.getValue()) {
-                BigDecimal discountsMoney = new BigDecimal("0");
-                BigDecimal payMoney = order.getPayMoney();
-                BigDecimal giftMoney = order.getGiftMoney();
-                AllPayMoney = AllPayMoney.add(payMoney.add(giftMoney));
-                List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
-                for (SlaveOrderEntity og : orderGoods) {
-                    og.setGoodInfo(goodService.getByid(og.getGoodId()));
-                    discountsMoney = discountsMoney.add(og.getDiscountsMoney());
-                }
-                order.setSlaveOrder(orderGoods);
-                order.setDiscountsMoney(discountsMoney);
-                order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
-                g = g.add(order.getGiftMoney());
-                d = d.add(order.getDiscountsMoney());
-                if (order.getRoomId() != null) {
-                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
-                } else if (order.getPOrderId().equals("0")) {
-                    MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
-                    if (roomOrderByPorderId != null) {
-                        order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
-                        order.setRoomId(roomOrderByPorderId.getRoomId());
-                        order.setReservationId(roomOrderByPorderId.getReservationId());
-                    }
+            BigDecimal discountsMoney = new BigDecimal("0");
+            BigDecimal payMoney = order.getPayMoney();
+            BigDecimal giftMoney = order.getGiftMoney();
+            AllPayMoney = AllPayMoney.add(payMoney.add(giftMoney));
+            List<SlaveOrderEntity> orderGoods = slaveOrderService.getOrderGoods(order.getOrderId());
+            for (SlaveOrderEntity og : orderGoods) {
+                og.setGoodInfo(goodService.getByid(og.getGoodId()));
+                discountsMoney = discountsMoney.add(og.getDiscountsMoney());
+            }
+            order.setSlaveOrder(orderGoods);
+            order.setDiscountsMoney(discountsMoney);
+            order.setClientUserInfo(clientUserService.getClientUser(order.getCreator()));
+            g = g.add(order.getGiftMoney());
+            d = d.add(order.getDiscountsMoney());
+            if (order.getRoomId() != null) {
+                order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(order.getRoomId()));
+            } else if (order.getPOrderId().equals("0")) {
+                MasterOrderEntity roomOrderByPorderId = masterOrderService.getRoomOrderByPorderId(orderId);
+                if (roomOrderByPorderId != null) {
+                    order.setMerchantRoomEntity(merchantRoomService.getmerchantroom(roomOrderByPorderId.getRoomId()));
+                    order.setRoomId(roomOrderByPorderId.getRoomId());
+                    order.setReservationId(roomOrderByPorderId.getReservationId());
                 }
             }
             mainOrder.setAllPaymoney(AllPayMoney);

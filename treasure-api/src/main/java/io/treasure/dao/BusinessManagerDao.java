@@ -6,6 +6,7 @@ import io.treasure.entity.BusinessManagerEntity;
 import io.treasure.entity.BusinessManagerTrackRecordEntity;
 import io.treasure.vo.BusinessManagerPageVo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,8 @@ public interface BusinessManagerDao  extends BaseDao<BusinessManagerEntity> {
    void binding(int bmId, String mchId);
     BusinessManagerDTO selectByMobile(String mobile);
   List<BusinessManagerTrackRecordEntity> selectlogById(long id);
-    BusinessManagerTrackRecordEntity  selectByMartId(long martId);
+    List<BusinessManagerTrackRecordEntity>  selectByMartId(long martId);
+    BusinessManagerTrackRecordEntity  selectByMartIdAndBmid(@Param("martId") long martId, @Param("bmId")int bmId);
     List<BusinessManagerPageVo> pagePC(Map<String, Object> params);
     void delLogById(Integer pid);
 }
