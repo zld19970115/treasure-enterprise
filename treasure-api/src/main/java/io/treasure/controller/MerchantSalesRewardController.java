@@ -483,6 +483,9 @@ public class MerchantSalesRewardController {
             e.printStackTrace();
             return new Result().error(500,"db_monthSales发生错误，请稍后重试");
         }
+        if(masterOrderEntity == null){
+            return new Result().error(500,"销售扣点值为0，不能返现");
+        }
         BigDecimal totalMoney = masterOrderEntity.getTotalMoney();
         BigDecimal platformBrokerage = masterOrderEntity.getPlatformBrokerage();
 
