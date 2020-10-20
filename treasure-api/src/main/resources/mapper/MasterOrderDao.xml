@@ -734,4 +734,14 @@
         and merchant_proceeds > 0
     </select>
 
+
+    <select id="monthSales" resultType="io.treasure.entity.MasterOrderEntity">
+        select sum(total_money) as total_money,sum(pay_money) as pay_money,sum(platform_brokerage) as platform_brokerage from ct_master_order
+        WHERE
+        merchant_id = #{mid}
+        and
+        check_status = 1
+        and date_format(#{month},'%Y%m') = date_format(update_date,'%Y%m')
+    </select>
+
 </mapper>

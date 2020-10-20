@@ -9,9 +9,6 @@ public class TaskSock{
 
     private boolean taskLock = false;
 
-
-
-
     public void resetTaskCounter(){
         taskCounter = 0;
     }

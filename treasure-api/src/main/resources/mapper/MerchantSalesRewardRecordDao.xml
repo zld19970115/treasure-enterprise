@@ -79,4 +79,11 @@
         (#{mId},#{method},#{cashOutStatus},#{auditStatus},#{auditComment},#{withDrawTime},#{stopPmt},#{commissionVolume},#{salesVolume})
     </update>
 
+    <select id="isExistRecordByIdAndTime" resultType="int">
+        select count(1) from merchant_sales_reward_record
+        where m_id = #{mid}
+        and cash_out_status = #{cashOutStatus}
+        and date_format(#{rTime},'%Y%m') = date_format(stop_pmt,'%Y%m')
+    </select>
+
 </mapper>

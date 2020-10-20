@@ -1,5 +1,7 @@
 package io.treasure.controller;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
@@ -14,13 +16,12 @@ import io.swagger.models.auth.In;
 import io.treasure.annotation.Login;
 import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
-import io.treasure.dao.MerchantDao;
-import io.treasure.dao.MerchantSalesRewardDao;
-import io.treasure.dao.MerchantSalesRewardRecordDao;
-import io.treasure.dao.MerchantWithdrawDao;
+import io.treasure.dao.*;
+import io.treasure.entity.MasterOrderEntity;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.MerchantSalesRewardEntity;
 import io.treasure.entity.MerchantSalesRewardRecordEntity;
+import io.treasure.service.CommissionWithdrawService;
 import io.treasure.service.MerchantSalesRewardService;
 import io.treasure.service.MerchantWithdrawService;
 import io.treasure.service.UserWithdrawService;
@@ -30,9 +31,11 @@ import io.treasure.utils.SendSMSUtil;
 import io.treasure.utils.TimeUtil;
 import io.treasure.vo.*;
 import lombok.val;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -54,6 +57,7 @@ public class MerchantSalesRewardController {
     @Autowired(required = false)
     private MerchantSalesRewardRecordDao merchantSalesRewardRecordDao;
 
+
     @Autowired(required = false)
     private MerchantWithdrawDao merchantWithdrawDao;
 
@@ -72,6 +76,9 @@ public class MerchantSalesRewardController {
     private WithdrawCommissionForMerchant withdrawCommissionForMerchant;
     @Autowired
     private SendSMSUtil sendSMSUtil;
+
+    @Autowired
+    CommissionWithdrawService commissionWithdrawService;
 
 
     //===============================================第二部分记录CRUD===========================================
@@ -447,4 +454,83 @@ public class MerchantSalesRewardController {
         return new Result().ok("success");
     }
 
+    @Resource
+    private MasterOrderDao masterOrderDao;
+
+
+
+    @CrossOrigin
+    @Login
+    @PostMapping("reward_mch")
+    @ApiOperation("给商家奖励（反佣）")
+    public Result rewardMch(@RequestBody RewardMchVo vo){
+        boolean canExecute = false;
+        Long mchId = vo.getMchId();
+        Date prizeMonth = vo.getPrizeMonth();
+        Double prizePercent = vo.getPrizePercent();
+        Double prizeValue = vo.getPrizeValue();
+        Double prePrizeValue = prizeValue > 0d?prizeValue:0d;
+        //检查用户是否已经返现过了，且成功了，如果是则不能再返现
+        int count = merchantSalesRewardRecordDao.isExistRecordByIdAndTime(mchId, prizeMonth, 2);
+        if(count >0){
+            //用户本月已经返现过了，不能再次返现
+            return new Result().error(500,"指定月份已经返现过了，不能再次返现");
+        }
+        MasterOrderEntity masterOrderEntity = null;
+        try{
+            masterOrderEntity = masterOrderDao.monthSales(mchId, prizeMonth);//检查清台时是否维护了updateDate
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Result().error(500,"db_monthSales发生错误，请稍后重试");
+        }
+        BigDecimal totalMoney = masterOrderEntity.getTotalMoney();
+        BigDecimal platformBrokerage = masterOrderEntity.getPlatformBrokerage();
+
+        if(prePrizeValue != 0d){
+            if(platformBrokerage.doubleValue()<prePrizeValue){
+                return new Result().error(500,"返现金额超限");
+            }
+        }else{
+            if(prizePercent >0d && prizePercent<=100){
+                prePrizeValue = (platformBrokerage.multiply(new BigDecimal(prizePercent)).setScale(2,BigDecimal.ROUND_DOWN)).doubleValue();
+            }else{
+                return new Result().error(500,"返现金额超限");
+            }
+        }
+        //需更新的内容
+        MerchantSalesRewardRecordEntity entity = new MerchantSalesRewardRecordEntity();
+        entity.setMId(mchId);
+        entity.setCommissionVolume(new BigDecimal(prePrizeValue+""));
+        entity.setMethod(vo.getPayMethod());
+        entity.setWithDrawTime(new Date());
+        entity.setSalesVolume(totalMoney);
+        entity.setStartPmt(prizeMonth);//仅显示当前月的内容
+        entity.setStopPmt(prizeMonth);//仅为当前月的内容
+        entity.setCashOutStatus(2);//表示已提现
+
+        Result result = null;
+        try{
+            if(vo.getPayMethod() == 3){
+                result = commissionWithdrawService.wxMerchantCommissionWithDraw(entity);//微信支付
+            }else if(vo.getPayMethod() == 2){
+                result = commissionWithdrawService.aliMerchantCommissionWithDraw(entity);//支付宝支付
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return new Result().error(500,"数据库发生错误，请稍后重试");
+        }
+        if(result != null){
+            if((result.getMsg()+"haha").equalsIgnoreCase("success")
+                    ||(result.getData()+"haha").equalsIgnoreCase("success")){
+                Result res = new Result();
+                res.setMsg("success");
+                res.setCode(200);
+                return res;
+            }else{
+                System.out.println("返佣"+result);
+            }
+        }
+        return new Result().error(500,"返佣失败，请稍后重试或联系管理员");
+        //{mchid=1516500931, mch_appid=wx55a47af8ae69ae28, err_code=OPENID_ERROR, return_msg=openid与商户appid不匹配, result_code=FAIL, err_code_des=openid与商户appid不匹配, return_code=SUCCESS}
+    }
 }

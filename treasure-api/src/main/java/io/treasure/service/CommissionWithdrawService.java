@@ -7,5 +7,5 @@ import io.treasure.entity.MerchantSalesRewardRecordEntity;
 public interface CommissionWithdrawService {
 
     Result wxMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity);
-    Result AliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException;
+    Result aliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException;
 }

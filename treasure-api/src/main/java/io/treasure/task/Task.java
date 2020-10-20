@@ -68,8 +68,8 @@ public class Task {
             clientMemberGradeAssessment.updateGrade(20);
         }
         //自动执行用户提现相关操作----给商家返佣定时业务
-        if(!withdrawCommissionForMerchant.isInProcess())
-            withdrawCommissionForMerchant.startWithdrarw();
+        //if(!withdrawCommissionForMerchant.isInProcess())
+           //withdrawCommissionForMerchant.startWithdrarw();
 
         //更新虚拟抢红钯奖池
         coinsActivitiesService.updateVisualJackpot();

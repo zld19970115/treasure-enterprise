@@ -94,7 +94,7 @@ public class WithdrawCommissionForMerchant extends TaskCommon implements IWithdr
                                 Integer method = entity.getMethod();
 
                                 if(method == 2){
-                                        commissionWithdrawService.AliMerchantCommissionWithDraw(entity);
+                                        commissionWithdrawService.aliMerchantCommissionWithDraw(entity);
                                 }else if(method == 1){
                                         commissionWithdrawService.wxMerchantCommissionWithDraw(entity);
                                 }

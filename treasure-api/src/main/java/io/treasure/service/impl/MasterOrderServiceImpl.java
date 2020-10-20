@@ -894,7 +894,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date a4 = sdf.parse(" 22:00:00");
             Date b4 = sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
-            Date b5 = sdf.parse("04:59:00");
+            Date b5 = sdf.parse(" 4:59:00");
             System.out.println(dto.getEatTime());
             System.out.println(a1);
             System.out.println(b1);

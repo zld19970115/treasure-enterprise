@@ -134,4 +134,6 @@ public interface MasterOrderDao extends BaseDao<MasterOrderEntity> {
 
     MasterOrderEntity checkOrder(String order_id);
 
+    MasterOrderEntity monthSales(@Param("mid")Long mid,@Param("month")Date month);
+
 }

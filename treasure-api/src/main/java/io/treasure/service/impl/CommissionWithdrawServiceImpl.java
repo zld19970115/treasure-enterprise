@@ -68,26 +68,21 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
 
         SortedMap<String, String> map = new TreeMap<String, String>();
         if(merchantEntity.getWxStatus() == 1) {
-            map.put("mch_appid","wx6e2e6aa4fa13a6f0");
+           map.put("mch_appid","wx6e2e6aa4fa13a6f0");//申请商户号的appid或商户号绑定的appid
         } else {
-            map.put("mch_appid","wx55a47af8ae69ae28");
+            map.put("mch_appid","wx55a47af8ae69ae28");//申请商户号的appid或商户号绑定的appid
         }
-        map.put("mchid",wxPayConfig.getMchID());
+        map.put("mchid",wxPayConfig.getMchID());//微信支付分配的商户号
         map.put("nonce_str", WXPayUtil.generateNonceStr());//随机字符串
-        map.put("partner_trade_no",mId+"");
-        map.put("openid",openid);
+        map.put("partner_trade_no",entity.getId()+"");//商户订单号，需保持唯一性(只能是字母或者数字，不能包含有其它字符)
+        map.put("openid",openid);//商户appid下，某用户的openid
         map.put("check_name","NO_CHECK");
-        //map.put("re_user_name",realName);//收款人真实姓名
-        java.text.DecimalFormat df=new java.text.DecimalFormat("0");
-
-        //接口中参数支付金额单位为【分】，参数值不能带小数，所以乘以100
         String fen = commissionVolume.multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN).stripTrailingZeros().toPlainString();
-        map.put("amount",df.format(fen));//金额
-
+        map.put("amount",fen.trim());//金额
         map.put("desc","mch_commission!");//描述
-        if(ipAddress != null){
-            map.put("spbill_create_ip",ipAddress);//IP
-        }
+//        if(ipAddress != null){
+//            map.put("spbill_create_ip",ipAddress);//IP
+//        }
         String orderInfo = null;
         Map<String, String> returnInfo=new HashMap<String, String>();
         try {
@@ -96,7 +91,10 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
             //生成交易记录,这一步才调用微信提现接口，上面的是封装参数
             String returnXml=wxPay.requestWithCert("/mmpaymkttransfers/promotion/transfers",map,wxPayConfig.getHttpConnectTimeoutMs(),wxPayConfig.getHttpReadTimeoutMs());
             returnInfo=  WXPayUtil.xmlToMap(returnXml);
+            System.out.println(returnInfo.toString());
+            System.out.println(returnInfo.toString());
         } catch (Exception e) {
+            System.out.println("返现签名异常");
             throw new RenException(e.getMessage());
         }
         if ("SUCCESS".equals(returnInfo.get("return_code"))
@@ -116,7 +114,7 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
      * 支付宝提现
      */
     @Transactional(rollbackFor = Exception.class)
-    public Result AliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
+    public Result aliMerchantCommissionWithDraw(MerchantSalesRewardRecordEntity entity) throws AlipayApiException {
 
         Result result=new Result();
         Long mId = entity.getMId();
@@ -165,17 +163,7 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
         }
         certAlipayRequest.setRootCertPath(alipay_root_cert_path);
         DefaultAlipayClient alipayClient = new DefaultAlipayClient(certAlipayRequest);
-        //构造client
-        //构造API请求
         AlipayFundTransUniTransferRequest request = new AlipayFundTransUniTransferRequest();
-//        Map<String, String> map = new LinkedHashMap<String, String>();
-//        map.put("out_biz_no", orderNumber);
-//        map.put("payee_type", "ALIPAY_LOGONID");
-//        map.put("payee_account",account);
-//        map.put("amount", amount);
-//        map.put("payer_show_name", "聚宝订餐平台用户提现");
-//        map.put("payee_real_name",realName);
-//        map.put("remark", "您的提现已转出请查收。");
         request.setBizContent(
                 "{" +
                         "\"out_biz_no\":\""+mId+"\"," +
@@ -210,14 +198,15 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
 
     public Result updateAndReturn(MerchantSalesRewardRecordEntity entity,MerchantEntity merchantEntity,BigDecimal amount){
         //更新奖励记录
-        entity.setCashOutStatus(2);
-        merchantSalesRewardRecordDao.updateById(entity);
+        //entity.setCashOutStatus(2);
+        //merchantSalesRewardRecordDao.updateById(entity);
+        merchantSalesRewardRecordDao.insertEntity(entity);//插入新记录
 
-        //更新商户提现等参数金额
-        merchantEntity.setCommissionNotWithdraw(merchantEntity.getCommissionNotWithdraw().subtract(amount));
-        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(amount));
-        merchantEntity.setCommissionWithdraw(merchantEntity.getCommissionWithdraw().add(amount));
-        merchantDao.updateById(merchantEntity);
+//        //更新商户提现等参数金额
+//        merchantEntity.setCommissionNotWithdraw(merchantEntity.getCommissionNotWithdraw().subtract(amount));
+//        merchantEntity.setCommissionAudit(merchantEntity.getCommissionAudit().subtract(amount));
+//        merchantEntity.setCommissionWithdraw(merchantEntity.getCommissionWithdraw().add(amount));
+//        merchantDao.updateById(merchantEntity);
 
         //发送成功消息
         SendSMSUtil.MerchantsWithdrawal(merchantEntity.getMobile(),entity.getCommissionVolume()+"", merchantEntity.getName(), smsConfig);
@@ -226,10 +215,9 @@ public class CommissionWithdrawServiceImpl implements CommissionWithdrawService 
         MerchantSalesRewardRecordEntity updatedEntity = merchantSalesRewardRecordDao.selectById(entity.getId());
         if(updatedEntity != null){
             if(updatedEntity.getCashOutStatus() != 2){
-                System.out.println("提现成功，记录更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.getId());
+                System.out.println("提现成功，记录更新失败"+ TimeUtil.simpleDateFormat.format(new Date())+":"+entity.toString());
             }
         }
-
         return new Result().ok("success");
     }
 }

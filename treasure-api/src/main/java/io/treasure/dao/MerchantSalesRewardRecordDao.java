@@ -6,7 +6,9 @@ import io.treasure.vo.MchRewardUpdateQuery;
 import io.treasure.vo.MerchantSalesRewardRecordVo;
 import io.treasure.vo.RewardMchList;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -19,5 +21,8 @@ public interface MerchantSalesRewardRecordDao extends BaseDao<MerchantSalesRewar
     int isExistRecord();
     void updateAuditStatusByIds(MchRewardUpdateQuery query);
     Long insertEntity(MerchantSalesRewardRecordEntity merchantSales);
+
+    int isExistRecordByIdAndTime(@Param("mid") Long mid, @Param("rTime")Date rTime,
+                                 @Param("cashOutStatus")int cashOutStatus);
 
 }
