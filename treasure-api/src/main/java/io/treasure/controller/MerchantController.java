@@ -821,4 +821,11 @@ public class MerchantController {
         return  new Result().ok("success");
     }
 
+    @Login
+    @GetMapping("merCommission")
+    @ApiOperation("设置佣金比例")
+    public Result merCommission(Long mid, BigDecimal proportion){
+        merchantService.updateCommission(mid, proportion);
+        return  new Result().ok("success");
+    }
 }
