@@ -46,7 +46,7 @@ public class AutoCancelOrders extends TaskCommon {
         //System.out.println("scaning");
         List<MasterOrderEntity> orders = scanTimeOutOrders();
         for(int i=0;i<orders.size();i++){
-            System.out.println(orders.get(i).toString());
+            System.out.println("超时订单:"+orders.get(i).toString());
             Long id = orders.get(i).getId();
             execAutoCancelOrder(id);
         }
@@ -59,7 +59,6 @@ public class AutoCancelOrders extends TaskCommon {
         Long date = new Date().getTime();
         Date unPayDate = new Date(date-unPayExpireDate);
         Date paidDate = new Date(date - paidExpireDate);
-
         List<MasterOrderEntity> orders =  masterOrderDao.scanAutoRefundOrders(unPayDate,paidDate);
         return orders;
     }

@@ -84,7 +84,6 @@ public class Task {
             reseverRoomRecord.checkReserverRoomRecord();
         }
         //更新计数器
-
         autoCancelOrders.updateDelayCounter();
         if(!autoCancelOrders.isInProcess())
             autoCancelOrders.execRefund(this.getClass());

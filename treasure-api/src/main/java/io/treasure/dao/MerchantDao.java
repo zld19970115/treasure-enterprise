@@ -62,4 +62,5 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
 
 
     List<MerchantDTO> selectCommissionList();
+
 }

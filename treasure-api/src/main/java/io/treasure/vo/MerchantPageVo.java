@@ -152,4 +152,6 @@ public class MerchantPageVo {
 
     private Integer commissionType;
 
+    private Integer deductionRate;//deduction_rate
+
 }

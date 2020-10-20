@@ -28,6 +28,9 @@ public class DesignConditionsDTO {
     @ApiModelProperty(value = "ID")
     private long id;
 
+    @ApiModelProperty(value = "mid")//商户id
+    private long mid;
+
     @ApiModelProperty(value = "订单总价")
     private BigDecimal totalMoney;
 

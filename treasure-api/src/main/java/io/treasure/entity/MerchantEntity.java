@@ -235,5 +235,7 @@ public class MerchantEntity implements Serializable {
 	private BigDecimal commissionWithdraw;
 	private Integer commissionType;
 
+	private Integer deductionRate;//deduction_rate
+
 	
 }

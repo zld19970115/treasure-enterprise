@@ -7,6 +7,7 @@ import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.entity.ClientUserEntity;
 import io.treasure.entity.MasterOrderEntity;
+import io.treasure.entity.MerchantEntity;
 import io.treasure.entity.SlaveOrderEntity;
 import io.treasure.vo.BackDishesVo;
 import io.treasure.vo.OrderVo;

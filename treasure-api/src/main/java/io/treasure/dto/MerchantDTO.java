@@ -194,6 +194,9 @@ public class MerchantDTO implements Serializable {
 	@ApiModelProperty(value = "返佣商户标识")
 	private Integer commissionType;
 
+	@ApiModelProperty(value = "扣点比率")
+	private Integer deductionRate;//deduction_rate
+
 	@Override
 	public boolean equals(Object obj) {
 		MerchantDTO u = (MerchantDTO) obj;

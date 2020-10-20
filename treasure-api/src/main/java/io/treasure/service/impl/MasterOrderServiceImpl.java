@@ -894,7 +894,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             Date a4 = sdf.parse(" 22:00:00");
             Date b4 = sdf.parse(" 23:59:00");
             Date a5 = sdf.parse("00:00:00");
-            Date b5 = sdf.parse(" 4:59:00");
+            Date b5 = sdf.parse("04:59:00");
             System.out.println(dto.getEatTime());
             System.out.println(a1);
             System.out.println(b1);
@@ -1646,7 +1646,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //                }
                 if (discountType.ordinal() == 1) {
                     System.out.println("xx当前赠送金的值--原总:" + priceOrigin);
-                    slaveOrders = calculateIncomex(slaveOrders);
+                    slaveOrders = calculateIncomex(slaveOrders,target.getMid());
                     break;
                 }
 
@@ -1697,7 +1697,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             case 3://默认不扣减方式
                 /************************************************************************/
                 System.out.println("xx当前赠送金的值--原总，赠送金:" + priceOrigin + "," + giftValue);
-                slaveOrders = calculateIncomex(slaveOrders);
+                slaveOrders = calculateIncomex(slaveOrders,target.getMid());
 
                 /************************************************************************/
                 break;
@@ -1719,9 +1719,16 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
      * @param slaveOrders
      * @param (-赠送金后的值)
      */
-    public List<calculationAmountDTO> calculateIncomex(List<calculationAmountDTO> slaveOrders) {
-        BigDecimal platformRatio = new BigDecimal("0.15");           //商家扣点标准(总金额-赠送金，后的15%)
+    public List<calculationAmountDTO> calculateIncomex(List<calculationAmountDTO> slaveOrders,Long mid) {
+        BigDecimal platformRatio = new BigDecimal("0.05");
 
+        if(mid != null){
+            MerchantEntity merchantEntity = merchantDao.selectById(mid);
+            //取得商家需要扣的点数
+            if(merchantEntity != null){
+                platformRatio = new BigDecimal(merchantEntity.getDeductionRate()+"").divide(new BigDecimal("100"),2,BigDecimal.ROUND_DOWN);        //商家扣点标准(总金额-赠送金，后的15%)
+            }
+        }
         //收入总额(商家收入+平台收入的总额)
         BigDecimal incomeTotal = new BigDecimal("0");
         //平台应收入总额
