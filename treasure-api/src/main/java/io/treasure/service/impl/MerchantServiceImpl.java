@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -529,4 +530,8 @@ public class MerchantServiceImpl extends CrudServiceImpl<MerchantDao, MerchantEn
 
     }
 
+    @Override
+    public int updateCommission(Long mid, BigDecimal proportion) {
+        return merchantDao.updateCommission(mid, proportion);
+    }
 }

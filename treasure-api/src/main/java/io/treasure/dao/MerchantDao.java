@@ -10,6 +10,7 @@ import io.treasure.entity.MerchantEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -63,4 +64,5 @@ public interface MerchantDao extends BaseDao<MerchantEntity> {
 
     List<MerchantDTO> selectCommissionList();
 
+    int updateCommission(@Param("mid") Long mid, @Param("proportion") BigDecimal proportion);
 }

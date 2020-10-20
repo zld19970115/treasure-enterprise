@@ -8,6 +8,7 @@ import io.treasure.dto.MerchantDTO;
 import io.treasure.entity.MerchantEntity;
 import io.treasure.vo.AutoAceptVo;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -54,5 +55,7 @@ public interface MerchantService extends CrudService<MerchantEntity, MerchantDTO
     int attachCategoryByNamePlus(String merchantName,String categoryName);
 
     void updateAutoAceptStatus(AutoAceptVo vo);
+
+    int updateCommission(Long mid, BigDecimal proportion);
 
 }

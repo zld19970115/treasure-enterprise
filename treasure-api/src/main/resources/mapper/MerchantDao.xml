@@ -342,6 +342,15 @@
         update ct_merchant set commission_type = #{type} where id = #{id}
     </update>
 
+    <update id="updateCommission">
+        update ct_merchant set deduction_rate = #{proportion}
+        <where>
+            <if test="mid != null">
+                id = #{mid}
+            </if>
+        </where>
+    </update>
+
     <select id="selectCommissionList" resultType="io.treasure.dto.MerchantDTO">
         select id,mobile,create_date,days,commission_type
         from ct_merchant
