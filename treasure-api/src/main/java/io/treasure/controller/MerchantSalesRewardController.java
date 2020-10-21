@@ -511,27 +511,24 @@ public class MerchantSalesRewardController {
         entity.setStopPmt(prizeMonth);//仅为当前月的内容
         entity.setCashOutStatus(2);//表示已提现
 
-        Result result = null;
         try{
             if(vo.getPayMethod() == 3){
-                result = commissionWithdrawService.wxMerchantCommissionWithDraw(entity);//微信支付
+                commissionWithdrawService.wxMerchantCommissionWithDraw(entity);//微信支付
             }else if(vo.getPayMethod() == 2){
-                result = commissionWithdrawService.aliMerchantCommissionWithDraw(entity);//支付宝支付
+                commissionWithdrawService.aliMerchantCommissionWithDraw(entity);//支付宝支付
             }
         }catch(Exception e){
             e.printStackTrace();
             return new Result().error(500,"数据库发生错误，请稍后重试");
         }
-        if(result != null){
-            if((result.getMsg()+"haha").equalsIgnoreCase("success")
-                    ||(result.getData()+"haha").equalsIgnoreCase("success")){
-                Result res = new Result();
-                res.setMsg("success");
-                res.setCode(200);
-                return res;
-            }else{
-                System.out.println("返佣"+result);
-            }
+
+        int counts = merchantSalesRewardRecordDao.isExistRecordByIdAndTime(mchId, prizeMonth, 2);
+        if(counts >0){
+            //用户本月已经返现过了，不能再次返现
+            Result res = new Result();
+            res.setMsg("success");
+            res.setCode(200);
+            return res;
         }
         return new Result().error(500,"返佣失败，请稍后重试或联系管理员");
         //{mchid=1516500931, mch_appid=wx55a47af8ae69ae28, err_code=OPENID_ERROR, return_msg=openid与商户appid不匹配, result_code=FAIL, err_code_des=openid与商户appid不匹配, return_code=SUCCESS}
