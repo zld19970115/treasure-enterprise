@@ -78,6 +78,17 @@ public class CoinsActivitiesController {
     }
 
 
+//    @GetMapping("testing")
+//    @ApiOperation("活动测试(重写的)")
+//    @ApiImplicitParams({
+//        @ApiImplicitParam(name="clientId",value = "id",dataType = "long",paramType = "query",required = false),
+//        @ApiImplicitParam(name="rewardCoins",value = "奖值测试",dataType = "string",paramType = "query",required = false)
+//    })
+
+    public Result clientDrawTesting(Long clientId,String rewardCoins) throws ParseException{
+        Result result = coinsActivitiesService.clientDrawTesting(clientId, rewardCoins);
+        return result;
+    }
 
 
 }

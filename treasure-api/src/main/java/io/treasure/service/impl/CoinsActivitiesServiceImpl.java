@@ -16,6 +16,7 @@ import io.treasure.utils.TimeUtil;
 import io.treasure.vo.CoinsActivityVo;
 import io.treasure.vo.CounterDownVo;
 import io.treasure.vo.PrizeUserInfoVo;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -563,17 +564,19 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
         if(clientActivityCoinsVolume.doubleValue()>= personalCoinsLimit){
             return 0d;
         }
+
         BigDecimal sum = award.add(clientActivityCoinsVolume);
         if(sum.doubleValue() > personalCoinsLimit)
-            sum = new BigDecimal(personalCoinsLimit+"").subtract(clientActivityCoinsVolume);
-        mulitCouponBoundleEntity.setCouponValue(sum);
+            award = new BigDecimal(personalCoinsLimit+"").subtract(clientActivityCoinsVolume);
+
+        mulitCouponBoundleEntity.setCouponValue(award);
         mulitCouponBoundleEntity.setConsumeValue(new BigDecimal("0"));
         mulitCouponBoundleEntity.setGotPmt(new Date());
         Date date = generateExpireTimeForActivities(coinsActivity);
         mulitCouponBoundleEntity.setExpirePmt(date);
         try{
             mulitCouponBoundleDao.insert(mulitCouponBoundleEntity);
-            return sum.doubleValue();
+            return award.doubleValue();
         }catch (Exception e){
             return 0d;
         }
@@ -819,5 +822,32 @@ public class CoinsActivitiesServiceImpl implements CoinsActivitiesService {
     }
 
 
+
+    public Result clientDrawTesting(Long clientId,String rewardCoins) throws ParseException {
+        CoinsActivityVo coinsActivityVo = new CoinsActivityVo();
+
+        CoinsActivitiesEntity entity = getCoinsActivityById(2L, false);
+        coinsActivityVo.setCoinsActivitiesEntity(entity);
+        coinsActivityVo.setRewardValue(jackpotRemaining(entity));
+
+        ClientUserEntity clientUserEntity = clientUserDao.selectById(clientId);
+        if (clientUserEntity == null){
+            coinsActivityVo.setRewardValue(new BigDecimal("0"));
+            coinsActivityVo.setComment("用户id无效,请先登录或注册！");
+            return coinActivityResultWithCoinsActivity(501,"用户id无效,请先登录或注册！",coinsActivityVo,false);
+        }
+
+        Double aDouble = insertCoinsActivityRecordByClientId(entity, clientId, new BigDecimal(rewardCoins), 3);
+
+        if(aDouble>0){
+            coinsActivityVo.setComment("恭喜获得"+aDouble+"宝币!!");
+            coinsActivityVo.setRewardValue(jackpotRemaining(entity));
+            return coinActivityResultWithCoinsActivity(200,"恭喜获得"+aDouble+"宝币!!",coinsActivityVo,false);
+        }else{
+            coinsActivityVo.setComment("宝币仓已满，请消费后再来抢红包!!");
+            return coinActivityResultWithCoinsActivity(501,"宝币仓已满，请消费后再来抢红包!!",coinsActivityVo,false);
+        }
+
+    }
 
 }

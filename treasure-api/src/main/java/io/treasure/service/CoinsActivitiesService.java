@@ -52,6 +52,7 @@ public interface CoinsActivitiesService {
     Result getFirstPrizeList() throws ParseException;
     Result coinActivityResultWithPrizeUser(int code,String msg,List<PrizeUserInfoVo> frizeDateInfo);
     Result coinActivityResultWithCoinsActivity(int code, String msg, CoinsActivityVo coinsActivityVo,boolean isOver);
+    Result clientDrawTesting(Long clientId,String rewardCoins) throws ParseException;
 
 
 }
