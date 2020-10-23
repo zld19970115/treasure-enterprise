@@ -180,7 +180,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
                     String clientId = userDto.getClientId();
                     if (StringUtils.isNotBlank(clientId)) {
                         //发送个推消息
-                        AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId);
+                        AppPushUtil.pushToSingleClient("商家拒绝接单", "您的订单商家已拒绝", "", clientId,"123");
                     }
                 }
             } else {

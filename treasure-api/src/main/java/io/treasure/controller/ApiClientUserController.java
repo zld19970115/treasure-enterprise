@@ -939,15 +939,17 @@ public class ApiClientUserController {
 
     @GetMapping("/pushClientPC")
     @ApiOperation("PC端推送用户")
-    public Result pushClientPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
-        AppPushUtil.pushToSingleClient(title, text, "", clientId);
+    public Result pushClientPC(@RequestParam String title,@RequestParam String text,
+                               @RequestParam String clientId,@RequestParam(required = false) Long msg) {
+        AppPushUtil.pushToSingleClient(title, text, "", clientId,msg != null ? msg+"": "off");
         return new Result().ok("成功");
     }
 
     @GetMapping("/pushMerPC")
     @ApiOperation("PC端推送商户")
-    public Result pushMerPC(@RequestParam String title,@RequestParam String text,@RequestParam String clientId) {
-        AppPushUtil.pushToSingleMerchantPC(title, text, clientId);
+    public Result pushMerPC(@RequestParam String title,@RequestParam String text,
+                            @RequestParam String clientId,@RequestParam(required = false) Long msg) {
+        AppPushUtil.pushToSingleMerchantPC(title, text, clientId,msg != null ? msg+"": "off");
         return new Result().ok("成功");
     }
     @GetMapping("/userpushMer")
