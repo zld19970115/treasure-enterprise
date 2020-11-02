@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.treasure.dao.MerchantStaffDao">
+
+    <resultMap type="io.treasure.entity.MerchantStaffEntity" id="id">
+
+        <result property="id" column="id"/>
+        <result property="mchId" column="mch_id"/>
+        <result property="mobile" column="mobile"/>
+        <result property="sType" column="s_type"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+    <select id="getOne" resultType="io.treasure.entity.MerchantStaffEntity">
+        select * from merchant_staff
+        where #{mchId} = mch_id
+        order by s_type asc
+        limit 0,1
+    </select>
+    <insert id="addOne">
+        insert into merchant_staff(mch_id,mobile,s_type)
+        value(#{mchId},#{mobile},#{sType})
+    </insert>
+    <delete id="delOne">
+        delete from merchant_staff
+        where #{mchId} = mch_id
+        and #{mobile} = mobile
+    </delete>
+</mapper>

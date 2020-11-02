@@ -421,8 +421,6 @@ public class SendSMSUtil {
         if(codeing==null||"".equals(codeing.trim())){
             result.error(-1,"验证码为空！");
         }
-        System.out.println(codeing+"sahdhakshdkhaskdhkhsjhaf了萨达了金坷垃绝对路径as拉斯绝对路径爱上了昆仑决撒了大家萨克埃里克森几点啦可视对讲爱是快乐大姐说了肯定奥斯卡单机啊胜利大街");
-        System.out.println(time+"sahdhakshdkhaskdhkhsjhaf积分接口了萨达了金坷垃绝对路径as拉斯绝对路径爱上了昆仑决撒了大家萨克埃里克森几点啦可视对讲爱是快乐大姐说了肯定奥斯卡单机啊胜利大街");
         if((System.currentTimeMillis()-time)/1000/60>=10){
             result.error(-2,"验证码已经过期！");
         }

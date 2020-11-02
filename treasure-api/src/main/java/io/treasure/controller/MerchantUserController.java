@@ -13,6 +13,7 @@ import io.treasure.common.sms.SMSConfig;
 import io.treasure.common.utils.Result;
 import io.treasure.common.validator.AssertUtils;
 import io.treasure.common.validator.ValidatorUtils;
+import io.treasure.dao.MerchantStaffDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,6 +58,10 @@ public class MerchantUserController {
     private MerchantClientService merchantClientService;
     @Autowired
     private MasterOrderService masterOrderService;
+
+    @Resource
+    private MerchantStaffDao merchantStaffDao;
+
     @CrossOrigin
     @Login
     @GetMapping("page")
@@ -630,4 +636,54 @@ public class MerchantUserController {
         Result result = merchantUserService.delOrFrozen(id, status);
         return new Result().ok(result);
     }
+
+    //==============================================================================================
+               /** merchant_staff 服务员-用于接收新订单提醒   */
+    //==============================================================================================
+    @CrossOrigin
+    @GetMapping("waiter_ack")
+    @ApiOperation("服务员-短信验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
+    })
+    public Result checkWaiter(@RequestParam String mobile){
+        Result result = SendSMSUtil.sendCodeForRegister(mobile, smsConfig);
+        return new Result().ok(result);
+    }
+    @CrossOrigin
+    @GetMapping("waiter_code")
+    @ApiOperation("服务员-校验验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query",dataType = "String"),
+            @ApiImplicitParam(name="code",value="验证码",required=true,paramType="query",dataType = "String"),
+            @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result verifyCodeWaiter(HttpServletRequest request,@RequestParam String mobile,@RequestParam String code,@RequestParam Long mchId){
+        Result bool=SendSMSUtil.verifyCode(mobile,request,code);
+        if(bool.getCode()==new Result<>().ok(null).getCode()){
+            merchantStaffDao.addOne(mchId,mobile,1);
+        }
+        return bool;
+    }
+
+
+    @GetMapping("waiter_del")
+    @ApiOperation("删除服务员手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query",dataType = "String"),
+            @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result delWaiter(@RequestParam String mobile, @RequestParam Long mchId) {
+        try{
+            merchantStaffDao.delOne(mchId,mobile);
+            return new Result().ok("success");
+        }catch (Exception e){
+            return new Result().error(500);
+        }
+    }
+
+
+
+
+
 }

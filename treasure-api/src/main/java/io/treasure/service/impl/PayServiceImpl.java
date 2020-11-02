@@ -14,6 +14,7 @@ import io.treasure.config.IWXConfig;
 import io.treasure.config.IWXPay;
 import io.treasure.dao.ClientUserDao;
 import io.treasure.dao.MasterOrderDao;
+import io.treasure.dao.MerchantStaffDao;
 import io.treasure.dao.SlaveOrderDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
@@ -111,6 +112,8 @@ public class PayServiceImpl implements PayService {
     private CouponForActivityService couponForActivityService;
 
     private Long platform_super = 1203867983016017922L;
+    @Resource
+    private MerchantStaffDao merchantStaffDao;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -203,7 +206,16 @@ public class PayServiceImpl implements PayService {
 
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+
+            String mobile = merchantUserEntity.getMobile();
+            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
+            if(one != null){
+                if(one.getMobile() != null)
+                    mobile = one.getMobile();
+            }
+            SendSMSUtil.sendNewOrder(mobile, smsConfig);
+
+            //SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
@@ -1003,7 +1015,15 @@ public class PayServiceImpl implements PayService {
 
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+
+            String mobile = merchantUserEntity.getMobile();
+            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
+            if(one != null){
+                if(one.getMobile() != null)
+                    mobile = one.getMobile();
+            }
+            SendSMSUtil.sendNewOrder(mobile, smsConfig);
+            //SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
 
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());

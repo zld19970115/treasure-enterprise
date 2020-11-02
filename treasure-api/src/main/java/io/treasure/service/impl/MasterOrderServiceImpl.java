@@ -19,6 +19,7 @@ import io.treasure.config.IWXPay;
 import io.treasure.dao.BusinessManagerDao;
 import io.treasure.dao.MasterOrderDao;
 import io.treasure.dao.MerchantDao;
+import io.treasure.dao.MerchantStaffDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Constants;
 import io.treasure.enm.EMessageUpdateType;
@@ -51,7 +52,7 @@ import java.util.*;
 import static io.treasure.enm.EAceptOrder.AUTO_ACEPT_ORDER;
 import static io.treasure.enm.EIncrType.ADD;
 import static io.treasure.enm.EIncrType.SUB;
-import static java.time.Instant.now;
+
 
 /**
  * 订单表
@@ -120,6 +121,9 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 
     @Autowired
     private CouponForActivityService couponForActivityService;
+
+    @Autowired
+    private MerchantStaffDao merchantStaffDao;
 
     @Override
     public QueryWrapper<MasterOrderEntity> getWrapper(Map<String, Object> params) {
@@ -959,7 +963,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         if (dto.getReservationType() == 2 && dto.getPayMoney().compareTo(BigDecimal.ZERO) == 0) {
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+
+            String mobile = merchantUserEntity.getMobile();
+            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
+            if(one != null){
+                if(one.getMobile() != null)
+                    mobile = one.getMobile();
+            }
+            SendSMSUtil.sendNewOrder(mobile, smsConfig);
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
             if (list.size() == 0){
                 System.out.println("MasterOrder 849");
@@ -1096,7 +1107,14 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
 //          boolean b=slaveOrderService.insertBatch(dtoList);
             MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
-            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            String mobile = merchantUserEntity.getMobile();
+            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
+            if(one != null){
+                if(one.getMobile() != null)
+                    mobile = one.getMobile();
+            }
+
+            SendSMSUtil.sendNewOrder(mobile, smsConfig);
         }
         return result.ok(orderId);
     }
