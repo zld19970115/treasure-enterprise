@@ -44,6 +44,7 @@ import java.util.Map;
 
 import static io.treasure.enm.EAceptOrder.AUTO_ACEPT_ORDER;
 import static io.treasure.enm.EIncrType.ADD;
+import static io.treasure.utils.SendSMSUtil.sendNewOrder;
 
 /**
  * @author super  251 903
@@ -206,16 +207,18 @@ public class PayServiceImpl implements PayService {
 
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
-
-            String mobile = merchantUserEntity.getMobile();
-            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
-            if(one != null){
-                if(one.getMobile() != null)
-                    mobile = one.getMobile();
+            List<MerchantStaffEntity> list = merchantStaffDao.getList(masterOrderEntity.getMerchantId(), 1, null);
+            if(list.size()>0){
+                for(int j=0;j<list.size();j++){
+                    MerchantStaffEntity one = list.get(j);
+                    if(one != null){
+                        if(one.getMobile() != null)
+                            sendNewOrder(one.getMobile(), smsConfig);
+                    }
+                }
+            }else{
+                sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
             }
-            SendSMSUtil.sendNewOrder(mobile, smsConfig);
-
-            //SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
         WebSocket wsByUser = wsPool.getWsByUser(masterOrderEntity.getMerchantId().toString());
         System.out.println("wsByUser+++++++++++++++++++++++++++++:" + wsByUser
@@ -1016,13 +1019,18 @@ public class PayServiceImpl implements PayService {
         MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(masterOrderEntity.getMerchantId());
         if (merchantUserEntity != null) {
 
-            String mobile = merchantUserEntity.getMobile();
-            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
-            if(one != null){
-                if(one.getMobile() != null)
-                    mobile = one.getMobile();
+            List<MerchantStaffEntity> list = merchantStaffDao.getList(masterOrderEntity.getMerchantId(), 1, null);
+            if(list.size()>0){
+                for(int j=0;j<list.size();j++){
+                    MerchantStaffEntity one = list.get(j);
+                    if(one != null){
+                        if(one.getMobile() != null)
+                            sendNewOrder(one.getMobile(), smsConfig);
+                    }
+                }
+            }else{
+                sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
             }
-            SendSMSUtil.sendNewOrder(mobile, smsConfig);
             //SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
         }
 

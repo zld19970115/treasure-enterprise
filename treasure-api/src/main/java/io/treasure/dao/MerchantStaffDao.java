@@ -18,10 +18,19 @@ public interface MerchantStaffDao extends BaseDao<MerchantStaffEntity> {
 
     void addOne(@Param("mchId") Long mchId,
                 @Param("mobile") String mobile,
-                @Param("sType") Integer sType);
+                @Param("sType") Integer sType,
+                @Param("status") Integer status,
+                @Param("tmpCode") String code);
 
-    MerchantStaffEntity getOne(@Param("mchId") Long mchId);
+    void updateCodeByMobile(@Param("mobile") String mobile,
+                      @Param("status") Integer status,
+                      @Param("tmpCode") String code);
+
+    List<MerchantStaffEntity> getList(@Param("mchId") Long mchId,
+                               @Param("status") Integer status,
+                               @Param("mobile") String mobile);
 
     void delOne(@Param("mchId") Long mchId,
                 @Param("mobile") String mobile);
+
 }

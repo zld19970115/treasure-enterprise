@@ -15,8 +15,7 @@ public class MerchantStaffEntity {
     private Long mchId;
     private String mobile;
     private Integer sType;//1表示管理者，2表示服务员
-
-    @TableLogic
-    private Integer deleted;
+    private Integer status;
+    private String tmpCode;
 
 }

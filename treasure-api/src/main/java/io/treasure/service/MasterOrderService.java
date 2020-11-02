@@ -189,4 +189,5 @@ public interface MasterOrderService extends CrudService<MasterOrderEntity, Maste
 
     void autoAceptOrder(Long id,Long verify,int days);
     void updateSalesVolume(Long mId);
+    void testingSendMsg(Long merchantId);
 }

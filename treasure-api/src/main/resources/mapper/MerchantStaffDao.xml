@@ -9,22 +9,39 @@
         <result property="mchId" column="mch_id"/>
         <result property="mobile" column="mobile"/>
         <result property="sType" column="s_type"/>
-        <result property="deleted" column="deleted"/>
+        <result property="status" column="status"/>
+        <result property="tmpCode" column="tmp_code"/>
     </resultMap>
 
-    <select id="getOne" resultType="io.treasure.entity.MerchantStaffEntity">
+    <select id="getList" resultType="io.treasure.entity.MerchantStaffEntity">
         select * from merchant_staff
-        where #{mchId} = mch_id
-        order by s_type asc
-        limit 0,1
+        <where>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="mchId != null and mchId != ''">
+                and mch_id = #{mchId}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+        </where>
+
     </select>
     <insert id="addOne">
-        insert into merchant_staff(mch_id,mobile,s_type)
-        value(#{mchId},#{mobile},#{sType})
+        insert into merchant_staff(mch_id,mobile,s_type,status,tmp_code)
+        value(#{mchId},#{mobile},#{sType},#{status},#{tmpCode})
     </insert>
     <delete id="delOne">
         delete from merchant_staff
         where #{mchId} = mch_id
         and #{mobile} = mobile
     </delete>
+    <update id="updateCodeByMobile">
+        update merchant_staff set status=#{status}
+        <if test="tmpCode != null and tmpCode != ''">
+            ,tmp_code = #{tmpCode}
+        </if>
+        where mobile = #{mobile}
+    </update>
 </mapper>

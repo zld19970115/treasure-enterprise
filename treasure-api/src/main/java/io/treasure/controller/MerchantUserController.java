@@ -17,6 +17,7 @@ import io.treasure.dao.MerchantStaffDao;
 import io.treasure.dto.*;
 import io.treasure.enm.Common;
 import io.treasure.entity.MerchantEntity;
+import io.treasure.entity.MerchantStaffEntity;
 import io.treasure.entity.MerchantUserEntity;
 import io.treasure.entity.TokenEntity;
 import io.treasure.service.*;
@@ -639,33 +640,59 @@ public class MerchantUserController {
 
     //==============================================================================================
                /** merchant_staff 服务员-用于接收新订单提醒   */
-    //==============================================================================================
-    @CrossOrigin
+               //status = 1表示可用，status =0表示注册中
+    //==============================================================================================@CrossOrigin
+
+
     @GetMapping("waiter_ack")
-    @ApiOperation("服务员-短信验证码")
+    @ApiOperation("服务员-发送短信验证码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query")
+            @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query"),
+            @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
     })
-    public Result checkWaiter(@RequestParam String mobile){
+    public Result checkWaiter(String mobile,Long mchId){
+        List<MerchantStaffEntity> lista = merchantStaffDao.getList(null, 1, mobile);
+        if(lista.size()>0)
+            return new Result().error("mobile_exist");
+
         Result result = SendSMSUtil.sendCodeForRegister(mobile, smsConfig);
-        return new Result().ok(result);
+        String code = result.getData()==null?null:result.getData().toString().trim();
+        if(code == null){
+            return  new Result().error("many_times");
+        }
+
+        //如果手机号已存在，则更新，如果不存在则添加
+        List<MerchantStaffEntity> list = merchantStaffDao.getList(null, 0, mobile);
+        if(list.size()>0){
+            merchantStaffDao.updateCodeByMobile(mobile,0,code);
+        }else{
+           merchantStaffDao.addOne(mchId,mobile,1,0,code);
+        }
+        return result;
     }
     @CrossOrigin
     @GetMapping("waiter_code")
-    @ApiOperation("服务员-校验验证码")
+    @ApiOperation("服务员-校验并添加")
     @ApiImplicitParams({
             @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query",dataType = "String"),
             @ApiImplicitParam(name="code",value="验证码",required=true,paramType="query",dataType = "String"),
             @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
     })
-    public Result verifyCodeWaiter(HttpServletRequest request,@RequestParam String mobile,@RequestParam String code,@RequestParam Long mchId){
-        Result bool=SendSMSUtil.verifyCode(mobile,request,code);
-        if(bool.getCode()==new Result<>().ok(null).getCode()){
-            merchantStaffDao.addOne(mchId,mobile,1);
-        }
-        return bool;
-    }
+    public Result verifyCodeWaiter(String mobile,String code,Long mchId){
 
+        List<MerchantStaffEntity> list = merchantStaffDao.getList(mchId, 0, mobile);
+        String cCode = list.size()>0?list.get(0).getTmpCode():null;
+        if(cCode == null){
+            return new Result().error("校验码不存在，请重新校验");
+        }else
+        if(cCode.equals(code.trim())){
+            merchantStaffDao.updateCodeByMobile(mobile,1,null);
+            return new Result().ok("success");
+        }else{
+            return new Result().error("校验码错误");
+        }
+
+    }
 
     @GetMapping("waiter_del")
     @ApiOperation("删除服务员手机号")
@@ -673,7 +700,7 @@ public class MerchantUserController {
             @ApiImplicitParam(name="mobile",value="手机号",required=true,paramType="query",dataType = "String"),
             @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
     })
-    public Result delWaiter(@RequestParam String mobile, @RequestParam Long mchId) {
+    public Result delWaiter(String mobile,Long mchId) {
         try{
             merchantStaffDao.delOne(mchId,mobile);
             return new Result().ok("success");
@@ -682,7 +709,48 @@ public class MerchantUserController {
         }
     }
 
+    @GetMapping("waiter_list")
+    @ApiOperation("服务员列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mchId", value = "商户ID", required = true, paramType = "query", dataType = "long")
+    })
+    public Result listWaiter(Long mchId) {
+        try{
+            List<MerchantStaffEntity> list = merchantStaffDao.getList(mchId, 1, null);
+            Result result = new Result();
+            result.setData(list);
+            result.setCode(200);
+            result.setMsg("sucess");
+            return result;
+        }catch (Exception e){
+            return new Result().error(500);
+        }
+    }
 
+    @GetMapping("test_msg")
+    @ApiOperation("短信测试")
+    public void testingMsg(){
+        masterOrderService.testingSendMsg(1213032199095779329L);
+    }
+
+/*
+ void addOne(@Param("mchId") Long mchId,
+                @Param("mobile") String mobile,
+                @Param("sType") Integer sType,
+                @Param("status") Integer status,
+                @Param("tmpCode") Integer code);
+
+    void updateCodeByMobile(@Param("mobile") String mobile,
+                      @Param("status") Integer status,
+                      @Param("tmpCode") Integer code);
+
+    List<MerchantStaffEntity> getList(@Param("mchId") Long mchId,
+                               @Param("status") Integer status,
+                               @Param("mobile") String mobile);
+
+    void delOne(@Param("mchId") Long mchId,
+                @Param("mobile") String mobile);
+ */
 
 
 

@@ -44,6 +44,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -122,7 +123,7 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
     @Autowired
     private CouponForActivityService couponForActivityService;
 
-    @Autowired
+    @Resource
     private MerchantStaffDao merchantStaffDao;
 
     @Override
@@ -964,13 +965,19 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             masterOrderEntity.setStatus(Constants.OrderStatus.PAYORDER.getValue());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
 
-            String mobile = merchantUserEntity.getMobile();
-            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
-            if(one != null){
-                if(one.getMobile() != null)
-                    mobile = one.getMobile();
+            List<MerchantStaffEntity> ms = merchantStaffDao.getList(dto.getMerchantId(), 1, null);
+            if(ms.size()>0){
+                for(int j=0;j<ms.size();j++){
+                    MerchantStaffEntity one = ms.get(j);
+                    if(one != null){
+                        if(one.getMobile() != null)
+                            SendSMSUtil.sendNewOrder(one.getMobile(), smsConfig);
+                    }
+                }
+            }else{
+                SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
             }
-            SendSMSUtil.sendNewOrder(mobile, smsConfig);
+
             List<MerchantClientDTO> list = merchantClientService.getMerchantUserClientByMerchantId(merchantUserEntity.getId());
             if (list.size() == 0){
                 System.out.println("MasterOrder 849");
@@ -1105,16 +1112,22 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
             }
 //          List<SlaveOrderEntity> slaveOrderEntityList=ConvertUtils.sourceToTarget(dtoList,SlaveOrderEntity.class);
 //          boolean b=slaveOrderService.insertBatch(dtoList);
+
             MerchantDTO merchantDTO = merchantService.get(dto.getMerchantId());
             MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(dto.getMerchantId());
-            String mobile = merchantUserEntity.getMobile();
-            MerchantStaffEntity one = merchantStaffDao.getOne(merchantUserEntity.getId());
-            if(one != null){
-                if(one.getMobile() != null)
-                    mobile = one.getMobile();
-            }
 
-            SendSMSUtil.sendNewOrder(mobile, smsConfig);
+            List<MerchantStaffEntity> list = merchantStaffDao.getList(dto.getMerchantId(), 1, null);
+            if(list.size()>0){
+                for(int j=0;j<list.size();j++){
+                    MerchantStaffEntity one = list.get(j);
+                    if(one != null){
+                        if(one.getMobile() != null)
+                            SendSMSUtil.sendNewOrder(one.getMobile(), smsConfig);
+                    }
+                }
+            }else{
+                SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+            }
         }
         return result.ok(orderId);
     }
@@ -3277,6 +3290,23 @@ public class MasterOrderServiceImpl extends CrudServiceImpl<MasterOrderDao, Mast
         MerchantEntity merchantEntity = merchantDao.selectById(mId);
         merchantEntity.setMonthySales(salesVolume);
         merchantDao.updateById(merchantEntity);
+    }
+
+    public void testingSendMsg(Long merchantId){
+        MerchantUserEntity merchantUserEntity = merchantUserService.selectByMerchantId(merchantId);
+
+        List<MerchantStaffEntity> list = merchantStaffDao.getList(merchantId, 1, null);
+        if(list.size()>0){
+            for(int j=0;j<list.size();j++){
+                MerchantStaffEntity one = list.get(j);
+                if(one != null){
+                    if(one.getMobile() != null)
+                        SendSMSUtil.sendNewOrder(one.getMobile(), smsConfig);
+                }
+            }
+        }else{
+            SendSMSUtil.sendNewOrder(merchantUserEntity.getMobile(), smsConfig);
+        }
     }
 
 }
